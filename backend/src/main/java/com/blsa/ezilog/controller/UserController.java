@@ -5,10 +5,12 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.blsa.ezilog.model.BasicResponse;
@@ -93,6 +95,26 @@ public class UserController {
 			userService.update(request);
 			result.status = true;
 			result.data = "success";
+			response = new ResponseEntity<>(result, HttpStatus.OK);
+		}
+		return response;
+	}
+	
+	@GetMapping("/user/detail")
+	@ApiOperation(value="회원 정보 조회",notes="조회 성공시 status=true, data='success', object=해당 유저 반환, 실패시 status=false,data='fail' 반환")
+	public Object login(@RequestParam long uid) {
+		ResponseEntity response = null;
+		final BasicResponse result = new BasicResponse();
+		User user = userService.select(uid);
+		if(user==null) {
+			result.status = false;
+			result.data = "nickname";
+			response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+			
+		}else {
+			result.status = true;
+			result.data = "success";
+			result.object = user;
 			response = new ResponseEntity<>(result, HttpStatus.OK);
 		}
 		return response;
