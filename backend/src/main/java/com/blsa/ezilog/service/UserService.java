@@ -9,6 +9,7 @@ public interface UserService {
 	User signup(SignupRequestDTO request);
 	User login(LoginRequestDTO request);
 	User update(UpdateRequestDTO request);
-	User select(Long uid);
+	User select(long uid);
+	void withdraw(long uid);
 	String duplicateCheck(String email,String nickname);
 }

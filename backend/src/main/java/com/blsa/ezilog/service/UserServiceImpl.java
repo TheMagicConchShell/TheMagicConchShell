@@ -58,9 +58,15 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public User select(Long uid) {
+	public User select(long uid) {
 		return dao.findByUid(uid).orElse(null);
 	}
-	
+
+	@Override
+	public void withdraw(long uid) {
+		dao.deleteById(uid);
+	}
+
+
 	
 }
