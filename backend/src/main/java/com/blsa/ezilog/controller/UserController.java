@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.blsa.ezilog.model.BasicResponse;
+import com.blsa.ezilog.model.user.LoginRequestDTO;
 import com.blsa.ezilog.model.user.SignupRequestDTO;
 import com.blsa.ezilog.model.user.User;
 import com.blsa.ezilog.service.UserService;
@@ -36,10 +37,42 @@ public class UserController {
 	public Object signup(@Valid @RequestBody SignupRequestDTO request) {
 		ResponseEntity response = null;
 		final BasicResponse result = new BasicResponse();
-		User u = userService.signup(request);
-		result.status = true;
-		result.data = "success";
-		response = new ResponseEntity<>(result, HttpStatus.OK);
+		String check = userService.duplicateCheck(request.getEmail(),request.getNickname());
+		if(check.equals("email")) {
+			result.status = false;
+			result.data="email";
+			response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+		}else if(check.equals("nickname")) {
+			result.status = false;
+			result.data="nickname";
+			response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+		}else {
+			User u = userService.signup(request);
+			result.status = true;
+			result.data = "success";
+			response = new ResponseEntity<>(result, HttpStatus.OK);
+		}
+
 		return response;
 	}
+	
+	@PostMapping("/user/login")
+	@ApiOperation(value="로그인",notes="로그인 성공 시 status=true, data='success',object=로그인한 유저 반환, 실패시 status=false,data='fail' 반환")
+	public Object login(@Valid @RequestBody LoginRequestDTO request) {
+		ResponseEntity response = null;
+		final BasicResponse result = new BasicResponse();
+		User u = userService.login(request);
+		if(u!=null) {
+			result.status = true;
+			result.data = "success";
+			result.object = u;
+			response = new ResponseEntity<>(result, HttpStatus.OK);
+		}else {
+			result.status = false;
+			result.data = "fail";
+			response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+		}
+		return response;
+	}
+	
 }
