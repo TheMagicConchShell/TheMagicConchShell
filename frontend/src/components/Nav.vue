@@ -88,7 +88,7 @@ export default {
 
 <style scoped>
 .navbar {
-    background-color: hsl(0, 0%, 67%);
+    background-color: rgb(178, 87, 34);
     position:sticky;
 }
 </style>

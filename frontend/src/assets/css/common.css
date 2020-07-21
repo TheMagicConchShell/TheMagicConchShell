@@ -7,3 +7,11 @@
 #app {
     font-family: ko
 }
+
+#platform {
+    margin: 20px;
+}
+
+button {
+    transition-duration: 1s
+}
