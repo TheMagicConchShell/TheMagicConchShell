@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        <Nav />
+        <PlatformNav />
         <router-view />
         <div id="go-up">
             <button
@@ -13,12 +13,12 @@
 </template>
 
 <script>
-import Nav from './components/Nav.vue';
+import PlatformNav from './components/PlatformNav.vue';
 
 export default {
     name: 'App',
     components: {
-        Nav,
+        PlatformNav,
     },
 };
 </script>

@@ -12,6 +12,34 @@
     margin: 20px;
 }
 
+/* 버튼 호버시 시간 딜레이 */
 button {
     transition-duration: 1s
+}
+
+/* 바운스 모션 */
+@keyframes motion {
+	0% {margin-top: 0px;}
+	100% {margin-top: 10px;}
+}
+
+
+/* 모달 조정 */
+.modal {
+    text-align: center;
+}
+
+@media screen and (min-width: 768px) { 
+    .modal:before {
+            display: inline-block;
+            vertical-align: middle;
+            content: " ";
+            height: 100%;
+    }
+}
+
+.modal-dialog {
+    display: inline-block;
+    text-align: left;
+    vertical-align: middle;
 }

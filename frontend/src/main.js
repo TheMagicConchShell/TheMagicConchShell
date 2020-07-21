@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import axios from 'axios';
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
+// import SidebarModal from 'vue-sidebar-modal';
 import App from './App.vue';
 import router from './router';
 import store from './store';
@@ -13,6 +14,7 @@ Vue.config.productionTip = false;
 
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
+// Vue.use(SidebarModal);
 
 const vm = new Vue({
     router,

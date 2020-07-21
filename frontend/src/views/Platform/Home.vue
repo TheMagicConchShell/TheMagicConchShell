@@ -1,7 +1,7 @@
 <template>
     <div id="platform">
         <div id="home">
-            <div id="present">
+            <div class="d-flex flex-column-reverse">
                 실시간 활동 블로그
             </div>
 
@@ -14,6 +14,12 @@
                 </router-link>
             </div>
         </div>
+
+        <i
+            id="click"
+            class="far fa-hand-point-up"
+            style="color: black"
+        />
 
         <div id="bloglist">
             <b-card
@@ -56,6 +62,8 @@ export default {
     components: {
 
     },
+    methods: {
+    },
 };
 </script>
 
@@ -65,9 +73,6 @@ export default {
   justify-content: space-between;
   font-size: 30px;
 }
-#present {
-  vertical-align: bottom;
-}
 #bigbutton {
   color: white;
   padding: 10px;
@@ -75,6 +80,11 @@ export default {
   width: 20%;
   border-radius: 10px;
   text-decoration: none;
+}
+#click {
+  position:absolute;
+  right: 100px;
+  animation: motion 0.5s linear 0s infinite alternate;
 }
 
 #bloglist {
