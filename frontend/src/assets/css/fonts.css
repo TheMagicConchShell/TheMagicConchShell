@@ -1,0 +1,9 @@
+@font-face { 
+    font-family: 'ko' ;
+    src: url('../fonts/koverwatch1.eot') format('eot');
+    src: local(※), url('../fonts/koverwatch1.woff') format('woff');
+}
+
+#app {
+    font-family: ko
+}

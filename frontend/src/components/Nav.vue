@@ -44,10 +44,11 @@
                         </b-button>
                     </b-nav-form>
 
-                    <b-nav-item-text
+                    <b-nav-item-dropdown
                         right
+                        text="language"
                     >
-                        <!-- <b-dropdown-item href="#">
+                        <b-dropdown-item href="#">
                             EN
                         </b-dropdown-item>
                         <b-dropdown-item href="#">
@@ -58,8 +59,8 @@
                         </b-dropdown-item>
                         <b-dropdown-item href="#">
                             FA
-                        </b-dropdown-item> -->
-                    </b-nav-item-text>
+                        </b-dropdown-item>
+                    </b-nav-item-dropdown>
 
                     <b-nav-item-dropdown right>
                         <!-- Using 'button-content' slot -->
