@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -15,6 +16,7 @@ import com.blsa.ezilog.interceptor.JwtInterceptor;
 public class BackendApplication implements WebMvcConfigurer {
 
     public static void main(String[] args) {
+        System.setProperty(AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME, "email");
         SpringApplication.run(BackendApplication.class, args);
     }
 
@@ -24,7 +26,7 @@ public class BackendApplication implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor).addPathPatterns("/user/**") // 기본 적용 경로
-                .excludePathPatterns(Arrays.asList("/user/signup", "/user/login"));// 적용 제외 경로
+                .excludePathPatterns(Arrays.asList("/user/signup", "/user/login","/user/authentication"));// 적용 제외 경로
     }
 
     @Override
