@@ -1,26 +1,52 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Home from '@/views/Home.vue';
 
+import Home from '@/views/Platform/Home.vue';
+import Open from '@/views/Platform/Open.vue';
+import Blog from '@/views/Blog/Blog.vue';
+
+import UserDetail from '@/components/user/UserDetail.vue';
+import Signup from '@/components/user/Signup.vue';
+import Login from '@/components/user/Login.vue';
+
+import Support from '@/views/Support.vue';
 import NoticeList from '@/components/NoticeList.vue';
 import NoticeEditor from '@/components/NoticeEditor.vue';
-import Support from '@/views/Support.vue';
 
 Vue.use(VueRouter);
 
 const routes = [
+    // 플랫폼
     {
         path: '/',
         name: 'Home',
         component: Home,
     },
     {
-        path: '/about',
-        name: 'About',
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
+        path: '/open',
+        name: 'Open',
+        component: Open,
+    },
+    // 블로그
+    {
+        path: '/blog',
+        name: 'Blog',
+        component: Blog,
+    },
+    {
+        path: '/user/detail',
+        name: 'userdetail',
+        component: UserDetail,
+    },
+    {
+        path: '/user/signup',
+        name: 'signup',
+        component: Signup,
+    },
+    {
+        path: '/user/login',
+        name: 'login',
+        component: Login,
     },
     {
         name: 'support',
