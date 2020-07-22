@@ -4,9 +4,10 @@ import com.blsa.ezilog.model.user.LoginRequestDTO;
 import com.blsa.ezilog.model.user.SignupRequestDTO;
 import com.blsa.ezilog.model.user.UpdateRequestDTO;
 import com.blsa.ezilog.model.user.User;
+import com.blsa.ezilog.model.user.UserAuth;
 
 public interface UserService {
-    User signup(SignupRequestDTO request);
+    UserAuth signup(SignupRequestDTO request, String token);
 
     Object login(LoginRequestDTO request);
 
@@ -17,4 +18,6 @@ public interface UserService {
     void withdraw(long uid);
 
     String duplicateCheck(String email, String nickname);
+
+    User authentication(long uaid, String token);
 }

@@ -5,26 +5,32 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.blsa.ezilog.dao.UserAuthDao;
 import com.blsa.ezilog.dao.UserDao;
 import com.blsa.ezilog.model.user.LoginRequestDTO;
 import com.blsa.ezilog.model.user.SignupRequestDTO;
 import com.blsa.ezilog.model.user.UpdateRequestDTO;
 import com.blsa.ezilog.model.user.User;
+import com.blsa.ezilog.model.user.UserAuth;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserDao dao;
+    
+    @Autowired
+    private UserAuthDao authDao;
 
     @Override
-    public User signup(SignupRequestDTO request) {
-        User user = new User();
+    public UserAuth signup(SignupRequestDTO request,String token) {
+        UserAuth user = new UserAuth();
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
         user.setNickname(request.getNickname());
+        user.setToken(token);
 
-        return dao.save(user);
+        return authDao.save(user);
     }
 
     @Override
@@ -79,6 +85,23 @@ public class UserServiceImpl implements UserService {
     @Override
     public void withdraw(long uid) {
         dao.deleteById(uid);
+    }
+
+    @Override
+    public User authentication(long uaid, String token) {
+        Optional<UserAuth> ua = authDao.findByUaidAndToken(uaid, token);
+        if(ua.isPresent()) {
+            UserAuth auth = ua.get();
+            User user = new User();
+            user.setEmail(auth.getEmail());
+            user.setNickname(auth.getNickname());
+            user.setPassword(auth.getPassword());
+            authDao.delete(auth);
+            user = dao.save(user);
+            return user;
+        }else {
+            return null;
+        }
     }
 
 }

@@ -3,6 +3,7 @@ package com.blsa.ezilog.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -24,7 +25,9 @@ import com.blsa.ezilog.model.user.LoginRequestDTO;
 import com.blsa.ezilog.model.user.SignupRequestDTO;
 import com.blsa.ezilog.model.user.UpdateRequestDTO;
 import com.blsa.ezilog.model.user.User;
+import com.blsa.ezilog.model.user.UserAuth;
 import com.blsa.ezilog.service.JwtService;
+import com.blsa.ezilog.service.MailSendService;
 import com.blsa.ezilog.service.UserService;
 
 import io.swagger.annotations.ApiOperation;
@@ -44,6 +47,9 @@ public class UserController {
 
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    private MailSendService mailSendService;
 
     @PostMapping("/user/signup")
     @ApiOperation(value = "회원 가입")
@@ -68,8 +74,22 @@ public class UserController {
             result.errors = errors;
             response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         } else {
+            String key = mailSendService.getKey(false, 20);
+
+            UserAuth u = userService.signup(request, key);
+            try {
+                mailSendService.mailSendWithUserKey(u.getEmail(), u.getNickname(), key, u.getUaid());
+            } catch (MessagingException e) {
+                final ErrorResponse result = new ErrorResponse();
+                result.status = "E-4006";
+                result.message = "인증 메일 발송에 실패했습니다.";
+                errors.put("field", "sendMail");
+
+                result.errors = errors;
+                return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
             final BasicResponse result = new BasicResponse();
-            User u = userService.signup(request);
+
             result.status = "S-200";
             result.message = "회원가입에 성공했습니다.";
             response = new ResponseEntity<>(result, HttpStatus.OK);
@@ -181,6 +201,29 @@ public class UserController {
             final BasicResponse result = new BasicResponse();
             result.status = "S-200";
             result.message = "회원 탈퇴에 성공했습니다.";
+            response = new ResponseEntity<>(result, HttpStatus.ACCEPTED);
+        }
+        return response;
+    }
+
+    @PostMapping("/user/authentication")
+    @ApiOperation(value = "이메일 인증 완료")
+    public Object confirm(@RequestParam long uid, @RequestParam String token) {
+        ResponseEntity<BasicResponse> response = null;
+        Map<String, Object> errors = new HashMap<>();
+        User user = userService.authentication(uid, token);
+        if (user == null) {
+            final ErrorResponse result = new ErrorResponse();
+            result.status = "E-4007";
+            result.message = "이메일 인증에 실패했습니다.";
+            errors.put("field", "token");
+            errors.put("data", token);
+            result.errors = errors;
+            response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        } else {
+            final BasicResponse result = new BasicResponse();
+            result.status = "S-200";
+            result.message = "이메일 인증에 성공했습니다.";
             response = new ResponseEntity<>(result, HttpStatus.ACCEPTED);
         }
         return response;
