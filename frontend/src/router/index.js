@@ -4,6 +4,8 @@ import VueRouter from 'vue-router';
 import Home from '../views/Platform/Home.vue';
 import Blog from '../views/Blog/Blog.vue';
 
+import Login from '../components/user/Login.vue';
+
 Vue.use(VueRouter);
 
 const routes = [
@@ -16,6 +18,11 @@ const routes = [
         path: '/blog',
         name: 'Blog',
         component: Blog,
+    },
+    {
+        path: '/user/login',
+        name: 'login',
+        component: Login,
     },
 ];
 
