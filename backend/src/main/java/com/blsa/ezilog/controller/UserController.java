@@ -208,10 +208,10 @@ public class UserController {
 
     @PostMapping("/user/authentication")
     @ApiOperation(value = "이메일 인증 완료")
-    public Object confirm(@RequestParam long uid, @RequestParam String token) {
+    public Object confirm(@RequestParam long uaid, @RequestParam String token) {
         ResponseEntity<BasicResponse> response = null;
         Map<String, Object> errors = new HashMap<>();
-        User user = userService.authentication(uid, token);
+        User user = userService.authentication(uaid, token);
         if (user == null) {
             final ErrorResponse result = new ErrorResponse();
             result.status = "E-4007";
