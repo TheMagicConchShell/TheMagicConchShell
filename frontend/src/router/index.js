@@ -4,6 +4,7 @@ import VueRouter from 'vue-router';
 import Home from '../views/Platform/Home.vue';
 import Blog from '../views/Blog/Blog.vue';
 
+import UserDetail from '../components/user/UserDetail.vue';
 import Signup from '../components/user/Signup.vue';
 import Login from '../components/user/Login.vue';
 
@@ -19,6 +20,11 @@ const routes = [
         path: '/blog',
         name: 'Blog',
         component: Blog,
+    },
+    {
+        path: '/user/detail',
+        name: 'userdetail',
+        component: UserDetail,
     },
     {
         path: '/user/signup',
