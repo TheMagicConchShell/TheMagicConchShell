@@ -15,12 +15,12 @@ import lombok.ToString;
 @Setter
 @ToString
 public class UpdateRequestDTO {
-	@ApiModelProperty(required = true)
-	@NotNull
-	long uid;
-	@ApiModelProperty(required = true)
+    @ApiModelProperty(required = true)
     @NotNull
-    @Email(message="이메일 형식에 맞지 않습니다.")
+    long uid;
+    @ApiModelProperty(required = true)
+    @NotNull
+    @Email(message = "이메일 형식에 맞지 않습니다.")
     String email;
     @ApiModelProperty(required = true)
     @NotNull
@@ -29,8 +29,8 @@ public class UpdateRequestDTO {
     @ApiModelProperty(required = true)
     @NotNull
     String nickname;
-    
+
     String introduce;
-    
-    String profile;
+
+    String profileImg;
 }

@@ -34,6 +34,7 @@ public class NoticeController {
     @Autowired
     NoticeDao noticeDao;
 
+
     @ApiOperation(value = "공지사항 목록 반환", notes = "Input : no, Output: 성공 : [status = true, data = 공지사항 리스트(Notice)] 실패 : status = false, data = 에러메세지", response = List.class)
     @GetMapping
     public Object retrieveNotice() {
@@ -65,33 +66,21 @@ public class NoticeController {
 
     }
 
-    @ApiOperation(value = "검색어에 해당 되는 작성자가 쓴 공지사항 반환", notes = "작성자 이름을 통해서 공지사항 검색", response = List.class)
+    @ApiOperation(value = "검색어에 해당 되는 작성자가 쓴 공지사항 반환", response = List.class)
     @GetMapping("/writer")
-    public Object searchNoticeByWriter(@RequestParam String writer) {
+    public ResponseEntity<Map<String, Object>> searchNoticeByWriter(@RequestParam String writer) {
 
-        ResponseEntity response = null;
-        final BasicResponse result = new BasicResponse();
-        final ErrorResponse eresult = new ErrorResponse();
-        Map<String, Object> errorMap = new HashMap<>();
+        ResponseEntity<Map<String, Object>> entity = null;
 
         try {
-            List<Notice> nList = noticeDao.getNoticeByWriter(writer);
-            result.status = "S-200";
-            result.message = "작성자를 이용하여 공지사항 목록들 가져오기 성공";
-            result.data = nList;
-            response = new ResponseEntity<>(result, HttpStatus.OK);
+            List<Notice> sList = noticeDao.getNoticeByWriter(writer);
+            entity = handleSuccess(sList);
 
         } catch (Exception e) {
             e.printStackTrace();
-            eresult.status = "E-4201";
-            eresult.message = "서버 내부 오류에 의해 작성자를 이용한 공지사항 목록 가져오기 실패";
-            eresult.data = null;
-
-            errorMap.put("field", "getNoticeByWriter");
-            errorMap.put("data", null);
-            response = new ResponseEntity<>(eresult, HttpStatus.INTERNAL_SERVER_ERROR);
+            entity = handleException(e);
         }
-        return response;
+        return entity;
     }
 
     @ApiOperation(value = "공지 번호에 해당되는 공지사항 반환", response = List.class)
@@ -166,6 +155,7 @@ public class NoticeController {
         try {
             Notice temp = noticeDao.getNoticeByNid(nid);
             noticeDao.delete(temp);
+            
             result.status = "S-200";
             result.message = "공지사항 삭제 완료";
             result.data = null;
@@ -184,11 +174,8 @@ public class NoticeController {
 
     @ApiOperation(value = "공지사항 내용 변경", response = List.class)
     @PutMapping
-    public Object updateNotice(@RequestBody Notice notice) {
-        ResponseEntity response = null;
-        final BasicResponse result = new BasicResponse();
-        final ErrorResponse eresult = new ErrorResponse();
-        Map<String, Object> errorMap = new HashMap<>();
+    public ResponseEntity<Map<String, Object>> updateNotice(@RequestBody Notice notice) {
+        ResponseEntity<Map<String, Object>> entity = null;
 
         try {
             Notice updateTemp = noticeDao.getNoticeByNid(notice.getNid());
@@ -196,6 +183,7 @@ public class NoticeController {
             updateTemp.setContent(notice.getContent());
 
             noticeDao.save(updateTemp);
+            
             result.status = "S-200";
             result.message = "공지사항 수정 완료";
             result.data = null;

@@ -20,18 +20,16 @@ import lombok.NoArgsConstructor;
 public class Notice {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-
-	//@Column(name="nid")
-	private BigInteger nid;
+    private BigInteger nid;
 	
-	@Column (name = "title")
-	private String title;
+    @Column (name = "title")
+    private String title;
 	
-	@Column (name = "content")
-	private String content;
+    @Column (name = "content")
+    private String content;
 	
-	@Column (name = "writer")
-	private String writer;
+    @Column (name = "writer")
+    private String writer;
 
     public Notice(String title, String content, String writer) {
         super();
@@ -39,6 +37,4 @@ public class Notice {
         this.content = content;
         this.writer = writer;
     }
-	
-	
 }
