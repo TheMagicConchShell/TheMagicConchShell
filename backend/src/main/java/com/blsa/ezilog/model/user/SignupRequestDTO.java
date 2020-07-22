@@ -1,6 +1,5 @@
 package com.blsa.ezilog.model.user;
 
-
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -16,9 +15,9 @@ import lombok.ToString;
 @Setter
 @ToString
 public class SignupRequestDTO {
-	@ApiModelProperty(required = true)
+    @ApiModelProperty(required = true)
     @NotNull
-    @Email(message="이메일 형식에 맞지 않습니다.")
+    @Email(message = "이메일 형식에 맞지 않습니다.")
     String email;
     @ApiModelProperty(required = true)
     @NotNull
