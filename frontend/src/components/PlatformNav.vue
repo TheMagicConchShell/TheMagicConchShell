@@ -1,13 +1,15 @@
 <template>
     <div>
         <b-navbar
-            class="navbar"
+            class="navbar sticky-top"
             toggleable="lg"
             type="dark"
         >
-            <b-navbar-brand href="#">
-                Platform 이름
-            </b-navbar-brand>
+            <router-link :to="{name: 'Home'}">
+                <b-navbar-brand>
+                    Platform 이름
+                </b-navbar-brand>
+            </router-link>
 
             <b-navbar-toggle target="nav-collapse" />
 
@@ -89,6 +91,8 @@ export default {
 <style scoped>
 .navbar {
     background-color: rgb(178, 87, 34);
-    position:sticky;
+    position: fixed;
+    top: 0;
+    width: 100%;
 }
 </style>

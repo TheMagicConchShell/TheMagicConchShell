@@ -7,9 +7,17 @@
 #app {
     font-family: ko
 }
+#title {
+    font-size: 50px;
+}
+
+/*마우스 오버 시 커서로 변경*/
+.cursor {
+    cursor: pointer
+}
 
 #platform {
-    margin: 20px;
+    margin: 70px 20px;
 }
 
 /* 버튼 호버시 시간 딜레이 */

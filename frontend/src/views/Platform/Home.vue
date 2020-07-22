@@ -5,9 +5,13 @@
                 실시간 활동 블로그
             </div>
 
-            <div id="bigbutton">
+            <div
+                id="bigbutton"
+                @mouseover="mouseover()"
+                @mouseout="mouseout()"
+            >
                 <router-link
-                    :to="{name: 'Blog'}"
+                    :to="{name: 'Open'}"
                     class="text-decoration-none text-light"
                 >
                     내 블로그 만들기
@@ -15,13 +19,21 @@
             </div>
         </div>
 
-        <i
+        <div
+            v-show="nomouse"
             id="click"
-            class="far fa-hand-point-up"
-            style="color: black"
-        />
+        >
+            <i
+                class="far fa-hand-point-up"
+                style="color: black"
+            /> click!
+        </div>
 
-        <div id="bloglist">
+        <div
+            id="bloglist"
+            class="cursor"
+            @click="$router.push({name: 'Blog'})"
+        >
             <b-card
                 img-src="https://placekitten.com/300/300"
                 img-alt="Card image"
@@ -59,10 +71,21 @@
 <script>
 export default {
     name: 'Home',
-    components: {
+    data() {
+        return {
+            nomouse: true,
+        };
+    },
+    watch: {
 
     },
     methods: {
+        mouseover() {
+            this.nomouse = false;
+        },
+        mouseout() {
+            this.nomouse = true;
+        },
     },
 };
 </script>
@@ -82,8 +105,8 @@ export default {
   text-decoration: none;
 }
 #click {
-  position:absolute;
-  right: 100px;
+  position: absolute;
+  right: 20px;
   animation: motion 0.5s linear 0s infinite alternate;
 }
 
