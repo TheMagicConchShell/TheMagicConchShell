@@ -3,8 +3,10 @@ import VueRouter from 'vue-router';
 
 import Home from '../views/Platform/Home.vue';
 import Blog from '../views/Blog/Blog.vue';
-// 유저
+
 import UserDetail from '../components/user/UserDetail.vue';
+import Signup from '../components/user/Signup.vue';
+import Login from '../components/user/Login.vue';
 
 Vue.use(VueRouter);
 
@@ -19,11 +21,20 @@ const routes = [
         name: 'Blog',
         component: Blog,
     },
-    // 유저
     {
         path: '/user/detail',
         name: 'userdetail',
         component: UserDetail,
+    },
+    {
+        path: '/user/signup',
+        name: 'signup',
+        component: Signup,
+    },
+    {
+        path: '/user/login',
+        name: 'login',
+        component: Login,
     },
 ];
 
