@@ -19,122 +19,200 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.blsa.ezilog.dao.NoticeDao;
+import com.blsa.ezilog.model.BasicResponse;
+import com.blsa.ezilog.model.ErrorResponse;
 import com.blsa.ezilog.model.notice.Notice;
+import com.blsa.ezilog.model.notice.NoticeCreateRequest;
 
 import io.swagger.annotations.ApiOperation;
 
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
 @RestController
-@RequestMapping("/api/support/notice")
+@RequestMapping("/support/notice")
 public class NoticeController {
 
-	@Autowired
-	NoticeDao noticeDao;
+    @Autowired
+    NoticeDao noticeDao;
 
-	@ApiOperation(value = "검색어에 해당 되는 작성자가 쓴 공지사항 반환", response = List.class)
-	@GetMapping("/writer")
-	public ResponseEntity<Map<String, Object>> searchNoticeByWriter(@RequestParam String writer) {
+    @ApiOperation(value = "공지사항 목록 반환", notes = "Input : no, Output: 성공 : [status = true, data = 공지사항 리스트(Notice)] 실패 : status = false, data = 에러메세지", response = List.class)
+    @GetMapping
+    public Object retrieveNotice() {
 
-		ResponseEntity<Map<String, Object>> entity = null;
+        ResponseEntity response = null;
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
 
-		try {
-			List<Notice> sList = noticeDao.getNoticeByWriter(writer);
-			entity = handleSuccess(sList);
+        try {
+            List<Notice> sList = noticeDao.findAll();
+            result.status = "S-200";
+            result.message = "공지사항 목록 불러오기에 성공했습니다.";
+            result.data = sList;
+            response = new ResponseEntity<>(result, HttpStatus.OK);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			entity = handleException(e);
-		}
-		return entity;
+        } catch (Exception e) {
+            e.printStackTrace();
+            eresult.status = "E-4200";
+            eresult.message = "서버 내부 오류로 인해 공지사항 목록 불러오기 실패.";
+            eresult.data = null;
+            errorMap.put("field", "getNotice");
+            errorMap.put("data", e.getMessage());
+            eresult.errors = errorMap;
 
-	}
+            response = new ResponseEntity<>(eresult, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return response;
 
-	@ApiOperation(value ="공지 번호에 해당되는 공지사항 반환", response = List.class)
-	@GetMapping("/noticeId")
-	public ResponseEntity<Map<String, Object>> seasrchNoticeById(@RequestParam BigInteger id) {
+    }
 
-		ResponseEntity<Map<String, Object>> entity = null;
+    @ApiOperation(value = "검색어에 해당 되는 작성자가 쓴 공지사항 반환", notes = "작성자 이름을 통해서 공지사항 검색", response = List.class)
+    @GetMapping("/writer")
+    public Object searchNoticeByWriter(@RequestParam String writer) {
 
-		try {
-			Notice temp = noticeDao.getNoticeByNid(id);
-			entity = handleSuccess(temp);
+        ResponseEntity response = null;
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			entity = handleException(e);
-		}
-		return entity;
+        try {
+            List<Notice> nList = noticeDao.getNoticeByWriter(writer);
+            result.status = "S-200";
+            result.message = "작성자를 이용하여 공지사항 목록들 가져오기 성공";
+            result.data = nList;
+            response = new ResponseEntity<>(result, HttpStatus.OK);
 
-	}
-	
-	@ApiOperation(value = "공지사항 작성", response = List.class)
-	@PostMapping
-	public ResponseEntity<Map<String, Object>> insertNotice(@RequestBody Notice notice) {
+        } catch (Exception e) {
+            e.printStackTrace();
+            eresult.status = "E-4201";
+            eresult.message = "서버 내부 오류에 의해 작성자를 이용한 공지사항 목록 가져오기 실패";
+            eresult.data = null;
 
-		ResponseEntity<Map<String, Object>> entity = null;
+            errorMap.put("field", "getNoticeByWriter");
+            errorMap.put("data", null);
+            response = new ResponseEntity<>(eresult, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return response;
+    }
 
-		try {
-			Notice temp = new Notice(notice.getNid(), notice.getTitle(), notice.getContent(), notice.getWriter());
-			noticeDao.save(temp);
-			String result = "success";
-			entity = handleSuccess(result);
+    @ApiOperation(value = "공지 번호에 해당되는 공지사항 반환", response = List.class)
+    @GetMapping("/noticeId")
+    public Object seasrchNoticeById(@RequestParam BigInteger id) {
 
-		} catch (Exception e) {
-			entity = handleException(e);
-		}
-		return entity;
-	}
+        ResponseEntity response = null;
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
 
-	@ApiOperation(value = "공지사항 삭제", response = List.class)
-	@DeleteMapping
-	public ResponseEntity<Map<String, Object>> deleteNotice(@RequestParam BigInteger nid ) {
+        try {
+            Notice notice = noticeDao.getNoticeByNid(id);
+            result.status = "S-200";
+            result.message = "공지 ID를 이용하여 공지사항 가져오기 성공";
+            result.data = notice;
+            response = new ResponseEntity<>(result, HttpStatus.OK);
 
-		ResponseEntity<Map<String, Object>> entity = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            eresult.status = "E-4202";
+            eresult.message = "서버 내부 오류로 인해 ID를 이용한 공지사항 가져오기 실패";
+            eresult.data = null;
 
-		try {
-			Notice temp = noticeDao.getNoticeByNid(nid);
-			noticeDao.delete(temp);
-			String result = "success";
-			entity = handleSuccess(result);
+            errorMap.put("field", "getNoticeById");
+            errorMap.put("data", null);
+            response = new ResponseEntity<>(eresult, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return response;
 
-		} catch (Exception e) {
-			entity = handleException(e);
-		}
-		return entity;
-	}
-	
-	@ApiOperation(value = "공지사항 내용 변경", response = List.class)
-	@PutMapping
-	public ResponseEntity<Map<String, Object>> updateNotice(@RequestBody Notice notice ) {
-		ResponseEntity<Map<String, Object>> entity = null;
-		
-		try {
-			Notice updateTemp = noticeDao.getNoticeByNid(notice.getNid());
-			updateTemp.setTitle(notice.getTitle());
-			updateTemp.setContent(notice.getContent());
-			
-			noticeDao.save(updateTemp);
-			
-			
-		}catch(Exception e) {
-			entity = handleException(e);
-		}
-		
-		return entity;
-	}
+    }
 
-	private ResponseEntity<Map<String, Object>> handleSuccess(Object data) {
-		Map<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap.put("status", true);
-		resultMap.put("data", data);
-		return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
-	}
+    @ApiOperation(value = "공지사항 작성", notes = "Input: (제목, 내용, 작성자) OutPut: 성공(status = true, data= sucess), 실패(status=false, data=오류 디버그 메세지)", response = List.class)
+    @PostMapping
+    public Object insertNotice(@RequestBody NoticeCreateRequest notice) {
 
-	private ResponseEntity<Map<String, Object>> handleException(Exception e) {
-		Map<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap.put("status", false);
-		resultMap.put("data", e.getMessage());
-		return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+        ResponseEntity response = null;
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
+
+        try {
+            Notice temp = new Notice(notice.getTitle(), notice.getContent(), notice.getWriter());
+            noticeDao.save(temp);
+            result.status = "S-200";
+            result.message = "공지사항 작성에 성공했습니다.";
+            result.data = null;
+            response = new ResponseEntity<>(result, HttpStatus.OK);
+
+        } catch (Exception e) {
+            eresult.status = "E-4203";
+            eresult.message = "서버 내부 오류로 인해 공지사항 작성 실패.";
+            eresult.data = null;
+            errorMap.put("field", "creatNotice");
+            errorMap.put("data", e.getMessage());
+            eresult.errors = errorMap;
+
+            response = new ResponseEntity<>(eresult, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return response;
+    }
+
+    @ApiOperation(value = "공지사항 삭제", response = List.class)
+    @DeleteMapping
+    public Object deleteNotice(@RequestParam BigInteger nid) {
+
+        ResponseEntity response = null;
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
+
+        try {
+            Notice temp = noticeDao.getNoticeByNid(nid);
+            noticeDao.delete(temp);
+            result.status = "S-200";
+            result.message = "공지사항 삭제 완료";
+            result.data = null;
+            response = new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            eresult.status = "E-4204";
+            eresult.message = "서버 내부 오류로 인해 공지사항 삭제 실패";
+            eresult.data = null;
+
+            errorMap.put("field", "deleteNotice");
+            errorMap.put("data", nid);
+            response = new ResponseEntity<>(eresult, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return response;
+    }
+
+    @ApiOperation(value = "공지사항 내용 변경", response = List.class)
+    @PutMapping
+    public Object updateNotice(@RequestBody Notice notice) {
+        ResponseEntity response = null;
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
+
+        try {
+            Notice updateTemp = noticeDao.getNoticeByNid(notice.getNid());
+            updateTemp.setTitle(notice.getTitle());
+            updateTemp.setContent(notice.getContent());
+
+            noticeDao.save(updateTemp);
+            result.status = "S-200";
+            result.message = "공지사항 수정 완료";
+            result.data = null;
+
+            response = new ResponseEntity<>(result, HttpStatus.OK);
+
+        } catch (Exception e) {
+            eresult.status = "E-4107";
+            eresult.message = "서버 내부 오류로 인해 공지사항 수정 실패";
+            eresult.data = null;
+
+            errorMap.put("field", "updateNotice");
+            errorMap.put("data", notice);
+            response = new ResponseEntity<>(eresult, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return response;
+    }
 
 }

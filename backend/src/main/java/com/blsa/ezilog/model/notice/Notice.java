@@ -4,6 +4,8 @@ import java.math.BigInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import lombok.AllArgsConstructor;
@@ -14,9 +16,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class Notice {
-	@Id
-	@Column(name="nid")
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+
+	//@Column(name="nid")
 	private BigInteger nid;
 	
 	@Column (name = "title")
@@ -27,5 +32,13 @@ public class Notice {
 	
 	@Column (name = "writer")
 	private String writer;
+
+    public Notice(String title, String content, String writer) {
+        super();
+        this.title = title;
+        this.content = content;
+        this.writer = writer;
+    }
+	
 	
 }

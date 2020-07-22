@@ -20,13 +20,4 @@ public class SwaggerConfig {
 				.paths(PathSelectors.any()).build();
 	}
 
-@Configuration
-@EnableSwagger2
-public class SwaggerConfig {
-    @Bean
-    public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2).select()
-                .apis(Predicates.not(RequestHandlerSelectors.basePackage("org.springframework.boot")))
-                .paths(PathSelectors.any()).build();
-    }
 }
