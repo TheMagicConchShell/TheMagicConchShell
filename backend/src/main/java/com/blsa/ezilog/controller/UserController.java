@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.blsa.ezilog.model.BasicResponse;
 import com.blsa.ezilog.model.user.LoginRequestDTO;
 import com.blsa.ezilog.model.user.SignupRequestDTO;
+import com.blsa.ezilog.model.user.UpdateRequestDTO;
 import com.blsa.ezilog.model.user.User;
 import com.blsa.ezilog.service.UserService;
 
@@ -75,4 +77,24 @@ public class UserController {
 		return response;
 	}
 	
+	@PutMapping("/user/update")
+	@ApiOperation(value="회원 정보 수정",notes="정보 수정 성공 시 status=true, data='success' 반환, 닉네임 중복시 status=false 및 data='nickname' 반환")
+	public Object login(@Valid @RequestBody UpdateRequestDTO request) {
+		ResponseEntity response = null;
+		final BasicResponse result = new BasicResponse();
+		User checkUser = userService.select(request.getUid());
+		String checkname = userService.duplicateCheck("", request.getNickname());
+		if(!checkUser.getNickname().equals(request.getNickname())&&checkname.equals("nickname")) {
+			result.status = false;
+			result.data = "nickname";
+			response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+			
+		}else {
+			userService.update(request);
+			result.status = true;
+			result.data = "success";
+			response = new ResponseEntity<>(result, HttpStatus.OK);
+		}
+		return response;
+	}
 }

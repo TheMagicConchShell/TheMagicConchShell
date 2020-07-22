@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.blsa.ezilog.dao.UserDao;
 import com.blsa.ezilog.model.user.LoginRequestDTO;
 import com.blsa.ezilog.model.user.SignupRequestDTO;
+import com.blsa.ezilog.model.user.UpdateRequestDTO;
 import com.blsa.ezilog.model.user.User;
 
 @Service
@@ -41,6 +42,24 @@ public class UserServiceImpl implements UserService{
 		}
 		return res;
 		
+	}
+
+	@Override
+	public User update(UpdateRequestDTO request) {
+		User user = new User();
+		user.setUid(request.getUid());
+		user.setEmail(request.getEmail());
+		user.setNickname(request.getNickname());
+		user.setPassword(request.getPassword());
+		user.setIntroduce(request.getIntroduce());
+		user.setProfile(request.getProfile());
+		user = dao.save(user);
+		return user;
+	}
+
+	@Override
+	public User select(Long uid) {
+		return dao.findByUid(uid).orElse(null);
 	}
 	
 	
