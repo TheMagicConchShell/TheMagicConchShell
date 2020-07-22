@@ -1,5 +1,6 @@
 package com.blsa.ezilog.controller;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import com.blsa.ezilog.model.user.LoginRequestDTO;
 import com.blsa.ezilog.model.user.SignupRequestDTO;
 import com.blsa.ezilog.model.user.UpdateRequestDTO;
 import com.blsa.ezilog.model.user.User;
+import com.blsa.ezilog.service.JwtService;
 import com.blsa.ezilog.service.UserService;
 
 import io.swagger.annotations.ApiOperation;
@@ -31,11 +33,13 @@ import io.swagger.annotations.ApiResponses;
         @ApiResponse(code = 500, message = "Failure", response = BasicResponse.class) })
 
 @RestController
-@RequestMapping("/api")
 public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private JwtService jwtService;
 
     @PostMapping("/user/signup")
     @ApiOperation(value = "회원 가입", notes = "닉네임 중복시 status=false 및 data='nickname', 이메일 중복시 status=false 및 data='email', 정상일경우 status=true 및 data='success' 반환")
@@ -63,15 +67,17 @@ public class UserController {
 
     @PostMapping("/user/login")
     @ApiOperation(value = "로그인", notes = "로그인 성공 시 status=true, data='success',object=로그인한 유저 반환, 실패시 status=false,data='fail' 반환")
-    public Object login(@Valid @RequestBody LoginRequestDTO request) {
+    public Object login(@Valid @RequestBody LoginRequestDTO request, HttpServletResponse res) {
         ResponseEntity<BasicResponse> response = null;
         final BasicResponse result = new BasicResponse();
         User u = userService.login(request);
         if (u != null) {
+            String token = jwtService.create(u);
+            res.setHeader("jwt-auth-token", token);
             result.status = true;
             result.data = "success";
             result.object = u;
-            response = new ResponseEntity<>(result, HttpStatus.OK);
+            response = new ResponseEntity<>(result, HttpStatus.ACCEPTED);
         } else {
             result.status = false;
             result.data = "fail";

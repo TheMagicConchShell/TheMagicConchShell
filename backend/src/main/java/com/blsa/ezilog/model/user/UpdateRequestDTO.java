@@ -32,5 +32,5 @@ public class UpdateRequestDTO {
 
     String introduce;
 
-    String profile;
+    String profileImg;
 }

@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
         user.setNickname(request.getNickname());
         user.setPassword(request.getPassword());
         user.setIntroduce(request.getIntroduce());
-        user.setProfile(request.getProfile());
+        user.setProfileImg(request.getProfileImg());
         user = dao.save(user);
         return user;
     }
