@@ -37,7 +37,7 @@ public class User {
 	private String introduce;
 	
 	@Column
-	private String profile;
+	private String profileImg;
 	
 	@Column(insertable = false, updatable = false)
 	private LocalDateTime authDate;
