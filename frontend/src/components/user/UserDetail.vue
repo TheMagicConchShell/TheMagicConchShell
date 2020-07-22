@@ -215,10 +215,46 @@ export default {
     },
     methods: {
         async userUpdate() {
+            const isValid = await this.$refs.observer.validate();
 
+            if (!isValid) return;
+
+            axios({
+                method: 'put',
+                url: 'http://localhost:8080/api/user/update',
+                data: {
+                    uid: this.uid,
+                    email: this.email,
+                    nickname: this.nickname,
+                    password: this.password,
+                    introduce: this.introduce,
+                    profile: this.profile,
+                },
+            }).then((res) => {
+                if (res.data.status) {
+                    console.log(res.data);
+                    this.email = res.data.object.email;
+                    this.nickname = res.data.object.nickname;
+                    this.introduce = res.data.object.introduce;
+                } else {
+                    // 닉네임 중복
+                    console.log('duplicate nickname - update fail');
+                }
+            }).catch(() => {
+                // 유저 정보 수정 실패
+            });
         },
         userDelete() {
-
+            axios({
+                method: 'delete',
+                url: `http://localhost:8080/api/user/delete?uid=${this.uid}`,
+            }).then((res) => {
+                if (res.data.status) {
+                    // 삭제 성공
+                }
+            }).catch(() => {
+                // 유저 정보 삭제 실패
+            });
         },
     },
 };
