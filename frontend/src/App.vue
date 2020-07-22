@@ -1,13 +1,18 @@
 <template>
     <div id="app">
-        <PlatformNav />
-        <router-view />
-        <div id="go-up">
-            <button
-                id="go-up"
-            >
-                <i class="fas fa-angle-double-up" />
-            </button>
+        <PlatformNav v-show="nowPlatform" />
+        <div id="content">
+            <router-view />
+            <div id="go-up">
+                <button
+                    id="go-up"
+                >
+                    <i
+                        class="fas fa-angle-double-up"
+                        @click="top"
+                    />
+                </button>
+            </div>
         </div>
     </div>
 </template>
@@ -19,6 +24,39 @@ export default {
     name: 'App',
     components: {
         PlatformNav,
+    },
+    data() {
+        return {
+            nowPlatform: true,
+        };
+    },
+    watch: {
+        $route(to) {
+            this.checkUrl(to.name);
+        },
+    },
+    created() {
+        const url = this.$route.name;
+
+        this.checkUrl(url);
+    },
+    methods: {
+        checkUrl(url) {
+            const array = [
+                'Blog',
+            ];
+
+            let nowPlatform = true;
+            array.some((path) => {
+                if (url === path) { nowPlatform = false; return nowPlatform; }
+                return nowPlatform;
+            });
+            console.log(nowPlatform);
+            this.nowPlatform = nowPlatform;
+        },
+        top() {
+            window.scrollTo(0, 0);
+        },
     },
 };
 </script>

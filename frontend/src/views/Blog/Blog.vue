@@ -1,134 +1,137 @@
 <template>
     <div>
-        <div id="blognav">
-            <BlogNav />
-        </div>
         <div id="blogheader">
-            <div class="d-flex justify-content-center">
+            <div id="blognav">
+                <BlogNav />
+            </div>
+            <div
+                id="title"
+                class="d-flex justify-content-center"
+            >
                 고양이 블로그
             </div>
-            <div id="blogbody">
-                <b-card
-                    title="Card Title"
-                    img-src="https://picsum.photos/600/300/?image=25"
-                    img-alt="Image"
-                    img-top
-                    tag="article"
-                    style="max-width: 100%;"
-                    class="mb-2"
-                >
-                    <b-card-text>
-                        임의의 글
-                    </b-card-text>
+        </div>
+        <div id="blogbody">
+            <b-card
+                title="Card Title"
+                img-src="https://picsum.photos/600/300/?image=25"
+                img-alt="Image"
+                img-top
+                tag="article"
+                style="max-width: 100%;"
+                class="mb-2"
+            >
+                <b-card-text>
+                    임의의 글
+                </b-card-text>
 
-                    <b-button
-                        href="#"
-                        variant="primary"
-                    >
-                        Go somewhere
-                    </b-button>
-                </b-card>
-                <b-card
-                    title="Card Title"
-                    img-src="https://picsum.photos/600/300/?image=25"
-                    img-alt="Image"
-                    img-top
-                    tag="article"
-                    style="max-width: 100%;"
-                    class="mb-2"
+                <b-button
+                    href="#"
+                    variant="primary"
                 >
-                    <b-card-text>
-                        임의의 글
-                    </b-card-text>
+                    Go somewhere
+                </b-button>
+            </b-card>
+            <b-card
+                title="Card Title"
+                img-src="https://picsum.photos/600/300/?image=25"
+                img-alt="Image"
+                img-top
+                tag="article"
+                style="max-width: 100%;"
+                class="mb-2"
+            >
+                <b-card-text>
+                    임의의 글
+                </b-card-text>
 
-                    <b-button
-                        href="#"
-                        variant="primary"
-                    >
-                        Go somewhere
-                    </b-button>
-                </b-card>
-                <b-card
-                    title="Card Title"
-                    img-src="https://picsum.photos/600/300/?image=25"
-                    img-alt="Image"
-                    img-top
-                    tag="article"
-                    style="max-width: 100%;"
-                    class="mb-2"
+                <b-button
+                    href="#"
+                    variant="primary"
                 >
-                    <b-card-text>
-                        임의의 글
-                    </b-card-text>
+                    Go somewhere
+                </b-button>
+            </b-card>
+            <b-card
+                title="Card Title"
+                img-src="https://picsum.photos/600/300/?image=25"
+                img-alt="Image"
+                img-top
+                tag="article"
+                style="max-width: 100%;"
+                class="mb-2"
+            >
+                <b-card-text>
+                    임의의 글
+                </b-card-text>
 
-                    <b-button
-                        href="#"
-                        variant="primary"
-                    >
-                        Go somewhere
-                    </b-button>
-                </b-card>
-                <b-card
-                    title="Card Title"
-                    img-src="https://picsum.photos/600/300/?image=25"
-                    img-alt="Image"
-                    img-top
-                    tag="article"
-                    style="max-width: 20rem;"
-                    class="mb-2"
+                <b-button
+                    href="#"
+                    variant="primary"
                 >
-                    <b-card-text>
-                        임의의 글
-                    </b-card-text>
+                    Go somewhere
+                </b-button>
+            </b-card>
+            <b-card
+                title="Card Title"
+                img-src="https://picsum.photos/600/300/?image=25"
+                img-alt="Image"
+                img-top
+                tag="article"
+                style="max-width: 20rem;"
+                class="mb-2"
+            >
+                <b-card-text>
+                    임의의 글
+                </b-card-text>
 
-                    <b-button
-                        href="#"
-                        variant="primary"
-                    >
-                        Go somewhere
-                    </b-button>
-                </b-card>
-                <b-card
-                    title="Card Title"
-                    img-src="https://picsum.photos/600/300/?image=25"
-                    img-alt="Image"
-                    img-top
-                    tag="article"
-                    style="max-width: 20rem;"
-                    class="mb-2"
+                <b-button
+                    href="#"
+                    variant="primary"
                 >
-                    <b-card-text>
-                        임의의 글
-                    </b-card-text>
+                    Go somewhere
+                </b-button>
+            </b-card>
+            <b-card
+                title="Card Title"
+                img-src="https://picsum.photos/600/300/?image=25"
+                img-alt="Image"
+                img-top
+                tag="article"
+                style="max-width: 20rem;"
+                class="mb-2"
+            >
+                <b-card-text>
+                    임의의 글
+                </b-card-text>
 
-                    <b-button
-                        href="#"
-                        variant="primary"
-                    >
-                        Go somewhere
-                    </b-button>
-                </b-card>
-                <b-card
-                    title="Card Title"
-                    img-src="https://picsum.photos/600/300/?image=25"
-                    img-alt="Image"
-                    img-top
-                    tag="article"
-                    style="max-width: 20rem;"
-                    class="mb-2"
+                <b-button
+                    href="#"
+                    variant="primary"
                 >
-                    <b-card-text>
-                        임의의 글
-                    </b-card-text>
+                    Go somewhere
+                </b-button>
+            </b-card>
+            <b-card
+                title="Card Title"
+                img-src="https://picsum.photos/600/300/?image=25"
+                img-alt="Image"
+                img-top
+                tag="article"
+                style="max-width: 20rem;"
+                class="mb-2"
+            >
+                <b-card-text>
+                    임의의 글
+                </b-card-text>
 
-                    <b-button
-                        href="#"
-                        variant="primary"
-                    >
-                        Go somewhere
-                    </b-button>
-                </b-card>
-            </div>
+                <b-button
+                    href="#"
+                    variant="primary"
+                >
+                    Go somewhere
+                </b-button>
+            </b-card>
         </div>
     </div>
 </template>
@@ -146,9 +149,7 @@ export default {
 <style scoped>
 #blognav {
     float: left;
-}
-#blogheader {
-    font-size: 50px;
+    top:50%
 }
 #blogbody {
     display:grid;
