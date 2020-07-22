@@ -15,17 +15,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Notice {
-	@Id
-	@Column(name="nid")
-	private BigInteger nid;
-	
-	@Column (name = "title")
-	private String title;
-	
-	@Column (name = "content")
-	private String content;
-	
-	@Column (name = "writer")
-	private String writer;
-	
+    @Id
+    @Column(name = "nid")
+    private BigInteger nid;
+
+    @Column(name = "title")
+    private String title;
+
+    @Column(name = "content")
+    private String content;
+
+    @Column(name = "writer")
+    private String writer;
+
 }

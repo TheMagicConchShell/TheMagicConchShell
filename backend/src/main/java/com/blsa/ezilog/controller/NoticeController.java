@@ -28,113 +28,112 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping("/api/support/notice")
 public class NoticeController {
 
-	@Autowired
-	NoticeDao noticeDao;
+    @Autowired
+    NoticeDao noticeDao;
 
-	@ApiOperation(value = "검색어에 해당 되는 작성자가 쓴 공지사항 반환", response = List.class)
-	@GetMapping("/writer")
-	public ResponseEntity<Map<String, Object>> searchNoticeByWriter(@RequestParam String writer) {
+    @ApiOperation(value = "검색어에 해당 되는 작성자가 쓴 공지사항 반환", response = List.class)
+    @GetMapping("/writer")
+    public ResponseEntity<Map<String, Object>> searchNoticeByWriter(@RequestParam String writer) {
 
-		ResponseEntity<Map<String, Object>> entity = null;
+        ResponseEntity<Map<String, Object>> entity = null;
 
-		try {
-			List<Notice> sList = noticeDao.getNoticeByWriter(writer);
-			entity = handleSuccess(sList);
+        try {
+            List<Notice> sList = noticeDao.getNoticeByWriter(writer);
+            entity = handleSuccess(sList);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			entity = handleException(e);
-		}
-		return entity;
+        } catch (Exception e) {
+            e.printStackTrace();
+            entity = handleException(e);
+        }
+        return entity;
 
-	}
+    }
 
-	@ApiOperation(value ="공지 번호에 해당되는 공지사항 반환", response = List.class)
-	@GetMapping("/noticeId")
-	public ResponseEntity<Map<String, Object>> seasrchNoticeById(@RequestParam BigInteger id) {
+    @ApiOperation(value = "공지 번호에 해당되는 공지사항 반환", response = List.class)
+    @GetMapping("/noticeId")
+    public ResponseEntity<Map<String, Object>> seasrchNoticeById(@RequestParam BigInteger id) {
 
-		ResponseEntity<Map<String, Object>> entity = null;
+        ResponseEntity<Map<String, Object>> entity = null;
 
-		try {
-			Notice temp = noticeDao.getNoticeByNid(id);
-			entity = handleSuccess(temp);
+        try {
+            Notice temp = noticeDao.getNoticeByNid(id);
+            entity = handleSuccess(temp);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			entity = handleException(e);
-		}
-		return entity;
+        } catch (Exception e) {
+            e.printStackTrace();
+            entity = handleException(e);
+        }
+        return entity;
 
-	}
-	
-	@ApiOperation(value = "공지사항 작성", response = List.class)
-	@PostMapping
-	public ResponseEntity<Map<String, Object>> insertNotice(@RequestBody Notice notice) {
+    }
 
-		ResponseEntity<Map<String, Object>> entity = null;
+    @ApiOperation(value = "공지사항 작성", response = List.class)
+    @PostMapping
+    public ResponseEntity<Map<String, Object>> insertNotice(@RequestBody Notice notice) {
 
-		try {
-			Notice temp = new Notice(notice.getNid(), notice.getTitle(), notice.getContent(), notice.getWriter());
-			noticeDao.save(temp);
-			String result = "success";
-			entity = handleSuccess(result);
+        ResponseEntity<Map<String, Object>> entity = null;
 
-		} catch (Exception e) {
-			entity = handleException(e);
-		}
-		return entity;
-	}
+        try {
+            Notice temp = new Notice(notice.getNid(), notice.getTitle(), notice.getContent(), notice.getWriter());
+            noticeDao.save(temp);
+            String result = "success";
+            entity = handleSuccess(result);
 
-	@ApiOperation(value = "공지사항 삭제", response = List.class)
-	@DeleteMapping
-	public ResponseEntity<Map<String, Object>> deleteNotice(@RequestParam BigInteger nid ) {
+        } catch (Exception e) {
+            entity = handleException(e);
+        }
+        return entity;
+    }
 
-		ResponseEntity<Map<String, Object>> entity = null;
+    @ApiOperation(value = "공지사항 삭제", response = List.class)
+    @DeleteMapping
+    public ResponseEntity<Map<String, Object>> deleteNotice(@RequestParam BigInteger nid) {
 
-		try {
-			Notice temp = noticeDao.getNoticeByNid(nid);
-			noticeDao.delete(temp);
-			String result = "success";
-			entity = handleSuccess(result);
+        ResponseEntity<Map<String, Object>> entity = null;
 
-		} catch (Exception e) {
-			entity = handleException(e);
-		}
-		return entity;
-	}
-	
-	@ApiOperation(value = "공지사항 내용 변경", response = List.class)
-	@PutMapping
-	public ResponseEntity<Map<String, Object>> updateNotice(@RequestBody Notice notice ) {
-		ResponseEntity<Map<String, Object>> entity = null;
-		
-		try {
-			Notice updateTemp = noticeDao.getNoticeByNid(notice.getNid());
-			updateTemp.setTitle(notice.getTitle());
-			updateTemp.setContent(notice.getContent());
-			
-			noticeDao.save(updateTemp);
-			
-			
-		}catch(Exception e) {
-			entity = handleException(e);
-		}
-		
-		return entity;
-	}
+        try {
+            Notice temp = noticeDao.getNoticeByNid(nid);
+            noticeDao.delete(temp);
+            String result = "success";
+            entity = handleSuccess(result);
 
-	private ResponseEntity<Map<String, Object>> handleSuccess(Object data) {
-		Map<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap.put("status", true);
-		resultMap.put("data", data);
-		return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
-	}
+        } catch (Exception e) {
+            entity = handleException(e);
+        }
+        return entity;
+    }
 
-	private ResponseEntity<Map<String, Object>> handleException(Exception e) {
-		Map<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap.put("status", false);
-		resultMap.put("data", e.getMessage());
-		return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+    @ApiOperation(value = "공지사항 내용 변경", response = List.class)
+    @PutMapping
+    public ResponseEntity<Map<String, Object>> updateNotice(@RequestBody Notice notice) {
+        ResponseEntity<Map<String, Object>> entity = null;
+
+        try {
+            Notice updateTemp = noticeDao.getNoticeByNid(notice.getNid());
+            updateTemp.setTitle(notice.getTitle());
+            updateTemp.setContent(notice.getContent());
+
+            noticeDao.save(updateTemp);
+
+        } catch (Exception e) {
+            entity = handleException(e);
+        }
+
+        return entity;
+    }
+
+    private ResponseEntity<Map<String, Object>> handleSuccess(Object data) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        resultMap.put("status", true);
+        resultMap.put("data", data);
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+    }
+
+    private ResponseEntity<Map<String, Object>> handleException(Exception e) {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        resultMap.put("status", false);
+        resultMap.put("data", e.getMessage());
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
 }
