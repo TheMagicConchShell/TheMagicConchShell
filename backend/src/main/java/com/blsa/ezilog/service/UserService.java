@@ -8,7 +8,7 @@ import com.blsa.ezilog.model.user.User;
 public interface UserService {
     User signup(SignupRequestDTO request);
 
-    User login(LoginRequestDTO request);
+    Object login(LoginRequestDTO request);
 
     User update(UpdateRequestDTO request);
 

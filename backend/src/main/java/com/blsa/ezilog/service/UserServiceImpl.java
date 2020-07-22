@@ -1,5 +1,7 @@
 package com.blsa.ezilog.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +28,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User login(LoginRequestDTO request) {
-        return dao.findByEmailAndPassword(request.getEmail(), request.getPassword()).orElse(null);
+    public Object login(LoginRequestDTO request) {
+        Object res = null;
+        Optional<User> user = dao.findByEmailAndPassword(request.getEmail(), request.getPassword());
+        if (user.isPresent()) {
+            res = user.get();
+        } else {
+            Optional<User> email = dao.findByEmail(request.getEmail());
+            if (email.isPresent()) {
+                res = "password";
+            } else {
+                res = "email";
+            }
+        }
+        return res;
     }
 
     @Override
