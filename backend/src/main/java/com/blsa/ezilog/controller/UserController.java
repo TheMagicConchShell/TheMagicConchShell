@@ -1,5 +1,8 @@
 package com.blsa.ezilog.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.blsa.ezilog.model.BasicResponse;
+import com.blsa.ezilog.model.ErrorResponse;
 import com.blsa.ezilog.model.user.LoginRequestDTO;
 import com.blsa.ezilog.model.user.SignupRequestDTO;
 import com.blsa.ezilog.model.user.UpdateRequestDTO;
@@ -27,10 +31,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
-@ApiResponses(value = { @ApiResponse(code = 401, message = "Unauthorized", response = BasicResponse.class),
-        @ApiResponse(code = 403, message = "Forbidden", response = BasicResponse.class),
-        @ApiResponse(code = 404, message = "Not Found", response = BasicResponse.class),
-        @ApiResponse(code = 500, message = "Failure", response = BasicResponse.class) })
+@ApiResponses(value = { @ApiResponse(code = 401, message = "Unauthorized", response = ErrorResponse.class),
+        @ApiResponse(code = 403, message = "Forbidden", response = ErrorResponse.class),
+        @ApiResponse(code = 404, message = "Not Found", response = ErrorResponse.class),
+        @ApiResponse(code = 500, message = "Failure", response = ErrorResponse.class) })
 
 @RestController
 public class UserController {
@@ -42,23 +46,32 @@ public class UserController {
     private JwtService jwtService;
 
     @PostMapping("/user/signup")
-    @ApiOperation(value = "회원 가입", notes = "닉네임 중복시 status=false 및 data='nickname', 이메일 중복시 status=false 및 data='email', 정상일경우 status=true 및 data='success' 반환")
+    @ApiOperation(value = "회원 가입")
     public Object signup(@Valid @RequestBody SignupRequestDTO request) {
         ResponseEntity<BasicResponse> response = null;
-        final BasicResponse result = new BasicResponse();
+        Map<String, Object> errors = new HashMap<>();
         String check = userService.duplicateCheck(request.getEmail(), request.getNickname());
         if (check.equals("email")) {
-            result.status = false;
-            result.data = "email";
+            final ErrorResponse result = new ErrorResponse();
+            result.status = "E-4000";
+            result.message = "이미 존재하는 이메일 입니다.";
+            errors.put("field", "email");
+            errors.put("data", request.getEmail());
+            result.errors = errors;
             response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         } else if (check.equals("nickname")) {
-            result.status = false;
-            result.data = "nickname";
+            final ErrorResponse result = new ErrorResponse();
+            result.status = "E-4001";
+            result.message = "이미 존재하는 별명 입니다.";
+            errors.put("field", "nickname");
+            errors.put("data", request.getNickname());
+            result.errors = errors;
             response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         } else {
+            final BasicResponse result = new BasicResponse();
             User u = userService.signup(request);
-            result.status = true;
-            result.data = "success";
+            result.status = "S-200";
+            result.message = "회원가입에 성공했습니다.";
             response = new ResponseEntity<>(result, HttpStatus.OK);
         }
 
@@ -66,78 +79,110 @@ public class UserController {
     }
 
     @PostMapping("/user/login")
-    @ApiOperation(value = "로그인", notes = "로그인 성공 시 status=true, data='success',object=로그인한 유저 반환, 실패시 status=false,data='fail' 반환")
+    @ApiOperation(value = "로그인")
     public Object login(@Valid @RequestBody LoginRequestDTO request, HttpServletResponse res) {
         ResponseEntity<BasicResponse> response = null;
-        final BasicResponse result = new BasicResponse();
-        User u = userService.login(request);
-        if (u != null) {
-            String token = jwtService.create(u);
-            res.setHeader("jwt-auth-token", token);
-            result.status = true;
-            result.data = "success";
-            result.object = u;
-            response = new ResponseEntity<>(result, HttpStatus.ACCEPTED);
-        } else {
-            result.status = false;
-            result.data = "fail";
+        Map<String, Object> errors = new HashMap<>();
+        Object u = userService.login(request);
+        if (u.equals("password")) {
+            final ErrorResponse result = new ErrorResponse();
+            result.status = "E-4003";
+            result.message = "로그인에 실패했습니다.(비밀번호가 일치하지 않습니다.)";
+            errors.put("field", "password");
+            errors.put("data", request);
+            result.errors = errors;
             response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        } else if (u.equals("email")) {
+            final ErrorResponse result = new ErrorResponse();
+            result.status = "E-4002";
+            result.message = "로그인에 실패했습니다.(존재하지 않는 이메일 입니다.)";
+            errors.put("field", "email");
+            errors.put("data", request);
+            result.errors = errors;
+            response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        } else {
+            String token = jwtService.create((User) u);
+            res.setHeader("jwt-auth-token", token);
+            final BasicResponse result = new BasicResponse();
+            result.status = "S-200";
+            result.message = "로그인에 성공했습니다.";
+            result.data = u;
+            response = new ResponseEntity<>(result, HttpStatus.ACCEPTED);
         }
         return response;
     }
 
     @PutMapping("/user/update")
-    @ApiOperation(value = "회원 정보 수정", notes = "정보 수정 성공 시 status=true, data='success' 반환, 닉네임 중복시 status=false 및 data='nickname' 반환")
+    @ApiOperation(value = "회원 정보 수정")
     public Object update(@Valid @RequestBody UpdateRequestDTO request) {
         ResponseEntity<BasicResponse> response = null;
-        final BasicResponse result = new BasicResponse();
+        Map<String, Object> errors = new HashMap<>();
         User checkUser = userService.select(request.getUid());
         String checkname = userService.duplicateCheck("", request.getNickname());
         if (!checkUser.getNickname().equals(request.getNickname()) && checkname.equals("nickname")) {
-            result.status = false;
-            result.data = "nickname";
+            final ErrorResponse result = new ErrorResponse();
+            result.status = "E-4001";
+            result.message = "이미 존재하는 별명 입니다.";
+            errors.put("field", "nickname");
+            errors.put("data", request.getNickname());
+            result.errors = errors;
             response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
 
         } else {
+            final BasicResponse result = new BasicResponse();
             userService.update(request);
-            result.status = true;
-            result.data = "success";
+            result.status = "S-200";
+            result.message = "회원 정보 수정이 완료되었습니다.";
             response = new ResponseEntity<>(result, HttpStatus.OK);
         }
         return response;
     }
 
     @GetMapping("/user/detail")
-    @ApiOperation(value = "회원 정보 조회", notes = "조회 성공시 status=true, data='success', object=해당 유저 반환, 실패시 status=false,data='fail' 반환")
+    @ApiOperation(value = "회원 정보 조회")
     public Object select(@RequestParam long uid) {
         ResponseEntity<BasicResponse> response = null;
-        final BasicResponse result = new BasicResponse();
+        Map<String, Object> errors = new HashMap<>();
         User user = userService.select(uid);
         if (user == null) {
-            result.status = false;
-            result.data = "nickname";
+            final ErrorResponse result = new ErrorResponse();
+            result.status = "E-4004";
+            result.message = "번호에 해당하는 유저가 존재하지 않습니다.";
+            errors.put("field", "uid");
+            errors.put("data", uid);
+            result.errors = errors;
             response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
-
         } else {
-            result.status = true;
-            result.data = "success";
-            result.object = user;
-            response = new ResponseEntity<>(result, HttpStatus.OK);
+            final BasicResponse result = new BasicResponse();
+            result.status = "S-200";
+            result.message = "회원 정보 조회에 성공했습니다.";
+            result.data = user;
+            response = new ResponseEntity<>(result, HttpStatus.ACCEPTED);
         }
         return response;
     }
 
     @DeleteMapping("/user/delete")
-    @ApiOperation(value = "회원 탈퇴", notes = "탈퇴 성공시 status=true, data='success' 반환")
+    @ApiOperation(value = "회원 탈퇴")
     public Object withdraw(@RequestParam long uid) {
         ResponseEntity<BasicResponse> response = null;
-        final BasicResponse result = new BasicResponse();
-
-        userService.withdraw(uid);
-        result.status = true;
-        result.data = "success";
-        response = new ResponseEntity<>(result, HttpStatus.OK);
-
+        Map<String, Object> errors = new HashMap<>();
+        User user = userService.select(uid);
+        if (user == null) {
+            final ErrorResponse result = new ErrorResponse();
+            result.status = "E-4004";
+            result.message = "번호에 해당하는 유저가 존재하지 않습니다.";
+            errors.put("field", "uid");
+            errors.put("data", uid);
+            result.errors = errors;
+            response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        } else {
+            userService.withdraw(uid);
+            final BasicResponse result = new BasicResponse();
+            result.status = "S-200";
+            result.message = "회원 탈퇴에 성공했습니다.";
+            response = new ResponseEntity<>(result, HttpStatus.ACCEPTED);
+        }
         return response;
     }
 }

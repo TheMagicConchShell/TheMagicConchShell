@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import com.blsa.ezilog.exception.jwt.JwtException;
 import com.blsa.ezilog.service.JwtService;
 
 @Component
@@ -26,7 +27,7 @@ public class JwtInterceptor implements HandlerInterceptor {
                 jwtService.checkValid(token);
                 return true;
             } else {
-                throw new RuntimeException("인증 토큰이 없습니다.");
+                throw new JwtException("인증 토큰이 없습니다.");
             }
         }
     }
