@@ -64,13 +64,13 @@ public class UserController {
         Map<String, Object> errors = new HashMap<>();
         String check = userService.duplicateCheck(request.getEmail(), request.getNickname());
         String authTableCheck = userService.authDuplicateCheck(request.getEmail(), request.getNickname());
-        if (check.equals("email")||authTableCheck.equals("email")) {
+        if (check.equals("email") || authTableCheck.equals("email")) {
             errors.put("field", "email");
             errors.put("data", request.getEmail());
             final ErrorResponse result = setErrors("E-4001", "이미 존재하는 이메일 입니다.", errors);
 
             response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
-        } else if (check.equals("nickname")||authTableCheck.equals("nickname")) {
+        } else if (check.equals("nickname") || authTableCheck.equals("nickname")) {
             errors.put("field", "nickname");
             errors.put("data", request.getNickname());
             final ErrorResponse result = setErrors("E-4001", "이미 존재하는 별명 입니다.", errors);
@@ -134,8 +134,9 @@ public class UserController {
         Map<String, Object> errors = new HashMap<>();
         User checkUser = userService.select(request.getUid());
         String checkname = userService.duplicateCheck("", request.getNickname());
-        String authTableCheckname = userService.authDuplicateCheck("",request.getNickname());
-        if (!checkUser.getNickname().equals(request.getNickname()) && (checkname.equals("nickname")||authTableCheckname.equals("nickname"))) {
+        String authTableCheckname = userService.authDuplicateCheck("", request.getNickname());
+        if (!checkUser.getNickname().equals(request.getNickname())
+                && (checkname.equals("nickname") || authTableCheckname.equals("nickname"))) {
             errors.put("field", "nickname");
             errors.put("data", request.getNickname());
             final ErrorResponse result = setErrors("E-4001", "이미 존재하는 별명 입니다.", errors);
@@ -215,7 +216,7 @@ public class UserController {
 
     @PostMapping("/user/findpw")
     @ApiOperation(value = "비밀 번호 찾기")
-    public Object findpw(@Email @NotBlank @RequestParam String email,@NotBlank @RequestParam String nickname) {
+    public Object findpw(@Email @NotBlank @RequestParam String email, @NotBlank @RequestParam String nickname) {
         ResponseEntity<BasicResponse> response = null;
         Map<String, Object> errors = new HashMap<>();
         String pw = userService.findPw(email, nickname);

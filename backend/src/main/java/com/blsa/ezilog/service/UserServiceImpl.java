@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
         return res;
 
     }
-    
+
     @Override
     public String authDuplicateCheck(String email, String nickname) {
         String res = null;
@@ -125,16 +125,14 @@ public class UserServiceImpl implements UserService {
             User u = ou.get();
             res = u.getPassword();
         } else {
-            if(dao.findByEmail(email).isPresent()) {
+            if (dao.findByEmail(email).isPresent()) {
                 res = "nickname";
-            }else {
+            } else {
                 res = "email";
             }
         }
-        
+
         return res;
     }
-
-  
 
 }

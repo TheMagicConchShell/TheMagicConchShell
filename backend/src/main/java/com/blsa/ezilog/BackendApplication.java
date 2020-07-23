@@ -25,7 +25,8 @@ public class BackendApplication implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(jwtInterceptor).addPathPatterns("/user/detail", "/user/update", "/user/delete"); // 적용 경로
+        registry.addInterceptor(jwtInterceptor).addPathPatterns("/user/detail", "/user/update", "/user/delete"); // 적용
+                                                                                                                 // 경로
         // .excludePathPatterns(Arrays.asList());// 적용 제외 경로
     }
 

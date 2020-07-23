@@ -40,7 +40,7 @@ public class GlobalRestExceptionHandler {
 
         ResponseEntity<ErrorResponse> response = null;
         ErrorResponse result = new ErrorResponse();
-        result.status = "E-4010";
+        result.status = "E-4009";
         result.message = "입력 형식이 맞지 않습니다.";
 
         List<Map<String, Object>> errors = new ArrayList<>();
