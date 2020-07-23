@@ -77,11 +77,11 @@ public class UserController {
 
             response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         } else {
-            String key = mailSendService.getKey(false, 20);
+            String token = mailSendService.getKey(false, 20);
 
-            UserAuth u = userService.signup(request, key);
+            UserAuth u = userService.signup(request, token);
             try {
-                mailSendService.mailSendWithUserKey(u.getEmail(), u.getNickname(), key, u.getUaid());
+                mailSendService.mailSendWithUserKey(u.getEmail(), u.getNickname(), token, u.getUaid());
             } catch (MessagingException e) {
                 errors.put("field", "sendMail");
 
