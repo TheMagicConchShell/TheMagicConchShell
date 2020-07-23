@@ -3,7 +3,10 @@
         <PlatformNav v-show="nowPlatform" />
         <div id="content">
             <router-view />
-            <div id="go-up">
+            <div
+                v-show="isnotTop"
+                id="go-up"
+            >
                 <button
                     id="go-up"
                 >
@@ -28,6 +31,7 @@ export default {
     data() {
         return {
             nowPlatform: true,
+            isnotTop: false,
         };
     },
     watch: {
@@ -51,12 +55,20 @@ export default {
                 if (url === path) { nowPlatform = false; return nowPlatform; }
                 return nowPlatform;
             });
-            console.log(nowPlatform);
             this.nowPlatform = nowPlatform;
         },
         top() {
-            window.scrollTo(0, 0);
+            while (document.documentElement.scrollTop !== 0) {
+                setTimeout(this.scrolling(), 200);
+            }
         },
+        scrolling() {
+            const y = document.documentElement.scrollTop;
+            const step = 2;
+            // this.y -= step;
+            window.scrollTo(0, y - step);
+        },
+
     },
 };
 </script>
@@ -90,7 +102,7 @@ export default {
   right: 20px;
   bottom: 20px;
   color: #ffffff;
-  background-color: rgb(178, 87, 34);
+  background: linear-gradient( 0, rgb(178, 87, 34), rgb(190, 158, 108));
   width: 50px;
   height: 50px;
   border: 1px solid #ffffff;
@@ -98,7 +110,6 @@ export default {
 }
 
 #go-up :hover {
-  background-color: firebrick;
   cursor: pointer;
 }
 </style>

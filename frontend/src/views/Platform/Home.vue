@@ -4,19 +4,15 @@
             <div class="d-flex flex-column-reverse">
                 실시간 활동 블로그
             </div>
-
-            <div
+            <router-link
                 id="bigbutton"
+                :to="{name: 'Open'}"
+                class="text-decoration-none text-light"
                 @mouseover="mouseover()"
                 @mouseout="mouseout()"
             >
-                <router-link
-                    :to="{name: 'Open'}"
-                    class="text-decoration-none text-light"
-                >
-                    내 블로그 만들기
-                </router-link>
-            </div>
+                내 블로그 만들기
+            </router-link>
         </div>
 
         <div
@@ -99,7 +95,7 @@ export default {
 #bigbutton {
   color: white;
   padding: 10px;
-  background-color: firebrick;
+  background: linear-gradient( 0, rgb(178, 87, 34), rgb(190, 158, 108));
   width: 20%;
   border-radius: 10px;
   text-decoration: none;
@@ -109,7 +105,14 @@ export default {
   right: 20px;
   animation: motion 0.5s linear 0s infinite alternate;
 }
-
+#bigbutton {
+    color: white;
+    padding: 10px;
+    height: 8vh;
+    background: linear-gradient( 0, rgb(178, 87, 34), rgb(190, 158, 108));
+    border-radius: 10px;
+    text-decoration: none;
+  }
 #bloglist {
   margin-top: 30px;
 }

@@ -90,7 +90,7 @@ export default {
 
 <style scoped>
 .navbar {
-    background-color: rgb(178, 87, 34);
+    background: linear-gradient( 0deg, rgb(178, 87, 34), rgb(190, 158, 108));
     position: fixed;
     top: 0;
     width: 100%;

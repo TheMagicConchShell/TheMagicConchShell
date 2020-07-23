@@ -6,44 +6,85 @@
             </div>
             web을 몰라도 누구든지 쉽게 제작할 수 있습니다
         </div>
-        <div class="row">
-            <div class="col-7 border">
-                <!-- 블로그명 섹션-->
+        <div
+            id="openheader"
+            class="row"
+        >
+            <div class="col-8">
                 <div class="row">
-                    <div class="col-10 pr-0">
-                        <div id="section">
-                            <input
-                                id="input"
-                                type="text"
-                                placeholder="블로그명"
-                            >
-                        </div>
-                        <div class="col-2">
-                            빈칸
-                        </div>
-                    </div>
-                    <!-- 유저 추가 섹션-->
                     <div
                         id="section"
-                        class="d-flex justify-content-between"
+                        class="col-8"
                     >
                         <input
                             id="input"
                             type="text"
+                            placeholder="블로그명"
                         >
-                        <b-button
+                        <input
+                            id="input"
+                            v-model="user"
+                            type="text"
+                            placeholder="회원 이름"
+                        >
+                    </div>
+                    <div class="col-4 d-flex align-items-end">
+                        <button
                             id="plusbutton"
+                            @click="adduser"
                         >
-                            유저 추가 <i class="fas fa-plus" />
-                        </b-button>
+                            회원 추가 <i class="fas fa-plus" />
+                        </button>
                     </div>
                 </div>
             </div>
-            <div class="col-5 d-flex">
-                <div id="photo">
-                    블로그 프로필 사진
+            <div class="col-4 d-flex">
+                <div class="row">
+                    <div class="col-8">
+                        <div id="photo">
+                            블로그 프로필 사진
+                        </div>
+                    </div>
                 </div>
-                <input type="file">
+                <div class="col-4">
+                    <input type="file">
+                </div>
+            </div>
+        </div>
+        <div
+            id="openheader"
+            class="d-flex"
+        >
+            블로그테마
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <b-form-checkbox> 테마1 </b-form-checkbox>
+                <div
+                    id="photo"
+                    class="border"
+                />
+            </div>
+            <div class="col-3">
+                <b-form-checkbox> 테마2 </b-form-checkbox>
+                <div
+                    id="photo"
+                    class="border"
+                />
+            </div>
+            <div class="col-3">
+                <b-form-checkbox>사용자 설정</b-form-checkbox>
+                <div
+                    id="photo"
+                    class="border d-flex justify-content-center align-items-center"
+                >
+                    <i class="fas fa-question" />
+                </div>
+            </div>
+            <div
+                class="col-2 d-flex align-items-center px-0"
+            >
+                <button id="openbutton">개설하기</button>
             </div>
         </div>
     </div>
@@ -51,7 +92,17 @@
 
 <script>
 export default {
+    name: 'Open',
+    data() {
+        return {
+            user: '',
+        };
+    },
+    methods: {
+        adduser() {
 
+        },
+    },
 };
 </script>
 
@@ -61,23 +112,21 @@ export default {
 }
 
 #section {
-  width: 100%;
-  height: 30px;
-  margin: 10px 0;
-  border: 1px solid #b6b6b6;
-  border-radius: 5px;
+  padding-right: 0;
 }
 #input {
   width: 100%;
-  border: 0;
+  border: 1px solid #b6b6b6;
+  border-radius: 5px;
+  margin: 10px 0 0 0;
 }
 
 #plusbutton {
-  float: right;
+  border: 1px solid #b6b6b6;
+  color: white;
+  border-radius: 10px;
   background-color:rgb(178, 87, 34);
-  height: 30px;
   font-size: 2vh;
-  margin: 10px;
 }
 
 #photo {
@@ -85,5 +134,15 @@ export default {
   width: 200px;
   border: 1px solid #b6b6b6;
 }
+
+#openbutton {
+    border: 1px solid #b6b6b6;
+    color: white;
+    font-size:3vh;
+    height: 8vh;
+    background-color:rgb(178, 87, 34);
+    border-radius: 10px;
+    text-decoration: none;
+  }
 
 </style>
