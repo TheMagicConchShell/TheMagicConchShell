@@ -2,11 +2,13 @@ package com.blsa.ezilog.controller;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -80,10 +82,10 @@ public class BlogController {
 
             }
         } catch (Exception e) {
-            eresult.status = "E-4103";
+            eresult.status = "E-4102";
             eresult.message = "서버 내부 오류로 인해 블로그 생성 실패.";
             eresult.data = null;
-            errorMap.put("field", "creatBlog");
+            errorMap.put("field", "createBlog");
             errorMap.put("data", e.getMessage());
             eresult.errors = errorMap;
 
@@ -96,27 +98,40 @@ public class BlogController {
 
     @GetMapping
     @ApiOperation(value = "전체 블로그 목록 가져오기", notes = "전체 블로그 목록 반환")
-    public Object retrieveAll() {
+    public Object retrieveAll(@RequestParam int page) {
+
+        PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.ASC, "id");
+
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
         try {
-            List<Blog> blogList = blogDao.findAll();
+            Page<Blog> blogList = blogDao.findAll(pageable);
+            if (!blogList.isEmpty()) {
+                result.status = "S-200";
+                result.message = "블로그 목록들 가져오기 성공";
+                result.data = blogList;
+                response = new ResponseEntity<>(result, HttpStatus.OK);
+            } else {
+                eresult.status = "S-204";
+                eresult.message = "불러 올 블로그가  없습니다.";
+                eresult.data = null;
+                errorMap.put("field", "noBlog");
+                errorMap.put("data", page);
+                eresult.errors = errorMap;
 
-            result.status = "S-200";
-            result.message = "블로그 목록들 가져오기 성공";
-            result.data = blogList;
-            response = new ResponseEntity<>(result, HttpStatus.OK);
+                response = new ResponseEntity<>(eresult, HttpStatus.NO_CONTENT);
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            eresult.status = "E-4104";
+            eresult.status = "E-4103";
             eresult.message = "서버 내부 오류에 의해 블로그 목록 가져오기 실패";
             eresult.data = null;
 
             errorMap.put("field", "getBlogList");
-            errorMap.put("data", null);
+            errorMap.put("data", e.getMessage());
             response = new ResponseEntity<>(eresult, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -133,16 +148,27 @@ public class BlogController {
 
         try {
             Optional<Blog> blogOpt = blogDao.getBlogByName(blogName);
+            if (blogOpt.isPresent()) {
 
-            Blog b = blogOpt.get();
+                Blog b = blogOpt.get();
+                result.status = "S-200";
+                result.message = "이름에 해당 되는 블로그 가져오기 성공";
+                result.data = b;
+                response = new ResponseEntity<>(result, HttpStatus.OK);
 
-            result.status = "S-200";
-            result.message = "이름에 해당 되는 블로그 가져오기 성공";
-            result.data = b;
-            response = new ResponseEntity<>(result, HttpStatus.OK);
+            } else {
+                eresult.status = "S-204";
+                eresult.message = "불러 올 블로그가  없습니다.";
+                eresult.data = null;
+                errorMap.put("field", "noBlog");
+                errorMap.put("data", null);
+                eresult.errors = errorMap;
+
+                response = new ResponseEntity<>(eresult, HttpStatus.NO_CONTENT);
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            eresult.status = "E-4105";
+            eresult.status = "E-4104";
             eresult.message = "서버 내부 오류로 인한 이름에 해당 되는 블로그 가져오기 실패";
             eresult.data = null;
 
@@ -165,15 +191,27 @@ public class BlogController {
         try {
             Optional<Blog> blogOpt = blogDao.getBlogByUrl(blogURL);
 
-            Blog b = blogOpt.get();
+            if (blogOpt.isPresent()) {
+                Blog b = blogOpt.get();
 
-            result.status = "S-200";
-            result.message = "Url에 해당 되는 블로그 가져오기 성공";
-            result.data = b;
-            response = new ResponseEntity<>(result, HttpStatus.OK);
+                result.status = "S-200";
+                result.message = "Url에 해당 되는 블로그 가져오기 성공";
+                result.data = b;
+                response = new ResponseEntity<>(result, HttpStatus.OK);
+                
+            }else {
+                eresult.status = "S-204";
+                eresult.message = "불러 올 블로그가  없습니다.";
+                eresult.data = null;
+                errorMap.put("field", "noBlog");
+                errorMap.put("data", null);
+                eresult.errors = errorMap;
+
+                response = new ResponseEntity<>(eresult, HttpStatus.NO_CONTENT);
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            eresult.status = "E-4106";
+            eresult.status = "E-4105";
             eresult.message = "서버 내부 오류로 인한 URL에 해당 되는 블로그 가져오기 실패";
             eresult.data = null;
 
@@ -208,7 +246,7 @@ public class BlogController {
             response = new ResponseEntity<>(result, HttpStatus.OK);
 
         } catch (Exception e) {
-            eresult.status = "E-4107";
+            eresult.status = "E-4106";
             eresult.message = "서버 내부 오류로 인해 블로그 정보 수정 실패";
             eresult.data = null;
 
@@ -240,7 +278,7 @@ public class BlogController {
             response = new ResponseEntity<>(result, HttpStatus.OK);
 
         } catch (Exception e) {
-            eresult.status = "E-4108";
+            eresult.status = "E-4107";
             eresult.message = "서버 내부 오류로 인해 블로그 정보 삭제 실패";
             eresult.data = null;
 

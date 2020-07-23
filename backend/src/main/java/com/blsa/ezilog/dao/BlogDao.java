@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.blsa.ezilog.model.blog.Blog;
 
-public interface BlogDao extends JpaRepository<Blog, String> {
+public interface BlogDao extends JpaRepository<Blog, Long> {
     Optional<Blog> getBlogByName(String name);
 
     Optional<Blog> getBlogByUrl(String url);

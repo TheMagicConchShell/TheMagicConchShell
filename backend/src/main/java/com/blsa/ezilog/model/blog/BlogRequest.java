@@ -1,8 +1,5 @@
 package com.blsa.ezilog.model.blog;
 
-import java.sql.Date;
-
-import javax.persistence.Column;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
