@@ -7,7 +7,10 @@
         >
             <router-link :to="{name: 'Home'}">
                 <b-navbar-brand>
-                    Platform 이름
+                    <img
+                        src="C:/Users/multicampus/Downloads/Preview_Thumb_No_Alpha.jpg"
+                        style=""
+                    >
                 </b-navbar-brand>
             </router-link>
 
@@ -75,6 +78,12 @@
                         <b-dropdown-item href="#">
                             Sign Out
                         </b-dropdown-item>
+                        <b-dropdown-item v-b-modal.signin>
+                            <Signin />
+                        </b-dropdown-item>
+                        <b-dropdown-item v-b-modal.login>
+                            <Login />
+                        </b-dropdown-item>
                     </b-nav-item-dropdown>
                 </b-navbar-nav>
             </b-collapse>
@@ -83,7 +92,15 @@
 </template>
 
 <script>
+import Signin from '../views/Account/Signin.vue';
+import Login from '../views/Account/Login.vue';
+
 export default {
+    name: 'PlatformNav',
+    components: {
+        Signin,
+        Login,
+    },
 
 };
 </script>

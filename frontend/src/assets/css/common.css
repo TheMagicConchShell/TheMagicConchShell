@@ -7,6 +7,25 @@
 #app {
     font-family: ko
 }
+.modal {
+    font-family: ko
+}
+
+input {
+    width: 100%;
+    border: 1px solid #b6b6b6;
+    border-radius: 5px;
+    margin: 10px 0 0 0;
+}
+
+textarea {
+    width: 100%;
+    border: 1px solid #b6b6b6;
+    border-radius: 5px;
+    margin: 10px 0 0 0;
+}
+
+
 #title {
     font-size: 50px;
 }

@@ -25,6 +25,7 @@
             /> click!
         </div>
 
+        <!-- 블로그 목록 -->
         <div
             id="bloglist"
             class="cursor"
@@ -61,15 +62,22 @@
                 </b-card-text>
             </b-card>
         </div>
+        <!-- 무한 스크롤-->
+        <infinite-loading @infinite="infiniteHandler" />
     </div>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     name: 'Home',
     data() {
         return {
             nomouse: true,
+            /* 무한 스크롤 데이터 */
+            page: 1,
+            list: [],
         };
     },
     watch: {
@@ -81,6 +89,23 @@ export default {
         },
         mouseout() {
             this.nomouse = true;
+        },
+        /* 무한스크롤 메서드 */
+        infiniteHandler($state) {
+            axios.get('', {
+                params: {
+                    page: this.page,
+                },
+            })
+                .then(({ data }) => {
+                    if (data.hits.length) {
+                        this.page += 1;
+                        this.list.push(...data.hits);
+                        $state.loaded();
+                    } else {
+                        $state.complete();
+                    }
+                });
         },
     },
 };
@@ -95,7 +120,7 @@ export default {
 #bigbutton {
   color: white;
   padding: 10px;
-  background: linear-gradient( 0, rgb(178, 87, 34), rgb(190, 158, 108));
+  background-color: rgb(178, 87, 34);
   width: 20%;
   border-radius: 10px;
   text-decoration: none;
@@ -105,14 +130,7 @@ export default {
   right: 20px;
   animation: motion 0.5s linear 0s infinite alternate;
 }
-#bigbutton {
-    color: white;
-    padding: 10px;
-    height: 8vh;
-    background: linear-gradient( 0, rgb(178, 87, 34), rgb(190, 158, 108));
-    border-radius: 10px;
-    text-decoration: none;
-  }
+
 #bloglist {
   margin-top: 30px;
 }

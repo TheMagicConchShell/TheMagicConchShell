@@ -17,12 +17,10 @@
                         class="col-8"
                     >
                         <input
-                            id="input"
                             type="text"
                             placeholder="블로그명"
                         >
                         <input
-                            id="input"
                             v-model="user"
                             type="text"
                             placeholder="회원 이름"
@@ -84,7 +82,9 @@
             <div
                 class="col-2 d-flex align-items-center px-0"
             >
-                <button id="openbutton">개설하기</button>
+                <button id="openbutton">
+                    개설하기
+                </button>
             </div>
         </div>
     </div>
@@ -113,12 +113,6 @@ export default {
 
 #section {
   padding-right: 0;
-}
-#input {
-  width: 100%;
-  border: 1px solid #b6b6b6;
-  border-radius: 5px;
-  margin: 10px 0 0 0;
 }
 
 #plusbutton {
