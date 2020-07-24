@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class UserAuth {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long uaid;
+    private long aid;
 
     @Column
     private String email;
