@@ -80,11 +80,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User update(UpdateRequestDTO request) {
         User user = new User();
-        user.setUid(request.getUid());
         user.setEmail(request.getEmail());
+        user.setUid(request.getUid());
         user.setNickname(request.getNickname());
         user.setPassword(request.getPassword());
-        user.setIntroduce(request.getIntroduce());
         user.setProfileImg(request.getProfileImg());
         user = dao.save(user);
         return user;
@@ -101,8 +100,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User authentication(long uaid, String token) {
-        Optional<UserAuth> ua = authDao.findByUaidAndToken(uaid, token);
+    public User authentication(long aid, String token) {
+        Optional<UserAuth> ua = authDao.findByAidAndToken(aid, token);
         if (ua.isPresent()) {
             UserAuth auth = ua.get();
             User user = new User();

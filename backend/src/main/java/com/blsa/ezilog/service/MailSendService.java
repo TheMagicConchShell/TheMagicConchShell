@@ -68,12 +68,12 @@ public class MailSendService {
         return session;
     }
 
-    public void mailSendWithUserKey(String email, String nickname, String token, long uaid)
+    public void mailSendWithUserKey(String email, String nickname, String token, long aid)
             throws AddressException, MessagingException {
         Session session = getSetting();
         String setfrom = MyEmail;
         String htmlStr = "<h2>안녕하세요 EZI LOG 입니다!</h2><br><br>" + "<h3>" + nickname + "님</h3>"
-                + "<p>인증하기 버튼을 누르시면 인증이 완료되어 로그인이 가능해 집니다 : " + "<a href='http://localhost:3000/user/auth?uaid=" + uaid
+                + "<p>인증하기 버튼을 누르시면 인증이 완료되어 로그인이 가능해 집니다 : " + "<a href='http://i3a403.p.ssafy.io:8399/user/authentication?aid=" + aid
                 + "&token=" + token + "'>인증하기</a></p>" + "(혹시 잘못 전달된 메일이라면 이 이메일을 무시하셔도 됩니다)";
 
         MimeMessage message = new MimeMessage(session);
