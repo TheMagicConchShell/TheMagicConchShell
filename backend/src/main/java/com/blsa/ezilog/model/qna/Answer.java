@@ -1,6 +1,7 @@
 package com.blsa.ezilog.model.qna;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,28 +17,33 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class QnaAnswer {
+public class Answer {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name ="qna_aid")
-    BigInteger aid;
+    @Column(name ="no")
+    BigInteger no;
     
-    @Column(name ="qna_reply")
-    String reply;
+    @Column(name ="content")
+    String content;
     
-    @Column(name ="qna_replier")
-    String replier;
+    @Column(name ="writer")
+    String writer;
     
-    @Column (name="qna_qid")
+    @Column (name="qid")
     BigInteger qid;
+    
+    @Column (name="write_date")
+    LocalDateTime writeDate;
 
-    public QnaAnswer(String reply, String replier, BigInteger qid) {
+    public Answer(String content, String writer, BigInteger qid, LocalDateTime writeDate) {
         super();
-        this.reply = reply;
-        this.replier = replier;
+        this.content = content;
+        this.writer = writer;
         this.qid = qid;
+        this.writeDate = writeDate;
     }
+
     
     
 }
