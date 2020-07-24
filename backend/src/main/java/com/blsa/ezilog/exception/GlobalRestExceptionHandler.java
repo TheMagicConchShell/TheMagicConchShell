@@ -21,7 +21,7 @@ import com.blsa.ezilog.model.ErrorResponse;
 @RestControllerAdvice
 public class GlobalRestExceptionHandler {
     @ExceptionHandler(value = { JwtException.class })
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public Object internalServerError(Exception e) {
         ResponseEntity<ErrorResponse> response = null;
         ErrorResponse result = new ErrorResponse();
@@ -30,7 +30,7 @@ public class GlobalRestExceptionHandler {
         Map<String, Object> errors = new HashMap<>();
         errors.put("field", "jwt-auth-token");
         result.errors = errors;
-        response = new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+        response = new ResponseEntity<>(result, HttpStatus.UNAUTHORIZED);
         return response;
     }
 
