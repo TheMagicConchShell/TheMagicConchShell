@@ -6,39 +6,25 @@
             title="로그인"
             hide-footer
         >
-            <div class="row">
-                <div class="col-5">
-                    <div id="photo" />
-                </div>
-                <div class="col-7">
-                    <input
-                        type="text"
-                        placeholder="이름"
-                    >
-                    <input
-                        type="text"
-                        placeholder="아이디"
-                    >
-                    <input
-                        type="password"
-                        placeholder="비밀번호"
-                    >
-                    <input
-                        type="password"
-                        placeholder="비밀번호 확인"
-                    >
-                    <input
-                        type="text"
-                        placeholder="닉네임"
-                    >
-                    <textarea
-                        cols="30"
-                        rows="5"
-                        placeholder="자기 소개"
-                    />
-                </div>
+            <div class="d-flex justify-content-center">
+                <img
+                    id="photo"
+                    src="../../assets/images/conch_shell.jpeg"
+                >
             </div>
-            <button> 회원 가입</button>
+            <input
+                type="text"
+                placeholder="아이디"
+            >
+            <input
+                type="password"
+                placeholder="비밀번호"
+            >
+            <div class="float-right">
+                <b-button id="commonbutton">
+                    로그인
+                </b-button>
+            </div>
         </b-modal>
     </div>
 </template>
@@ -50,7 +36,4 @@ export default {
 </script>
 
 <style scoped>
-#join {
-    margin: 10px;
-}
 </style>

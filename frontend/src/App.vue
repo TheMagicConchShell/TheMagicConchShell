@@ -1,7 +1,7 @@
 <template>
     <div id="app">
-        <PlatformNav v-show="nowPlatform" />
-        <div id="content">
+        <Nav v-show="nowPlatform" />
+        <div>
             <router-view />
             <div
                 v-show="isnotTop"
@@ -21,12 +21,12 @@
 </template>
 
 <script>
-import PlatformNav from './components/PlatformNav.vue';
+import Nav from './components/Nav.vue';
 
 export default {
     name: 'App',
     components: {
-        PlatformNav,
+        Nav,
     },
     data() {
         return {

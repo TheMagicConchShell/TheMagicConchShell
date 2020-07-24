@@ -1,3 +1,9 @@
+/* 디자인 컬러 조합
+ 1. 노랑F9E54E 오렌지F8981D 빨강E12E4B 하늘#5BBDCB
+ 2. 하늘#BEDAE5 노랑EECB27 빨강E13239 남색#1F1762
+ 3. 하늘#A6C2CE 브라운9C8F96 노랑EBC57C 남색6B799E*/
+
+
 @font-face { 
     font-family: 'ko' ;
     src: url('../fonts/koverwatch1.eot') format('eot');
@@ -7,22 +13,40 @@
 #app {
     font-family: ko
 }
-.modal {
-    font-family: ko
+
+#content {
+    margin-top: 150px;
+}
+#photo {
+    height: 100px;
+}
+/*회원가입창과 로그인창의 사진*/
+#profilephoto {
+    width: 100%;
 }
 
+/*모달 설정*/
+.modal {
+    font-family: ko;
+}
+.modal-header {
+    background-color: #A6C2CE;
+    color: white;
+}
+.modal-footer {
+    height: 60px;
+}
+
+/*일반버튼 설정*/
+#commonbutton {
+    background-color: #9C8F96;
+    border: 0;
+}
 input {
     width: 100%;
     border: 1px solid #b6b6b6;
     border-radius: 5px;
-    margin: 10px 0 0 0;
-}
-
-textarea {
-    width: 100%;
-    border: 1px solid #b6b6b6;
-    border-radius: 5px;
-    margin: 10px 0 0 0;
+    margin: 10px 0;
 }
 
 
@@ -30,18 +54,11 @@ textarea {
     font-size: 50px;
 }
 
-#platform {
-    margin-top: 30px;
-}
-
 /*마우스 오버 시 커서로 변경*/
 .cursor {
     cursor: pointer
 }
 
-#platform {
-    margin: 70px 20px;
-}
 
 /* 버튼 호버시 시간 딜레이 */
 button {
@@ -52,25 +69,4 @@ button {
 @keyframes motion {
 	0% {margin-top: 0px;}
 	100% {margin-top: 10px;}
-}
-
-
-/* 모달 조정 */
-.modal {
-    text-align: center;
-}
-
-@media screen and (min-width: 768px) { 
-    .modal:before {
-            display: inline-block;
-            vertical-align: middle;
-            content: " ";
-            height: 100%;
-    }
-}
-
-.modal-dialog {
-    display: inline-block;
-    text-align: left;
-    vertical-align: middle;
 }

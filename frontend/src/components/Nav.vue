@@ -5,14 +5,15 @@
             toggleable="lg"
             type="dark"
         >
-            <router-link :to="{name: 'Home'}">
-                <b-navbar-brand>
+            <b-navbar-brand class="p-0">
+                <router-link :to="{name: 'Home'}" class="text-light text-decoration-none">
                     <img
-                        src="C:/Users/multicampus/Downloads/Preview_Thumb_No_Alpha.jpg"
-                        style=""
+                        id="photo"
+                        src="../assets/images/Preview_Thumb_No_Alpha.jpg"
                     >
-                </b-navbar-brand>
-            </router-link>
+                    마법의 싸피고둥
+                </router-link>
+            </b-navbar-brand>
 
             <b-navbar-toggle target="nav-collapse" />
 
@@ -26,7 +27,6 @@
                     </b-nav-item>
                     <b-nav-item
                         href="#"
-                        disabled
                     >
                         Q&A
                     </b-nav-item>
@@ -41,6 +41,7 @@
                             placeholder="Search"
                         />
                         <b-button
+                            id="commonbutton"
                             size="sm"
                             class="my-2 my-sm-0"
                             type="submit"
@@ -87,7 +88,14 @@
                     </b-nav-item-dropdown>
                 </b-navbar-nav>
             </b-collapse>
+            <!-- spot area -->
         </b-navbar>
+        <div
+            id="spot_area"
+            class="sticky-top"
+        >
+            여기는 spot area 영역
+        </div>
     </div>
 </template>
 
@@ -96,7 +104,7 @@ import Signin from '../views/Account/Signin.vue';
 import Login from '../views/Account/Login.vue';
 
 export default {
-    name: 'PlatformNav',
+    name: 'Nav',
     components: {
         Signin,
         Login,
@@ -107,9 +115,17 @@ export default {
 
 <style scoped>
 .navbar {
-    background: linear-gradient( 0deg, rgb(178, 87, 34), rgb(190, 158, 108));
+    background-color:  #A6C2CE;
     position: fixed;
     top: 0;
+    width: 100%;
+    height: 100px;
+    margin: 0;
+    padding: 0;
+}
+#spot_area {
+    position: fixed;
+    top: 100px;
     width: 100%;
 }
 </style>

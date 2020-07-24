@@ -1,5 +1,5 @@
 <template>
-    <div id="platform">
+    <div>
         <div id="openheader">
             <div id="title">
                 쉽고 빠른 블로그 개설
