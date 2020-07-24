@@ -120,14 +120,25 @@
             </div>
 
             <div>
-                <label for="introduce">자기소개</label>
-                <textarea
-                    id="introduce"
-                    ref="introduce"
-                    v-model="introduce"
+                <label for="point">포인트</label>
+                <input
+                    id="point"
+                    ref="point"
+                    v-model="point"
                     type="text"
-                    placeholder="자기소개"
-                />
+                    readonly
+                >
+            </div>
+
+            <div>
+                <label for="level">레벨</label>
+                <input
+                    id="level"
+                    ref="level"
+                    v-model="level"
+                    type="text"
+                    readonly
+                >
             </div>
 
             <div>
@@ -198,8 +209,9 @@ export default {
         nickname: '',
         password: '',
         passwordConfirm: '',
-        introduce: '',
         profileImg: '',
+        point: '',
+        level: '',
         passwordType: 'password',
         imageUrl: '',
         msg: '',
@@ -214,8 +226,9 @@ export default {
                 // 정보 조회 성공
                 this.email = res.data.data.email;
                 this.nickname = res.data.data.nickname;
-                this.introduce = res.data.data.introduce;
                 this.profileImg = res.data.data.profileImg;
+                this.point = res.data.data.point;
+                this.level = res.data.data.level;
             }
         }).catch((error) => {
             console.log(error.response);
@@ -239,7 +252,6 @@ export default {
                     email: this.email,
                     nickname: this.nickname,
                     password: this.password,
-                    introduce: this.introduce,
                     profileImg: this.profileImg,
                 },
             }).then((res) => {
