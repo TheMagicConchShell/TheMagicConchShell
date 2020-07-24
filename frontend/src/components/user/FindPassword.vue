@@ -33,8 +33,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
     data: () => ({
         email: '',
@@ -44,19 +42,15 @@ export default {
     methods: {
         findPassword() {
             // empty check
-            if (!this.email && !this.nickname) {
+            if (!this.email || !this.nickname) {
                 this.msg = '아이디(이메일)와 닉네임을 입력해주세요.';
                 this.makeToast();
                 return;
             }
 
-            axios({
+            this.$axios({
                 method: 'post',
-                url: 'http://localhost:8080/user/findpw',
-                data: {
-                    email: this.email,
-                    nickname: this.nickname,
-                },
+                url: `/user/findpw?email=${this.email}&nickname=${this.nickname}`,
             }).then((res) => {
                 if (res.data.status === 'S-200') {
                     // 이메일 전송 성공
@@ -64,19 +58,7 @@ export default {
                     this.makeToast();
                 }
             }).catch((error) => {
-                if (error.response.data.status === 'E-4002') {
-                    // 없는 이메일
-                    this.msg = error.response.data.errors.message;
-                    this.makeToast();
-                } else if (error.response.data.status === 'E-4004') {
-                    // 닉네임 불일치
-                    this.msg = error.response.data.errors.message;
-                    this.makeToast();
-                } else if (error.response.data.status === 'E-4007') {
-                    // 메일 발송 실패
-                    this.msg = error.response.data.errors.message;
-                    this.makeToast();
-                }
+                console.log(error.response);
             });
         },
         makeToast(append = false) {

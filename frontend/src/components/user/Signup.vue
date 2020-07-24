@@ -125,8 +125,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 import {
     ValidationObserver,
     ValidationProvider,
@@ -190,14 +188,14 @@ export default {
             const isValid = await this.$refs.observer.validate();
 
             if (!isValid) {
-                this.msg = '모든 항목에 맞게 입력해주세요.';
+                this.msg = '모든 항목을 형식에 맞게 입력해주세요.';
                 this.makeToast();
                 return;
             }
 
-            axios({
+            this.$axios({
                 method: 'post',
-                url: 'http://localhost:8080/user/signup',
+                url: '/user/signup',
                 data: {
                     email: this.email,
                     nickname: this.nickname,
@@ -210,19 +208,7 @@ export default {
                     this.makeToast();
                 }
             }).catch((error) => {
-                if (error.response.data.status === 'E-4000') {
-                    // 이메일 중복
-                    this.msg = error.response.data.errors.message;
-                    this.makeToast();
-                } else if (error.response.data.status === 'E-4001') {
-                    // 닉네임 중복
-                    this.msg = error.response.data.errors.message;
-                    this.makeToast();
-                } else if (error.response.data.status === 'E-4006') {
-                    // 인증 메일 발송 실패
-                    this.msg = error.response.data.errors.message;
-                    this.makeToast();
-                }
+                console.log(error.response);
             });
         },
         makeToast(append = false) {

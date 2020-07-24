@@ -33,8 +33,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 const storage = window.sessionStorage;
 
 export default {
@@ -46,7 +44,7 @@ export default {
     methods: {
         login() {
             // empty check
-            if (!this.email && !this.password) {
+            if (!this.email || !this.password) {
                 this.msg = '아이디(이메일)와 비밀번호를 입력해주세요.';
                 this.makeToast();
                 return;
@@ -54,30 +52,19 @@ export default {
 
             storage.setItem('jwt-auth-token', '');
             storage.setItem('login_user', '');
-            axios({
+            this.$axios({
                 method: 'post',
-                url: 'http://localhost:8080/user/login',
+                url: '/user/login',
                 data: {
                     email: this.email,
                     password: this.password,
                 },
             }).then((res) => {
-                if (res.data.status === 'S-200') {
-                    // 로그인 성공
-                    console.log('login success');
-                    storage.setItem('jwt-auth-token', res.headers['jwt-auth-token']);
-                    storage.setItem('login_user', res.data.data.uid);
-                }
+                console.log(res);
+                storage.setItem('jwt-auth-token', res.headers['jwt-auth-token']);
+                storage.setItem('login_user', res.data.data.uid);
             }).catch((error) => {
-                if (error.response.data.status === 'E-4002') {
-                    // 로그인 실패 - 없는 이메일
-                    this.msg = error.response.data.errors.message;
-                    this.makeToast();
-                } else if (error.response.data.status === 'E-4003') {
-                    // 로그인 실패 - 비밀번호 불일치
-                    this.msg = error.response.data.errors.message;
-                    this.makeToast();
-                }
+                console.log(error.response);
             });
         },
         makeToast(append = false) {

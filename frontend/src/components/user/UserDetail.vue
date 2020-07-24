@@ -8,9 +8,23 @@
 
         <ValidationObserver ref="observer">
             <div>
-                <p>
-                    프로필 영역
-                </p>
+                프로필
+                <b-avatar
+                    variant="info"
+                    :src="imageUrl"
+                    size="6em"
+                />
+                <input
+                    ref="imageInput"
+                    type="file"
+                    hidden
+                    @change="onChangeImages"
+                >
+                <button
+                    class="fas fa-camera"
+                    type="button"
+                    @click="onClickImageUpload"
+                />
             </div>
 
             <div>
@@ -132,8 +146,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 import {
     ValidationObserver,
     ValidationProvider,
@@ -189,13 +201,14 @@ export default {
         introduce: '',
         profileImg: '',
         passwordType: 'password',
+        imageUrl: '',
         msg: '',
     }),
     created() {
         this.uid = storage.getItem('login_user');
-        axios({
+        this.$axios({
             method: 'get',
-            url: `http://localhost:8080/user/detail?uid=${this.uid}`,
+            url: `/user/detail?uid=${this.uid}`,
         }).then((res) => {
             if (res.data.status === 'S-200') {
                 // 정보 조회 성공
@@ -205,11 +218,7 @@ export default {
                 this.profileImg = res.data.data.profileImg;
             }
         }).catch((error) => {
-            if (error.response.data.status === 'E-4004'){
-                // 해당 번호의 유저 존재하지 않음
-                this.msg = error.response.data.errors.message;
-                this.makeToast();
-            }
+            console.log(error.response);
         });
     },
     methods: {
@@ -222,9 +231,9 @@ export default {
                 return;
             }
 
-            axios({
+            this.$axios({
                 method: 'put',
-                url: 'http://localhost:8080/user/update',
+                url: '/user/update',
                 data: {
                     uid: this.uid,
                     email: this.email,
@@ -239,17 +248,13 @@ export default {
                     this.makeToast();
                 }
             }).catch((error) => {
-                if (error.reponse.status === 'E-4001') {
-                    // 닉네임 중복
-                    this.msg = error.response.data.errors.message;
-                    this.makeToast();
-                }
+                console.log(error.response);
             });
         },
         userDelete() {
-            axios({
+            this.$axios({
                 method: 'delete',
-                url: `http://localhost:8080/user/delete?uid=${this.uid}`,
+                url: `/user/delete?uid=${this.uid}`,
             }).then((res) => {
                 if (res.data.status === 'S-200') {
                     // 삭제 성공
@@ -257,11 +262,7 @@ export default {
                     this.makeToast();
                 }
             }).catch((error) => {
-                if (error.response.data.status === 'E-4004') {
-                    // 번호에 해당하는 유저 존재하지 않음
-                    this.msg = error.response.data.errors.message;
-                    this.makeToast();
-                }
+                console.log(error.response);
             });
         },
         makeToast(append = false) {
@@ -271,6 +272,16 @@ export default {
                 autoHideDelay: 5000,
                 appendToast: append,
             });
+        },
+        onClickImageUpload() {
+            this.$refs.imageInput.click();
+        },
+        onChangeImages(e) {
+            console.log(e.target.files);
+            if(e.target.files){
+                const file = e.target.files[0];
+                this.imageUrl = URL.createObjectURL(file);
+            }
         }
     },
 };
