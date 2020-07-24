@@ -1,14 +1,15 @@
 package com.blsa.ezilog.dao;
 
 import java.math.BigInteger;
-import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.blsa.ezilog.model.notice.Notice;
 
-public interface NoticeDao extends JpaRepository<Notice, String> {
-    List<Notice> getNoticeByWriter(String writer) throws Exception;
+public interface NoticeDao extends JpaRepository<Notice, Long> {
+    Page<Notice> findNoticeByWriter(String writer, Pageable request) throws Exception;
 
     Notice getNoticeByNid(BigInteger id) throws Exception;
 }

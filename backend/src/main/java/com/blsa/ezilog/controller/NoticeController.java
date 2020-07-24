@@ -6,11 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,9 +38,11 @@ public class NoticeController {
     @Autowired
     NoticeDao noticeDao;
 
-    @ApiOperation(value = "공지사항 목록 반환", notes = "Input : no, Output: 성공 : [status = true, data = 공지사항 리스트(Notice)] 실패 : status = false, data = 에러메세지", response = List.class)
+    @ApiOperation(value = "공지사항 목록 반환", notes = "Input : page, Output: 성공 : [status = true, data = 공지사항 리스트(Notice)] 실패 : status = false, data = 에러메세지", response = List.class)
     @GetMapping
-    public Object retrieveNotice() {
+    public Object retrieveNotice(@RequestParam int page) {
+
+        PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.ASC, "nid");
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -44,11 +50,22 @@ public class NoticeController {
         Map<String, Object> errorMap = new HashMap<>();
 
         try {
-            List<Notice> sList = noticeDao.findAll();
-            result.status = "S-200";
-            result.message = "공지사항 목록 불러오기에 성공했습니다.";
-            result.data = sList;
-            response = new ResponseEntity<>(result, HttpStatus.OK);
+            Page<Notice> sList = noticeDao.findAll(pageable);
+            if (!sList.isEmpty()) {
+                result.status = "S-200";
+                result.message = "공지사항 목록 불러오기에 성공했습니다.";
+                result.data = sList;
+                response = new ResponseEntity<>(result, HttpStatus.OK);
+            } else {
+                eresult.status = "S-204";
+                eresult.message = "불러 올 공지사항이  없습니다.";
+                eresult.data = null;
+                errorMap.put("field", "noticeEmpty");
+                errorMap.put("data", page);
+                eresult.errors = errorMap;
+
+                response = new ResponseEntity<>(eresult, HttpStatus.NO_CONTENT);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,7 +84,9 @@ public class NoticeController {
 
     @ApiOperation(value = "검색어에 해당 되는 작성자가 쓴 공지사항 반환", notes = "작성자 이름을 통해서 공지사항 검색", response = List.class)
     @GetMapping("/writer")
-    public Object searchNoticeByWriter(@RequestParam String writer) {
+    public Object searchNoticeByWriter(@RequestParam String writer, @RequestParam int page) {
+
+        PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.ASC, "nid");
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -75,11 +94,23 @@ public class NoticeController {
         Map<String, Object> errorMap = new HashMap<>();
 
         try {
-            List<Notice> nList = noticeDao.getNoticeByWriter(writer);
-            result.status = "S-200";
-            result.message = "작성자를 이용하여 공지사항 목록들 가져오기 성공";
-            result.data = nList;
-            response = new ResponseEntity<>(result, HttpStatus.OK);
+            Page<Notice> nList = noticeDao.findNoticeByWriter(writer, pageable);
+
+            if (!nList.isEmpty()) {
+                result.status = "S-200";
+                result.message = "작성자를 이용하여 공지사항 목록들 가져오기 성공";
+                result.data = nList;
+                response = new ResponseEntity<>(result, HttpStatus.OK);
+            } else {
+                eresult.status = "S-204";
+                eresult.message = "불러 올 공지사항이  없습니다.";
+                eresult.data = null;
+                errorMap.put("field", "noticeEmpty");
+                errorMap.put("data", page);
+                eresult.errors = errorMap;
+
+                response = new ResponseEntity<>(eresult, HttpStatus.NO_CONTENT);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -88,7 +119,7 @@ public class NoticeController {
             eresult.data = null;
 
             errorMap.put("field", "getNoticeByWriter");
-            errorMap.put("data", null);
+            errorMap.put("data", e.getMessage());
             response = new ResponseEntity<>(eresult, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
@@ -105,10 +136,23 @@ public class NoticeController {
 
         try {
             Notice notice = noticeDao.getNoticeByNid(id);
-            result.status = "S-200";
-            result.message = "공지 ID를 이용하여 공지사항 가져오기 성공";
-            result.data = notice;
-            response = new ResponseEntity<>(result, HttpStatus.OK);
+
+            if (notice != null) {
+
+                result.status = "S-200";
+                result.message = "공지 ID를 이용하여 공지사항 가져오기 성공";
+                result.data = notice;
+                response = new ResponseEntity<>(result, HttpStatus.OK);
+            }else {
+                eresult.status = "S-204";
+                eresult.message = "불러 올 공지사항이  없습니다.";
+                eresult.data = null;
+                errorMap.put("field", "noNotice");
+                errorMap.put("data", null);
+                eresult.errors = errorMap;
+
+                response = new ResponseEntity<>(eresult, HttpStatus.NO_CONTENT);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -117,7 +161,7 @@ public class NoticeController {
             eresult.data = null;
 
             errorMap.put("field", "getNoticeById");
-            errorMap.put("data", null);
+            errorMap.put("data", e.getMessage());
             response = new ResponseEntity<>(eresult, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return response;
@@ -204,7 +248,7 @@ public class NoticeController {
             response = new ResponseEntity<>(result, HttpStatus.OK);
 
         } catch (Exception e) {
-            eresult.status = "E-4107";
+            eresult.status = "E-4105";
             eresult.message = "서버 내부 오류로 인해 공지사항 수정 실패";
             eresult.data = null;
 
