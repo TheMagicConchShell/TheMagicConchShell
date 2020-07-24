@@ -19,5 +19,9 @@ public interface UserService {
 
     String duplicateCheck(String email, String nickname);
 
+    String authDuplicateCheck(String email, String nickname);
+
     User authentication(long uaid, String token);
+
+    String findPw(String email, String nickname);
 }

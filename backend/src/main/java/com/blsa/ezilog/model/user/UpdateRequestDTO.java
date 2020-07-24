@@ -2,6 +2,7 @@ package com.blsa.ezilog.model.user;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -19,15 +20,15 @@ public class UpdateRequestDTO {
     @NotNull
     long uid;
     @ApiModelProperty(required = true)
-    @NotNull
+    @NotBlank(message = "이메일은 필수 입력값입니다.")
     @Email(message = "이메일 형식에 맞지 않습니다.")
     String email;
     @ApiModelProperty(required = true)
-    @NotNull
+    @NotBlank(message = "비밀번호는 필수 입력값입니다.")
     @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d$@$!%*#?&]{8,}$")
     String password;
     @ApiModelProperty(required = true)
-    @NotNull
+    @NotBlank(message = "닉네임은 필수 입력값입니다.")
     String nickname;
 
     String introduce;

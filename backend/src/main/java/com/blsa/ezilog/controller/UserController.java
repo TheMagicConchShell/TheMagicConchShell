@@ -4,12 +4,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,35 +63,30 @@ public class UserController {
         ResponseEntity<BasicResponse> response = null;
         Map<String, Object> errors = new HashMap<>();
         String check = userService.duplicateCheck(request.getEmail(), request.getNickname());
-        if (check.equals("email")) {
-            final ErrorResponse result = new ErrorResponse();
-            result.status = "E-4000";
-            result.message = "이미 존재하는 이메일 입니다.";
+        String authTableCheck = userService.authDuplicateCheck(request.getEmail(), request.getNickname());
+        if (check.equals("email") || authTableCheck.equals("email")) {
             errors.put("field", "email");
             errors.put("data", request.getEmail());
-            result.errors = errors;
+            final ErrorResponse result = setErrors("E-4001", "이미 존재하는 이메일 입니다.", errors);
+
             response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
-        } else if (check.equals("nickname")) {
-            final ErrorResponse result = new ErrorResponse();
-            result.status = "E-4001";
-            result.message = "이미 존재하는 별명 입니다.";
+        } else if (check.equals("nickname") || authTableCheck.equals("nickname")) {
             errors.put("field", "nickname");
             errors.put("data", request.getNickname());
-            result.errors = errors;
+            final ErrorResponse result = setErrors("E-4001", "이미 존재하는 별명 입니다.", errors);
+
             response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         } else {
-            String key = mailSendService.getKey(false, 20);
+            String token = mailSendService.getKey(false, 20);
 
-            UserAuth u = userService.signup(request, key);
+            UserAuth u = userService.signup(request, token);
             try {
-                mailSendService.mailSendWithUserKey(u.getEmail(), u.getNickname(), key, u.getUaid());
+                mailSendService.mailSendWithUserKey(u.getEmail(), u.getNickname(), token, u.getUaid());
             } catch (MessagingException e) {
-                final ErrorResponse result = new ErrorResponse();
-                result.status = "E-4006";
-                result.message = "인증 메일 발송에 실패했습니다.";
                 errors.put("field", "sendMail");
 
-                result.errors = errors;
+                final ErrorResponse result = setErrors("E-4007", "메일 발송에 실패했습니다.", errors);
+
                 return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
             }
             final BasicResponse result = new BasicResponse();
@@ -105,20 +106,14 @@ public class UserController {
         Map<String, Object> errors = new HashMap<>();
         Object u = userService.login(request);
         if (u.equals("password")) {
-            final ErrorResponse result = new ErrorResponse();
-            result.status = "E-4003";
-            result.message = "로그인에 실패했습니다.(비밀번호가 일치하지 않습니다.)";
             errors.put("field", "password");
             errors.put("data", request);
-            result.errors = errors;
+            final ErrorResponse result = setErrors("E-4003", "비밀번호가 일치하지 않습니다.", errors);
             response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         } else if (u.equals("email")) {
-            final ErrorResponse result = new ErrorResponse();
-            result.status = "E-4002";
-            result.message = "로그인에 실패했습니다.(존재하지 않는 이메일 입니다.)";
             errors.put("field", "email");
             errors.put("data", request);
-            result.errors = errors;
+            final ErrorResponse result = setErrors("E-4002", "존재하지 않는 이메일 입니다.", errors);
             response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         } else {
             String token = jwtService.create((User) u);
@@ -139,13 +134,12 @@ public class UserController {
         Map<String, Object> errors = new HashMap<>();
         User checkUser = userService.select(request.getUid());
         String checkname = userService.duplicateCheck("", request.getNickname());
-        if (!checkUser.getNickname().equals(request.getNickname()) && checkname.equals("nickname")) {
-            final ErrorResponse result = new ErrorResponse();
-            result.status = "E-4001";
-            result.message = "이미 존재하는 별명 입니다.";
+        String authTableCheckname = userService.authDuplicateCheck("", request.getNickname());
+        if (!checkUser.getNickname().equals(request.getNickname())
+                && (checkname.equals("nickname") || authTableCheckname.equals("nickname"))) {
             errors.put("field", "nickname");
             errors.put("data", request.getNickname());
-            result.errors = errors;
+            final ErrorResponse result = setErrors("E-4001", "이미 존재하는 별명 입니다.", errors);
             response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
 
         } else {
@@ -165,12 +159,9 @@ public class UserController {
         Map<String, Object> errors = new HashMap<>();
         User user = userService.select(uid);
         if (user == null) {
-            final ErrorResponse result = new ErrorResponse();
-            result.status = "E-4004";
-            result.message = "번호에 해당하는 유저가 존재하지 않습니다.";
             errors.put("field", "uid");
             errors.put("data", uid);
-            result.errors = errors;
+            final ErrorResponse result = setErrors("E-4005", "번호에 해당하는 유저가 존재하지 않습니다.", errors);
             response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         } else {
             final BasicResponse result = new BasicResponse();
@@ -189,12 +180,9 @@ public class UserController {
         Map<String, Object> errors = new HashMap<>();
         User user = userService.select(uid);
         if (user == null) {
-            final ErrorResponse result = new ErrorResponse();
-            result.status = "E-4004";
-            result.message = "번호에 해당하는 유저가 존재하지 않습니다.";
             errors.put("field", "uid");
             errors.put("data", uid);
-            result.errors = errors;
+            final ErrorResponse result = setErrors("E-4005", "번호에 해당하는 유저가 존재하지 않습니다.", errors);
             response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         } else {
             userService.withdraw(uid);
@@ -213,12 +201,9 @@ public class UserController {
         Map<String, Object> errors = new HashMap<>();
         User user = userService.authentication(uaid, token);
         if (user == null) {
-            final ErrorResponse result = new ErrorResponse();
-            result.status = "E-4007";
-            result.message = "이메일 인증에 실패했습니다.";
             errors.put("field", "token");
             errors.put("data", token);
-            result.errors = errors;
+            final ErrorResponse result = setErrors("E-4008", "이메일 인증에 실패했습니다.", errors);
             response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         } else {
             final BasicResponse result = new BasicResponse();
@@ -228,4 +213,45 @@ public class UserController {
         }
         return response;
     }
+
+    @PostMapping("/user/findpw")
+    @ApiOperation(value = "비밀 번호 찾기")
+    public Object findpw(@Email @NotBlank @RequestParam String email, @NotBlank @RequestParam String nickname) {
+        ResponseEntity<BasicResponse> response = null;
+        Map<String, Object> errors = new HashMap<>();
+        String pw = userService.findPw(email, nickname);
+        if (pw.equals("email")) {
+            errors.put("data", email);
+            final ErrorResponse result = setErrors("E-4002", "존재하지 않는 이메일 입니다.", errors);
+            response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        } else if (pw.equals("nickname")) {
+            errors.put("field", "nickname");
+            errors.put("data", nickname);
+            final ErrorResponse result = setErrors("E-4004", "닉네임이 일치하지 않습니다.", errors);
+            response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        } else {
+            try {
+                mailSendService.mailSendWithPassword(email, nickname, pw);
+            } catch (MessagingException e) {
+                errors.put("field", "sendMail");
+                final ErrorResponse result = setErrors("E-4007", "메일 발송에 실패했습니다.", errors);
+                return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            final BasicResponse result = new BasicResponse();
+            result.status = "S-200";
+            result.message = "비밀번호 찾기에 성공했습니다.";
+            response = new ResponseEntity<>(result, HttpStatus.OK);
+        }
+
+        return response;
+    }
+
+    private ErrorResponse setErrors(String status, String message, Map<String, Object> errors) {
+        ErrorResponse res = new ErrorResponse();
+        res.status = status;
+        res.message = message;
+        res.errors = errors;
+        return res;
+    }
+
 }

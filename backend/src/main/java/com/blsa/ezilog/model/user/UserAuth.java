@@ -32,7 +32,7 @@ public class UserAuth {
 
     @Column
     private String nickname;
-    
+
     @Column(insertable = false, updatable = false)
     private LocalDateTime createDate;
 

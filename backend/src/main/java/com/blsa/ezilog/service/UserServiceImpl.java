@@ -18,12 +18,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserDao dao;
-    
+
     @Autowired
     private UserAuthDao authDao;
 
     @Override
-    public UserAuth signup(SignupRequestDTO request,String token) {
+    public UserAuth signup(SignupRequestDTO request, String token) {
         UserAuth user = new UserAuth();
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
@@ -65,6 +65,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public String authDuplicateCheck(String email, String nickname) {
+        String res = null;
+        if (authDao.findByEmail(email).isPresent()) {
+            res = "email";
+        } else if (authDao.findByNickname(nickname).isPresent()) {
+            res = "nickname";
+        } else {
+            res = "ok";
+        }
+        return res;
+    }
+
+    @Override
     public User update(UpdateRequestDTO request) {
         User user = new User();
         user.setUid(request.getUid());
@@ -90,7 +103,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User authentication(long uaid, String token) {
         Optional<UserAuth> ua = authDao.findByUaidAndToken(uaid, token);
-        if(ua.isPresent()) {
+        if (ua.isPresent()) {
             UserAuth auth = ua.get();
             User user = new User();
             user.setEmail(auth.getEmail());
@@ -99,9 +112,27 @@ public class UserServiceImpl implements UserService {
             authDao.delete(auth);
             user = dao.save(user);
             return user;
-        }else {
+        } else {
             return null;
         }
+    }
+
+    @Override
+    public String findPw(String email, String nickname) {
+        Optional<User> ou = dao.findByEmailAndNickname(email, nickname);
+        String res = null;
+        if (ou.isPresent()) {
+            User u = ou.get();
+            res = u.getPassword();
+        } else {
+            if (dao.findByEmail(email).isPresent()) {
+                res = "nickname";
+            } else {
+                res = "email";
+            }
+        }
+
+        return res;
     }
 
 }
