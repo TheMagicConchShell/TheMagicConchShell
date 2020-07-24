@@ -1,5 +1,7 @@
 package com.blsa.ezilog.model.qna;
 
+import java.math.BigInteger;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -8,10 +10,7 @@ import lombok.ToString;
 
 @Valid
 @ToString
-public class QnaQuestionRequest {
-    @ApiModelProperty(required = true)
-    @NotNull
-    String title;
+public class AnswerRequest {
     
     @ApiModelProperty(required = true)
     @NotNull
@@ -20,14 +19,10 @@ public class QnaQuestionRequest {
     @ApiModelProperty(required = true)
     @NotNull
     String writer;
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    
+    @ApiModelProperty(required = true)
+    @NotNull
+    BigInteger qid;
 
     public String getContent() {
         return content;
@@ -44,5 +39,16 @@ public class QnaQuestionRequest {
     public void setWriter(String writer) {
         this.writer = writer;
     }
+
+    public BigInteger getQid() {
+        return qid;
+    }
+
+    public void setQid(BigInteger qid) {
+        this.qid = qid;
+    }
+
+    
+    
     
 }

@@ -1,6 +1,7 @@
 package com.blsa.ezilog.controller;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,14 +103,14 @@ public class NoticeController {
                 result.data = nList;
                 response = new ResponseEntity<>(result, HttpStatus.OK);
             } else {
-                eresult.status = "S-204";
+                eresult.status = "E-404";
                 eresult.message = "불러 올 공지사항이  없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "noticeEmpty");
                 errorMap.put("data", page);
                 eresult.errors = errorMap;
 
-                response = new ResponseEntity<>(eresult, HttpStatus.NO_CONTENT);
+                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
             }
 
         } catch (Exception e) {
@@ -178,7 +179,8 @@ public class NoticeController {
         Map<String, Object> errorMap = new HashMap<>();
 
         try {
-            Notice temp = new Notice(notice.getTitle(), notice.getContent(), notice.getWriter());
+            LocalDateTime currentTime = LocalDateTime.now();
+            Notice temp = new Notice(notice.getTitle(), notice.getContent(), notice.getWriter(), currentTime );
             noticeDao.save(temp);
             result.status = "S-200";
             result.message = "공지사항 작성에 성공했습니다.";

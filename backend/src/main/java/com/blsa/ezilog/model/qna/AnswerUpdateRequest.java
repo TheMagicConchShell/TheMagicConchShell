@@ -10,45 +10,41 @@ import lombok.ToString;
 
 @Valid
 @ToString
-public class QnaAnswerRequest {
-    @ApiModelProperty(required = true)
-    @NotNull
-    String qnaName;
+public class AnswerUpdateRequest {
     
     @ApiModelProperty(required = true)
     @NotNull
-    String qnaReply;
+    BigInteger no;
     
     @ApiModelProperty(required = true)
     @NotNull
-    String qnaReplier;
+    String content;
+    
+    @ApiModelProperty(required = true)
+    @NotNull
+    String writer;
     
     @ApiModelProperty(required = true)
     @NotNull
     BigInteger qid;
 
-    public String getQnaName() {
-        return qnaName;
+    
+    
+
+    public String getContent() {
+        return content;
     }
 
-    public void setQnaName(String qnaName) {
-        this.qnaName = qnaName;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public String getQnaReply() {
-        return qnaReply;
+    public String getWriter() {
+        return writer;
     }
 
-    public void setQnaReply(String qnaReply) {
-        this.qnaReply = qnaReply;
-    }
-
-    public String getQnaReplier() {
-        return qnaReplier;
-    }
-
-    public void setQnaReplier(String qnaReplier) {
-        this.qnaReplier = qnaReplier;
+    public void setWriter(String writer) {
+        this.writer = writer;
     }
 
     public BigInteger getQid() {
@@ -58,6 +54,16 @@ public class QnaAnswerRequest {
     public void setQid(BigInteger qid) {
         this.qid = qid;
     }
+
+    public BigInteger getNo() {
+        return no;
+    }
+
+    public void setNo(BigInteger no) {
+        this.no = no;
+    }
+
+    
     
     
 }

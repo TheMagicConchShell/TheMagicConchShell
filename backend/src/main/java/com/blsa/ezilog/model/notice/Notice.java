@@ -1,6 +1,7 @@
 package com.blsa.ezilog.model.notice;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,10 +32,15 @@ public class Notice {
     @Column (name = "writer")
     private String writer;
 
-    public Notice(String title, String content, String writer) {
+    @Column (name = "write_data")
+    LocalDateTime writeDate;
+
+    public Notice(String title, String content, String writer, LocalDateTime writeDate) {
         super();
         this.title = title;
         this.content = content;
         this.writer = writer;
+        this.writeDate = writeDate;
     }
+    
 }
