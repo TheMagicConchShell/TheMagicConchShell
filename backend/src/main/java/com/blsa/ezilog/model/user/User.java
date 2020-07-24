@@ -34,11 +34,15 @@ public class User {
     private String nickname;
 
     @Column
-    private String introduce;
-
-    @Column
     private String profileImg;
 
     @Column(insertable = false, updatable = false)
     private LocalDateTime authDate;
+
+    @Column
+    private int point;
+
+    @Column
+    private int level;
+
 }

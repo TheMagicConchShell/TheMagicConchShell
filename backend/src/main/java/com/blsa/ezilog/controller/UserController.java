@@ -81,7 +81,7 @@ public class UserController {
 
             UserAuth u = userService.signup(request, token);
             try {
-                mailSendService.mailSendWithUserKey(u.getEmail(), u.getNickname(), token, u.getUaid());
+                mailSendService.mailSendWithUserKey(u.getEmail(), u.getNickname(), token, u.getAid());
             } catch (MessagingException e) {
                 errors.put("field", "sendMail");
 
@@ -194,12 +194,12 @@ public class UserController {
         return response;
     }
 
-    @PostMapping("/user/authentication")
+    @GetMapping("/user/authentication")
     @ApiOperation(value = "이메일 인증 완료")
-    public Object confirm(@RequestParam long uaid, @RequestParam String token) {
+    public Object confirm(@RequestParam long aid, @RequestParam String token) {
         ResponseEntity<BasicResponse> response = null;
         Map<String, Object> errors = new HashMap<>();
-        User user = userService.authentication(uaid, token);
+        User user = userService.authentication(aid, token);
         if (user == null) {
             errors.put("field", "token");
             errors.put("data", token);
