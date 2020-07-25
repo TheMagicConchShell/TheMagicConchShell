@@ -22,6 +22,7 @@ import './assets/css/common.css';
 Vue.config.productionTip = false;
 
 Vue.prototype.$axios = axios.create({
+    // baseURL: 'http://localhost:8080'
     baseURL: 'http://i3a403.p.ssafy.io:8399',
 });
 
@@ -53,3 +54,12 @@ const vm = new Vue({
     store,
     render: (h) => h(App),
 }).$mount('#app');
+
+Vue.prototype.$toast = (title, message, append = false, hideDelay = 5000) => {
+    vm.$bvToast.toast(`${message}`, {
+        title: title,
+        toaster: 'b-toaster-top-center',
+        autoHideDelay: hideDelay,
+        appendToast: append,
+    });
+};

@@ -1,5 +1,8 @@
 <template>
-    <base-editor />
+    <base-editor
+        :submit-url="'/support/notice'"
+        :submit-method="'post'"
+    />
 </template>
 
 <script>

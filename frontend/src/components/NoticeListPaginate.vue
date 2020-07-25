@@ -1,43 +1,68 @@
 <template>
-    <nav>
-        <paginate
-            :page-count="last"
-            :click-handler="pageHandle"
-            :prev-text="'Prev'"
-            :next-text="'Next'"
-            container-class="pagination"
-            page-class="page-item"
-        />
-
-        <ul class="pagination">
-            <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-            <li><a href="#">4</a></li>
-            <li><a href="#">5</a></li>
-        </ul>
-    </nav>
+    <paginate
+        v-model="page"
+        :page-count="last"
+        :click-handler="pageHandle"
+        :prev-text="'<'"
+        :next-text="'>'"
+        :hide-prev-next="true"
+        :first-last-button="true"
+        :container-class="'pagination'"
+        :page-class="'page-item'"
+        :active-class="'active'"
+        :disabled-class="'disabled'"
+    />
 </template>
 
 <script>
 export default {
-    name: 'NoticeListPaginate',
+    name: "NoticeListPaginate",
     props: {
         current: {
-            type: [Number, String],
-            default: 1,
+            type: [Number],
+            required: true,
         },
         last: {
-            type: [Number, String],
-            default: 1,
-        }
+            type: [Number],
+            required: true,
+        },
+    },
+    data: () => ({
+        page: 1,
+    }),
+    mounted() {
+        this.page = this.current;
     },
     methods: {
         pageHandle(nextPage) {
-            this.$emit('page-move', nextPage);
+            this.$router.push({
+                name: 'NoticeList',
+                query: {
+                    page: nextPage,
+                }
+            }).catch(() => {});
+            // console.log(nextPage);
+            // this.$emit("page-move", nextPage);
         },
     },
 };
 </script>
 
-<style scoped>
+<style>
+.page-item {
+}
+.page-link-item {
+}
+.prev-item {
+}
+.prev-link-item {
+}
+.next-item {
+}
+.next-link-item {
+}
+.break-view {
+}
+.break-view-item {
+}
 </style>

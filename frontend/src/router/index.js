@@ -10,9 +10,14 @@ import Signup from '@/components/user/Signup.vue';
 import Login from '@/components/user/Login.vue';
 import FindPassword from '@/components/user/FindPassword.vue';
 
-import Support from '@/views/Support.vue';
-import NoticeList from '@/components/NoticeList.vue';
-import NoticeEditor from '@/components/NoticeEditor.vue';
+import Support from '@/views/support/Support.vue';
+import NoticeView from '@/views/support/notice/NoticeView.vue';
+import NoticeList from '@/views/support/notice/NoticeList.vue';
+import NoticeRead from '@/views/support/notice/NoticeRead.vue';
+import NoticeEditor from '@/views/support/notice/NoticeEditor.vue';
+import NoticeUpdate from '@/views/support/notice/NoticeUpdate.vue';
+import Error from '@/views/Error.vue';
+import { readyException } from 'jquery';
 
 Vue.use(VueRouter);
 
@@ -57,26 +62,49 @@ const routes = [
     {
         name: 'support',
         path: '/support',
+        name: 'Support',
         component: Support,
-        redirect: '/support/notice/1',
+        redirect: {
+            name: 'NoticeList',
+            query: {
+                page: 1,
+            },
+        },
         children: [
             {
-                name: 'notice-list-default',
                 path: 'notice',
-                redirect: '/support/notice/1',
-            },
-            {
-                name: 'notice-write',
-                path: 'notice/write',
-                component: NoticeEditor,
-            },
-            {
-                name: 'notice-list',
-                path: 'notice/:page',
-                props: true,
-                component: NoticeList,
+                component: NoticeView,
+                children: [
+                    {
+                        path: 'list',
+                        name: 'NoticeList',
+                        component: NoticeList,
+                    },
+                    {
+                        path: 'write',
+                        name: 'NoticeWrite',
+                        component: NoticeEditor,
+                    },
+                    {
+                        path: 'modify/:no',
+                        name: 'NoticeUpdate',
+                        props: ({params}) => ({no: Number.parseInt(params.no, 10) || 0}),
+                        component: NoticeUpdate,
+                    },
+                    {
+                        path: ':no',
+                        name: 'NoticeRead',
+                        props: ({params}) => ({no: Number.parseInt(params.no, 10) || 0}),
+                        component: NoticeRead,
+                    },
+                ],
             },
         ],
+    },
+    {
+        path: "/error",
+        name: "Error",
+        component: Error,
     },
 ];
 
@@ -84,6 +112,10 @@ const router = new VueRouter({
     mode: 'history',
     base: process.env.BASE_URL,
     routes,
+});
+
+router.onError(() => {
+    router.push({path: '/error'});
 });
 
 export default router;
