@@ -1,6 +1,5 @@
 <template>
     <div>
-        <div class="nav-bar-holder" />
         <b-navbar
             class="navbar sticky-top"
             toggleable="lg"
@@ -86,23 +85,13 @@
 </template>
 
 <script>
-export default {
-    
-};
 </script>
 
 <style scoped>
-.nav-bar-holder {
-    height: 30px;
-}
 .navbar {
     background-color: rgb(178, 87, 34);
     position: fixed;
     top: 0;
     width: 100%;
-}
-
-* {
-    border: 1px solid black !important;
 }
 </style>
