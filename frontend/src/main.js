@@ -22,7 +22,7 @@ import './assets/css/common.css';
 Vue.config.productionTip = false;
 
 Vue.prototype.$axios = axios.create({
-    baseURL: 'http://localhost:8080'
+    baseURL: 'http://i3a403.p.ssafy.io:8399',
 });
 
 Vue.prototype.$axios.interceptors.response.use(
@@ -35,6 +35,14 @@ Vue.prototype.$axios.interceptors.response.use(
             //     params: { error: 'error' },
             // });
         }
+
+        const message = error.response.data.message;
+        const vm = new Vue();
+        vm.$bvToast.toast(`${message}`, {
+            title: `Error ${error.response.status} (${error.response.data.status})`,
+            toaster: 'b-toaster-top-center',
+            autoHideDelay: 5000,
+        });
 
         return Promise.reject(error);
     },

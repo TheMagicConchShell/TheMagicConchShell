@@ -8,9 +8,23 @@
 
         <ValidationObserver ref="observer">
             <div>
-                <p>
-                    프로필 영역
-                </p>
+                프로필
+                <b-avatar
+                    variant="info"
+                    :src="imageUrl"
+                    size="6em"
+                />
+                <input
+                    ref="imageInput"
+                    type="file"
+                    hidden
+                    @change="onChangeImages"
+                >
+                <button
+                    class="fas fa-camera"
+                    type="button"
+                    @click="onClickImageUpload"
+                />
             </div>
 
             <div>
@@ -106,14 +120,25 @@
             </div>
 
             <div>
-                <label for="introduce">자기소개</label>
-                <textarea
-                    id="introduce"
-                    ref="introduce"
-                    v-model="introduce"
+                <label for="point">포인트</label>
+                <input
+                    id="point"
+                    ref="point"
+                    v-model="point"
                     type="text"
-                    placeholder="자기소개"
-                />
+                    readonly
+                >
+            </div>
+
+            <div>
+                <label for="level">레벨</label>
+                <input
+                    id="level"
+                    ref="level"
+                    v-model="level"
+                    type="text"
+                    readonly
+                >
             </div>
 
             <div>
@@ -132,8 +157,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 import {
     ValidationObserver,
     ValidationProvider,
@@ -173,13 +196,6 @@ extend('passwordRegex', {
     message: '알파벳과 숫자를 각각 1개 이상 포함해야합니다.',
 });
 
-extend('emailRegex', {
-    validate(value) {
-        return /^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/.test(value);
-    },
-    message: '이메일 형식이 일치하지 않습니다.',
-});
-
 const storage = window.sessionStorage;
 
 export default {
@@ -193,69 +209,92 @@ export default {
         nickname: '',
         password: '',
         passwordConfirm: '',
-        introduce: '',
-        profile: '',
+        profileImg: '',
+        point: '',
+        level: '',
         passwordType: 'password',
+        imageUrl: '',
+        msg: '',
     }),
     created() {
         this.uid = storage.getItem('login_user');
-        axios({
+        this.$axios({
             method: 'get',
-            url: `http://localhost:8080/api/user/detail?uid=${this.uid}`,
+            url: `/user/detail?uid=${this.uid}`,
         }).then((res) => {
-            if (res.data.status) {
-                this.email = res.data.object.email;
-                this.nickname = res.data.object.nickname;
-                this.introduce = res.data.object.introduce;
-                this.profile = res.data.object.profile;
+            if (res.data.status === 'S-200') {
+                // 정보 조회 성공
+                this.email = res.data.data.email;
+                this.nickname = res.data.data.nickname;
+                this.profileImg = res.data.data.profileImg;
+                this.point = res.data.data.point;
+                this.level = res.data.data.level;
             }
-        }).catch(() => {
-            // 유저 정보 조회 실패
+        }).catch((error) => {
+            console.log(error.response);
         });
     },
     methods: {
         async userUpdate() {
             const isValid = await this.$refs.observer.validate();
 
-            if (!isValid) return;
+            if (!isValid) {
+                this.msg = '필수 항목을 모두 입력해주세요.';
+                this.makeToast();
+                return;
+            }
 
-            axios({
+            this.$axios({
                 method: 'put',
-                url: 'http://localhost:8080/api/user/update',
+                url: '/user/update',
                 data: {
                     uid: this.uid,
                     email: this.email,
                     nickname: this.nickname,
                     password: this.password,
-                    introduce: this.introduce,
-                    profile: this.profile,
+                    profileImg: this.profileImg,
                 },
             }).then((res) => {
-                if (res.data.status) {
-                    console.log(res.data);
-                    this.email = res.data.object.email;
-                    this.nickname = res.data.object.nickname;
-                    this.introduce = res.data.object.introduce;
-                } else {
-                    // 닉네임 중복
-                    console.log('duplicate nickname - update fail');
+                if (res.data.status === 'S-200') {
+                    this.msg = '수정 완료되었습니다.';
+                    this.makeToast();
                 }
-            }).catch(() => {
-                // 유저 정보 수정 실패
+            }).catch((error) => {
+                console.log(error.response);
             });
         },
         userDelete() {
-            axios({
+            this.$axios({
                 method: 'delete',
-                url: `http://localhost:8080/api/user/delete?uid=${this.uid}`,
+                url: `/user/delete?uid=${this.uid}`,
             }).then((res) => {
-                if (res.data.status) {
+                if (res.data.status === 'S-200') {
                     // 삭제 성공
+                    this.msg = '정상적으로 탈퇴 처리되었습니다.';
+                    this.makeToast();
                 }
-            }).catch(() => {
-                // 유저 정보 삭제 실패
+            }).catch((error) => {
+                console.log(error.response);
             });
         },
+        makeToast(append = false) {
+            this.$bvToast.toast(`${this.msg}`, {
+                title: 'Notice',
+                toaster: 'b-toaster-top-center',
+                autoHideDelay: 5000,
+                appendToast: append,
+            });
+        },
+        onClickImageUpload() {
+            this.$refs.imageInput.click();
+        },
+        onChangeImages(e) {
+            console.log(e.target.files);
+            if(e.target.files){
+                const file = e.target.files[0];
+                this.imageUrl = URL.createObjectURL(file);
+            }
+        }
     },
 };
 </script>

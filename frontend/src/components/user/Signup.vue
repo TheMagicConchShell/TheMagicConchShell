@@ -125,8 +125,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 import {
     ValidationObserver,
     ValidationProvider,
@@ -189,31 +187,38 @@ export default {
         async signup() {
             const isValid = await this.$refs.observer.validate();
 
-            if (!isValid) return;
+            if (!isValid) {
+                this.msg = '모든 항목을 형식에 맞게 입력해주세요.';
+                this.makeToast();
+                return;
+            }
 
-            axios({
+            this.$axios({
                 method: 'post',
-                url: 'http://localhost:8080/api/user/signup',
+                url: '/user/signup',
                 data: {
                     email: this.email,
                     nickname: this.nickname,
                     password: this.password,
                 },
             }).then((res) => {
-                if (res.data.status) {
-                    console.log('signup success');
+                if (res.data.status === 'S-200') {
                     // 성공
-                } else if (res.data.data === 'nickname') {
-                    // 닉네임 중복
-                    console.log('nickname duplicate');
-                } else if (res.data.data === 'email') {
-                    // 이메일 중복
-                    console.log('email duplicate');
+                    this.msg = '가입에 성공했습니다! 인증 메일이 발송되었습니다. 메일로 인증 후 로그인하여 주세요.';
+                    this.makeToast();
                 }
-            }).catch(() => {
-                // 가입 실패
+            }).catch((error) => {
+                console.log(error.response);
             });
         },
+        makeToast(append = false) {
+            this.$bvToast.toast(`${this.msg}`, {
+                title: 'Notice',
+                toaster: 'b-toaster-top-center',
+                autoHideDelay: 5000,
+                appendToast: append,
+            });
+        }
     },
 };
 </script>

@@ -2,72 +2,101 @@
     <div>
         <h1>로그인</h1>
 
-        <div>
-            <input
-                id="email"
-                ref="email"
-                v-model="email"
-                type="text"
-                placeholder="아이디"
-            >
+        <div v-if="!isLogin">
+            <div>
+                <label for="email">아이디</label>
+                <input
+                    id="email"
+                    ref="email"
+                    v-model="email"
+                    type="text"
+                    placeholder="아이디"
+                >
+            </div>
+
+            <div>
+                <label for="password">비밀번호</label>
+                <input
+                    id="password"
+                    ref="password"
+                    v-model="password"
+                    type="password"
+                    placeholder="비밀번호"
+                >
+            </div>
+
+            <div>
+                <button @click.prevent="login">
+                    로그인
+                </button>
+            </div>
         </div>
 
-        <div>
-            <input
-                id="password"
-                ref="password"
-                v-model="password"
-                type="password"
-                placeholder="비밀번호"
-            >
-        </div>
-
-        <div>
-            <button @click="login">
-                로그인
+        <div v-else>
+            <button @click.prevent="logout">
+                로그아웃
             </button>
         </div>
     </div>
 </template>
 
 <script>
-import axios from 'axios';
-
 const storage = window.sessionStorage;
 
 export default {
     data: () => ({
         email: '',
         password: '',
+        isLogin: '',
+        msg: '',
     }),
+    created() {
+        if(storage.getItem('jwt-auth-token')){
+            this.isLogin = true;
+        } else {
+            this.isLogin = false;
+        }
+    },
     methods: {
         login() {
             // empty check
-            if (!this.email && this.password) {
-                // 입력 요청
+            if (!this.email || !this.password) {
+                this.msg = '아이디(이메일)와 비밀번호를 입력해주세요.';
+                this.makeToast();
+                return;
             }
 
             storage.setItem('jwt-auth-token', '');
             storage.setItem('login_user', '');
-            axios({
+            this.$axios({
                 method: 'post',
-                url: 'http://localhost:8080/api/user/login',
+                url: '/user/login',
                 data: {
                     email: this.email,
                     password: this.password,
                 },
             }).then((res) => {
-                if (res.data.status) {
-                    // 로그인 성공
-                    console.log('login success');
-                    storage.setItem('jwt-auth-token', res.headers['jwt-auth-token']);
-                    storage.setItem('login_user', res.data.object.uid);
-                } else {
-                    // 로그인 실패
-                    console.log('login fail');
-                }
-            }).catch(() => {
-                // 로그인 실패
+                console.log(res);
+                storage.setItem('jwt-auth-token', res.headers['jwt-auth-token']);
+                storage.setItem('login_user', res.data.data.uid);
+                this.isLogin = true;
+            }).catch((error) => {
+                console.log(error.response);
+            });
+        },
+        logout() {
+            storage.setItem('jwt-auth-token', '');
+            storage.setItem('login_user', '');
+            this.isLogin = false;
+            this.msg = '로그아웃 되었습니다.';
+            this.makeToast();
+        },
+        makeToast(append = false) {
+            this.$bvToast.toast(`${this.msg}`, {
+                title: 'Notice',
+                toaster: 'b-toaster-top-center',
+                autoHideDelay: 5000,
+                appendToast: append,
             });
         },
     },

@@ -8,6 +8,7 @@ import Blog from '@/views/Blog/Blog.vue';
 import UserDetail from '@/components/user/UserDetail.vue';
 import Signup from '@/components/user/Signup.vue';
 import Login from '@/components/user/Login.vue';
+import FindPassword from '@/components/user/FindPassword.vue';
 
 import Support from '@/views/Support.vue';
 import NoticeList from '@/components/NoticeList.vue';
@@ -47,6 +48,11 @@ const routes = [
         path: '/user/login',
         name: 'login',
         component: Login,
+    },
+    {
+        path: '/user/findpw',
+        name: 'findpw',
+        component: FindPassword,
     },
     {
         name: 'support',
