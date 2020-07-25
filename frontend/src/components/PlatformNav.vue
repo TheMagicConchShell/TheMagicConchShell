@@ -1,5 +1,6 @@
 <template>
     <div>
+        <div class="nav-bar-holder" />
         <b-navbar
             class="navbar sticky-top"
             toggleable="lg"
@@ -18,7 +19,9 @@
                 is-nav
             >
                 <b-navbar-nav>
-                    <b-nav-item href="#">
+                    <b-nav-item
+                        href="/support"
+                    >
                         공지사항
                     </b-nav-item>
                     <b-nav-item
@@ -84,15 +87,22 @@
 
 <script>
 export default {
-
+    
 };
 </script>
 
 <style scoped>
+.nav-bar-holder {
+    height: 30px;
+}
 .navbar {
     background-color: rgb(178, 87, 34);
     position: fixed;
     top: 0;
     width: 100%;
+}
+
+* {
+    border: 1px solid black !important;
 }
 </style>
