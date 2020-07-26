@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.blsa.ezilog.model.notice.Notice;
 
 public interface NoticeDao extends JpaRepository<Notice, Long> {
-    Page<Notice> findNoticeByWriter(String writer, Pageable request) throws Exception;
+    Page<Notice> findNoticeByWriter(String writer, Pageable request);
 
-    Notice getNoticeByNid(BigInteger id) throws Exception;
+    Notice getNoticeByNid(BigInteger id);
 }
