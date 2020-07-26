@@ -128,7 +128,7 @@ public class NoticeController {
             errorMap.put("data", null);
             eresult.errors = errorMap;
 
-            response = new ResponseEntity<>(eresult, HttpStatus.NO_CONTENT);
+            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
         }
 
         return response;
