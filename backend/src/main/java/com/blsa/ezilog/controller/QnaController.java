@@ -32,6 +32,8 @@ import com.blsa.ezilog.model.qna.AnswerUpdateRequest;
 import com.blsa.ezilog.model.qna.Question;
 import com.blsa.ezilog.model.qna.QuestionRequest;
 import com.blsa.ezilog.model.qna.QuestionUpdateRequest;
+import com.blsa.ezilog.model.user.User;
+import com.blsa.ezilog.service.UserService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -45,6 +47,9 @@ public class QnaController {
 
     @Autowired
     QuestionDao questionDao;
+    
+    @Autowired
+    UserService userservice;
 
     @PostMapping("/question")
     @ApiOperation(value = "질문 게시판 질문 생성", notes = "QnaQuestionRequest를 이용하여 질문 생성")
@@ -55,7 +60,6 @@ public class QnaController {
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-       
         
         LocalDateTime currentTime = LocalDateTime.now();
         Question qnaQ = new Question(qrequest.getTitle(), qrequest.getContent(), qrequest.getWriter(), currentTime);
