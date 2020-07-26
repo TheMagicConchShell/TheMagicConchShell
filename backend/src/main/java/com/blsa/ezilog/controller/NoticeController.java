@@ -196,7 +196,7 @@ public class NoticeController {
             eresult.status = "E-4205";
             eresult.message = "알수 없는 회원 입니다. 공지사항을 삭제 할 수 없습니다.";
             eresult.data = null;
-            errorMap.put("field", "creatNotice");
+            errorMap.put("field", "deleteNotice");
             errorMap.put("data", nickname);
             eresult.errors = errorMap;
 
@@ -205,7 +205,7 @@ public class NoticeController {
             eresult.status = "E-4206";
             eresult.message = "관리자 계정이 아닙니다. 공지사항을 삭제 할 수 없습니다.";
             eresult.data = null;
-            errorMap.put("field", "creatNotice");
+            errorMap.put("field", "deleteNotice");
             errorMap.put("data", nickname);
             eresult.errors = errorMap;
 
@@ -238,7 +238,7 @@ public class NoticeController {
             eresult.status = "E-4207";
             eresult.message = "알수 없는 회원 입니다. 공지사항을 수정 할 수 없습니다.";
             eresult.data = null;
-            errorMap.put("field", "creatNotice");
+            errorMap.put("field", "updateNotice");
             errorMap.put("data", nickname);
             eresult.errors = errorMap;
 
@@ -247,7 +247,7 @@ public class NoticeController {
             eresult.status = "E-4208";
             eresult.message = "관리자 계정이 아닙니다. 공지사항을 수정 할 수 없습니다.";
             eresult.data = null;
-            errorMap.put("field", "creatNotice");
+            errorMap.put("field", "updateNotice");
             errorMap.put("data", nickname);
             eresult.errors = errorMap;
 
