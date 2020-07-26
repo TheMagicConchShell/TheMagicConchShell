@@ -14,7 +14,6 @@ module.exports = {
         'plugin:vue/essential',
         'plugin:vue/strongly-recommended',
         'plugin:vue/recommended',
-        //'@vue/airbnb',
     ],
     rules: {
         'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
@@ -36,10 +35,6 @@ module.exports = {
         semi: [
             'error',
             'always',
-        ],
-        'linebreak-style': [
-            'error',
-            'windows',
         ],
     },
     settings: {
