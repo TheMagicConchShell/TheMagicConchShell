@@ -9,6 +9,7 @@ import UserDetail from '@/components/user/UserDetail.vue';
 import Signup from '@/components/user/Signup.vue';
 import Login from '@/components/user/Login.vue';
 import FindPassword from '@/components/user/FindPassword.vue';
+import EmailAuth from '@/components/user/EmailAuthentication.vue';
 
 import Support from '@/views/support/Support.vue';
 import NoticeView from '@/views/support/notice/NoticeView.vue';
@@ -58,6 +59,11 @@ const routes = [
         path: '/user/findpw',
         name: 'findpw',
         component: FindPassword,
+    },
+    {
+        path: '/user/authentication',
+        name: 'emailauth',
+        component: EmailAuth,
     },
     {
         name: 'support',
