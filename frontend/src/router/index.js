@@ -34,11 +34,11 @@ const routes = [
         name: 'Open',
         component: Open,
     },
-    // 블로그
+    // 게시판
     {
-        path: '/blog',
-        name: 'Blog',
-        component: Blog,
+        path: '/board',
+        name: 'List',
+        component: List,
     },
     {
         path: '/user/detail',

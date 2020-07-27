@@ -10,10 +10,12 @@ import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import InfiniteLoading from 'vue-infinite-loading';
+import VueCarousel from 'vue-carousel';
 
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 Vue.use(InfiniteLoading);
+Vue.use(VueCarousel);
 
 Vue.component('paginate', Paginate);
 

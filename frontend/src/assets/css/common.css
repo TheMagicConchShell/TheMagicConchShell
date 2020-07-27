@@ -15,7 +15,7 @@
 }
 
 #content {
-    margin-top: 150px;
+    margin: 150px 10px;
 }
 #photo {
     height: 100px;
@@ -42,13 +42,16 @@
     background-color: #9C8F96;
     border: 0;
 }
+
 input {
     width: 100%;
     border: 1px solid #b6b6b6;
     border-radius: 5px;
     margin: 10px 0;
 }
-
+li {
+    list-style: none;
+}
 
 #title {
     font-size: 50px;
