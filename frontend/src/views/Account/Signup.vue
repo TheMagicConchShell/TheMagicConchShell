@@ -220,7 +220,7 @@ export default {
 
             if (!isValid) {
                 this.msg = '모든 항목을 형식에 맞게 입력해주세요.';
-                this.makeToast();
+                this.$bvToast.toast(this.msg);
                 return;
             }
 
@@ -236,20 +236,12 @@ export default {
                 if (res.data.status === 'S-200') {
                     // 성공
                     this.msg = '가입에 성공했습니다! 인증 메일이 발송되었습니다. 메일로 인증 후 로그인하여 주세요.';
-                    this.makeToast();
+                    this.$bvToast.toast(this.msg);
                 }
             }).catch((error) => {
                 console.log(error.response);
             });
         },
-        makeToast(append = false) {
-            this.$bvToast.toast(`${this.msg}`, {
-                title: 'Notice',
-                toaster: 'b-toaster-top-center',
-                autoHideDelay: 5000,
-                appendToast: append,
-            });
-        }
     },
 };
 </script>

@@ -81,7 +81,7 @@ export default {
             // empty check
             if (!this.email || !this.password) {
                 this.msg = '아이디(이메일)와 비밀번호를 입력해주세요.';
-                this.makeToast();
+                this.$bvToast.toast(this.msg);
                 return;
             }
 
@@ -106,14 +106,6 @@ export default {
         },
         onClickLoginSuccess() {
             this.$refs.loginCloseBtn.click();
-        },
-        makeToast(append = false) {
-            this.$bvToast.toast(`${this.msg}`, {
-                title: 'Notice',
-                toaster: 'b-toaster-top-center',
-                autoHideDelay: 5000,
-                appendToast: append,
-            });
         },
     },
 };

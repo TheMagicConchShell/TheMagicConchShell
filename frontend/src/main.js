@@ -41,13 +41,8 @@ Vue.prototype.$axios.interceptors.response.use(
             // });
         }
 
-        const message = error.response.data.message;
-        const vm = new Vue();
-        vm.$bvToast.toast(`${message}`, {
-            title: `Error ${error.response.status} (${error.response.data.status})`,
-            toaster: 'b-toaster-top-center',
-            autoHideDelay: 5000,
-        });
+        let message = error.response.data.message;
+        vm.$bvToast.toast(`${message}`);
 
         return Promise.reject(error);
     },

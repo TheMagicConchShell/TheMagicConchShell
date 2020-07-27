@@ -239,7 +239,7 @@ export default {
 
             if (!isValid) {
                 this.msg = '필수 항목을 모두 입력해주세요.';
-                this.makeToast();
+                this.$bvToast.toast(this.msg);
                 return;
             }
 
@@ -256,7 +256,7 @@ export default {
             }).then((res) => {
                 if (res.data.status === 'S-200') {
                     this.msg = '수정 완료되었습니다.';
-                    this.makeToast();
+                    this.$bvToast.toast(this.msg);
                 }
             }).catch((error) => {
                 console.log(error.response);
@@ -270,18 +270,10 @@ export default {
                 if (res.data.status === 'S-200') {
                     // 삭제 성공
                     this.msg = '정상적으로 탈퇴 처리되었습니다.';
-                    this.makeToast();
+                    this.$bvToast.toast(this.msg);
                 }
             }).catch((error) => {
                 console.log(error.response);
-            });
-        },
-        makeToast(append = false) {
-            this.$bvToast.toast(`${this.msg}`, {
-                title: 'Notice',
-                toaster: 'b-toaster-top-center',
-                autoHideDelay: 5000,
-                appendToast: append,
             });
         },
         onClickImageUpload() {
