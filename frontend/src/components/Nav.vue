@@ -94,18 +94,23 @@
                         <template v-slot:button-content>
                             <em>User</em>
                         </template>
-                        <b-dropdown-item href="#">
-                            Profile
-                        </b-dropdown-item>
-                        <b-dropdown-item href="#">
-                            Sign Out
-                        </b-dropdown-item>
-                        <b-dropdown-item v-b-modal.signin>
-                            <Signin />
-                        </b-dropdown-item>
-                        <b-dropdown-item v-b-modal.login>
-                            <Login />
-                        </b-dropdown-item>
+                        <div v-if="isLogin">
+                            <b-dropdown-item v-b-modal.userdetail>
+                                <UserDetail />
+                            </b-dropdown-item>
+                            <b-dropdown-item @click="logout">
+                                Log out
+                            </b-dropdown-item>
+                        </div>
+
+                        <div v-else>
+                            <b-dropdown-item v-b-modal.signup>
+                                <Signup />
+                            </b-dropdown-item>
+                            <b-dropdown-item v-b-modal.login>
+                                <Login />
+                            </b-dropdown-item>
+                        </div>
                     </b-nav-item-dropdown>
                 </b-navbar-nav>
             </b-collapse>
@@ -121,16 +126,49 @@
 </template>
 
 <script>
-import Signin from '../views/Account/Signin.vue';
+import Signup from '../views/Account/Signup.vue';
 import Login from '../views/Account/Login.vue';
+import UserDetail from '../views/Account/UserDetail.vue';
+
+const storage = window.sessionStorage;
 
 export default {
     name: 'Nav',
     components: {
-        Signin,
+        Signup,
         Login,
+        UserDetail,
     },
-
+    data: () => ({
+        isLogin: '',
+    }),
+    created() {
+        this.init();
+    },
+    methods: {
+        init() {
+            if(storage.getItem('jwt-auth-token')){
+                this.isLogin = true;
+            } else {
+                this.isLogin = false;
+            }
+        },
+        logout() {
+            storage.setItem('jwt-auth-token', '');
+            storage.setItem('login_user', '');
+            this.isLogin = false;
+            this.msg = '로그아웃 되었습니다.';
+            this.makeToast();
+        },
+        makeToast(append = false) {
+            this.$bvToast.toast(`${this.msg}`, {
+                title: 'Notice',
+                toaster: 'b-toaster-top-center',
+                autoHideDelay: 5000,
+                appendToast: append,
+            });
+        },
+    },
 };
 </script>
 

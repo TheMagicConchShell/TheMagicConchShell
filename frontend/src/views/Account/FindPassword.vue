@@ -1,34 +1,36 @@
 <template>
     <div>
-        <h1>비밀번호 찾기</h1>
+        <b-modal
+            id="findpw"
+            title="비밀번호 찾기"
+            hide-footer
+        >
+            <div>
+                <input
+                    id="email"
+                    ref="email"
+                    v-model="email"
+                    type="text"
+                    placeholder="아이디"
+                >
+            </div>
 
-        <div>
-            <label for="email">이메일</label>
-            <input
-                id="email"
-                ref="email"
-                v-model="email"
-                type="text"
-                placeholder="아이디"
-            >
-        </div>
+            <div>
+                <input
+                    id="nickname"
+                    ref="nickname"
+                    v-model="nickname"
+                    type="text"
+                    placeholder="닉네임"
+                >
+            </div>
 
-        <div>
-            <label for="nickname">닉네임</label>
-            <input
-                id="nickname"
-                ref="nickname"
-                v-model="nickname"
-                type="text"
-                placeholder="닉네임"
-            >
-        </div>
-
-        <div>
-            <button @click="findPassword">
-                비밀번호 찾기 (이메일 전송)
-            </button>
-        </div>
+            <div>
+                <b-button @click="findPassword">
+                    비밀번호 찾기 (이메일 전송)
+                </b-button>
+            </div>
+        </b-modal>
     </div>
 </template>
 
