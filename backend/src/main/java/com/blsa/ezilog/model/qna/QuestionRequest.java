@@ -1,4 +1,4 @@
-package com.blsa.ezilog.model.notice;
+package com.blsa.ezilog.model.qna;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -8,34 +8,25 @@ import lombok.ToString;
 
 @Valid
 @ToString
-public class NoticeCreateRequest {
+public class QuestionRequest {
     @ApiModelProperty(required = true)
     @NotNull
     String title;
-
+    
+    @ApiModelProperty(required = true)
+    @NotNull
+    String content;
+    
     @ApiModelProperty(required = true)
     @NotNull
     String writer;
 
-    @ApiModelProperty(required = true)
-    @NotNull
-    String content;
-
-    
     public String getTitle() {
         return title;
     }
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getWriter() {
-        return writer;
-    }
-
-    public void setWriter(String writer) {
-        this.writer = writer;
     }
 
     public String getContent() {
@@ -46,4 +37,12 @@ public class NoticeCreateRequest {
         this.content = content;
     }
 
+    public String getWriter() {
+        return writer;
+    }
+
+    public void setWriter(String writer) {
+        this.writer = writer;
+    }
+    
 }

@@ -1,7 +1,10 @@
 package com.blsa.ezilog.controller;
 
+import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,20 +13,27 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.blsa.ezilog.dao.QnaAnswerDao;
-import com.blsa.ezilog.dao.QnaQuestionDao;
+import com.blsa.ezilog.dao.AnswerDao;
+import com.blsa.ezilog.dao.QuestionDao;
 import com.blsa.ezilog.model.BasicResponse;
 import com.blsa.ezilog.model.ErrorResponse;
-import com.blsa.ezilog.model.notice.Notice;
-import com.blsa.ezilog.model.qna.QnaQuestion;
-import com.blsa.ezilog.model.qna.QnaQuestionRequest;
+import com.blsa.ezilog.model.qna.Answer;
+import com.blsa.ezilog.model.qna.AnswerRequest;
+import com.blsa.ezilog.model.qna.AnswerUpdateRequest;
+import com.blsa.ezilog.model.qna.Question;
+import com.blsa.ezilog.model.qna.QuestionRequest;
+import com.blsa.ezilog.model.qna.QuestionUpdateRequest;
+import com.blsa.ezilog.model.user.User;
+import com.blsa.ezilog.service.UserService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -31,85 +41,344 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/qna")
 public class QnaController {
+
+    @Autowired
+    AnswerDao answerDao;
+
+    @Autowired
+    QuestionDao questionDao;
     
     @Autowired
-    QnaAnswerDao answerDao;
-    
-    @Autowired
-    QnaQuestionDao questionDao;
-    
+    UserService userservice;
+
     @PostMapping("/question")
-    @ApiOperation(value ="질문 게시판 질문 생성", notes="QnaQuestionRequest를 이용하여 질문 생성")
-    public Object createQuestion(@RequestBody QnaQuestionRequest qrequest) {
+    @ApiOperation(value = "질문 게시판 질문 생성", notes = "QnaQuestionRequest를 이용하여 질문 생성")
+    public Object createQuestion(@RequestBody QuestionRequest qrequest) {
         ResponseEntity response = null;
-        
+
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
+
         
-        try {
-            QnaQuestion qnaQ = new QnaQuestion(qrequest.getTitle(), qrequest.getContent(), qrequest.getWriter());
-            
-            questionDao.save(qnaQ);
+        LocalDateTime currentTime = LocalDateTime.now();
+        Question qnaQ = new Question(qrequest.getTitle(), qrequest.getContent(), qrequest.getWriter(), currentTime);
+
+        questionDao.save(qnaQ);
+        result.status = "S-200";
+        result.message = "성공적으로 Qna 질문 작성 완료";
+        result.data = null;
+
+        response = new ResponseEntity<>(result, HttpStatus.OK);
+
+        return response;
+
+    }
+
+    @PostMapping("/answer")
+    @ApiOperation(value = "질문 게시판 답변 생성", notes = "AnswerRequest를 이용하여 질문 생성")
+    public Object createAnswer(@RequestBody AnswerRequest qrequest) {
+        ResponseEntity response = null;
+
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
+
+        Optional<Question> questionOpt = questionDao.getQuestionByNo(qrequest.getQid());
+
+        if (questionOpt.isPresent()) {
+            LocalDateTime currentTime = LocalDateTime.now();
+
+            Answer qnaQ = new Answer(qrequest.getContent(), qrequest.getWriter(), qrequest.getQid(), currentTime);
+
+            answerDao.save(qnaQ);
             result.status = "S-200";
-            result.message = "성공적으로 Qna 질문 작성 완료";
+            result.message = "성공적으로  질문 답변 작성 완료";
             result.data = null;
-            
+
             response = new ResponseEntity<>(result, HttpStatus.OK);
-            
-        }catch(Exception e) {
-            
+        }
+
+        else {
             eresult.status = "E-4300";
-            eresult.message = "서버 내부 오류로 인해 Qna 질문 생성 실패.";
+            eresult.message = "답변 작성을 위한 질문이  없습니다.";
             eresult.data = null;
-            errorMap.put("field", "createQna");
-            errorMap.put("data", e.getMessage());
+            errorMap.put("field", "questionEmpty");
+            errorMap.put("data", null);
             eresult.errors = errorMap;
 
-            response = new ResponseEntity<>(eresult, HttpStatus.INTERNAL_SERVER_ERROR);
-            
+            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
         }
-        
+
         return response;
-        
+
     }
-    
+
     @GetMapping("/question")
-    @ApiOperation(value="질문 게시판 글 목록 불러오기", notes="Input : Page 번호 Output: page에 맞는 10개의 질문 글")
+    @ApiOperation(value = "질문 게시판 글 목록 불러오기", notes = "Input : Page 번호 Output: page에 맞는 10개의 질문 글")
     public Object retrieveQuestion(@RequestParam int page) {
         ResponseEntity response = null;
-        
-        PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.ASC, "qid");
-        
+
+        PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.ASC, "no");
+
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
-        
-        try {
-            
-            Page<QnaQuestion> qList = questionDao.findAll(pageable);
-            if (!qList.isEmpty()) {
-                result.status = "S-200";
-                result.message = "공지사항 목록 불러오기에 성공했습니다.";
-                result.data = qList;
-                response = new ResponseEntity<>(result, HttpStatus.OK);
-            } else {
-                eresult.status = "S-204";
-                eresult.message = "불러 올 공지사항이  없습니다.";
-                eresult.data = null;
-                errorMap.put("field", "noticeEmpty");
-                errorMap.put("data", page);
-                eresult.errors = errorMap;
 
-                response = new ResponseEntity<>(eresult, HttpStatus.NO_CONTENT);
-            }
-            
-        }catch(Exception e) {
-            
+        Page<Question> qList = questionDao.findAll(pageable);
+        if (!qList.isEmpty()) {
+            result.status = "S-200";
+            result.message = "질문 목록 불러오기에 성공했습니다.";
+            result.data = qList;
+            response = new ResponseEntity<>(result, HttpStatus.OK);
+        } else {
+            eresult.status = "E-4301";
+            eresult.message = "불러 올 질문 목록이  없습니다.";
+            eresult.data = null;
+            errorMap.put("field", "questionEmpty");
+            errorMap.put("data", page);
+            eresult.errors = errorMap;
+
+            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
         }
-        
-        
-        
+
         return response;
     }
+
+    @GetMapping("/question/writer")
+    @ApiOperation(value = "질문 게시판 글 목록 불러오기", notes = "Input : Page 번호, 작성자, Output: page에 맞는 10개의 질문 글")
+    public Object retrieveQuestionByWriter(@RequestParam int page, @RequestParam String writer) {
+        ResponseEntity response = null;
+
+        PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.ASC, "no");
+
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
+
+        Page<Question> qList = questionDao.findQuestionByWriter(writer, pageable);
+        if (!qList.isEmpty()) {
+            result.status = "S-200";
+            result.message = "질문 목록 불러오기에 성공했습니다.";
+            result.data = qList;
+            response = new ResponseEntity<>(result, HttpStatus.OK);
+        } else {
+            eresult.status = "E-4302";
+            eresult.message = "해당 작성자가 작성한 질문들이  없습니다.";
+            eresult.data = null;
+            errorMap.put("field", "questionEmpty");
+            errorMap.put("data", page);
+            eresult.errors = errorMap;
+
+            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+        }
+
+        return response;
+    }
+
+    @GetMapping("/question/title")
+    @ApiOperation(value = "질문 게시판 글 목록 불러오기", notes = "Input : Page 번호, 제목 Output: page에 맞는 10개의 질문 글")
+    public Object retrieveQuestionByTitle(@RequestParam int page, @RequestParam String title) {
+        ResponseEntity response = null;
+
+        PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.ASC, "no");
+
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
+
+        Page<Question> qList = questionDao.findQuestionByTitleLike(title, pageable);
+        if (!qList.isEmpty()) {
+            result.status = "S-200";
+            result.message = "질문 목록 불러오기에 성공했습니다.";
+            result.data = qList;
+            response = new ResponseEntity<>(result, HttpStatus.OK);
+        } else {
+            eresult.status = "E-4303";
+            eresult.message = "해당 제목을 가진 질문들이  없습니다.";
+            eresult.data = null;
+            errorMap.put("field", "questionEmpty");
+            errorMap.put("data", page);
+            eresult.errors = errorMap;
+
+            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+        }
+
+        return response;
+    }
+
+    @GetMapping("/answer")
+    @ApiOperation(value = "질문에 달아둔 답변들 가져오기", notes = "Input : 질문 번호, page, Output : 답변 목록")
+    public Object retrieveAnswer(@RequestParam int page, @RequestParam BigInteger no) {
+        ResponseEntity response = null;
+
+        PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.ASC, "no");
+
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
+
+        Page<Question> qList = questionDao.findAll(pageable);
+        if (!qList.isEmpty()) {
+            result.status = "S-200";
+            result.message = "답변 목록 불러오기에 성공했습니다.";
+            result.data = qList;
+            response = new ResponseEntity<>(result, HttpStatus.OK);
+        } else {
+            eresult.status = "E-4304";
+            eresult.message = "해당 질문에 대한 답변이  없습니다.";
+            eresult.data = null;
+            errorMap.put("field", "answerEmpty");
+            errorMap.put("data", page);
+            eresult.errors = errorMap;
+
+            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+        }
+
+        return response;
+    }
+
+    @PutMapping("/qeustion/update")
+    @ApiOperation(value = "질문 글 수정", notes = "Input : 수정 QuestionUpdateRequest, Output : 성공 여부 메세지")
+    public Object updateQuestion(@RequestBody QuestionUpdateRequest uprequest) {
+        ResponseEntity response = null;
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
+
+        Optional<Question> qtemp = questionDao.getQuestionByNo(uprequest.getNo());
+
+        if (qtemp.isPresent()) {
+            Question temp = qtemp.get();
+
+            temp.setTitle(uprequest.getTitle());
+            temp.setContent(uprequest.getContent());
+            questionDao.save(temp);
+
+            result.status = "S-200";
+            result.message = "질문 사항 수정 완료";
+            result.data = null;
+
+            response = new ResponseEntity<>(result, HttpStatus.OK);
+
+        } else {
+            eresult.status = "E-4305";
+            eresult.message = "수정을 하기 위한 해당 질문이  없습니다.";
+            eresult.data = null;
+            errorMap.put("field", "questionEmpty");
+            errorMap.put("data", null);
+            eresult.errors = errorMap;
+
+            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+        }
+
+        return response;
+    }
+
+    @PutMapping("/answer/update")
+    @ApiOperation(value = "답변 수정", notes = "Input : 수정 answerUpdateRequest, Output : 성공 여부 메세지")
+    public Object updateAnswer(@RequestBody AnswerUpdateRequest uprequest) {
+        ResponseEntity response = null;
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
+
+        Optional<Answer> atemp = answerDao.getQnaAnswerByNo(uprequest.getNo());
+
+        if (atemp.isPresent()) {
+            Answer temp = atemp.get();
+
+            temp.setContent(uprequest.getContent());
+            answerDao.save(temp);
+
+            result.status = "S-200";
+            result.message = "답변 사항 수정 완료";
+            result.data = null;
+
+            response = new ResponseEntity<>(result, HttpStatus.OK);
+
+        } else {
+            eresult.status = "E-4306";
+            eresult.message = "수정 답변에 해당하는 질문이  없습니다.";
+            eresult.data = null;
+            errorMap.put("field", "answerEmpty");
+            errorMap.put("data", null);
+            eresult.errors = errorMap;
+
+            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+        }
+
+        return response;
+    }
+
+    @DeleteMapping("/qeuestion")
+    @ApiOperation(value = "질문 삭제 삭제", notes = "Input : 해당 질문 no를 받아서 삭제")
+    public Object deleteQuestion(@RequestParam BigInteger no) {
+
+        ResponseEntity response = null;
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
+
+        Optional<Question> questionOpt = questionDao.getQuestionByNo(no);
+
+        if (questionOpt.isPresent()) {
+
+            Question temp = questionOpt.get();
+            questionDao.delete(temp);
+
+            result.status = "S-200";
+            result.message = "질문 삭제 삭제 완료";
+            result.data = null;
+            response = new ResponseEntity<>(result, HttpStatus.OK);
+        } else {
+
+            eresult.status = "E-4307";
+            eresult.message = "삭제 할 질문이  없습니다.";
+            eresult.data = null;
+            errorMap.put("field", "questionEmpty");
+            errorMap.put("data", null);
+            eresult.errors = errorMap;
+
+            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+        }
+
+        return response;
+    }
+
+    @DeleteMapping("/answer")
+    @ApiOperation(value = "답변 삭제 삭제", notes = "Input : 해당 답변 no를 받아서 삭제")
+    public Object deleteAnswer(@RequestParam BigInteger no) {
+
+        ResponseEntity response = null;
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
+
+        Optional<Answer> answerOpt = answerDao.getQnaAnswerByNo(no);
+
+        if (answerOpt.isPresent()) {
+
+            Answer temp = answerOpt.get();
+            answerDao.delete(temp);
+
+            result.status = "S-200";
+            result.message = "답변 삭제 삭제 완료";
+            result.data = null;
+            response = new ResponseEntity<>(result, HttpStatus.OK);
+        } else {
+
+            eresult.status = "E-4308";
+            eresult.message = "삭제할 답변이  없습니다.";
+            eresult.data = null;
+            errorMap.put("field", "questionEmpty");
+            errorMap.put("data", null);
+            eresult.errors = errorMap;
+
+            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+        }
+
+        return response;
+    }
+
 }

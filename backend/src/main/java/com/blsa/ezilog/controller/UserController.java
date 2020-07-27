@@ -69,13 +69,13 @@ public class UserController {
             errors.put("data", request.getEmail());
             final ErrorResponse result = setErrors("E-4001", "이미 존재하는 이메일 입니다.", errors);
 
-            response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+            response = new ResponseEntity<>(result, HttpStatus.CONFLICT);
         } else if (check.equals("nickname") || authTableCheck.equals("nickname")) {
             errors.put("field", "nickname");
             errors.put("data", request.getNickname());
             final ErrorResponse result = setErrors("E-4001", "이미 존재하는 별명 입니다.", errors);
 
-            response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+            response = new ResponseEntity<>(result, HttpStatus.CONFLICT);
         } else {
             String token = mailSendService.getKey(false, 20);
 
@@ -87,13 +87,13 @@ public class UserController {
 
                 final ErrorResponse result = setErrors("E-4007", "메일 발송에 실패했습니다.", errors);
 
-                return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>(result, HttpStatus.CONFLICT);
             }
             final BasicResponse result = new BasicResponse();
 
             result.status = "S-200";
             result.message = "회원가입에 성공했습니다.";
-            response = new ResponseEntity<>(result, HttpStatus.OK);
+            response = new ResponseEntity<>(result, HttpStatus.CREATED);
         }
 
         return response;
@@ -114,7 +114,7 @@ public class UserController {
             errors.put("field", "email");
             errors.put("data", request);
             final ErrorResponse result = setErrors("E-4002", "존재하지 않는 이메일 입니다.", errors);
-            response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+            response = new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
         } else {
             String token = jwtService.create((User) u);
             res.setHeader("jwt-auth-token", token);
@@ -122,7 +122,7 @@ public class UserController {
             result.status = "S-200";
             result.message = "로그인에 성공했습니다.";
             result.data = u;
-            response = new ResponseEntity<>(result, HttpStatus.ACCEPTED);
+            response = new ResponseEntity<>(result, HttpStatus.OK);
         }
         return response;
     }
@@ -140,14 +140,14 @@ public class UserController {
             errors.put("field", "nickname");
             errors.put("data", request.getNickname());
             final ErrorResponse result = setErrors("E-4001", "이미 존재하는 별명 입니다.", errors);
-            response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+            response = new ResponseEntity<>(result, HttpStatus.CONFLICT);
 
         } else {
             final BasicResponse result = new BasicResponse();
             userService.update(request);
             result.status = "S-200";
             result.message = "회원 정보 수정이 완료되었습니다.";
-            response = new ResponseEntity<>(result, HttpStatus.OK);
+            response = new ResponseEntity<>(result, HttpStatus.CREATED);
         }
         return response;
     }
@@ -162,13 +162,13 @@ public class UserController {
             errors.put("field", "uid");
             errors.put("data", uid);
             final ErrorResponse result = setErrors("E-4005", "번호에 해당하는 유저가 존재하지 않습니다.", errors);
-            response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+            response = new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
         } else {
             final BasicResponse result = new BasicResponse();
             result.status = "S-200";
             result.message = "회원 정보 조회에 성공했습니다.";
             result.data = user;
-            response = new ResponseEntity<>(result, HttpStatus.ACCEPTED);
+            response = new ResponseEntity<>(result, HttpStatus.OK);
         }
         return response;
     }
@@ -183,13 +183,13 @@ public class UserController {
             errors.put("field", "uid");
             errors.put("data", uid);
             final ErrorResponse result = setErrors("E-4005", "번호에 해당하는 유저가 존재하지 않습니다.", errors);
-            response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+            response = new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
         } else {
             userService.withdraw(uid);
             final BasicResponse result = new BasicResponse();
             result.status = "S-200";
             result.message = "회원 탈퇴에 성공했습니다.";
-            response = new ResponseEntity<>(result, HttpStatus.ACCEPTED);
+            response = new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
         }
         return response;
     }
@@ -204,12 +204,12 @@ public class UserController {
             errors.put("field", "token");
             errors.put("data", token);
             final ErrorResponse result = setErrors("E-4008", "이메일 인증에 실패했습니다.", errors);
-            response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+            response = new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
         } else {
             final BasicResponse result = new BasicResponse();
             result.status = "S-200";
             result.message = "이메일 인증에 성공했습니다.";
-            response = new ResponseEntity<>(result, HttpStatus.ACCEPTED);
+            response = new ResponseEntity<>(result, HttpStatus.OK);
         }
         return response;
     }
@@ -223,7 +223,7 @@ public class UserController {
         if (pw.equals("email")) {
             errors.put("data", email);
             final ErrorResponse result = setErrors("E-4002", "존재하지 않는 이메일 입니다.", errors);
-            response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+            response = new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
         } else if (pw.equals("nickname")) {
             errors.put("field", "nickname");
             errors.put("data", nickname);
@@ -235,7 +235,7 @@ public class UserController {
             } catch (MessagingException e) {
                 errors.put("field", "sendMail");
                 final ErrorResponse result = setErrors("E-4007", "메일 발송에 실패했습니다.", errors);
-                return new ResponseEntity<>(result, HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>(result, HttpStatus.CONFLICT);
             }
             final BasicResponse result = new BasicResponse();
             result.status = "S-200";

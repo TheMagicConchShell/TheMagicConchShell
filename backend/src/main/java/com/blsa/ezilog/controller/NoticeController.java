@@ -1,6 +1,7 @@
 package com.blsa.ezilog.controller;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,35 +50,23 @@ public class NoticeController {
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        try {
-            Page<Notice> sList = noticeDao.findAll(pageable);
-            if (!sList.isEmpty()) {
-                result.status = "S-200";
-                result.message = "공지사항 목록 불러오기에 성공했습니다.";
-                result.data = sList;
-                response = new ResponseEntity<>(result, HttpStatus.OK);
-            } else {
-                eresult.status = "S-204";
-                eresult.message = "불러 올 공지사항이  없습니다.";
-                eresult.data = null;
-                errorMap.put("field", "noticeEmpty");
-                errorMap.put("data", page);
-                eresult.errors = errorMap;
-
-                response = new ResponseEntity<>(eresult, HttpStatus.NO_CONTENT);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        Page<Notice> sList = noticeDao.findAll(pageable);
+        if (!sList.isEmpty()) {
+            result.status = "S-200";
+            result.message = "공지사항 목록 불러오기에 성공했습니다.";
+            result.data = sList;
+            response = new ResponseEntity<>(result, HttpStatus.OK);
+        } else {
             eresult.status = "E-4200";
-            eresult.message = "서버 내부 오류로 인해 공지사항 목록 불러오기 실패.";
+            eresult.message = "불러 올 공지사항이  없습니다.";
             eresult.data = null;
-            errorMap.put("field", "getNotice");
-            errorMap.put("data", e.getMessage());
+            errorMap.put("field", "noticeEmpty");
+            errorMap.put("data", page);
             eresult.errors = errorMap;
 
-            response = new ResponseEntity<>(eresult, HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>(eresult, HttpStatus.NO_CONTENT);
         }
+
         return response;
 
     }
@@ -93,35 +82,24 @@ public class NoticeController {
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        try {
-            Page<Notice> nList = noticeDao.findNoticeByWriter(writer, pageable);
+        Page<Notice> nList = noticeDao.findNoticeByWriter(writer, pageable);
 
-            if (!nList.isEmpty()) {
-                result.status = "S-200";
-                result.message = "작성자를 이용하여 공지사항 목록들 가져오기 성공";
-                result.data = nList;
-                response = new ResponseEntity<>(result, HttpStatus.OK);
-            } else {
-                eresult.status = "S-204";
-                eresult.message = "불러 올 공지사항이  없습니다.";
-                eresult.data = null;
-                errorMap.put("field", "noticeEmpty");
-                errorMap.put("data", page);
-                eresult.errors = errorMap;
-
-                response = new ResponseEntity<>(eresult, HttpStatus.NO_CONTENT);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (!nList.isEmpty()) {
+            result.status = "S-200";
+            result.message = "작성자를 이용하여 공지사항 목록들 가져오기 성공";
+            result.data = nList;
+            response = new ResponseEntity<>(result, HttpStatus.OK);
+        } else {
             eresult.status = "E-4201";
-            eresult.message = "서버 내부 오류에 의해 작성자를 이용한 공지사항 목록 가져오기 실패";
+            eresult.message = "불러 올 공지사항이  없습니다.";
             eresult.data = null;
+            errorMap.put("field", "noticeEmpty");
+            errorMap.put("data", page);
+            eresult.errors = errorMap;
 
-            errorMap.put("field", "getNoticeByWriter");
-            errorMap.put("data", e.getMessage());
-            response = new ResponseEntity<>(eresult, HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
         }
+
         return response;
     }
 
@@ -134,80 +112,79 @@ public class NoticeController {
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        try {
-            Notice notice = noticeDao.getNoticeByNid(id);
+        Notice notice = noticeDao.getNoticeByNid(id);
 
-            if (notice != null) {
+        if (notice != null) {
 
-                result.status = "S-200";
-                result.message = "공지 ID를 이용하여 공지사항 가져오기 성공";
-                result.data = notice;
-                response = new ResponseEntity<>(result, HttpStatus.OK);
-            }else {
-                eresult.status = "S-204";
-                eresult.message = "불러 올 공지사항이  없습니다.";
-                eresult.data = null;
-                errorMap.put("field", "noNotice");
-                errorMap.put("data", null);
-                eresult.errors = errorMap;
-
-                response = new ResponseEntity<>(eresult, HttpStatus.NO_CONTENT);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            eresult.status = "E-4202";
-            eresult.message = "서버 내부 오류로 인해 ID를 이용한 공지사항 가져오기 실패";
+            result.status = "S-200";
+            result.message = "공지 ID를 이용하여 공지사항 가져오기 성공";
+            result.data = notice;
+            response = new ResponseEntity<>(result, HttpStatus.OK);
+        } else {
+            eresult.status = "S-4202";
+            eresult.message = "불러 올 공지사항이  없습니다.";
             eresult.data = null;
+            errorMap.put("field", "noNotice");
+            errorMap.put("data", null);
+            eresult.errors = errorMap;
 
-            errorMap.put("field", "getNoticeById");
-            errorMap.put("data", e.getMessage());
-            response = new ResponseEntity<>(eresult, HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
         }
+
         return response;
 
     }
 
     @ApiOperation(value = "공지사항 작성", notes = "Input: (제목, 내용, 작성자) OutPut: 성공(status = true, data= sucess), 실패(status=false, data=오류 디버그 메세지)", response = List.class)
     @PostMapping
-    public Object insertNotice(@RequestBody NoticeCreateRequest notice) {
+    public Object insertNotice(@RequestBody NoticeCreateRequest notice, @RequestBody String nickname) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        try {
-            Notice temp = new Notice(notice.getTitle(), notice.getContent(), notice.getWriter());
+        if (nickname == "admin") {
+            LocalDateTime currentTime = LocalDateTime.now();
+            Notice temp = new Notice(notice.getTitle(), notice.getContent(), notice.getWriter(), currentTime);
             noticeDao.save(temp);
             result.status = "S-200";
             result.message = "공지사항 작성에 성공했습니다.";
             result.data = null;
             response = new ResponseEntity<>(result, HttpStatus.OK);
 
-        } catch (Exception e) {
+        } else if (nickname == null) {
             eresult.status = "E-4203";
-            eresult.message = "서버 내부 오류로 인해 공지사항 작성 실패.";
+            eresult.message = "알 수 없는 회원 입니다. 공지사항을 작성 할 수 없습니다.";
             eresult.data = null;
             errorMap.put("field", "creatNotice");
-            errorMap.put("data", e.getMessage());
+            errorMap.put("data", nickname);
             eresult.errors = errorMap;
 
-            response = new ResponseEntity<>(eresult, HttpStatus.INTERNAL_SERVER_ERROR);
+            response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
+        } else {
+            eresult.status = "E-4204";
+            eresult.message = "관리자 계정이 아닙니다. 공지사항을 작성 할 수 없습니다.";
+            eresult.data = null;
+            errorMap.put("field", "creatNotice");
+            errorMap.put("data", nickname);
+            eresult.errors = errorMap;
+
+            response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
         }
         return response;
     }
 
     @ApiOperation(value = "공지사항 삭제", response = List.class)
     @DeleteMapping
-    public Object deleteNotice(@RequestParam BigInteger nid) {
+    public Object deleteNotice(@RequestParam BigInteger nid, @RequestParam String nickname) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        try {
+        if (nickname == "admin") {
             Notice temp = noticeDao.getNoticeByNid(nid);
             noticeDao.delete(temp);
 
@@ -215,27 +192,37 @@ public class NoticeController {
             result.message = "공지사항 삭제 완료";
             result.data = null;
             response = new ResponseEntity<>(result, HttpStatus.OK);
-        } catch (Exception e) {
-            eresult.status = "E-4204";
-            eresult.message = "서버 내부 오류로 인해 공지사항 삭제 실패";
+        } else if (nickname == null) {
+            eresult.status = "E-4205";
+            eresult.message = "알수 없는 회원 입니다. 공지사항을 삭제 할 수 없습니다.";
             eresult.data = null;
-
             errorMap.put("field", "deleteNotice");
-            errorMap.put("data", nid);
-            response = new ResponseEntity<>(eresult, HttpStatus.INTERNAL_SERVER_ERROR);
+            errorMap.put("data", nickname);
+            eresult.errors = errorMap;
+
+            response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
+        } else {
+            eresult.status = "E-4206";
+            eresult.message = "관리자 계정이 아닙니다. 공지사항을 삭제 할 수 없습니다.";
+            eresult.data = null;
+            errorMap.put("field", "deleteNotice");
+            errorMap.put("data", nickname);
+            eresult.errors = errorMap;
+
+            response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
         }
         return response;
     }
 
     @ApiOperation(value = "공지사항 내용 변경", response = List.class)
     @PutMapping
-    public Object updateNotice(@RequestBody Notice notice) {
+    public Object updateNotice(@RequestBody Notice notice, @RequestParam String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        try {
+        if (nickname == "admin") {
             Notice updateTemp = noticeDao.getNoticeByNid(notice.getNid());
             updateTemp.setTitle(notice.getTitle());
             updateTemp.setContent(notice.getContent());
@@ -247,16 +234,26 @@ public class NoticeController {
 
             response = new ResponseEntity<>(result, HttpStatus.OK);
 
-        } catch (Exception e) {
-            eresult.status = "E-4105";
-            eresult.message = "서버 내부 오류로 인해 공지사항 수정 실패";
+        } else if (nickname == null) {
+            eresult.status = "E-4207";
+            eresult.message = "알수 없는 회원 입니다. 공지사항을 수정 할 수 없습니다.";
             eresult.data = null;
-
             errorMap.put("field", "updateNotice");
-            errorMap.put("data", notice);
-            response = new ResponseEntity<>(eresult, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+            errorMap.put("data", nickname);
+            eresult.errors = errorMap;
 
+            response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
+        } else {
+            eresult.status = "E-4208";
+            eresult.message = "관리자 계정이 아닙니다. 공지사항을 수정 할 수 없습니다.";
+            eresult.data = null;
+            errorMap.put("field", "updateNotice");
+            errorMap.put("data", nickname);
+            eresult.errors = errorMap;
+
+            response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
+        }
         return response;
+
     }
 }
