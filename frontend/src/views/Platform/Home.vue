@@ -1,35 +1,15 @@
 <template>
-    <div id="content">
+    <div>
         <div id="home">
             <div class="d-flex flex-column-reverse">
-                실시간 활동 블로그
+                지난 대나무숲
             </div>
-            <router-link
-                id="bigbutton"
-                :to="{name: 'Open'}"
-                class="text-decoration-none text-light"
-                @mouseover="mouseover()"
-                @mouseout="mouseout()"
-            >
-                내 블로그 만들기
-            </router-link>
         </div>
 
-        <div
-            v-show="nomouse"
-            id="click"
-        >
-            <i
-                class="far fa-hand-point-up"
-                style="color: black"
-            /> click!
-        </div>
-
-        <!-- 블로그 목록 -->
+        <!-- 지난주 -->
         <div
             id="bloglist"
             class="cursor"
-            @click="$router.push({name: 'Blog'})"
         >
             <b-card
                 img-src="https://placekitten.com/300/300"
@@ -38,12 +18,85 @@
                 class="mb-3"
             >
                 <b-card-text>
-                    귀여운 고양이 블로그
+                    <div id="answerheader">
+                        답변들
+                    </div>
+                    <carousel
+                        :per-page="1"
+                        :navigate-to="someLocalProperty"
+                        :mouse-drag="true"
+                    >
+                        <slide>
+                            Slide 1 Content
+                            <hr>
+                            asdfasdf
+                        </slide>
+                        <slide>
+                            Slide 2 Content
+                            <hr>
+                            qwesdf
+                        </slide>
+                        <slide>
+                            Slide 3 Content
+                            <hr>
+                            qwerty
+                        </slide>
+                    </carousel>
+                    <!-- 무한 스크롤-->
+                    <infinite-loading @infinite="infiniteHandler" />
                 </b-card-text>
             </b-card>
         </div>
-        <!-- 무한 스크롤-->
-        <infinite-loading @infinite="infiniteHandler" />
+        <div id="home">
+            <div class="d-flex flex-column-reverse">
+                금주의 싸피고둥이들
+            </div>
+            <div
+                v-show="nomouse"
+                id="click"
+            >
+                <i
+                    class="far fa-hand-point-up"
+                    style="color: black"
+                /> click!
+            </div>
+            <router-link
+                id="bigbutton"
+                :to="{name: 'Open'}"
+                class="text-decoration-none text-light"
+                @mouseover="mouseover()"
+                @mouseout="mouseout()"
+            >
+                이번 주 고민 보러가기
+            </router-link>
+        </div>
+        <!-- 금주 -->
+        <div
+            id="bloglist"
+            class="cursor"
+        >
+            <b-card
+                class="mb-3"
+            >
+                <b-card-text>
+                    <div id="answerheader">
+                        답변들
+                    </div>
+                    <carousel
+                        :per-page="1"
+                        :navigate-to="someLocalProperty"
+                        :mouse-drag="true"
+                    >
+                        <slide>
+                            Slide 1 Content
+                        </slide>
+                        <slide>
+                            Slide 2 Content
+                        </slide>
+                    </carousel>
+                </b-card-text>
+            </b-card>
+        </div>
     </div>
 </template>
 
@@ -59,9 +112,6 @@ export default {
             page: 1,
             list: [],
         };
-    },
-    watch: {
-
     },
     methods: {
         mouseover() {
@@ -94,6 +144,7 @@ export default {
 <style scoped>
 #home {
   display: flex;
+  margin: 30px 0;
   justify-content: space-between;
   font-size: 30px;
 }
@@ -106,12 +157,15 @@ export default {
   text-decoration: none;
 }
 #click {
-  position: absolute;
-  right: 20px;
   animation: motion 0.5s linear 0s infinite alternate;
 }
 
 #bloglist {
   margin-top: 30px;
+  height: 30vh;
+  overflow: auto;
+}
+#answerheader {
+    height: 100px;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <Nav v-show="nowPlatform" />
-        <div>
+        <div id="content">
             <router-view />
             <div
                 v-show="isnotTop"

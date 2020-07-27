@@ -3,7 +3,7 @@ import VueRouter from 'vue-router';
 
 import Home from '../views/Platform/Home.vue';
 import Open from '../views/Platform/Open.vue';
-import Blog from '../views/Blog/Blog.vue';
+import List from '../views/Board/List.vue';
 
 Vue.use(VueRouter);
 
@@ -19,11 +19,11 @@ const routes = [
         name: 'Open',
         component: Open,
     },
-    // 블로그
+    // 게시판
     {
-        path: '/blog',
-        name: 'Blog',
-        component: Blog,
+        path: '/board',
+        name: 'List',
+        component: List,
     },
 ];
 

@@ -6,7 +6,10 @@
             type="dark"
         >
             <b-navbar-brand class="p-0">
-                <router-link :to="{name: 'Home'}" class="text-light text-decoration-none">
+                <router-link
+                    :to="{name: 'Home'}"
+                    class="text-light text-decoration-none"
+                >
                     <img
                         id="photo"
                         src="../assets/images/Preview_Thumb_No_Alpha.jpg"
@@ -29,6 +32,22 @@
                         href="#"
                     >
                         Q&A
+                    </b-nav-item>
+                    <b-nav-item>
+                        <router-link
+                            :to="{name: 'List'}"
+                            class="text-light text-decoration-none"
+                        >
+                            고민게시판
+                        </router-link>
+                    </b-nav-item>
+                    <b-nav-item>
+                        <router-link
+                            :to="{name: '???'}"
+                            class="text-light text-decoration-none"
+                        >
+                            랭킹
+                        </router-link>
                     </b-nav-item>
                 </b-navbar-nav>
 
