@@ -9,9 +9,11 @@ import Paginate from 'vuejs-paginate';
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
+import InfiniteLoading from 'vue-infinite-loading';
 
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
+Vue.use(InfiniteLoading);
 
 Vue.component('paginate', Paginate);
 

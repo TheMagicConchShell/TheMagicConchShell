@@ -5,11 +5,15 @@
             toggleable="lg"
             type="dark"
         >
-            <router-link :to="{name: 'Home'}">
-                <b-navbar-brand>
-                    Platform 이름
-                </b-navbar-brand>
-            </router-link>
+            <b-navbar-brand class="p-0">
+                <router-link :to="{name: 'Home'}" class="text-light text-decoration-none">
+                    <img
+                        id="photo"
+                        src="../assets/images/Preview_Thumb_No_Alpha.jpg"
+                    >
+                    마법의 싸피고둥
+                </router-link>
+            </b-navbar-brand>
 
             <b-navbar-toggle target="nav-collapse" />
 
@@ -25,7 +29,6 @@
                     </b-nav-item>
                     <b-nav-item
                         href="#"
-                        disabled
                     >
                         Q&A
                     </b-nav-item>
@@ -40,6 +43,7 @@
                             placeholder="Search"
                         />
                         <b-button
+                            id="commonbutton"
                             size="sm"
                             class="my-2 my-sm-0"
                             type="submit"
@@ -77,21 +81,53 @@
                         <b-dropdown-item href="#">
                             Sign Out
                         </b-dropdown-item>
+                        <b-dropdown-item v-b-modal.signin>
+                            <Signin />
+                        </b-dropdown-item>
+                        <b-dropdown-item v-b-modal.login>
+                            <Login />
+                        </b-dropdown-item>
                     </b-nav-item-dropdown>
                 </b-navbar-nav>
             </b-collapse>
+            <!-- spot area -->
         </b-navbar>
+        <div
+            id="spot_area"
+            class="sticky-top"
+        >
+            여기는 spot area 영역
+        </div>
     </div>
 </template>
 
 <script>
+import Signin from '../views/Account/Signin.vue';
+import Login from '../views/Account/Login.vue';
+
+export default {
+    name: 'Nav',
+    components: {
+        Signin,
+        Login,
+    },
+
+};
 </script>
 
 <style scoped>
 .navbar {
-    background-color: rgb(178, 87, 34);
+    background-color:  #A6C2CE;
     position: fixed;
     top: 0;
+    width: 100%;
+    height: 100px;
+    margin: 0;
+    padding: 0;
+}
+#spot_area {
+    position: fixed;
+    top: 100px;
     width: 100%;
 }
 </style>
