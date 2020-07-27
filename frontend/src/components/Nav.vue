@@ -25,7 +25,9 @@
                 is-nav
             >
                 <b-navbar-nav>
-                    <b-nav-item href="#">
+                    <b-nav-item
+                        href="/support"
+                    >
                         공지사항
                     </b-nav-item>
                     <b-nav-item
