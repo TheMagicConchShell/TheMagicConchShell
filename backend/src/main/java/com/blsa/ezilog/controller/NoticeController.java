@@ -105,7 +105,7 @@ public class NoticeController {
 
     @ApiOperation(value = "공지 번호에 해당되는 공지사항 반환", response = List.class)
     @GetMapping("/noticeId")
-    public Object seasrchNoticeById(@RequestParam BigInteger id) {
+    public Object seasrchNoticeById(@RequestParam(required = true) BigInteger id) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -137,14 +137,14 @@ public class NoticeController {
 
     @ApiOperation(value = "공지사항 작성", notes = "Input: (제목, 내용, 작성자) OutPut: 성공(status = true, data= sucess), 실패(status=false, data=오류 디버그 메세지)", response = List.class)
     @PostMapping
-    public Object insertNotice(@RequestBody NoticeCreateRequest notice, @RequestBody String nickname) {
+    public Object insertNotice(@RequestBody NoticeCreateRequest notice) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        if (nickname == "admin") {
+        if (notice.getWriter().equals("admin")) {
             LocalDateTime currentTime = LocalDateTime.now();
             Notice temp = new Notice(notice.getTitle(), notice.getContent(), notice.getWriter(), currentTime);
             noticeDao.save(temp);
@@ -153,12 +153,12 @@ public class NoticeController {
             result.data = null;
             response = new ResponseEntity<>(result, HttpStatus.OK);
 
-        } else if (nickname == null) {
+        } else if (notice.getWriter().equals(null)) {
             eresult.status = "E-4203";
             eresult.message = "알 수 없는 회원 입니다. 공지사항을 작성 할 수 없습니다.";
             eresult.data = null;
             errorMap.put("field", "creatNotice");
-            errorMap.put("data", nickname);
+            errorMap.put("data", notice.getWriter());
             eresult.errors = errorMap;
 
             response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
@@ -167,7 +167,7 @@ public class NoticeController {
             eresult.message = "관리자 계정이 아닙니다. 공지사항을 작성 할 수 없습니다.";
             eresult.data = null;
             errorMap.put("field", "creatNotice");
-            errorMap.put("data", nickname);
+            errorMap.put("data", notice.getWriter());
             eresult.errors = errorMap;
 
             response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
@@ -184,7 +184,7 @@ public class NoticeController {
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        if (nickname == "admin") {
+        if (nickname.equals("admin")) {
             Notice temp = noticeDao.getNoticeByNid(nid);
             noticeDao.delete(temp);
 
@@ -192,7 +192,7 @@ public class NoticeController {
             result.message = "공지사항 삭제 완료";
             result.data = null;
             response = new ResponseEntity<>(result, HttpStatus.OK);
-        } else if (nickname == null) {
+        } else if (nickname.equals(null)) {
             eresult.status = "E-4205";
             eresult.message = "알수 없는 회원 입니다. 공지사항을 삭제 할 수 없습니다.";
             eresult.data = null;
@@ -216,13 +216,13 @@ public class NoticeController {
 
     @ApiOperation(value = "공지사항 내용 변경", response = List.class)
     @PutMapping
-    public Object updateNotice(@RequestBody Notice notice, @RequestParam String nickname) {
+    public Object updateNotice(@RequestBody Notice notice) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        if (nickname == "admin") {
+        if (notice.getWriter().equals("admin")) {
             Notice updateTemp = noticeDao.getNoticeByNid(notice.getNid());
             updateTemp.setTitle(notice.getTitle());
             updateTemp.setContent(notice.getContent());
@@ -234,12 +234,12 @@ public class NoticeController {
 
             response = new ResponseEntity<>(result, HttpStatus.OK);
 
-        } else if (nickname == null) {
+        } else if (notice.getWriter().equals(null)) {
             eresult.status = "E-4207";
             eresult.message = "알수 없는 회원 입니다. 공지사항을 수정 할 수 없습니다.";
             eresult.data = null;
             errorMap.put("field", "updateNotice");
-            errorMap.put("data", nickname);
+            errorMap.put("data", notice.getWriter());
             eresult.errors = errorMap;
 
             response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
@@ -248,7 +248,7 @@ public class NoticeController {
             eresult.message = "관리자 계정이 아닙니다. 공지사항을 수정 할 수 없습니다.";
             eresult.data = null;
             errorMap.put("field", "updateNotice");
-            errorMap.put("data", nickname);
+            errorMap.put("data", notice.getWriter());
             eresult.errors = errorMap;
 
             response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
