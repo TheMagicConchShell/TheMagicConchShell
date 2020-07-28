@@ -12,7 +12,7 @@
                 >
                     <img
                         id="photo"
-                        src="../assets/images/Preview_Thumb_No_Alpha.jpg"
+                        src="../assets/images/sora.png"
                     >
                     마법의 싸피고둥
                 </router-link>
@@ -45,7 +45,7 @@
                     </b-nav-item>
                     <b-nav-item>
                         <router-link
-                            :to="{name: '???'}"
+                            :to="{name: 'Rank'}"
                             class="text-light text-decoration-none"
                         >
                             랭킹

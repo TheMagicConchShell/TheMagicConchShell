@@ -9,7 +9,7 @@
 
 <script>
 export default {
-    name: 'NoticeWriteButton',
+    name: 'WriteButton',
     props: {
         handler: {
             type: Function,
@@ -18,8 +18,8 @@ export default {
         text: {
             type: String,
             required: true,
-        }
-    }
+        },
+    },
 };
 </script>
 

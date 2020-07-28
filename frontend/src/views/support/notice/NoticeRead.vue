@@ -25,7 +25,7 @@
             </div>
         </div>
         
-        <notice-write-button
+        <write-button
             class="button float-right"
             :handler="moveUpdate"
             :text="'수정'"
@@ -34,11 +34,11 @@
 </template>
 
 <script>
-import NoticeWriteButton from "@/components/NoticeWriteButton";
+import WriteButton from "@/components/WriteButton";
 
 export default {
     components: {
-        NoticeWriteButton
+        WriteButton
     },
     props: {
         no: {

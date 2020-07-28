@@ -48,12 +48,26 @@
                 광고 배너
             </div>
         </div>
+        <b-button @click="write">
+            작성
+        </b-button>
     </div>
 </template>
 
 <script>
+
 export default {
     name: 'List',
+    components: {
+        
+    },
+    methods: {
+        write() {
+            this.$router.push({
+                name: 'PostWrite'
+            });
+        },
+    },
 };
 </script>
 

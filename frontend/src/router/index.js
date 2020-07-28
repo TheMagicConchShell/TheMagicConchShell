@@ -3,6 +3,8 @@ import VueRouter from 'vue-router';
 
 import Home from '@/views/Platform/Home.vue';
 import Open from '@/views/Platform/Open.vue';
+import List from '@/views/Board/List.vue';
+import Rank from '@/views/Board/Rank.vue';
 
 import EmailAuth from '@/views/Account/EmailAuthentication.vue';
 
@@ -34,6 +36,16 @@ const routes = [
         component: Open,
     },
     // 게시판
+    {
+        path: '/board',
+        name: 'List',
+        component: List,
+    },
+    {
+        path: '/rank',
+        name: 'Rank',
+        component: Rank,
+    },
     {
         path: '/user/authentication',
         name: 'emailauth',

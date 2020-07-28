@@ -16,7 +16,7 @@
 
 <script>
 export default {
-    name: "NoticeListPaginate",
+    name: 'NoticeListPaginate',
     props: {
         current: {
             type: [Number],
@@ -39,7 +39,7 @@ export default {
                 name: 'NoticeList',
                 query: {
                     page: nextPage,
-                }
+                },
             }).catch(() => {});
             // console.log(nextPage);
             // this.$emit("page-move", nextPage);

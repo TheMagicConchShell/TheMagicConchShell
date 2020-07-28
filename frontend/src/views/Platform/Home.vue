@@ -2,6 +2,44 @@
     <div>
         <div id="home">
             <div class="d-flex flex-column-reverse">
+                금주의 싸피고둥이들
+            </div>
+        </div>
+        <!-- 금주 -->
+        <div
+            id="bloglist"
+            class="d-flex"
+        >
+            <div id="mainpost">
+                asdf
+            </div>
+            <div id="sidepost">
+                <b-jumbotron
+                    fluid
+                    lead="연애가 하고 싶어요.."
+                    class="w-100 m-0 border"
+                >
+                    <p>written by 연애고수</p>
+                </b-jumbotron>
+                <b-jumbotron
+                    fluid
+                    lead="취업 고민ㅠㅠ"
+                    class="w-100 m-0"
+                >
+                    <p>written by 30대 무직 남성</p>
+                </b-jumbotron>
+                <b-jumbotron
+                    lead="이 코인 존버가 답일까요?"
+                    class="w-100"
+                >
+                    <p>written by 개미</p>
+                </b-jumbotron>
+                <infinite-loading @infinite="infiniteHandler" />
+            </div>
+        </div>
+
+        <div id="home">
+            <div class="d-flex flex-column-reverse">
                 지난 대나무숲
             </div>
         </div>
@@ -21,79 +59,7 @@
                     <div id="answerheader">
                         답변들
                     </div>
-                    <carousel
-                        :per-page="1"
-                        :navigate-to="someLocalProperty"
-                        :mouse-drag="true"
-                    >
-                        <slide>
-                            Slide 1 Content
-                            <hr>
-                            asdfasdf
-                        </slide>
-                        <slide>
-                            Slide 2 Content
-                            <hr>
-                            qwesdf
-                        </slide>
-                        <slide>
-                            Slide 3 Content
-                            <hr>
-                            qwerty
-                        </slide>
-                    </carousel>
-                    <!-- 무한 스크롤-->
-                    <infinite-loading @infinite="infiniteHandler" />
-                </b-card-text>
-            </b-card>
-        </div>
-        <div id="home">
-            <div class="d-flex flex-column-reverse">
-                금주의 싸피고둥이들
-            </div>
-            <div
-                v-show="nomouse"
-                id="click"
-            >
-                <i
-                    class="far fa-hand-point-up"
-                    style="color: black"
-                /> click!
-            </div>
-            <router-link
-                id="bigbutton"
-                :to="{name: 'Open'}"
-                class="text-decoration-none text-light"
-                @mouseover="mouseover()"
-                @mouseout="mouseout()"
-            >
-                이번 주 고민 보러가기
-            </router-link>
-        </div>
-        <!-- 금주 -->
-        <div
-            id="bloglist"
-            class="cursor"
-        >
-            <b-card
-                class="mb-3"
-            >
-                <b-card-text>
-                    <div id="answerheader">
-                        답변들
-                    </div>
-                    <carousel
-                        :per-page="1"
-                        :navigate-to="someLocalProperty"
-                        :mouse-drag="true"
-                    >
-                        <slide>
-                            Slide 1 Content
-                        </slide>
-                        <slide>
-                            Slide 2 Content
-                        </slide>
-                    </carousel>
+                    
                 </b-card-text>
             </b-card>
         </div>
@@ -151,7 +117,7 @@ export default {
 #bigbutton {
   color: white;
   padding: 10px;
-  background-color: #978F96;
+  background: linear-gradient( 0, #9C8F96, #ccbbc4);
   width: 20%;
   border-radius: 10px;
   text-decoration: none;
@@ -161,11 +127,29 @@ export default {
 }
 
 #bloglist {
-  margin-top: 30px;
-  height: 30vh;
-  overflow: auto;
+    width: 100%;
+    height: 70vh;
+    border: 1px solid #b6b6b6;
+    border-radius: 5px;
+}
+#mainpost {
+    width: 70%;
+    height: 100%;
+}
+#sidepost {
+    width: 30%;
+    height: 100%;
+    overflow: auto;
+}
+#slide {
+    max-height: auto;
+    max-width: auto;
 }
 #answerheader {
     height: 100px;
+}
+#slide {
+    border: 1px solid;
+    width: 50%;
 }
 </style>

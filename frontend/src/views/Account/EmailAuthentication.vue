@@ -1,5 +1,5 @@
 <template>
-    <div> 
+    <div>
         <div>
             <div>
                 <h1>이메일 인증</h1>
@@ -16,14 +16,15 @@
 </template>
 
 <script>
-import axios from 'axios';
+// import axios from 'axios';
 
 export default {
-    data: function(){
+    name: 'EmailAuthentication',
+    data() {
         return {
-            text:"",
-            aid:"",
-            token:""
+            text: '',
+            aid: '',
+            token: '',
         };
     },
     created() {
@@ -31,25 +32,24 @@ export default {
         this.token = this.$route.query.token;
         console.log(this.aid);
         console.log(this.token);
-        
         this.$axios({
-            method:"get",
-            url:`/user/authentication?aid=${this.aid}&token=${this.token}`,
+            method: 'get',
+            url: `/user/authentication?aid=${this.aid}&token=${this.token}`,
 
-        }).then((res)=>{
-            if(res.data.status === 'S-200'){
+        }).then((res) => {
+            if (res.data.status === 'S-200') {
                 this.text = `이메일 인증이 완료되었습니다.
                  정상적으로 서비스 이용이 가능합니다.`;
-            }else{
-                this.text = "이메일 인증에 실패하였습니다. 다시 시도해주세요.";
+            } else {
+                this.text = '이메일 인증에 실패하였습니다. 다시 시도해주세요.';
             }
         }).catch((error) => {
             console.log(error.response);
         });
     },
     methods: {
-        moveMain(){
-            this.$router.push("/");
+        moveMain() {
+            this.$router.push('/');
         },
     },
 };
@@ -58,4 +58,3 @@ export default {
 <style>
 
 </style>
-

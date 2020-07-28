@@ -4,7 +4,7 @@
         <div id="content">
             <router-view />
             <div
-                v-show="isnotTop"
+                v-show="windowTop"
                 id="go-up"
             >
                 <button
@@ -31,7 +31,7 @@ export default {
     data() {
         return {
             nowPlatform: true,
-            isnotTop: false,
+            windowTop: window.top.scrollY,
         };
     },
     watch: {
@@ -43,6 +43,9 @@ export default {
         const url = this.$route.name;
 
         this.checkUrl(url);
+    },
+    mounted() {
+        window.addEventListener("scroll", this.onScroll);
     },
     methods: {
         checkUrl(url) {
@@ -56,6 +59,9 @@ export default {
                 return nowPlatform;
             });
             this.nowPlatform = nowPlatform;
+        },
+        onScroll(e) {
+            this.windowTop = window.top.scrollY;
         },
         top() {
             while (document.documentElement.scrollTop !== 0) {
@@ -102,9 +108,9 @@ export default {
   right: 20px;
   bottom: 20px;
   color: #ffffff;
-  background: linear-gradient( 0, rgb(178, 87, 34), rgb(190, 158, 108));
-  width: 50px;
-  height: 50px;
+  background: linear-gradient( 0, #9C8F96, #ccbbc4);
+  width: 30px;
+  height: 30px;
   border: 1px solid #ffffff;
   border-radius: 5px;
 }

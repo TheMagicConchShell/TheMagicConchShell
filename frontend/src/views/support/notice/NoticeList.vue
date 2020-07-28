@@ -59,7 +59,7 @@
             />
         </template>
 
-        <notice-write-button
+        <write-button
             class="button float-right"
             :handler="write"
             :text="'작성'"
@@ -69,13 +69,13 @@
 
 <script>
 import NoticeListPaginate from "@/components/NoticeListPaginate";
-import NoticeWriteButton from "@/components/NoticeWriteButton";
+import WriteButton from "@/components/WriteButton";
 
 export default {
     name: "NoticeList",
     components: {
         NoticeListPaginate,
-        NoticeWriteButton
+        WriteButton,
     },
     data: () => ({
         page: 0,
