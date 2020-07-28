@@ -16,9 +16,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 @Component
 public class JwtService {
-    @Value("${jwt.salt}")
-    private String salt;
-
     @Value("${jwt.expmin}")
     private Long expireMin;
 
@@ -30,21 +27,21 @@ public class JwtService {
         builder.setSubject("로그인 토큰").setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * expireMin))
                 .claim("User", user);
 
-        builder.signWith(SignatureAlgorithm.HS256, salt.getBytes());
+        builder.signWith(SignatureAlgorithm.HS256, user.getNickname().getBytes());
 
         final String jwt = builder.compact();
 
         return jwt;
     }
 
-    public void checkValid(final String jwt) {
-        Jwts.parser().setSigningKey(salt.getBytes()).parseClaimsJws(jwt);
+    public void checkValid(final String jwt, final String nickname) {
+        Jwts.parser().setSigningKey(nickname.getBytes()).parseClaimsJws(jwt);
     }
 
-    public Map<String, Object> get(final String jwt) {
+    public Map<String, Object> get(final String jwt, final String nickname) {
         Jws<Claims> claims = null;
         try {
-            claims = Jwts.parser().setSigningKey(salt.getBytes()).parseClaimsJws(jwt);
+            claims = Jwts.parser().setSigningKey(nickname.getBytes()).parseClaimsJws(jwt);
         } catch (final Exception e) {
             throw new RuntimeException();
         }

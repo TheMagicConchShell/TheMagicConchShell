@@ -23,8 +23,9 @@ public class JwtInterceptor implements HandlerInterceptor {
             return true;
         } else {
             String token = request.getHeader("jwt-auth-token");
+            String nickname = request.getHeader("nickname");
             if (token != null && token.length() > 0) {
-                jwtService.checkValid(token);
+                jwtService.checkValid(token, nickname);
                 return true;
             } else {
                 throw new JwtException("인증 토큰이 없습니다.");
