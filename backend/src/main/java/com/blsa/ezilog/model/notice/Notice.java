@@ -32,7 +32,7 @@ public class Notice {
     @Column (name = "writer")
     private String writer;
 
-    @Column (name = "write_data")
+    @Column (name = "write_date")
     LocalDateTime writeDate;
 
     public Notice(String title, String content, String writer, LocalDateTime writeDate) {

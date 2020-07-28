@@ -2,6 +2,7 @@ package com.blsa.ezilog.controller;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,11 +87,11 @@ public class CounselController {
                 eresult.status = "E-4401";
                 eresult.message = "불러 올 고민이  없습니다.";
                 eresult.data = null;
-                errorMap.put("field", "nopost");
+                errorMap.put("field", "noPost");
                 errorMap.put("data", page);
                 eresult.errors = errorMap;
 
-                response = new ResponseEntity<>(eresult, HttpStatus.NO_CONTENT);
+                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
             }
 
         }
@@ -109,7 +110,7 @@ public class CounselController {
         Map<String, Object> errorMap = new HashMap<>();
 
         if (page <= 0) {
-            eresult.status = "E-4402";
+            eresult.status = "E-4400";
             eresult.message = "잘못 된 페이지 요청 입니다.";
             eresult.data = null;
             errorMap.put("field", "errorPageRequest");
@@ -131,7 +132,7 @@ public class CounselController {
                 result.data = pList;
                 response = new ResponseEntity<>(result, HttpStatus.OK);
             } else {
-                eresult.status = "E-4403";
+                eresult.status = "E-4402";
                 eresult.message = "작성자에 해당되는 고민이  없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "noPostByWriter");
@@ -147,7 +148,7 @@ public class CounselController {
 
     @ApiOperation(value = "고민 번호에 해당되는 고민 반환", response = List.class)
     @GetMapping("/post/post-no")
-    public Object seasrchPostByNo(@RequestParam BigInteger no) {
+    public Object seasrchPostByNo(@RequestParam BigInteger no, @RequestParam int start) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -158,13 +159,30 @@ public class CounselController {
         Post post = optPost.get();
         if (optPost.isPresent()) {
 
+            List<Reply>allList = replyDao.ReplyByPostNum(post.getNo());
+            
+            List<Reply>rList = new ArrayList<>();
+            
+            int end = (start+10 > allList.size()) ? allList.size() : start+10; 
+            
+            for(int i = start-1; i < end; i++) {
+               
+                rList.add(allList.get(i));
+            }
+            
+            Map<String, Object>PostMap = new HashMap<>();
+            
             result.status = "S-200";
-            result.message = "공지 ID를 이용하여 공지사항 가져오기 성공";
-            result.data = post;
+            result.message = "공지 ID를 이용하여 공지사항  및 댓글 가져오기 성공";
+            
+            PostMap.put("post", post);
+            PostMap.put("replies", rList);
+            
+            result.data = PostMap;
             response = new ResponseEntity<>(result, HttpStatus.OK);
         } else {
-            eresult.status = "S-4404";
-            eresult.message = "번호에 해당되는 고민 글이  없습니다.";
+            eresult.status = "S-4403";
+            eresult.message = "공지 번호에 해당되는 고민 글이  없습니다.";
             eresult.data = null;
             errorMap.put("field", "noPostByNo");
             errorMap.put("data", null);
@@ -187,7 +205,7 @@ public class CounselController {
         Map<String, Object> errorMap = new HashMap<>();
 
         if (page <= 0) {
-            eresult.status = "E-4402";
+            eresult.status = "E-4400";
             eresult.message = "잘못 된 페이지 요청 입니다.";
             eresult.data = null;
             errorMap.put("field", "errorPageRequest");
@@ -213,7 +231,7 @@ public class CounselController {
                 result.data = pList;
                 response = new ResponseEntity<>(result, HttpStatus.OK);
             } else {
-                eresult.status = "S-4405";
+                eresult.status = "S-4404";
                 eresult.message = "제목에 해당 되는고민 글들이  없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "noPostByTitle");
@@ -227,7 +245,7 @@ public class CounselController {
         return response;
     }
 
-    @ApiOperation(value = "제목에 해당되는 고민 반환", response = List.class)
+    @ApiOperation(value = "제목 또는 작성자에서 keyword를 포함하는 고민 반환", response = List.class)
     @GetMapping("/post/all")
     public Object seasrchPostByTitleORWriter(@RequestParam(required = false) String keyword, @RequestParam int page) {
 
@@ -237,7 +255,7 @@ public class CounselController {
         Map<String, Object> errorMap = new HashMap<>();
 
         if (page <= 0) {
-            eresult.status = "E-4402";
+            eresult.status = "E-4400";
             eresult.message = "잘못 된 페이지 요청 입니다.";
             eresult.data = null;
             errorMap.put("field", "errorPageRequest");
@@ -263,7 +281,7 @@ public class CounselController {
                 result.data = pList;
                 response = new ResponseEntity<>(result, HttpStatus.OK);
             } else {
-                eresult.status = "S-4406";
+                eresult.status = "S-4405";
                 eresult.message = "제목 또는 작성자에 해당 되는고민 글들이  없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "noPostByWriterORTitle");
@@ -287,7 +305,7 @@ public class CounselController {
         Map<String, Object> errorMap = new HashMap<>();
 
         if (post.getWriter().equals(null)) {
-            eresult.status = "E-4407";
+            eresult.status = "E-4406";
             eresult.message = "알 수 없는 회원 입니다. 고민 글을 작성 할 수 없습니다.";
             eresult.data = null;
             errorMap.put("field", "creatPost");
@@ -300,8 +318,7 @@ public class CounselController {
 
             LocalDateTime currentTime = LocalDateTime.now();
             Post ctemp = new Post(post.getWriter(), post.getCategoryId(), post.getTitle(), post.getContent(),
-                    currentTime, post.getLikeCount(), post.getUnlikeCount(), post.getViews(), post.getAllow(),
-                    post.getSecret());
+                    currentTime, post.getAllow(), post.getSecret());
             postDao.save(ctemp);
             result.status = "S-200";
             result.message = "고민 글 작성에 성공했습니다.";
@@ -335,7 +352,7 @@ public class CounselController {
                 result.data = null;
                 response = new ResponseEntity<>(result, HttpStatus.OK);
             } else if (nickname.equals(null)) {
-                eresult.status = "E-4408";
+                eresult.status = "E-4407";
                 eresult.message = "알수 없는 회원 입니다. 글을 삭제 할 수 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "deletePost");
@@ -344,7 +361,7 @@ public class CounselController {
 
                 response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
             } else {
-                eresult.status = "E-4409";
+                eresult.status = "E-4408";
                 eresult.message = "허가 된 계정이 아닙니다. 글을 삭제 할 수 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "deletePost");
@@ -354,8 +371,8 @@ public class CounselController {
                 response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
             }
         } else {
-            eresult.status = "E-4410";
-            eresult.message = "존재하지 않는 질문입니다. 질문을 삭제 할 수 없습니다.";
+            eresult.status = "E-4409";
+            eresult.message = "존재하지 않는 고민입니다. 고민을 삭제 할 수 없습니다.";
             eresult.data = null;
             errorMap.put("field", "deletePost");
             errorMap.put("data", no);
@@ -397,7 +414,7 @@ public class CounselController {
                 response = new ResponseEntity<>(result, HttpStatus.OK);
 
             } else if (post.getWriter().equals(null)) {
-                eresult.status = "E-4411";
+                eresult.status = "E-4410";
                 eresult.message = "알수 없는 회원 입니다. 고민 글을 수정 할 수 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "updatePost");
@@ -406,7 +423,7 @@ public class CounselController {
 
                 response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
             } else {
-                eresult.status = "E-4412";
+                eresult.status = "E-4411";
                 eresult.message = "허가 된 계정이 아닙니다. 고민 글을 수정 할 수 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "updatePost");
@@ -416,7 +433,7 @@ public class CounselController {
                 response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
             }
         } else {
-            eresult.status = "E-4413";
+            eresult.status = "E-4412";
             eresult.message = "존재하지 않는 질문입니다. 질문을 수정 할 수 없습니다.";
             eresult.data = null;
             errorMap.put("field", "deletePost");
@@ -439,7 +456,7 @@ public class CounselController {
         Map<String, Object> errorMap = new HashMap<>();
 
         if (page <= 0) {
-            eresult.status = "E-4414";
+            eresult.status = "E-4413";
             eresult.message = "잘못 된 페이지 요청 입니다.";
             eresult.data = null;
             errorMap.put("field", "errorPageRequest");
@@ -465,7 +482,7 @@ public class CounselController {
                 result.data = rList;
                 response = new ResponseEntity<>(result, HttpStatus.OK);
             } else {
-                eresult.status = "E-4415";
+                eresult.status = "E-4414";
                 eresult.message = "불러 올 답변이  없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "noReply");
@@ -489,7 +506,7 @@ public class CounselController {
         Map<String, Object> errorMap = new HashMap<>();
 
         if (page <= 0) {
-            eresult.status = "E-4402";
+            eresult.status = "E-4400";
             eresult.message = "잘못 된 페이지 요청 입니다.";
             eresult.data = null;
             errorMap.put("field", "errorPageRequest");
@@ -507,7 +524,7 @@ public class CounselController {
                 result.data = rList;
                 response = new ResponseEntity<>(result, HttpStatus.OK);
             } else {
-                eresult.status = "E-4416";
+                eresult.status = "E-4415";
                 eresult.message = "불러 올 답변이  없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "noReply");
@@ -536,7 +553,7 @@ public class CounselController {
         if (optPost.isPresent()) {
 
             if (reply.getWriter().equals(null)) {
-                eresult.status = "E-4427";
+                eresult.status = "E-4416";
                 eresult.message = "알 수 없는 회원 입니다. 답변 글을 작성 할 수 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "creatReply");
@@ -557,7 +574,7 @@ public class CounselController {
                 response = new ResponseEntity<>(result, HttpStatus.OK);
             }
         } else {
-            eresult.status = "E-4418";
+            eresult.status = "E-4417";
             eresult.message = "존재하지 않는 고민글입니다. 답변을 달 수가  없습니다.";
             eresult.data = null;
             errorMap.put("field", "createReply");
@@ -582,7 +599,7 @@ public class CounselController {
         System.out.println(rtemp.isPresent());
 
         if (!rtemp.isPresent()) {
-            eresult.status = "E-4419";
+            eresult.status = "E-4418";
             eresult.message = "존재하지 않는 답변입니다. 답변을 삭제 할 수 없습니다.";
             eresult.data = null;
             errorMap.put("field", "deleteReply");
@@ -604,7 +621,7 @@ public class CounselController {
                 result.data = null;
                 response = new ResponseEntity<>(result, HttpStatus.OK);
             } else if (nickname.equals(null)) {
-                eresult.status = "E-4420";
+                eresult.status = "E-4419";
                 eresult.message = "알수 없는 회원 입니다. 답변을 삭제 할 수 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "deleteReply");
@@ -613,7 +630,7 @@ public class CounselController {
 
                 response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
             } else {
-                eresult.status = "E-4421";
+                eresult.status = "E-4420";
                 eresult.message = "허가 된 계정이 아닙니다. 답변을 삭제 할 수 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "deleteReply");
@@ -655,7 +672,7 @@ public class CounselController {
                 response = new ResponseEntity<>(result, HttpStatus.OK);
 
             } else if (reply.getWriter().equals(null)) {
-                eresult.status = "E-4425";
+                eresult.status = "E-4421";
                 eresult.message = "알수 없는 회원 입니다. 답변 글을 수정 할 수 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "updateReply");
