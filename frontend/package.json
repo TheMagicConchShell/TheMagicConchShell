@@ -24,8 +24,12 @@
     },
     "main": "index.js",
     "dependencies": {
+        "@toast-ui/editor-plugin-code-syntax-highlight": "^1.0.0",
+        "@toast-ui/editor-plugin-color-syntax": "^1.0.1",
+        "@toast-ui/vue-editor": "^2.3.0",
         "axios": "^0.19.2",
         "bootstrap": "^4.5.0",
+        "bootstrap-vue": "^2.15.0",
         "core-js": "^3.6.5",
         "jquery": "^3.5.1",
         "vee-validate": "^3.3.7",
@@ -33,10 +37,9 @@
         "vue-carousel": "^0.18.0",
         "vue-infinite-loading": "^2.4.5",
         "vue-router": "^3.2.0",
-        "vuex": "^3.4.0",
-        "bootstrap-vue": "^2.15.0",
+        "vue-sidebar-modal": "^1.0.0",
         "vuejs-paginate": "^2.1.0",
-        "vue-sidebar-modal": "^1.0.0"
+        "vuex": "^3.4.0"
     },
     "devDependencies": {
         "@vue/cli-plugin-babel": "~4.4.0",

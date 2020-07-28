@@ -20,6 +20,8 @@ import NoticeUpdate from '@/views/support/notice/NoticeUpdate.vue';
 import Error from '@/views/Error.vue';
 import { readyException } from 'jquery';
 
+import CounselRegist from '@/views/counsel/CounselRegist.vue';
+
 Vue.use(VueRouter);
 
 const routes = [
@@ -106,6 +108,11 @@ const routes = [
                 ],
             },
         ],
+    },
+    {
+        path:"/counselregist",
+        name:"counselregist",
+        component: CounselRegist
     },
     {
         path: "/error",

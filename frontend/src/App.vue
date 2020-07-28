@@ -112,4 +112,8 @@ export default {
 #go-up :hover {
   cursor: pointer;
 }
+
+#content {
+    margin-top: 94px;
+}
 </style>
