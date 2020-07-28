@@ -118,6 +118,7 @@ public class UserController {
         } else {
             String token = jwtService.create((User) u);
             res.setHeader("jwt-auth-token", token);
+            res.setHeader("nickname", ((User) u).getNickname());
             final BasicResponse result = new BasicResponse();
             result.status = "S-200";
             result.message = "로그인에 성공했습니다.";
