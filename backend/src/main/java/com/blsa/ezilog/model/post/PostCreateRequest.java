@@ -27,18 +27,6 @@ public class PostCreateRequest {
     @NotNull
     String content;
     
-   
-    @ApiModelProperty(required = true)
-    @NotNull 
-    int likeCount;
-    
-    @ApiModelProperty(required = true)
-    @NotNull
-    int unlikeCount;
-    
-    @ApiModelProperty(required = true)
-    @NotNull
-    int views;
     
     @ApiModelProperty(required = true)
     @NotNull
@@ -78,30 +66,6 @@ public class PostCreateRequest {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public int getLikeCount() {
-        return likeCount;
-    }
-
-    public void setLikeCount(int likeCount) {
-        this.likeCount = likeCount;
-    }
-
-    public int getUnlikeCount() {
-        return unlikeCount;
-    }
-
-    public void setUnlikeCount(int unlikeCount) {
-        this.unlikeCount = unlikeCount;
-    }
-
-    public int getViews() {
-        return views;
-    }
-
-    public void setViews(int views) {
-        this.views = views;
     }
 
     public boolean getAllow() {

@@ -53,20 +53,21 @@ public class Post {
     @Column (name ="secret")
     private boolean secret;
 
-    public Post(String writer, BigInteger categoryId, String title, String content, LocalDateTime writeDate, int likeCount,
-            int unlikeCount, int views, boolean allow, boolean secret) {
+    public Post(String writer, BigInteger categoryId, String title, String content, LocalDateTime writeDate,
+            boolean allow, boolean secret) {
         super();
         this.writer = writer;
         this.categoryId = categoryId;
         this.title = title;
         this.content = content;
         this.writeDate = writeDate;
-        this.likeCount = likeCount;
-        this.unlikeCount = unlikeCount;
-        this.views = views;
         this.allow = allow;
         this.secret = secret;
     }
+
+    
+
+    
     
     
 
