@@ -5,12 +5,14 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.blsa.ezilog.dao.SelectionHistoryDao;
 import com.blsa.ezilog.dao.SelectionPostDao;
 import com.blsa.ezilog.model.post.SelectionHistory;
 import com.blsa.ezilog.model.post.SelectionPost;
 
+@Service
 public class SelectionService{
 
     @Autowired
