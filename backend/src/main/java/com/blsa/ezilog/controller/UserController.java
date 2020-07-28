@@ -130,10 +130,11 @@ public class UserController {
 
     @PutMapping("/user/update")
     @ApiOperation(value = "회원 정보 수정")
-    public Object update(@Valid @RequestBody UpdateRequestDTO request) {
+    public Object update(@Valid @RequestBody UpdateRequestDTO request, HttpServletResponse res) {
         ResponseEntity<BasicResponse> response = null;
         Map<String, Object> errors = new HashMap<>();
         User checkUser = userService.select(request.getUid());
+        request.setEmail(checkUser.getEmail());
         String checkname = userService.duplicateCheck("", request.getNickname());
         String authTableCheckname = userService.authDuplicateCheck("", request.getNickname());
         if (!checkUser.getNickname().equals(request.getNickname())
@@ -145,7 +146,10 @@ public class UserController {
 
         } else {
             final BasicResponse result = new BasicResponse();
-            userService.update(request);
+            User user = userService.update(request);
+            String token = jwtService.create(user);
+            res.setHeader("jwt-auth-token", token);
+            res.setHeader("nickname", user.getNickname());
             result.status = "S-200";
             result.message = "회원 정보 수정이 완료되었습니다.";
             response = new ResponseEntity<>(result, HttpStatus.CREATED);
