@@ -101,4 +101,8 @@ export default {
   background-color: firebrick;
   cursor: pointer;
 }
+
+#content {
+    margin-top: 94px;
+}
 </style>
