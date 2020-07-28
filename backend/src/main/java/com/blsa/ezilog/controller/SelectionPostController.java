@@ -18,7 +18,9 @@ import com.blsa.ezilog.dao.SelectionPostDao;
 import com.blsa.ezilog.model.BasicResponse;
 import com.blsa.ezilog.model.ErrorResponse;
 import com.blsa.ezilog.model.post.SelectMainPostRequestDTO;
+import com.blsa.ezilog.model.post.SelectionHistory;
 import com.blsa.ezilog.model.post.SelectionPost;
+import com.blsa.ezilog.service.SelectionService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -28,6 +30,9 @@ public class SelectionPostController {
 
     @Autowired
     SelectionPostDao selectionPostDao;
+    
+    @Autowired
+    SelectionService selectionService;
     
     @PostMapping
     @ApiOperation(value = "메인 고민으로 선정", notes = "기존 작성된 글 중 선택한 글을 메인에 선정, SelectMainPostRequestDTO를 이용하여 추가")
@@ -45,6 +50,8 @@ public class SelectionPostController {
             result.errors = errors;
 
             response = new ResponseEntity<>(result, HttpStatus.CONFLICT);
+            
+            /// to do: 노출 allow한 글인지 체크!!
         } else {
             SelectionPost post = new SelectionPost();
             post.setNo(request.getNo());
@@ -65,12 +72,35 @@ public class SelectionPostController {
     @GetMapping
     @ApiOperation(value = "선정된 메인 고민 목록 가져오기")
     public Object retrieveMainPost(@RequestBody SelectMainPostRequestDTO request) {
-
+        
+        
+        return null;
     }
     
     @DeleteMapping
-    @ApiOperation(value = "메인 고민 선정 취소?.. 내리기.. 히스토리로 이동")
-    public Object cancelMainPost(@RequestBody SelectMainPostRequestDTO request) {
+    @ApiOperation(value = "메인 고민에서 내리기, 히스토리로 이동")
+    public Object removeMainPost(@RequestBody SelectionPost request) {
+        ResponseEntity<BasicResponse> response = null;
+        Map<String, Object> errors = new HashMap<>();
 
+        SelectionHistory histoty = selectionService.removeMainPostandAddtoHistory(request);
+        if(histoty == null) {
+            errors.put("field", "no");
+            errors.put("data", request.getNo());
+            final ErrorResponse result = new ErrorResponse();
+            result.status = "미정,,,,";
+            result.message = "해당 번호의 메인 글이 존재하지 않습니다.";
+            result.errors = errors;
+
+            response = new ResponseEntity<>(result, HttpStatus.CONFLICT);
+        } else {
+            final BasicResponse result = new BasicResponse();
+
+            result.status = "S-200";
+            result.message = "히스토리로 이동에 성공했습니다.";
+            response = new ResponseEntity<>(result, HttpStatus.CREATED);
+        }
+        
+        return response;
     }
 }
