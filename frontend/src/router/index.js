@@ -6,6 +6,9 @@ import Open from '@/views/Platform/Open.vue';
 
 import EmailAuth from '@/views/Account/EmailAuthentication.vue';
 
+import CounselView from '@/views/counsel/CounselView.vue';
+import CounselDetail from '@/views/counsel/CounselDetail.vue';
+
 import Support from '@/views/support/Support.vue';
 import NoticeView from '@/views/support/notice/NoticeView.vue';
 import NoticeList from '@/views/support/notice/NoticeList.vue';
@@ -13,7 +16,6 @@ import NoticeRead from '@/views/support/notice/NoticeRead.vue';
 import NoticeEditor from '@/views/support/notice/NoticeEditor.vue';
 import NoticeUpdate from '@/views/support/notice/NoticeUpdate.vue';
 import Error from '@/views/Error.vue';
-import { readyException } from 'jquery';
 
 import CounselRegist from '@/views/counsel/CounselRegist.vue';
 
@@ -38,7 +40,19 @@ const routes = [
         component: EmailAuth,
     },
     {
-        name: 'support',
+        path: '/counsel',
+        name: 'Counsel',
+        component: CounselView,
+        children: [
+            {
+                path: 'read/:no',
+                name: 'CounselDetail',
+                props: ({params}) => ({no: Number.parseInt(params.no, 10) || 0}),
+                component: CounselDetail,
+            }
+        ],
+    },
+    {
         path: '/support',
         name: 'Support',
         component: Support,
@@ -78,6 +92,7 @@ const routes = [
                 ],
             },
         ],
+
     },
     {
         path:"/counselregist",
