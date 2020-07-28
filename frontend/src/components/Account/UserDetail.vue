@@ -74,19 +74,21 @@
                             passwordRegex: true,
                             passwordConfirm: passwordConfirm }"
                     >
-                        <input
-                            id="password"
-                            ref="password"
-                            v-model="password"
-                            :type="passwordType"
-                            placeholder="영문/숫자 포함 8자 이상"
-                        >
-                        <i
-                            :class="{ 'fa fa-eye fa-lg' : passwordType === 'password' ,
-                                      'fa fa-eye-slash fa-lg' : passwordType === 'text' }"
-                            @click="passwordType === 'text'?
-                                passwordType = 'password': passwordType = 'text'"
-                        />
+                        <div id="passwordInput">
+                            <input
+                                id="password"
+                                ref="password"
+                                v-model="password"
+                                :type="passwordType"
+                                placeholder="영문/숫자 포함 8자 이상"
+                            >
+                            <i
+                                :class="{ 'fa fa-eye fa-lg' : passwordType === 'password' ,
+                                          'fa fa-eye-slash fa-lg' : passwordType === 'text' }"
+                                @click="passwordType === 'text'?
+                                    passwordType = 'password': passwordType = 'text'"
+                            />
+                        </div>
                         <div
                             v-if="errors[0]"
                             class="validation-fail-message"
@@ -222,7 +224,6 @@ export default {
             url: `/user/detail?uid=${this.uid}`,
         }).then((res) => {
             if (res.data.status === 'S-200') {
-                // 정보 조회 성공
                 this.email = res.data.data.email;
                 this.nickname = res.data.data.nickname;
                 this.profileImg = res.data.data.profileImg;
@@ -239,7 +240,7 @@ export default {
 
             if (!isValid) {
                 this.msg = '필수 항목을 모두 입력해주세요.';
-                this.$bvToast.toast(this.msg);
+                this.$toast('안내', this.msg);
                 return;
             }
 
@@ -256,7 +257,7 @@ export default {
             }).then((res) => {
                 if (res.data.status === 'S-200') {
                     this.msg = '수정 완료되었습니다.';
-                    this.$bvToast.toast(this.msg);
+                    this.$toast('안내', this.msg);
                 }
             }).catch((error) => {
                 console.log(error.response);
@@ -270,7 +271,7 @@ export default {
                 if (res.data.status === 'S-200') {
                     // 삭제 성공
                     this.msg = '정상적으로 탈퇴 처리되었습니다.';
-                    this.$bvToast.toast(this.msg);
+                    this.$toast('안내', this.msg);
                 }
             }).catch((error) => {
                 console.log(error.response);
@@ -293,5 +294,13 @@ export default {
 <style scoped>
 .validation-fail-message {
   color: red;
+}
+#passwordInput {
+    display: flex;
+    align-items: center;
+}
+#passwordInput i{
+    position:absolute;
+    right:20px;
 }
 </style>

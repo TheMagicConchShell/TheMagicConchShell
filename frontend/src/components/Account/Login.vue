@@ -81,7 +81,7 @@ export default {
             // empty check
             if (!this.email || !this.password) {
                 this.msg = '아이디(이메일)와 비밀번호를 입력해주세요.';
-                this.$bvToast.toast(this.msg);
+                this.$toast('안내', this.msg);
                 return;
             }
 

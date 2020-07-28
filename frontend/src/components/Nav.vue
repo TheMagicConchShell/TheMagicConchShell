@@ -98,7 +98,7 @@
                             <b-dropdown-item v-b-modal.userdetail>
                                 <UserDetail />
                             </b-dropdown-item>
-                            <b-dropdown-item @click="logout">
+                            <b-dropdown-item @click.prevent="logout">
                                 Log out
                             </b-dropdown-item>
                         </div>
@@ -126,9 +126,9 @@
 </template>
 
 <script>
-import Signup from '../views/Account/Signup.vue';
-import Login from '../views/Account/Login.vue';
-import UserDetail from '../views/Account/UserDetail.vue';
+import Signup from '../components/Account/Signup.vue';
+import Login from '../components/Account/Login.vue';
+import UserDetail from '../components/Account/UserDetail.vue';
 
 const storage = window.sessionStorage;
 
@@ -157,16 +157,7 @@ export default {
             storage.setItem('jwt-auth-token', '');
             storage.setItem('login_user', '');
             this.isLogin = false;
-            this.msg = '로그아웃 되었습니다.';
-            this.makeToast();
-        },
-        makeToast(append = false) {
-            this.$bvToast.toast(`${this.msg}`, {
-                title: 'Notice',
-                toaster: 'b-toaster-top-center',
-                autoHideDelay: 5000,
-                appendToast: append,
-            });
+            this.$toast('안내', '로그아웃 되었습니다.');
         },
     },
 };

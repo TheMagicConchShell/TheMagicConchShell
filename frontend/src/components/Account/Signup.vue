@@ -65,19 +65,21 @@
                                     passwordRegex: true,
                                     passwordConfirm: passwordConfirm }"
                             >
-                                <input
-                                    id="password"
-                                    ref="password"
-                                    v-model="password"
-                                    :type="passwordType"
-                                    placeholder="비밀번호"
-                                >
-                                <i
-                                    :class="{ 'fa fa-eye fa-lg' : passwordType === 'password' ,
-                                              'fa fa-eye-slash fa-lg' : passwordType === 'text' }"
-                                    @click="passwordType === 'text'?
-                                        passwordType = 'password': passwordType = 'text'"
-                                />
+                                <div id="passwordInput">
+                                    <input
+                                        id="password"
+                                        ref="password"
+                                        v-model="password"
+                                        :type="passwordType"
+                                        placeholder="비밀번호"
+                                    >
+                                    <i
+                                        :class="{ 'fa fa-eye fa-lg' : passwordType === 'password' ,
+                                                  'fa fa-eye-slash fa-lg' : passwordType === 'text' }"
+                                        @click="passwordType === 'text'?
+                                            passwordType = 'password': passwordType = 'text'"
+                                    />
+                                </div>
                                 <div
                                     v-if="errors[0]"
                                     class="validation-fail-message"
@@ -220,7 +222,7 @@ export default {
 
             if (!isValid) {
                 this.msg = '모든 항목을 형식에 맞게 입력해주세요.';
-                this.$bvToast.toast(this.msg);
+                this.$toast('안내', this.msg);
                 return;
             }
 
@@ -234,9 +236,8 @@ export default {
                 },
             }).then((res) => {
                 if (res.data.status === 'S-200') {
-                    // 성공
                     this.msg = '가입에 성공했습니다! 인증 메일이 발송되었습니다. 메일로 인증 후 로그인하여 주세요.';
-                    this.$bvToast.toast(this.msg);
+                    this.$toast('안내', this.msg);
                 }
             }).catch((error) => {
                 console.log(error.response);
@@ -253,5 +254,13 @@ export default {
 }
 .validation-fail-message {
   color: red;
+}
+#passwordInput {
+    display: flex;
+    align-items: center;
+}
+#passwordInput i{
+    position:absolute;
+    right:20px;
 }
 </style>

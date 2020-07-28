@@ -46,7 +46,7 @@ export default {
             // empty check
             if (!this.email || !this.nickname) {
                 this.msg = '아이디(이메일)와 닉네임을 입력해주세요.';
-                this.$bvToast.toast(this.msg);
+                this.$toast('안내', this.msg);
                 return;
             }
 
@@ -56,8 +56,8 @@ export default {
             }).then((res) => {
                 if (res.data.status === 'S-200') {
                     // 이메일 전송 성공
-                    this.msg = '비밀번호가 이메일로 전송되었습니다. 발송된 메일의 비밀번호로 로그인하여 주세요.';
-                    this.$bvToast.toast(this.msg);
+                    this.msg = '이메일이 전송되었습니다! 발송된 메일을 통하여 로그인하여 주세요.';
+                    this.$toast('안내', this.msg);
                 }
             }).catch((error) => {
                 console.log(error.response);
