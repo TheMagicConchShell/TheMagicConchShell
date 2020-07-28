@@ -3,13 +3,8 @@ import VueRouter from 'vue-router';
 
 import Home from '@/views/Platform/Home.vue';
 import Open from '@/views/Platform/Open.vue';
-import Blog from '@/views/Blog/Blog.vue';
 
-import UserDetail from '@/components/user/UserDetail.vue';
-import Signup from '@/components/user/Signup.vue';
-import Login from '@/components/user/Login.vue';
-import FindPassword from '@/components/user/FindPassword.vue';
-import EmailAuth from '@/components/user/EmailAuthentication.vue';
+import EmailAuth from '@/views/Account/EmailAuthentication.vue';
 
 import Support from '@/views/support/Support.vue';
 import NoticeView from '@/views/support/notice/NoticeView.vue';
@@ -37,31 +32,6 @@ const routes = [
         component: Open,
     },
     // 게시판
-    {
-        path: '/board',
-        name: 'List',
-        component: List,
-    },
-    {
-        path: '/user/detail',
-        name: 'userdetail',
-        component: UserDetail,
-    },
-    {
-        path: '/user/signup',
-        name: 'signup',
-        component: Signup,
-    },
-    {
-        path: '/user/login',
-        name: 'login',
-        component: Login,
-    },
-    {
-        path: '/user/findpw',
-        name: 'findpw',
-        component: FindPassword,
-    },
     {
         path: '/user/authentication',
         name: 'emailauth',
