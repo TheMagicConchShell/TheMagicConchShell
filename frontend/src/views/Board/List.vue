@@ -31,36 +31,30 @@
                     <li>치정</li>
                 </ul>
                 <div>
-                    <b-card
-                        img-src="https://placekitten.com/300/300"
-                        img-alt="Card image"
-                        img-left
-                        class="mb-3"
-                    >
-                        <b-card-text>
-                            Some quick example text to build on the card and
-                            make up the bulk of the card's content.
-                        </b-card-text>
-                    </b-card>
+                    <counsel-board
+                        :page="page"
+                    />
                 </div>
             </div>
             <div class="border m-3 w-25">
                 광고 배너
             </div>
         </div>
-        <b-button @click="write">
-            작성
-        </b-button>
     </div>
 </template>
 
 <script>
+import CounselBoard from '@/views/counsel/CounselBoard.vue';
 
 export default {
     name: 'List',
     components: {
-        
+        CounselBoard,
     },
+    data: () => ({
+        page: 0,
+        pageCount: 1,
+    }),
     methods: {
         write() {
             this.$router.push({
