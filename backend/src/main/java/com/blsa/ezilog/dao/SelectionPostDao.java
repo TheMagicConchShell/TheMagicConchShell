@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -13,6 +14,6 @@ public interface SelectionPostDao extends JpaRepository<SelectionPost, BigIntege
 
     Optional<SelectionPost> findByNo(BigInteger no);
     
-    List<SelectionPost> findByIdLessThanOrderByIdDesc(BigInteger id, Pageable pageRequest);
+    Page<SelectionPost> findByIdLessThanOrderByIdDesc(BigInteger id, Pageable pageRequest);
     
 }
