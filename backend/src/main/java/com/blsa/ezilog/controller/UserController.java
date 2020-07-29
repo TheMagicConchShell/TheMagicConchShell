@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
@@ -130,10 +131,12 @@ public class UserController {
 
     @PutMapping("/user/update")
     @ApiOperation(value = "회원 정보 수정")
-    public Object update(@Valid @RequestBody UpdateRequestDTO request, HttpServletResponse res) {
+    public Object update(@Valid @RequestBody UpdateRequestDTO request, HttpServletRequest req,
+            HttpServletResponse res) {
         ResponseEntity<BasicResponse> response = null;
         Map<String, Object> errors = new HashMap<>();
-        User checkUser = userService.select(request.getUid());
+
+        User checkUser = userService.select(req.getHeader("nickname"));
         request.setEmail(checkUser.getEmail());
         String checkname = userService.duplicateCheck("", request.getNickname());
         String authTableCheckname = userService.authDuplicateCheck("", request.getNickname());
@@ -146,7 +149,7 @@ public class UserController {
 
         } else {
             final BasicResponse result = new BasicResponse();
-            User user = userService.update(request);
+            User user = userService.update(request, req.getHeader("nickname"));
             String token = jwtService.create(user);
             res.setHeader("jwt-auth-token", token);
             res.setHeader("nickname", user.getNickname());
@@ -159,13 +162,13 @@ public class UserController {
 
     @GetMapping("/user/detail")
     @ApiOperation(value = "회원 정보 조회")
-    public Object select(@RequestParam long uid) {
+    public Object select(@RequestParam String nickname) {
         ResponseEntity<BasicResponse> response = null;
         Map<String, Object> errors = new HashMap<>();
-        User user = userService.select(uid);
+        User user = userService.select(nickname);
         if (user == null) {
-            errors.put("field", "uid");
-            errors.put("data", uid);
+            errors.put("field", "nickname");
+            errors.put("data", nickname);
             final ErrorResponse result = setErrors("E-4005", "번호에 해당하는 유저가 존재하지 않습니다.", errors);
             response = new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
         } else {
@@ -180,17 +183,18 @@ public class UserController {
 
     @DeleteMapping("/user/delete")
     @ApiOperation(value = "회원 탈퇴")
-    public Object withdraw(@RequestParam long uid) {
+    public Object withdraw(@RequestParam String nickname) {
+
         ResponseEntity<BasicResponse> response = null;
         Map<String, Object> errors = new HashMap<>();
-        User user = userService.select(uid);
+        User user = userService.select(nickname);
         if (user == null) {
-            errors.put("field", "uid");
-            errors.put("data", uid);
+            errors.put("field", "nickname");
+            errors.put("data", nickname);
             final ErrorResponse result = setErrors("E-4005", "번호에 해당하는 유저가 존재하지 않습니다.", errors);
             response = new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
         } else {
-            userService.withdraw(uid);
+            userService.withdraw(nickname);
             final BasicResponse result = new BasicResponse();
             result.status = "S-200";
             result.message = "회원 탈퇴에 성공했습니다.";
@@ -248,6 +252,21 @@ public class UserController {
             response = new ResponseEntity<>(result, HttpStatus.OK);
         }
 
+        return response;
+    }
+
+    @GetMapping("/user/extendJWT")
+    @ApiOperation(value = "jwt 재발급")
+    public Object extendJWT(HttpServletRequest req, HttpServletResponse res) {
+        ResponseEntity<BasicResponse> response = null;
+        final BasicResponse result = new BasicResponse();
+        User user = userService.select(req.getHeader("nickname"));
+        String token = jwtService.create(user);
+        res.setHeader("jwt-auth-token", token);
+        res.setHeader("nickname", user.getNickname());
+        result.status = "S-200";
+        result.message = "토큰이 재발급 되었습니다.";
+        response = new ResponseEntity<>(result, HttpStatus.CREATED);
         return response;
     }
 
