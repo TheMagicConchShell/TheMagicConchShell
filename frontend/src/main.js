@@ -11,7 +11,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import './assets/css/common.css';
 import InfiniteLoading from 'vue-infinite-loading';
+import 'codemirror/lib/codemirror.css';
+import '@toast-ui/editor/dist/toastui-editor.css';
+import '@toast-ui/editor/dist/toastui-editor-viewer.css';
+import { Editor,Viewer } from '@toast-ui/vue-editor';
 
+Vue.component('editor',Editor);
+Vue.component('viewer',Viewer);
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 Vue.use(InfiniteLoading);
@@ -21,7 +27,7 @@ Vue.component('paginate', Paginate);
 Vue.config.productionTip = false;
 
 Vue.prototype.$axios = axios.create({
-    // baseURL: 'http://localhost:8080'
+    // baseURL: 'http://localhost:8399'
     baseURL: 'http://i3a403.p.ssafy.io:8399',
 });
 

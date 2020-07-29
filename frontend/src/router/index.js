@@ -61,6 +61,11 @@ const routes = [
                 name: 'CounselDetail',
                 props: ({params}) => ({no: Number.parseInt(params.no, 10) || 0}),
                 component: CounselDetail,
+            },
+            {
+                path:"regist",
+                name:"counselregist",
+                component: CounselRegist
             }
         ],
     },
@@ -105,11 +110,6 @@ const routes = [
             },
         ],
 
-    },
-    {
-        path:"/counselregist",
-        name:"counselregist",
-        component: CounselRegist
     },
     {
         path: "/error",
