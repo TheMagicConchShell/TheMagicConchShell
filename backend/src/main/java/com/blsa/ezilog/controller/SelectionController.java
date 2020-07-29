@@ -2,11 +2,11 @@ package com.blsa.ezilog.controller;
 
 import java.math.BigInteger;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -53,7 +53,7 @@ public class SelectionController {
             errors.put("field", "no");
             errors.put("data", request.getNo());
             final ErrorResponse result = new ErrorResponse();
-            result.status = "미정,,,,";
+            result.status = "E-4431";
             result.message = "이미 메인에 선정된 글입니다.";
             result.errors = errors;
 
@@ -78,39 +78,37 @@ public class SelectionController {
     }
     
     @GetMapping("/post")
-    @ApiOperation(value = "선정된 메인 고민 목록 가져오기")
+    @ApiOperation(value = "선정된 메인 고민 목록 가져오기", notes = "lastMainPostId: 현재까지 페이지에 그려진 고민글 no 중 가장 작은 값, size: 가져올 글의 개수 ")
     public Object retrieveMainPost(@RequestParam BigInteger lastMainPostId, @RequestParam int size) {
         ResponseEntity<BasicResponse> response = null;
         Map<String, Object> errors = new HashMap<>();
         
         Pageable pageable = PageRequest.of(0, size);
-        List<SelectionPost> list = selectionPostDao.findByIdLessThanOrderByIdDesc(lastMainPostId, pageable);
+        Page<SelectionPost> list = selectionPostDao.findByIdLessThanOrderByIdDesc(lastMainPostId, pageable);
         
         if(list.isEmpty()) {
-            // 의미 없는 코드,,
-            errors.put("field", "selectionPostEmpty");
+            errors.put("field", "lastMainPostId");
             errors.put("data", lastMainPostId);
             final ErrorResponse result = new ErrorResponse();
-            result.status = "미정,,,";
-            result.message = "불러 올 메인 고민이  없습니다.";
+            result.status = "E-4430";
+            result.message = "불러올 메인 고민이  없습니다.";
             result.errors = errors;
-            // no content,,
             
-            response = new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
+            response = new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
         }else {
             final BasicResponse result = new BasicResponse();
             
             result.status = "S-200";
             result.message = "메인 고민 목록 조회에 성공했습니다.";
-            result.data = list;
+            result.data = list.getContent();
             
-            response = new ResponseEntity<>(result, HttpStatus.CREATED);            
+            response = new ResponseEntity<>(result, HttpStatus.OK);            
         }
         return response;
     }
     
     @DeleteMapping("/post")
-    @ApiOperation(value = "메인 고민에서 내리기, 히스토리로 이동")
+    @ApiOperation(value = "메인 고민에서 내리기, 메인에 있던 글을 히스토리로 이동")
     public Object removeMainPost(@RequestBody SelectionPost request) {
         ResponseEntity<BasicResponse> response = null;
         Map<String, Object> errors = new HashMap<>();
@@ -120,8 +118,8 @@ public class SelectionController {
             errors.put("field", "no");
             errors.put("data", request.getNo());
             final ErrorResponse result = new ErrorResponse();
-            result.status = "미정,,,,";
-            result.message = "해당 번호의 메인 글이 존재하지 않습니다.";
+            result.status = "E-4432";
+            result.message = "존재하지 않는 메인 글입니다.";
             result.errors = errors;
 
             response = new ResponseEntity<>(result, HttpStatus.NOT_FOUND);

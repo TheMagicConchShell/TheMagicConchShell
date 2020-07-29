@@ -26,7 +26,10 @@ public class SelectionService{
         Optional<SelectionPost> selectionPostOptional = selectionPostDao.findById(post.getId());
         
         if(selectionPostOptional.isPresent()) {
-            SelectionHistory selectionHistory = new SelectionHistory(post.getId(), post.getNo(), post.getDescription());
+            SelectionHistory selectionHistory = new SelectionHistory();
+            selectionHistory.setNo(post.getNo());
+            selectionHistory.setDescription(post.getDescription());
+            
             selectionHistoryDao.save(selectionHistory);
             selectionPostDao.deleteById(post.getId());
             
