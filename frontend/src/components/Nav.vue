@@ -126,9 +126,9 @@
 </template>
 
 <script>
-import Signup from '../components/Account/Signup.vue';
-import Login from '../components/Account/Login.vue';
-import UserDetail from '../components/Account/UserDetail.vue';
+import Signup from '@/components/account/Signup.vue';
+import Login from '@/components/account/Login.vue';
+import UserDetail from '@/components/account/UserDetail.vue';
 
 const storage = window.sessionStorage;
 

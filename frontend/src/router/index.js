@@ -6,11 +6,7 @@ import Open from '@/views/Platform/Open.vue';
 import List from '@/views/Board/List.vue';
 import Rank from '@/views/Board/Rank.vue';
 
-import UserDetail from '@/components/user/UserDetail.vue';
-import Signup from '@/components/user/Signup.vue';
-import Login from '@/components/user/Login.vue';
-import FindPassword from '@/components/user/FindPassword.vue';
-import EmailAuth from '@/components/user/EmailAuthentication.vue';
+import EmailAuthentication from '@/views/account/EmailAuthentication.vue';
 
 import CounselView from '@/views/counsel/CounselView.vue';
 import CounselDetail from '@/views/counsel/CounselDetail.vue';
@@ -48,29 +44,9 @@ const routes = [
         component: Rank,
     },
     {
-        path: '/user/detail',
-        name: 'userdetail',
-        component: UserDetail,
-    },
-    {
-        path: '/user/signup',
-        name: 'signup',
-        component: Signup,
-    },
-    {
-        path: '/user/login',
-        name: 'login',
-        component: Login,
-    },
-    {
-        path: '/user/findpw',
-        name: 'findpw',
-        component: FindPassword,
-    },
-    {
         path: '/user/authentication',
-        name: 'emailauth',
-        component: EmailAuth,
+        name: 'EmailAuthentication',
+        component: EmailAuthentication,
     },
     {
         path: '/counsel',

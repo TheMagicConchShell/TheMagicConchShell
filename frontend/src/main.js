@@ -9,7 +9,7 @@ import Paginate from 'vuejs-paginate';
 import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
-import VueCarousel from 'vue-carousel';
+
 import VueWait from 'vue-wait';
 import InfiniteLoading from 'vue-infinite-loading';
 
@@ -17,7 +17,6 @@ Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 Vue.use(VueWait);
 Vue.use(InfiniteLoading);
-Vue.use(VueCarousel);
 
 Vue.component('paginate', Paginate);
 
