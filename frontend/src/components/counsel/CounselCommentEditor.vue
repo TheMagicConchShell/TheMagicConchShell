@@ -1,0 +1,158 @@
+<template>
+    <div 
+        id="commenteditor" 
+        class="container row"
+    >
+        <div class="col-md-2">
+            <h2>
+                답변 등록<br>
+                <input 
+                    id="commentsecret" 
+                    v-model="commentsecret"
+                    style="width:5%" 
+                    type="checkbox" 
+                    name="commentsecret" 
+                >
+                <label 
+                    v-if="commentsecret==true" 
+                    for="commentsecret"
+                >익명
+                </label>
+                <label 
+                    v-else 
+                    for="commentsecret"
+                >닉네임 공개
+                </label>
+            </h2>
+        </div>
+        <div class="col-md-10">
+            <form
+                ref="form"
+                @submit.prevent="submit"
+            >
+                <editor 
+                    ref="commentEditorText" 
+                    v-model="content" 
+                    :options="editorOpts" 
+                    initial-edit-type="wysiwyg" 
+                    height="150px"
+                    style="margin-top:20px;"
+                />
+                <button
+                    id="commentsubmit"
+                    type="submit" 
+                >
+                    등록
+                </button>
+            </form>
+        </div>
+    </div>
+</template>
+
+<script>
+import 'tui-color-picker/dist/tui-color-picker.css';
+import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
+import { integer } from 'vee-validate/dist/rules';
+
+const storage = window.sessionStorage;
+
+export default {
+    props: {
+        submitUrl: {
+            type: String,
+            required: true,
+        },
+        submitMethod: {
+            type: String,
+            required: true,
+        },
+        defaultPostNo:{
+            type: Number,
+            required: true,
+        }
+    },
+    data: () => ({
+        content: '',
+        commentsecret:true,
+        editorOpts:{
+            hooks:{
+                addImageBlobHook :  async (blob, callback)=>{
+                    var u = window.URL.createObjectURL(blob);
+                    var img = new Image();
+                    img.src = u;
+                    var canvas = document.createElement('canvas');
+                    img.onload=function(){
+                        var MAX_WIDTH = 1000;
+                        var MAX_HEIGHT = 800;
+                        var width = img.width;
+                        var height = img.height;
+                            
+                        if (width > height) {
+                            if (width > MAX_WIDTH) {
+                                height *= MAX_WIDTH / width;
+                                width = MAX_WIDTH;
+                            }
+                        } else {
+                            if (height > MAX_HEIGHT) {
+                                width *= MAX_HEIGHT / height;
+                                height = MAX_HEIGHT;
+                            }
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        var ctx = canvas.getContext('2d');
+                        ctx.drawImage(img,0,0,width,height);
+                        var ret = canvas.toDataURL();
+                        callback(ret,"uploaded image");
+                    };
+                    
+                    return false;
+                }
+            },
+            plugins: [colorSyntax],
+        },
+    }),
+    methods: {
+        async submit() {
+            this.content = this.$refs.commentEditorText.invoke("getHtml");
+
+            const response = await this.$axios({
+                url: this.submitUrl,
+                method: this.submitMethod,
+                headers: {
+                },
+                data: {
+                    content:this.content,
+                    postNo: this.defaultPostNo,
+                    secret:this.commentsecret,
+                    writer:sessionStorage.getItem("nickname")
+                },
+            })
+                .catch((error) => { console.log(error.response); });
+
+            if (response) {
+                if (response.status >= 200 && response.status < 300) {
+                    this.$toast('답변', '답변이 작성되었습니다.');
+                } else {
+                    console.log('글 작성이 실패하였습니다');
+                }
+            }
+        },
+    },
+};
+</script>
+
+<style>
+#commenteditor{
+    margin-top:20px;
+    border: 0.5px solid gray;
+}
+
+#commenteditor h2{
+    margin-top: 50px;
+    text-align: center;
+}
+#commentsubmit{
+    margin:20px;
+}
+</style>
