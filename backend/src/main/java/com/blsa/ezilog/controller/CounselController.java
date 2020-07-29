@@ -729,7 +729,7 @@ public class CounselController {
 
                 LocalDateTime currentTime = LocalDateTime.now();
                 Reply ptemp = new Reply(reply.getWriter(), reply.getPostNo(), reply.getContent(), currentTime,
-                        reply.getLikeCount(), reply.getUnlikeCount(), reply.isSelected(), reply.isSecret());
+                        reply.isSecret());
                 replyDao.save(ptemp);
                 result.status = "S-200";
                 result.message = "답변 작성에 성공했습니다.";
@@ -821,10 +821,10 @@ public class CounselController {
             if (reply.getWriter().equals("admin") || temp.getWriter().equals(nickname)) {
                 Optional<Reply> utemp = replyDao.findReplyById(reply.getId());
                 Reply updateTemp = utemp.get();
-                updateTemp.setContent(reply.getContent()); 
+                updateTemp.setContent(reply.getContent());
                 updateTemp.setSecret(reply.isSecret());
                 updateTemp.setSelected(reply.isSelected());
-               
+
                 replyDao.save(updateTemp);
                 result.status = "S-200";
                 result.message = "답변 글 수정 완료";
