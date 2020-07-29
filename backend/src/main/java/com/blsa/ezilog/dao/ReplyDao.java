@@ -15,7 +15,7 @@ public interface ReplyDao extends JpaRepository<Reply, BigInteger> {
     
     Page<Reply> findReplyByPostNo(BigInteger postNo, Pageable request);
     
-    @Query(value="SELECT * FROM REPLY WHERE post_no =:postNo", nativeQuery=true)
+    @Query(value="SELECT * FROM reply WHERE post_no =:postNo", nativeQuery=true)
     List<Reply> ReplyByPostNum(BigInteger postNo);
     
     Page<Reply> findReplyByWriter(String writer, Pageable request);

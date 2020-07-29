@@ -37,7 +37,7 @@ import io.swagger.annotations.ApiOperation;
 
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
 @RestController
-@RequestMapping("/conusel")
+@RequestMapping("/counsel")
 public class CounselController {
 
     @Autowired
@@ -68,7 +68,7 @@ public class CounselController {
             response = new ResponseEntity<>(eresult, HttpStatus.BAD_REQUEST);
 
         } else {
-            PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.ASC, "no");
+            PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "no");
             Page<Post> pList = postDao.findAll(pageable);
 
             if (!pList.isEmpty()) {
@@ -88,7 +88,7 @@ public class CounselController {
                 eresult.message = "불러 올 고민이  없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "noPost");
-                errorMap.put("data", page);
+                errorMap.put("data", pageable);
                 eresult.errors = errorMap;
 
                 response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
@@ -121,7 +121,7 @@ public class CounselController {
 
         } else {
 
-            PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.ASC, "no");
+            PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "no");
 
             Page<Post> pList = postDao.findPostByWriter(writer, pageable);
 
@@ -136,7 +136,7 @@ public class CounselController {
                 eresult.message = "작성자에 해당되는 고민이  없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "noPostByWriter");
-                errorMap.put("data", page);
+                errorMap.put("data", pageable);
                 eresult.errors = errorMap;
 
                 response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
@@ -215,7 +215,7 @@ public class CounselController {
             response = new ResponseEntity<>(eresult, HttpStatus.BAD_REQUEST);
 
         } else {
-            PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.ASC, "no");
+            PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "no");
             Page<Post> pList = postDao.findPostByTitle(title, pageable);
 
             if (!pList.isEmpty()) {
@@ -235,7 +235,7 @@ public class CounselController {
                 eresult.message = "제목에 해당 되는고민 글들이  없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "noPostByTitle");
-                errorMap.put("data", null);
+                errorMap.put("data", pageable);
                 eresult.errors = errorMap;
 
                 response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
@@ -265,7 +265,7 @@ public class CounselController {
             response = new ResponseEntity<>(eresult, HttpStatus.BAD_REQUEST);
 
         } else {
-            PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.ASC, "no");
+            PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "no");
             Page<Post> pList = postDao.findPostByTitleORWriter(keyword, pageable);
 
             if (!pList.isEmpty()) {
@@ -285,7 +285,7 @@ public class CounselController {
                 eresult.message = "제목 또는 작성자에 해당 되는고민 글들이  없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "noPostByWriterORTitle");
-                errorMap.put("data", null);
+                errorMap.put("data", pageable);
                 eresult.errors = errorMap;
 
                 response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
@@ -456,7 +456,7 @@ public class CounselController {
         Map<String, Object> errorMap = new HashMap<>();
 
         if (page <= 0) {
-            eresult.status = "E-4413";
+            eresult.status = "E-4400";
             eresult.message = "잘못 된 페이지 요청 입니다.";
             eresult.data = null;
             errorMap.put("field", "errorPageRequest");
@@ -467,7 +467,7 @@ public class CounselController {
 
         } else {
 
-            PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.ASC, "id");
+            PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "id");
             Page<Reply> rList = replyDao.findReplyByPostNo(postNo, pageable);
             if (!rList.isEmpty()) {
 
@@ -482,14 +482,14 @@ public class CounselController {
                 result.data = rList;
                 response = new ResponseEntity<>(result, HttpStatus.OK);
             } else {
-                eresult.status = "E-4414";
+                eresult.status = "E-4413";
                 eresult.message = "불러 올 답변이  없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "noReply");
-                errorMap.put("data", page);
+                errorMap.put("data", pageable);
                 eresult.errors = errorMap;
 
-                response = new ResponseEntity<>(eresult, HttpStatus.NO_CONTENT);
+                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
             }
         }
         return response;
@@ -516,7 +516,7 @@ public class CounselController {
             response = new ResponseEntity<>(eresult, HttpStatus.BAD_REQUEST);
 
         } else {
-            PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.ASC, "id");
+            PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "id");
             Page<Reply> rList = replyDao.findReplyByWriter(writer, pageable);
             if (!rList.isEmpty()) {
                 result.status = "S-200";
@@ -524,14 +524,14 @@ public class CounselController {
                 result.data = rList;
                 response = new ResponseEntity<>(result, HttpStatus.OK);
             } else {
-                eresult.status = "E-4415";
+                eresult.status = "E-4414";
                 eresult.message = "불러 올 답변이  없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "noReply");
-                errorMap.put("data", page);
+                errorMap.put("data", pageable);
                 eresult.errors = errorMap;
 
-                response = new ResponseEntity<>(eresult, HttpStatus.NO_CONTENT);
+                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
             }
 
         }
@@ -553,7 +553,7 @@ public class CounselController {
         if (optPost.isPresent()) {
 
             if (reply.getWriter().equals(null)) {
-                eresult.status = "E-4416";
+                eresult.status = "E-4415";
                 eresult.message = "알 수 없는 회원 입니다. 답변 글을 작성 할 수 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "creatReply");
@@ -574,8 +574,8 @@ public class CounselController {
                 response = new ResponseEntity<>(result, HttpStatus.OK);
             }
         } else {
-            eresult.status = "E-4417";
-            eresult.message = "존재하지 않는 고민글입니다. 답변을 달 수가  없습니다.";
+            eresult.status = "E-4416";
+            eresult.message = "존재하지 않는 고민글입니다. 답변 글을 작성 할 수  없습니다.";
             eresult.data = null;
             errorMap.put("field", "createReply");
             errorMap.put("data", reply.getPostNo());
@@ -599,7 +599,7 @@ public class CounselController {
         System.out.println(rtemp.isPresent());
 
         if (!rtemp.isPresent()) {
-            eresult.status = "E-4418";
+            eresult.status = "E-4417";
             eresult.message = "존재하지 않는 답변입니다. 답변을 삭제 할 수 없습니다.";
             eresult.data = null;
             errorMap.put("field", "deleteReply");
@@ -621,7 +621,7 @@ public class CounselController {
                 result.data = null;
                 response = new ResponseEntity<>(result, HttpStatus.OK);
             } else if (nickname.equals(null)) {
-                eresult.status = "E-4419";
+                eresult.status = "E-4418";
                 eresult.message = "알수 없는 회원 입니다. 답변을 삭제 할 수 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "deleteReply");
@@ -630,7 +630,7 @@ public class CounselController {
 
                 response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
             } else {
-                eresult.status = "E-4420";
+                eresult.status = "E-4419";
                 eresult.message = "허가 된 계정이 아닙니다. 답변을 삭제 할 수 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "deleteReply");
@@ -672,7 +672,7 @@ public class CounselController {
                 response = new ResponseEntity<>(result, HttpStatus.OK);
 
             } else if (reply.getWriter().equals(null)) {
-                eresult.status = "E-4421";
+                eresult.status = "E-4420";
                 eresult.message = "알수 없는 회원 입니다. 답변 글을 수정 할 수 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "updateReply");
@@ -681,7 +681,7 @@ public class CounselController {
 
                 response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
             } else {
-                eresult.status = "E-4422";
+                eresult.status = "E-4421";
                 eresult.message = "허가 된 계정이 아닙니다. 답변 글을 수정 할 수 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "updateReply");
@@ -691,7 +691,7 @@ public class CounselController {
                 response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
             }
         } else {
-            eresult.status = "E-4423";
+            eresult.status = "E-4422";
             eresult.message = "존재하지 않는 답변입니다. 답변을 수정 할 수 없습니다.";
             eresult.data = null;
             errorMap.put("field", "updateReply");
