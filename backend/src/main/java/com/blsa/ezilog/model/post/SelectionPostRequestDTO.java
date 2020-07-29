@@ -15,7 +15,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class SelectMainPostRequestDTO {
+public class SelectionPostRequestDTO {
     @ApiModelProperty(required = true)
     @NotNull
     BigInteger no;

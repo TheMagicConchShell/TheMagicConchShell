@@ -15,5 +15,7 @@ public interface SelectionPostDao extends JpaRepository<SelectionPost, BigIntege
     Optional<SelectionPost> findByNo(BigInteger no);
     
     Page<SelectionPost> findByIdLessThanOrderByIdDesc(BigInteger id, Pageable pageRequest);
+
+    void deleteByNo(BigInteger no);
     
 }

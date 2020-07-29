@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.blsa.ezilog.dao.SelectionPostDao;
 import com.blsa.ezilog.model.BasicResponse;
 import com.blsa.ezilog.model.ErrorResponse;
-import com.blsa.ezilog.model.post.SelectMainPostRequestDTO;
+import com.blsa.ezilog.model.post.SelectionPostRequestDTO;
 import com.blsa.ezilog.model.post.SelectionHistory;
 import com.blsa.ezilog.model.post.SelectionPost;
 import com.blsa.ezilog.service.SelectionService;
@@ -41,7 +43,7 @@ public class SelectionController {
     
     @PostMapping("/post")
     @ApiOperation(value = "메인 고민으로 선정", notes = "기존 작성된 글 중 선택한 글을 메인에 선정, SelectMainPostRequestDTO를 이용하여 추가")
-    public Object selectMainPost(@RequestBody SelectMainPostRequestDTO request) {
+    public Object selectMainPost(@Valid @RequestBody SelectionPostRequestDTO request) {
         ResponseEntity<BasicResponse> response = null;
         Map<String, Object> errors = new HashMap<>();
         
@@ -109,7 +111,7 @@ public class SelectionController {
     
     @DeleteMapping("/post")
     @ApiOperation(value = "메인 고민에서 내리기, 메인에 있던 글을 히스토리로 이동")
-    public Object removeMainPost(@RequestBody SelectionPost request) {
+    public Object removeMainPost(@Valid @RequestBody SelectionPostRequestDTO request) {
         ResponseEntity<BasicResponse> response = null;
         Map<String, Object> errors = new HashMap<>();
 

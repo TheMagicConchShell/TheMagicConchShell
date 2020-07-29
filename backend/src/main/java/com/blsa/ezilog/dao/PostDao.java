@@ -30,4 +30,9 @@ public interface PostDao extends JpaRepository<Post, BigInteger>{
             countQuery = "SELECT count(*) FROM post WHERE title LIKE %:title% OR writer LIKE %:keyword%",
             nativeQuery = true)
     Page<Post> findPostByTitleORWriter(String keyword, Pageable request);
+    
+    @Query(value = "SELECT * FROM post WHERE allow = true AND no not in (SELECT NO FROM selection_history)",
+            countQuery = "SELECT count(*) FROM post WHERE allow = true",
+            nativeQuery = true)
+    Page<Post> findPostByAllowIsTrueAndNotInHistory(Pageable request);
 }

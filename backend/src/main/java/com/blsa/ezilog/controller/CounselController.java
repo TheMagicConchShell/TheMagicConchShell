@@ -703,5 +703,35 @@ public class CounselController {
         return response;
 
     }
+    
+    @ApiOperation(value = "allow = true이면서 히스토리에 없는 고민 글 목록 반환")
+    @GetMapping("/post/allowed")
+    public Object retrieveAllowedPost(@RequestParam int page) {
+        ResponseEntity<BasicResponse> response = null;
+        Map<String, Object> errors = new HashMap<>();
+
+        PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "no");
+        Page<Post> pList = postDao.findPostByAllowIsTrueAndNotInHistory(pageable);
+
+        if (pList.isEmpty()) {
+            errors.put("field", "lastPage");
+            errors.put("data", page);
+            ErrorResponse result = new ErrorResponse();
+            result.status = "E-4401";
+            result.message = "불러올 고민이 없습니다.";
+            result.errors = errors;
+
+            response = new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+        } else {
+            BasicResponse result = new BasicResponse();
+            result.status = "S-200";
+            result.message = "고민 목록 불러오기에 성공했습니다.";
+            result.data = pList;
+
+            response = new ResponseEntity<>(result, HttpStatus.OK);
+        }
+
+        return response;
+    }
 
 }

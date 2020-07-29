@@ -11,6 +11,7 @@ import com.blsa.ezilog.dao.SelectionHistoryDao;
 import com.blsa.ezilog.dao.SelectionPostDao;
 import com.blsa.ezilog.model.post.SelectionHistory;
 import com.blsa.ezilog.model.post.SelectionPost;
+import com.blsa.ezilog.model.post.SelectionPostRequestDTO;
 
 @Service
 public class SelectionService{
@@ -22,8 +23,8 @@ public class SelectionService{
     SelectionHistoryDao selectionHistoryDao;
     
     @Transactional
-    public SelectionHistory removeMainPostandAddtoHistory(SelectionPost post) {
-        Optional<SelectionPost> selectionPostOptional = selectionPostDao.findById(post.getId());
+    public SelectionHistory removeMainPostandAddtoHistory(SelectionPostRequestDTO post) {
+        Optional<SelectionPost> selectionPostOptional = selectionPostDao.findByNo(post.getNo());
         
         if(selectionPostOptional.isPresent()) {
             SelectionHistory selectionHistory = new SelectionHistory();
@@ -31,7 +32,7 @@ public class SelectionService{
             selectionHistory.setDescription(post.getDescription());
             
             selectionHistoryDao.save(selectionHistory);
-            selectionPostDao.deleteById(post.getId());
+            selectionPostDao.deleteByNo(post.getNo());
             
             return selectionHistory;
         }else {
