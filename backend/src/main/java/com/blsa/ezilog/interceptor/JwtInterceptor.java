@@ -25,7 +25,11 @@ public class JwtInterceptor implements HandlerInterceptor {
             String token = request.getHeader("jwt-auth-token");
             String nickname = request.getHeader("nickname");
             if (token != null && token.length() > 0) {
-                jwtService.checkValid(token, nickname);
+                try {
+                    jwtService.checkValid(token, nickname);
+                } catch (Exception e) {
+                    throw new JwtException("닉네임이 맞지 않습니다.");
+                }
                 return true;
             } else {
                 throw new JwtException("인증 토큰이 없습니다.");
