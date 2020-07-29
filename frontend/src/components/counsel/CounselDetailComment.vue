@@ -19,24 +19,27 @@
                 <div class="comment-expand">
                     <div class="title">
                         <div class="buttons">
-                            <svg
-                                aria-label="Show options"
-                                class="button-item octicon octicon-kebab-horizontal"
-                                viewBox="0 0 16 16"
-                                version="1.1"
-                                width="16"
-                                height="16"
-                                role="img"
-                            />
                             <div
-                                v-if="isWriter"
+                                v-if="isAuthor"
                                 class="button-item button-author"
                             >
                                 AUTHOR
                             </div>
-                            <CounselDetailCommentMenu
-                                class="menu"
-                            />
+
+                            <template v-if="isMine">
+                                <div class="button-item">
+                                    <svg-delete />
+                                </div>
+                                
+                                <div class="button-item">
+                                    <svg-pencil />
+                                </div>
+                            </template>
+                            <template v-else>
+                                <div class="button-item">
+                                    <svg-exclamation />
+                                </div>
+                            </template>
                         </div>
                         <div class="title-text">
                             TITLE
@@ -65,16 +68,17 @@
 </template>
 
 <script>
-import CounselDetailCommentMenu from "@/components/counsel/CounselDetailCommentMenu.vue";
-import SvgBento from '@/components/general/SvgBento.vue';
-import SvgClose from '@/components/general/SvgClose.vue';
 import SvgExclamation from '@/components/general/SvgExclamation.vue';
 import SvgPencil from '@/components/general/SvgPencil.vue';
+import SvgDelete from '@/components/general/SvgDelete.vue';
+
 
 export default {
     name: "CounselDetailComment",
     components: {
-        CounselDetailCommentMenu,
+        SvgDelete,
+        SvgPencil,
+        SvgExclamation,
     },
     props: {
         writer: {
@@ -85,10 +89,14 @@ export default {
             type: String,
             required: true,
         },
-        isWriter: {
+        isMine: {
             type: Boolean,
             default: false,
-        }
+        },
+        isAuthor: {
+            type: Boolean,
+            default: false,
+        },
     },
 };
 </script>
