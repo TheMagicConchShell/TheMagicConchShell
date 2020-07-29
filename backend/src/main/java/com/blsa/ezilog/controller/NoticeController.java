@@ -61,10 +61,10 @@ public class NoticeController {
             eresult.message = "불러 올 공지사항이  없습니다.";
             eresult.data = null;
             errorMap.put("field", "noticeEmpty");
-            errorMap.put("data", page);
+            errorMap.put("data", pageable);
             eresult.errors = errorMap;
 
-            response = new ResponseEntity<>(eresult, HttpStatus.NO_CONTENT);
+            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
         }
 
         return response;
@@ -94,7 +94,7 @@ public class NoticeController {
             eresult.message = "불러 올 공지사항이  없습니다.";
             eresult.data = null;
             errorMap.put("field", "noticeEmpty");
-            errorMap.put("data", page);
+            errorMap.put("data", pageable);
             eresult.errors = errorMap;
 
             response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
