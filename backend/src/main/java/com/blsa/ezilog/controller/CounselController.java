@@ -28,6 +28,7 @@ import com.blsa.ezilog.dao.CategoryDao;
 import com.blsa.ezilog.dao.LikeCountDao;
 import com.blsa.ezilog.dao.PostDao;
 import com.blsa.ezilog.dao.ReplyDao;
+import com.blsa.ezilog.dao.ReplyLikeCountDao;
 import com.blsa.ezilog.dao.UserDao;
 import com.blsa.ezilog.model.BasicResponse;
 import com.blsa.ezilog.model.ErrorResponse;
@@ -35,7 +36,9 @@ import com.blsa.ezilog.model.category.Category;
 import com.blsa.ezilog.model.category.CategoryCreateRequest;
 import com.blsa.ezilog.model.category.CategoryUpdateRequest;
 import com.blsa.ezilog.model.like.LikeCount;
-import com.blsa.ezilog.model.like.LikeCountCreateRequest;
+import com.blsa.ezilog.model.like.LikeCountRequest;
+import com.blsa.ezilog.model.like.ReplyLikeCount;
+import com.blsa.ezilog.model.like.ReplyLikeCountRequest;
 import com.blsa.ezilog.model.post.Post;
 import com.blsa.ezilog.model.post.PostCreateRequest;
 import com.blsa.ezilog.model.post.PostUpdateRequest;
@@ -64,11 +67,15 @@ public class CounselController {
     LikeCountDao likecountDao;
 
     @Autowired
+    ReplyLikeCountDao replylikecountDao;
+
+    @Autowired
     UserDao userDao;
 
     @ApiOperation(value = "고민 전체 목록 반환", notes = "Input : page, Output: 성공 : [status = true, data = 고민 리스트(Post)] 실패 : status = false, data = 에러메세지", response = List.class)
     @GetMapping("/post")
-    public Object retrievePost(@RequestParam int page, @RequestHeader("nickname") String nickname) {
+    public Object retrievePost(@RequestParam int page,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -94,8 +101,16 @@ public class CounselController {
             if (!pList.isEmpty()) {
 
                 pList.forEach((e) -> {
+
+                    Integer like = likecountDao.countTotal(e.getNo(), "p").intValue();
+                    Integer likelike = likecountDao.countTotal(e.getNo(), "pp").intValue();
+                    Integer unlike = likecountDao.countTotal(e.getNo(), "m").intValue();
+
+                    e.setLikeCount(like + likelike);
+                    e.setUnlikeCount(unlike);
+
                     if (e.getWriter().equals(nickname)) {
-                        e.set_mine(true);
+                        e.setMine(true);
                     }
                     if (e.isSecret() == true) {
                         e.setWriter("익명의 작성자");
@@ -126,7 +141,7 @@ public class CounselController {
     @ApiOperation(value = "카테고리에 해당 되는 작성자가 쓴 고민 반환", notes = "작성자 이름을 통해서 고민 검색", response = List.class)
     @GetMapping("/post/category")
     public Object searchNoticeByCategory(@RequestParam String category, @RequestParam int page,
-            @RequestHeader("nickname") String nickname) {
+            @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -154,6 +169,23 @@ public class CounselController {
                 Page<Post> pList = postDao.findPostByCategoryId(cate.getId(), pageable);
 
                 if (!pList.isEmpty()) {
+
+                    pList.forEach((e) -> {
+
+                        Integer like = likecountDao.countTotal(e.getNo(), "p").intValue();
+                        Integer likelike = likecountDao.countTotal(e.getNo(), "pp").intValue();
+                        Integer unlike = likecountDao.countTotal(e.getNo(), "m").intValue();
+
+                        e.setLikeCount(like + likelike);
+                        e.setUnlikeCount(unlike);
+
+                        if (e.getWriter().equals(nickname)) {
+                            e.setMine(true);
+                        }
+                        if (e.isSecret() == true) {
+                            e.setWriter("익명의 작성자");
+                        }
+                    });
 
                     result.status = "S-200";
                     result.message = "작성자를 이용하여 고민 목록들 가져오기 성공";
@@ -188,7 +220,7 @@ public class CounselController {
     @ApiOperation(value = "검색어에 해당 되는 작성자가 쓴 고민 반환", notes = "작성자 이름을 통해서 고민 검색", response = List.class)
     @GetMapping("/post/writer")
     public Object searchNoticeByWriter(@RequestParam String writer, @RequestParam int page,
-            @RequestHeader("nickname") String nickname) {
+            @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -215,8 +247,16 @@ public class CounselController {
                 if (!aList.isEmpty()) {
 
                     aList.forEach((e) -> {
+
+                        Integer like = likecountDao.countTotal(e.getNo(), "p").intValue();
+                        Integer likelike = likecountDao.countTotal(e.getNo(), "pp").intValue();
+                        Integer unlike = likecountDao.countTotal(e.getNo(), "m").intValue();
+
+                        e.setLikeCount(like + likelike);
+                        e.setUnlikeCount(unlike);
+
                         if (e.getWriter().equals(nickname)) {
-                            e.set_mine(true);
+                            e.setMine(true);
                         }
                         if (e.isSecret() == true) {
                             e.setWriter("익명의 작성자");
@@ -243,6 +283,19 @@ public class CounselController {
                 Page<Post> pList = postDao.findPostByWriter(writer, pageable);
 
                 if (!pList.isEmpty()) {
+
+                    pList.forEach((e) -> {
+
+                        Integer like = likecountDao.countTotal(e.getNo(), "p").intValue();
+                        Integer likelike = likecountDao.countTotal(e.getNo(), "pp").intValue();
+                        Integer unlike = likecountDao.countTotal(e.getNo(), "m").intValue();
+                        e.setLikeCount(like + likelike);
+                        e.setUnlikeCount(unlike);
+
+                        if (e.getWriter().equals(nickname)) {
+                            e.setMine(true);
+                        }
+                    });
 
                     result.status = "S-200";
                     result.message = "작성자를 이용하여 고민 목록들 가져오기 성공";
@@ -275,10 +328,36 @@ public class CounselController {
         Map<String, Object> errorMap = new HashMap<>();
 
         Optional<Post> optPost = postDao.findPostByNo(no);
-        Post post = optPost.get();
+
         if (optPost.isPresent()) {
+            Post post = optPost.get();
+
+            // 고민에 해당되는 좋아요, 싫어요 가져오기
+            if (post.isSecret() == true) {
+                post.setWriter("익명의 작성자");
+            }
+            Integer like = likecountDao.countTotal(post.getNo(), "p").intValue();
+            Integer likelike = likecountDao.countTotal(post.getNo(), "pp").intValue();
+            Integer unlike = likecountDao.countTotal(post.getNo(), "m").intValue();
+
+            post.setLikeCount(like + likelike);
+            post.setUnlikeCount(unlike);
 
             List<Reply> allList = replyDao.ReplyByPostNum(post.getNo());
+
+            // 같이오는 댓글들 목록 좋아요, 싫어요 수 가져오기
+            for (int i = 0; i < allList.size(); i++) {
+                Integer r_like = replylikecountDao.countTotal(allList.get(i).getId(), "p").intValue();
+                Integer r_likelike = replylikecountDao.countTotal(allList.get(i).getId(), "pp").intValue();
+                Integer r_unlike = replylikecountDao.countTotal(allList.get(i).getId(), "m").intValue();
+
+                allList.get(i).setLikeCount(r_like + r_likelike);
+                allList.get(i).setUnlikeCount(r_unlike);
+
+                if (allList.get(i).isSecret() == true) {
+                    allList.get(i).setWriter("익명의 작성자");
+                }
+            }
 
             Map<String, Object> PostMap = new HashMap<>();
 
@@ -308,7 +387,7 @@ public class CounselController {
     @ApiOperation(value = "제목에 해당되는 고민 반환", response = List.class)
     @GetMapping("/post/post-title")
     public Object seasrchPostByTitle(@RequestParam String title, @RequestParam int page,
-            @RequestHeader("nickname") String nickname) {
+            @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -333,8 +412,16 @@ public class CounselController {
 
                 pList.forEach((e) -> {
 
+                    // 고민에 해당되는 좋아요, 싫어요 가져오기
+                    Integer like = likecountDao.countTotal(e.getNo(), "p").intValue();
+                    Integer likelike = likecountDao.countTotal(e.getNo(), "pp").intValue();
+                    Integer unlike = likecountDao.countTotal(e.getNo(), "m").intValue();
+
+                    e.setLikeCount(like + likelike);
+                    e.setUnlikeCount(unlike);
+
                     if (e.getWriter().equals(nickname)) {
-                        e.set_mine(true);
+                        e.setMine(true);
                     }
 
                     if (e.isSecret() == true) {
@@ -365,7 +452,7 @@ public class CounselController {
     @ApiOperation(value = "제목 또는 작성자에서 keyword를 포함하는 고민 반환", response = List.class)
     @GetMapping("/post/all")
     public Object seasrchPostByTitleORWriter(@RequestParam(required = false) String keyword, @RequestParam int page,
-            @RequestHeader("nickname") String nickname) {
+            @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -391,8 +478,17 @@ public class CounselController {
                 if (!aList.isEmpty()) {
 
                     aList.forEach((e) -> {
+
+                        // 고민에 해당되는 좋아요, 싫어요 가져오기
+                        Integer like = likecountDao.countTotal(e.getNo(), "p").intValue();
+                        Integer likelike = likecountDao.countTotal(e.getNo(), "pp").intValue();
+                        Integer unlike = likecountDao.countTotal(e.getNo(), "m").intValue();
+
+                        e.setLikeCount(like + likelike);
+                        e.setUnlikeCount(unlike);
+
                         if (e.getWriter().equals(nickname)) {
-                            e.set_mine(true);
+                            e.setMine(true);
                         }
                         if (e.isSecret() == true) {
                             e.setWriter("익명의 작성자");
@@ -420,8 +516,16 @@ public class CounselController {
 
                     pList.forEach((e) -> {
 
+                        // 고민에 해당되는 좋아요, 싫어요 가져오기
+                        Integer like = likecountDao.countTotal(e.getNo(), "p").intValue();
+                        Integer likelike = likecountDao.countTotal(e.getNo(), "pp").intValue();
+                        Integer unlike = likecountDao.countTotal(e.getNo(), "m").intValue();
+
+                        e.setLikeCount(like + likelike);
+                        e.setUnlikeCount(unlike);
+
                         if (e.getWriter().equals(nickname)) {
-                            e.set_mine(true);
+                            e.setMine(true);
                         }
 
                         if (e.isSecret() == true) {
@@ -486,7 +590,8 @@ public class CounselController {
 
     @ApiOperation(value = "고민글 삭제", response = List.class)
     @DeleteMapping("/post")
-    public Object deletePost(@RequestParam BigInteger no, @RequestHeader("nickname") String nickname) {
+    public Object deletePost(@RequestParam BigInteger no,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -541,7 +646,8 @@ public class CounselController {
 
     @ApiOperation(value = "고민 글 내용 변경", response = List.class)
     @PutMapping("/post")
-    public Object updatePost(@RequestBody PostUpdateRequest post, @RequestHeader("nickname") String nickname) {
+    public Object updatePost(@RequestBody PostUpdateRequest post,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
@@ -601,7 +707,7 @@ public class CounselController {
     @ApiOperation(value = "고민 글에 해당하는 답변 전체 목록 반환", notes = "Input : page, postNo Output: 성공 : [status = true, data = 고민 리스트(Post)] 실패 : status = false, data = 에러메세지", response = List.class)
     @GetMapping("/reply")
     public Object retrieveReplyByPostNo(@RequestParam BigInteger postNo, @RequestParam int page,
-            @RequestHeader("nickname") String nickname) {
+            @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -629,11 +735,19 @@ public class CounselController {
 
                 if (!rList.isEmpty()) {
                     rList.forEach((e) -> {
+
+                        // 답변에 해당되는 좋아요, 싫어요 가져오기
+                        Integer like = replylikecountDao.countTotal(e.getId(), "p").intValue();
+                        Integer likelike = replylikecountDao.countTotal(e.getId(), "pp").intValue();
+                        Integer unlike = replylikecountDao.countTotal(e.getId(), "m").intValue();
+
+                        e.setLikeCount(like + likelike);
+                        e.setUnlikeCount(unlike);
                         if (e.getWriter().equals(nickname)) {
-                            e.set_mine(true);
+                            e.setMine(true);
                         }
                         if (nickname.equals(post.getWriter())) {
-                            e.set_author(true);
+                            e.setAuthor(true);
                         }
                         if (e.isSecret() == true) {
                             e.setWriter("익명의 작성자");
@@ -693,6 +807,17 @@ public class CounselController {
             PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "id");
             Page<Reply> rList = replyDao.findReplyByWriter(writer, pageable);
             if (!rList.isEmpty()) {
+
+                rList.forEach(e -> {
+                    // 답변에 해당되는 좋아요, 싫어요 가져오기
+                    Integer like = replylikecountDao.countTotal(e.getId(), "p").intValue();
+                    Integer likelike = replylikecountDao.countTotal(e.getId(), "pp").intValue();
+                    Integer unlike = replylikecountDao.countTotal(e.getId(), "m").intValue();
+
+                    e.setLikeCount(like + likelike);
+                    e.setUnlikeCount(unlike);
+                });
+
                 result.status = "S-200";
                 result.message = "작성자가 작성한 모든 답변 불러오기에 성공했습니다.";
                 result.data = rList;
@@ -762,7 +887,8 @@ public class CounselController {
 
     @ApiOperation(value = "고민 답변 글 삭제", response = List.class)
     @DeleteMapping("/reply")
-    public Object deleteReply(@RequestParam BigInteger id, @RequestHeader("nickname") String nickname) {
+    public Object deleteReply(@RequestParam BigInteger id,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -819,7 +945,8 @@ public class CounselController {
 
     @ApiOperation(value = "답변 글 내용 변경", response = List.class)
     @PutMapping("/reply")
-    public Object updateReply(@RequestBody ReplyUpdateRequest reply, @RequestHeader("nickname") String nickname) {
+    public Object updateReply(@RequestBody ReplyUpdateRequest reply,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
@@ -908,7 +1035,7 @@ public class CounselController {
     @ApiOperation(value = "카테고리 생성", notes = "현재 로그인 유저 닉네임, CategoryRequest")
     @PostMapping("/category")
     public Object createCategory(@RequestBody CategoryCreateRequest crequest,
-            @RequestHeader("nickname") String nickname) {
+            @RequestHeader(value = "nickname", required = false) String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
@@ -952,7 +1079,8 @@ public class CounselController {
 
     @ApiOperation(value = "카테고리 삭제", notes = "Input : 지우려는 카테고리 이름, 현재 로그인 되어있는 사람 Output: 성공 - null, 실패 : 중복시 카테고리 이름 반환")
     @DeleteMapping("/category")
-    public Object deleteCategory(@RequestParam String categoryName, @RequestHeader("nickname") String nickname) {
+    public Object deleteCategory(@RequestParam String categoryName,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
@@ -996,7 +1124,7 @@ public class CounselController {
     @ApiOperation(value = "카테고리 내용 변경", notes = "input CategoryRequest, 현재 로그인 닉네임 output : 성공 여부")
     @PutMapping("/category")
     public Object updateCategory(@RequestBody CategoryUpdateRequest urequest,
-            @RequestHeader("nickname") String nickname) {
+            @RequestHeader(value = "nickname", required = false) String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
@@ -1061,8 +1189,8 @@ public class CounselController {
 
     @ApiOperation(value = "어떤 글의 고민 좋아요, 싫어요, 더 좋아요 총 갯수 가져오기")
     @GetMapping("/post/like")
-    public Object retrieveLikeCountPost(@RequestParam BigInteger uid, @RequestParam BigInteger postNo,
-            @RequestHeader("nickname") String nickname) {
+    public Object retrieveLikeCountPost(@RequestParam BigInteger postNo,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
@@ -1102,8 +1230,8 @@ public class CounselController {
 
     @ApiOperation("종아요, 싫어요 추가")
     @PostMapping("/post/like")
-    public Object createLikeCountPost(@RequestBody LikeCountCreateRequest lcrequest,
-            @RequestHeader("nickname") String nickname) {
+    public Object createLikeCountPost(@RequestBody LikeCountRequest lcrequest,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
@@ -1112,46 +1240,39 @@ public class CounselController {
         Optional<User> userOpt = userDao.findByNickname(nickname);
         if (userOpt.isPresent()) {
             User user = userOpt.get();
-            Optional<LikeCount> tOpt = likecountDao.checkExistLikeCount(user.getUid(), lcrequest.getType(), lcrequest.getPostNo());
+            Optional<LikeCount> tOpt = likecountDao.checkExistLikeCount(user.getUid(), lcrequest.getType(),
+                    lcrequest.getPostNo());
 
             if (lcrequest.getType().equals("p")) {
 
-                if (!tOpt.isPresent()) {
+                Optional<LikeCount> converseOpt = likecountDao.checkExistLikeCount(user.getUid(), "m", lcrequest.getPostNo());
+                
+                if(!converseOpt.isPresent()) {
+                    if (!tOpt.isPresent()) {
 
-                    LocalDateTime currentTime = LocalDateTime.now();
-                    LikeCount lc = new LikeCount(lcrequest.getPostNo(), BigInteger.valueOf(user.getUid()), currentTime, lcrequest.getType());
-                    likecountDao.save(lc);
+                        LocalDateTime currentTime = LocalDateTime.now();
+                        LikeCount lc = new LikeCount(lcrequest.getPostNo(), BigInteger.valueOf(user.getUid()), currentTime,
+                                lcrequest.getType());
+                        likecountDao.save(lc);
 
-                    result.status = "S-200";
-                    result.message = "좋아요 추가  성공";
-                    result.data = null;
+                        result.status = "S-200";
+                        result.message = "좋아요 추가  성공";
+                        result.data = null;
 
-                    response = new ResponseEntity<>(result, HttpStatus.OK);
-                } else {
-                    eresult.status = "E-4434";
-                    eresult.message = "이미 좋아요를 눌렀습니다.";
-                    eresult.data = null;
-                    errorMap.put("field", "existLike");
-                    errorMap.put("data", null);
-                    eresult.errors = errorMap;
+                        response = new ResponseEntity<>(result, HttpStatus.OK);
+                    } else {
+                        eresult.status = "E-4434";
+                        eresult.message = "이미 좋아요를 눌렀습니다.";
+                        eresult.data = null;
+                        errorMap.put("field", "existLike");
+                        errorMap.put("data", null);
+                        eresult.errors = errorMap;
 
-                    response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
-                }
-            } else if (lcrequest.getType().equals("m")) {
-                if (!tOpt.isPresent()) {
-
-                    LocalDateTime currentTime = LocalDateTime.now();
-                    LikeCount lc = new LikeCount(lcrequest.getPostNo(), BigInteger.valueOf(user.getUid()), currentTime, lcrequest.getType());
-                    likecountDao.save(lc);
-
-                    result.status = "S-200";
-                    result.message = "싫어요 추가  성공";
-                    result.data = null;
-
-                    response = new ResponseEntity<>(eresult, HttpStatus.OK);
-                } else {
+                        response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                    }
+                }else {
                     eresult.status = "E-4435";
-                    eresult.message = "이미 싫어요를 눌렀습니다.";
+                    eresult.message = "이미 싫어요를 눌렀습니다. 해제하고 다시 시도하세요";
                     eresult.data = null;
                     errorMap.put("field", "existUnLike");
                     errorMap.put("data", null);
@@ -1159,6 +1280,47 @@ public class CounselController {
 
                     response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
                 }
+                
+                
+            } else if (lcrequest.getType().equals("m")) {
+                
+                Optional<LikeCount> converseOpt = likecountDao.checkExistLikeCount(user.getUid(), "p", lcrequest.getPostNo());
+                
+                if(!converseOpt.isPresent()) {
+                    if (!tOpt.isPresent()) {
+                        
+                        LocalDateTime currentTime = LocalDateTime.now();
+                        LikeCount lc = new LikeCount(lcrequest.getPostNo(), BigInteger.valueOf(user.getUid()), currentTime,
+                                lcrequest.getType());
+                        likecountDao.save(lc);
+
+                        result.status = "S-200";
+                        result.message = "싫어요 추가  성공";
+                        result.data = null;
+
+                        response = new ResponseEntity<>(result, HttpStatus.OK);
+                    } else {
+                        eresult.status = "E-4435";
+                        eresult.message = "이미 싫어요를 눌렀습니다.";
+                        eresult.data = null;
+                        errorMap.put("field", "existUnLike");
+                        errorMap.put("data", null);
+                        eresult.errors = errorMap;
+
+                        response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                    }
+                }else {
+                    eresult.status = "E-4435";
+                    eresult.message = "이미 좋아요를 눌렀습니다. 해제하고 다시 시도하세요";
+                    eresult.data = null;
+                    errorMap.put("field", "existLike");
+                    errorMap.put("data", null);
+                    eresult.errors = errorMap;
+
+                    response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                }
+                
+                
                 // 추가 하는 것이 또 좋아요 기능인 경우
             } else if (lcrequest.getType().equals("pp")) {
                 Optional<LikeCount> pOpt = likecountDao.checkExistLikeCount(user.getUid(), "p", lcrequest.getPostNo());
@@ -1168,7 +1330,8 @@ public class CounselController {
                     // 또 좋아요가 있는지 체크
                     if (!tOpt.isPresent()) {
                         LocalDateTime currentTime = LocalDateTime.now();
-                        LikeCount lc = new LikeCount(lcrequest.getPostNo(), BigInteger.valueOf(user.getUid()), currentTime, lcrequest.getType());
+                        LikeCount lc = new LikeCount(lcrequest.getPostNo(), BigInteger.valueOf(user.getUid()),
+                                currentTime, lcrequest.getType());
                         likecountDao.save(lc);
 
                         result.status = "S-200";
@@ -1196,6 +1359,15 @@ public class CounselController {
 
                     response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
                 }
+            } else {
+                eresult.status = "E-4435";
+                eresult.message = "잘못 된 좋아요 타입 입니다";
+                eresult.data = null;
+                errorMap.put("field", "noExistType");
+                errorMap.put("data", lcrequest.getType());
+                eresult.errors = errorMap;
+
+                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
             }
 
         } else {
@@ -1215,7 +1387,8 @@ public class CounselController {
 
     @ApiOperation("좋아요, 싫어요 삭제")
     @DeleteMapping("/post/like")
-    public Object deleteLikeCountPost(@RequestParam BigInteger postNo, @RequestHeader("nickname") String nickname) {
+    public Object deleteLikeCountPost(@RequestBody LikeCountRequest lcrequest,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
@@ -1225,14 +1398,15 @@ public class CounselController {
         if (userOpt.isPresent()) {
             User user = userOpt.get();
 
-            Optional<LikeCount> lcOpt = likecountDao.findLikeCountByUid(postNo, user.getUid());
+            Optional<LikeCount> lcOpt = likecountDao.checkExistLikeCount(user.getUid(), lcrequest.getType(),
+                    lcrequest.getPostNo());
             if (lcOpt.isPresent()) {
                 LikeCount lctemp = lcOpt.get();
 
                 likecountDao.delete(lctemp);
 
                 result.status = "S-200";
-                result.message = "좋아요 삭제  성공";
+                result.message = "좋아요, 싫어요 삭제  성공";
                 result.data = null;
                 response = new ResponseEntity<>(result, HttpStatus.OK);
 
@@ -1241,7 +1415,226 @@ public class CounselController {
                 eresult.message = "해당 글에 좋아요, 싫어요를 표시한 적이 없습니다";
                 eresult.data = null;
                 errorMap.put("field", "noLikeCount");
-                errorMap.put("postNo", postNo);
+                errorMap.put("postNo", lcrequest.getPostNo());
+                errorMap.put("nickname", nickname);
+                eresult.errors = errorMap;
+
+                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+            }
+
+        } else {
+            eresult.status = "E-4435";
+            eresult.message = "존재하지 않는 유저 입니다";
+            eresult.data = null;
+            errorMap.put("field", "noLikeCount");
+            errorMap.put("data", nickname);
+            eresult.errors = errorMap;
+
+            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+        }
+
+        return response;
+
+    }
+
+    @ApiOperation(value = "어떤  답변 글의 고민 좋아요, 싫어요, 더 좋아요 총 갯수 가져오기")
+    @GetMapping("/reply/like")
+    public Object retrieveLikeCountReply(@RequestParam BigInteger replyId,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
+        ResponseEntity response = null;
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
+
+        Long plus = (long) 0, minus = (long) 0, plus_plus = (long) 0;
+
+        Optional<Reply> optReply = replyDao.findReplyById(replyId);
+
+        if (optReply.isPresent()) {
+            plus = replylikecountDao.countTotal(replyId, "p");
+            minus = replylikecountDao.countTotal(replyId, "m");
+            plus_plus = replylikecountDao.countTotal(replyId, "pp");
+
+            Map<String, Object> resultMap = new HashMap<>();
+
+            result.status = "S-200";
+            result.message = "답변 글의 좋아요 개수 불러오기 성공";
+            resultMap.put("like", plus + plus_plus);
+            resultMap.put("unlike", minus);
+            result.data = resultMap;
+            response = new ResponseEntity<>(result, HttpStatus.OK);
+
+        } else {
+            eresult.status = "E-4433";
+            eresult.message = "해당 번호의 게시글이 없습니다";
+            eresult.data = null;
+            errorMap.put("field", "noPost");
+            errorMap.put("data", null);
+            eresult.errors = errorMap;
+
+            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+        }
+
+        return response;
+    }
+
+    @ApiOperation("댓 글에 종아요, 싫어요 추가")
+    @PostMapping("/reply/like")
+    public Object createLikeCountReply(@RequestBody ReplyLikeCountRequest rlcrequest,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
+        ResponseEntity response = null;
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
+
+        Optional<User> userOpt = userDao.findByNickname(nickname);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            Optional<ReplyLikeCount> tOpt = replylikecountDao.checkExistLikeCount(user.getUid(), rlcrequest.getType(),
+                    rlcrequest.getReplyId());
+
+            if (rlcrequest.getType().equals("p")) {
+
+                if (!tOpt.isPresent()) {
+
+                    LocalDateTime currentTime = LocalDateTime.now();
+                    ReplyLikeCount rlc = new ReplyLikeCount(rlcrequest.getReplyId(), BigInteger.valueOf(user.getUid()),
+                            currentTime, rlcrequest.getType());
+                    replylikecountDao.save(rlc);
+
+                    result.status = "S-200";
+                    result.message = "좋아요 추가  성공";
+                    result.data = null;
+
+                    response = new ResponseEntity<>(result, HttpStatus.OK);
+                } else {
+                    eresult.status = "E-4434";
+                    eresult.message = "이미 좋아요를 눌렀습니다.";
+                    eresult.data = null;
+                    errorMap.put("field", "existLike");
+                    errorMap.put("data", null);
+                    eresult.errors = errorMap;
+
+                    response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                }
+            } else if (rlcrequest.getType().equals("m")) {
+                if (!tOpt.isPresent()) {
+
+                    LocalDateTime currentTime = LocalDateTime.now();
+                    ReplyLikeCount rlc = new ReplyLikeCount(rlcrequest.getReplyId(), BigInteger.valueOf(user.getUid()),
+                            currentTime, rlcrequest.getType());
+                    replylikecountDao.save(rlc);
+
+                    result.status = "S-200";
+                    result.message = "싫어요 추가  성공";
+                    result.data = null;
+
+                    response = new ResponseEntity<>(eresult, HttpStatus.OK);
+                } else {
+                    eresult.status = "E-4435";
+                    eresult.message = "이미 싫어요를 눌렀습니다.";
+                    eresult.data = null;
+                    errorMap.put("field", "existUnLike");
+                    errorMap.put("data", null);
+                    eresult.errors = errorMap;
+
+                    response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                }
+                // 추가 하는 것이 또 좋아요 기능인 경우
+            } else if (rlcrequest.getType().equals("pp")) {
+                Optional<ReplyLikeCount> pOpt = replylikecountDao.checkExistLikeCount(user.getUid(), "p",
+                        rlcrequest.getReplyId());
+
+                // 좋아요가 있는지 체크
+                if (pOpt.isPresent()) {
+                    // 또 좋아요가 있는지 체크
+                    if (!tOpt.isPresent()) {
+                        LocalDateTime currentTime = LocalDateTime.now();
+                        ReplyLikeCount rlc = new ReplyLikeCount(rlcrequest.getReplyId(),
+                                BigInteger.valueOf(user.getUid()), currentTime, rlcrequest.getType());
+                        replylikecountDao.save(rlc);
+                        result.status = "S-200";
+                        result.message = "또 좋아요 추가  성공";
+                        result.data = null;
+
+                        response = new ResponseEntity<>(result, HttpStatus.OK);
+                    } else {
+                        eresult.status = "E-4436";
+                        eresult.message = "이미 또 좋아요를 눌렀습니다.";
+                        eresult.data = null;
+                        errorMap.put("field", "existUnLike");
+                        errorMap.put("data", null);
+                        eresult.errors = errorMap;
+
+                        response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                    }
+                } else {
+                    eresult.status = "E-4437";
+                    eresult.message = "좋아요를 누르지 않았습니다. 먼저 좋아요를 눌러주세요.";
+                    eresult.data = null;
+                    errorMap.put("field", "needPreLike");
+                    errorMap.put("data", null);
+                    eresult.errors = errorMap;
+
+                    response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+                }
+            } else {
+                eresult.status = "E-4435";
+                eresult.message = "잘못 된 좋아요 타입 입니다";
+                eresult.data = null;
+                errorMap.put("field", "noExistType");
+                errorMap.put("data", rlcrequest.getType());
+                eresult.errors = errorMap;
+
+                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+            }
+
+        } else {
+            eresult.status = "E-4435";
+            eresult.message = "존재하지 않는 유저 입니다";
+            eresult.data = null;
+            errorMap.put("field", "noLikeCount");
+            errorMap.put("data", nickname);
+            eresult.errors = errorMap;
+
+            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+        }
+
+        return response;
+
+    }
+
+    @ApiOperation("좋아요, 싫어요 삭제")
+    @DeleteMapping("/reply/like")
+    public Object deleteLikeCountReply(@RequestBody ReplyLikeCountRequest rlcrequest,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
+        ResponseEntity response = null;
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
+
+        Optional<User> userOpt = userDao.findByNickname(nickname);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+
+            Optional<LikeCount> lcOpt = likecountDao.checkExistLikeCount(user.getUid(), rlcrequest.getType(),
+                    rlcrequest.getReplyId());
+            if (lcOpt.isPresent()) {
+                LikeCount lctemp = lcOpt.get();
+
+                likecountDao.delete(lctemp);
+
+                result.status = "S-200";
+                result.message = "좋아요, 싫어요 삭제  성공";
+                result.data = null;
+                response = new ResponseEntity<>(result, HttpStatus.OK);
+
+            } else {
+                eresult.status = "E-4438";
+                eresult.message = "해당 글에 좋아요, 싫어요를 표시한 적이 없습니다";
+                eresult.data = null;
+                errorMap.put("field", "noLikeCount");
+                errorMap.put("replyId", rlcrequest.getReplyId());
                 errorMap.put("nickname", nickname);
                 eresult.errors = errorMap;
 

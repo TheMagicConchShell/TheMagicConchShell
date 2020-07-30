@@ -13,14 +13,14 @@ import com.blsa.ezilog.model.post.Post;
 public interface PostDao extends JpaRepository<Post, BigInteger>{
     
     @Query(value = "SELECT * FROM post WHERE writer LIKE %:writer% AND secret=false",
-            countQuery = "SELECT count(*) FROM post WHERE writer LIKE %:writer% AND secre-false",
+            countQuery = "SELECT count(*) FROM post WHERE writer LIKE %:writer% AND secret=false",
             nativeQuery = true)
     Page<Post> findPostByWriter(String writer, Pageable request);
     
     Optional<Post> findPostByNo(BigInteger no);
     
-    @Query(value ="SELECT * FROM post where category_id =:id",
-            countQuery = "SELECT count(*) FROM post where category_id=:id",
+    @Query(value ="SELECT * FROM post WHERE category_id =:id",
+            countQuery = "SELECT count(*) FROM post WHERE category_id=:id",
             nativeQuery = true)
     Page<Post>  findPostByCategoryId(BigInteger id, Pageable request);
     

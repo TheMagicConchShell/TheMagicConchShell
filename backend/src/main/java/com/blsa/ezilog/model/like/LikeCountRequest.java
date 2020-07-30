@@ -17,7 +17,7 @@ import lombok.ToString;
 
 @Valid
 @ToString
-public class LikeCountCreateRequest {
+public class LikeCountRequest {
 
     BigInteger postNo;
 
