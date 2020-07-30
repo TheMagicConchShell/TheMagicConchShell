@@ -49,10 +49,10 @@ public class Reply {
     private boolean secret;
     
     @Transient
-    private boolean is_mine;
+    private boolean isMine;
     
     @Transient
-    private boolean is_author;
+    private boolean isAuthor;
 
     public Reply(String writer, BigInteger postNo, String content, LocalDateTime writeDate, boolean secret) {
         super();
