@@ -54,16 +54,14 @@ public class Reply {
     @Transient
     private boolean is_author;
 
-    public Reply(String writer, BigInteger postNo, String content, LocalDateTime writeDate, int likeCount, int unlikeCount,
-            boolean selected, boolean secret) {
+    public Reply(String writer, BigInteger postNo, String content, LocalDateTime writeDate, boolean secret) {
         super();
         this.writer = writer;
         this.postNo = postNo;
         this.content = content;
         this.writeDate = writeDate;
-        this.likeCount = likeCount;
-        this.unlikeCount = unlikeCount;
-        this.selected = selected;
         this.secret = secret;
     }
+
+   
 }

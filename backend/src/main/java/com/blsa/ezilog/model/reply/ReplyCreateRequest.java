@@ -24,15 +24,6 @@ public class ReplyCreateRequest {
     @NotNull
     String content;
     
-   
-    @ApiModelProperty(required = true)
-    @NotNull 
-    int likeCount;
-    
-    @ApiModelProperty(required = true)
-    @NotNull
-    int unlikeCount;
-    
     @ApiModelProperty(required = true)
     @NotNull
     boolean selected;
@@ -55,22 +46,6 @@ public class ReplyCreateRequest {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public int getLikeCount() {
-        return likeCount;
-    }
-
-    public void setLike(int likeCount) {
-        this.likeCount = likeCount;
-    }
-
-    public int getUnlikeCount() {
-        return unlikeCount;
-    }
-
-    public void setUnlike(int unlikeCount) {
-        this.unlikeCount = unlikeCount;
     }
 
     public boolean isSelected() {
