@@ -23,7 +23,7 @@ public class ReplyLikeCount {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     BigInteger id;
     
-    @Column(name="rely_id")
+    @Column(name="reply_id")
     BigInteger replyId;
     
     @Column
