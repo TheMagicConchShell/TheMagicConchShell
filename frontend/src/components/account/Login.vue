@@ -62,8 +62,7 @@
 </template>
 
 <script>
-
-import FindPW from './FindPassword.vue';
+import FindPW from '@/components/account/FindPassword.vue';
 
 const storage = window.sessionStorage;
 
@@ -98,14 +97,10 @@ export default {
                 console.log(res);
                 storage.setItem('jwt-auth-token', res.headers['jwt-auth-token']);
                 storage.setItem('nickname', res.data.data.nickname);
-                this.onClickLoginSuccess();
                 this.$router.go();
             }).catch((error) => {
                 console.log(error.response);
             });
-        },
-        onClickLoginSuccess() {
-            this.$refs.loginCloseBtn.click();
         },
     },
 };
