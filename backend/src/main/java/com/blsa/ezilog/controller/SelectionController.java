@@ -65,42 +65,43 @@ public class SelectionController {
 
             response = new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
         }
-        
-        Post post = postDao.getOne(request.getNo());
-        if(!post.isAllow()) {
-            errors.put("field", "notAllowedPostNo");
-            errors.put("data", request.getNo());
-            final ErrorResponse result = new ErrorResponse();
-            result.status = "E-4433";
-            result.message = "메인 노출을 허락한 글이 아닙니다.";
-            result.errors = errors;
-
-            response = new ResponseEntity<>(result, HttpStatus.FORBIDDEN);
-            
-        } else if(mainPost.isPresent()) {
-            errors.put("field", "selectionPostNo");
-            errors.put("data", request.getNo());
-            final ErrorResponse result = new ErrorResponse();
-            result.status = "E-4431";
-            result.message = "이미 메인에 선정된 글입니다.";
-            result.errors = errors;
-
-            response = new ResponseEntity<>(result, HttpStatus.CONFLICT);
-            
-        } else {
-            SelectionPost selectionPost = new SelectionPost();
-            selectionPost.setNo(request.getNo());
-            selectionPost.setDescription(request.getDescription());
-            
-            selectionPostDao.save(selectionPost);
-            
-            final BasicResponse result = new BasicResponse();
-
-            result.status = "S-200";
-            result.message = "메인 선정에 성공했습니다.";
-            result.data = selectionPost;
-            
-            response = new ResponseEntity<>(result, HttpStatus.CREATED);
+        else {
+            Post post = postDao.getOne(request.getNo());
+            if(!post.isAllow()) {
+                errors.put("field", "notAllowedPostNo");
+                errors.put("data", request.getNo());
+                final ErrorResponse result = new ErrorResponse();
+                result.status = "E-4433";
+                result.message = "메인 노출을 허락한 글이 아닙니다.";
+                result.errors = errors;
+                
+                response = new ResponseEntity<>(result, HttpStatus.FORBIDDEN);
+                
+            } else if(mainPost.isPresent()) {
+                errors.put("field", "selectionPostNo");
+                errors.put("data", request.getNo());
+                final ErrorResponse result = new ErrorResponse();
+                result.status = "E-4431";
+                result.message = "이미 메인에 선정된 글입니다.";
+                result.errors = errors;
+                
+                response = new ResponseEntity<>(result, HttpStatus.CONFLICT);
+                
+            } else {
+                SelectionPost selectionPost = new SelectionPost();
+                selectionPost.setNo(request.getNo());
+                selectionPost.setDescription(request.getDescription());
+                
+                selectionPostDao.save(selectionPost);
+                
+                final BasicResponse result = new BasicResponse();
+                
+                result.status = "S-200";
+                result.message = "메인 선정에 성공했습니다.";
+                result.data = selectionPost;
+                
+                response = new ResponseEntity<>(result, HttpStatus.CREATED);
+            }
         }
         
         return response;
