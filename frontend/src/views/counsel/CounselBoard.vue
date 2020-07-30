@@ -77,8 +77,11 @@ export default {
         fetchPost(page) {
             this.$wait.start("board list load");
             this.$axios({
-                url: '/conusel/post',
+                url: '/counsel/post',
                 method: 'get',
+                headers: {
+                    nickname: sessionStorage.getItem('nickname') || '',
+                },
                 params: {
                     page: page || 1,
                 }
