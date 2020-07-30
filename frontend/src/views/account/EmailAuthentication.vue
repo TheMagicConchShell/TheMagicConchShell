@@ -3,7 +3,7 @@
         <div>
             <div>
                 <h1>이메일 인증</h1>
-                <h3>{{ text }}</h3>
+                <h3 id="authText">{{ text }}</h3>
 
                 <button @click="moveMain">
                     <span>
@@ -42,8 +42,10 @@ export default {
                  정상적으로 서비스 이용이 가능합니다.`;
             } else {
                 this.text = '이메일 인증에 실패하였습니다. 다시 시도해주세요.';
+                alert(1);
             }
         }).catch((error) => {
+            this.text = '이메일 인증에 실패하였습니다. 다시 시도해주세요.';
             console.log(error.response);
         });
     },
@@ -56,5 +58,7 @@ export default {
 </script>
 
 <style>
-
+#authText{
+    text-align: center;
+}
 </style>
