@@ -221,7 +221,7 @@ export default {
         console.log(this.nickname);
         this.$axios({
             method: 'get',
-            url: `/user/detail?nickname=${this.uid}`,
+            url: `/user/detail?nickname=${this.nickname}`,
         }).then((res) => {
             if (res.data.status === 'S-200') {
                 this.email = res.data.data.email;
