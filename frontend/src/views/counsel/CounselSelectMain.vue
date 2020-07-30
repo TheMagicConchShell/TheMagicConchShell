@@ -4,21 +4,19 @@
             추천 영역..
         </h1>
 
-        <div class="temporary-placer" />
         <template v-if="list && list.length">
             <table
                 class="table"
             >
                 <colgroup>
-                    <col width="5%">
+                    <col width="10%">
                     <col width="30%">
                     <col width="10%">
-                    <col width="5%">
-                    <col width="5%">
-                    <col width="5%">
+                    <col width="8%">
+                    <col width="8%">
+                    <col width="8%">
                     <col width="10%">
-                    <col width="10%">
-                    <col width="15%">
+                    <col width="12%">
                 </colgroup>
                 <thead class="thead-dark">
                     <tr>
@@ -61,7 +59,7 @@
                     >
                         <td>{{ item.no }}</td>
                         <td class="text-left">
-                            <router-link :to="{path: '/support/notice/'+ item.nid}">
+                            <router-link :to="{path: '/counsel/read/'+ item.no}">
                                 {{ item.title }}
                             </router-link>
                         </td>
@@ -114,8 +112,19 @@
                 @submit.stop.prevent="setSelectionPost"
             >
                 <b-form-group
+                    label="선택 글 번호"
+                    label-for="no-input"
+                >
+                    <b-form-input
+                        id="no-input"
+                        v-model="no"
+                        required
+                        readonly
+                    />
+                </b-form-group>
+                <b-form-group
                     :state="descriptionState"
-                    label="Description"
+                    label="설명"
                     label-for="description-input"
                     invalid-feedback="설명을 입력해주세요."
                 >
@@ -132,12 +141,7 @@
 </template>
 <script>
 import CounselSelectMainPaginate from "@/components/CounselSelectMainPaginate";
-import axios from 'axios';
 import moment from 'moment';
-
-const ai = axios.create({
-    baseURL: 'http://localhost:8399'
-});
 
 export default {
     name: 'CounselSelectMain',
@@ -169,7 +173,7 @@ export default {
     },
     methods: {
         async fetchAllowedCounsels(page) {
-            const response = await ai({
+            const response = await this.$axios({
                 url: `/counsel/post/allowed`,
                 method: "get",
                 params: {
@@ -205,7 +209,6 @@ export default {
             if (!this.checkFormValidity()) {
                 return;
             }
-            console.log(this.no + " " + this.description);
             ai({
                 url: `/selection/post`,
                 method: "post",
@@ -214,9 +217,10 @@ export default {
                     description: this.description,
                 }
             }).then(() => {
-                
-            }).catch(() => {
-
+                let msg = '메인 글로 선정되었습니다.';
+                this.$toast('안내', msg);
+            }).catch((error) => {
+                console.log(error.response);
             });
 
             this.$nextTick(() => {
@@ -231,6 +235,14 @@ export default {
 
 </script>
 
-<style>
-
+<style scoped>
+table {
+    table-layout: fixed; 
+    width: 100%;
+}
+td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; 
+}
 </style>
