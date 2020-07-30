@@ -209,7 +209,7 @@ export default {
             if (!this.checkFormValidity()) {
                 return;
             }
-            ai({
+            this.$axios({
                 url: `/selection/post`,
                 method: "post",
                 data: {
