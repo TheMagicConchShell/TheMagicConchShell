@@ -34,8 +34,16 @@ public interface PostDao extends JpaRepository<Post, BigInteger>{
             nativeQuery = true)
     Page<Post> findPostByTitleORWriter(String keyword, Pageable request);
     
+    @Query(value = "SELECT * FROM post WHERE allow = true AND no not in (SELECT no FROM selection_history)",
+            countQuery = "SELECT count(*) FROM post WHERE allow = true AND no not in (SELECT no FROM selection_history)",
+            nativeQuery = true)
+    Page<Post> findPostByAllowIsTrueAndNotInHistory(Pageable request);
     
-    
+    @Query(value = "SELECT * FROM post where no in (SELECT no FROM selection_post) ORDER BY no desc",
+            countQuery = "SELECT count(*) FROM post where no in (SELECT no FROM selection_post) ORDER BY no desc",
+            nativeQuery = true)
+    Page<Post> findByNoLessThanOrderByNoDesc(BigInteger no, Pageable pageable);
+
     
     @Query(value = "SELECT * FROM post WHERE secret=true ",
             countQuery = "SELECT count(*) FROM post WHERE secret=true",
