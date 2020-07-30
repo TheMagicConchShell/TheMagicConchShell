@@ -205,7 +205,6 @@ export default {
         ValidationObserver,
     },
     data: () => ({
-        uid: '',
         email: '',
         nickname: '',
         password: '',
@@ -218,14 +217,14 @@ export default {
         msg: '',
     }),
     created() {
-        this.uid = storage.getItem('login_user');
+        this.nickname = storage.getItem('nickname');
+        console.log(this.nickname);
         this.$axios({
             method: 'get',
-            url: `/user/detail?uid=${this.uid}`,
+            url: `/user/detail?nickname=${this.uid}`,
         }).then((res) => {
             if (res.data.status === 'S-200') {
                 this.email = res.data.data.email;
-                this.nickname = res.data.data.nickname;
                 this.profileImg = res.data.data.profileImg;
                 this.point = res.data.data.point;
                 this.level = res.data.data.level;
@@ -248,7 +247,6 @@ export default {
                 method: 'put',
                 url: '/user/update',
                 data: {
-                    uid: this.uid,
                     email: this.email,
                     nickname: this.nickname,
                     password: this.password,
@@ -266,7 +264,7 @@ export default {
         userDelete() {
             this.$axios({
                 method: 'delete',
-                url: `/user/delete?uid=${this.uid}`,
+                url: `/user/delete?nickname=${this.nickname}`,
             }).then((res) => {
                 if (res.data.status === 'S-200') {
                     // 삭제 성공
