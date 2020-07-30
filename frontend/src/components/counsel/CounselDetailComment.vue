@@ -41,17 +41,19 @@
                                 </div>
                             </template>
                         </div>
-                        <div class="title-text">
-                            TITLE
+                        <div
+                            v-if="showTitle"
+                            class="title-text"
+                        >
+                            {{ title }}
                         </div>
                     </div>
                     <table class="content">
                         <tbody>
                             <td class="comment-body">
-                                AAAAAAAAAAAAAAAAAAAAAAAAAAaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+                                <viewer
+                                    :initial-value="content"
+                                />
                             </td>
                             <td class="comment-side-up">
                                 +25
@@ -89,6 +91,19 @@ export default {
             type: String,
             required: true,
         },
+        title: {
+            type: String,
+            required: false,
+            default: '',
+        },
+        content: {
+            type: String,
+            required: true,
+        },
+        showTitle: {
+            type: Boolean,
+            default: false,
+        },
         isMine: {
             type: Boolean,
             default: false,
@@ -112,6 +127,7 @@ export default {
     width: 75%;
     left: -16px;
     margin-bottom: 22px;
+    min-height: 160px;
 }
 .avatar-container {
     max-width: 76px;
