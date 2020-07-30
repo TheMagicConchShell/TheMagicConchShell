@@ -11,11 +11,11 @@ public interface UserService {
 
     Object login(LoginRequestDTO request);
 
-    User update(UpdateRequestDTO request);
+    User update(UpdateRequestDTO request, String nickname);
 
-    User select(long uid);
+    User select(String nickname);
 
-    void withdraw(long uid);
+    void withdraw(String nickname);
 
     String duplicateCheck(String email, String nickname);
 

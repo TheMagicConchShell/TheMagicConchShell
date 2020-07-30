@@ -1,4 +1,4 @@
-package com.blsa.ezilog.model.reply;
+package com.blsa.ezilog.model.post;
 
 import java.math.BigInteger;
 
@@ -10,34 +10,50 @@ import lombok.ToString;
 
 @Valid
 @ToString
-public class ReplyCreateRequest {
+public class PostUpdateRequest {
     
     @ApiModelProperty(required = true)
     @NotNull
-    BigInteger postNo;
+    BigInteger no;
     
     @ApiModelProperty(required = true)
-    @NotNull 
-    String writer;
+    @NotNull
+    String title;
+    
+    @ApiModelProperty(required = true)
+    @NotNull
+    BigInteger categoryId;
     
     @ApiModelProperty(required = true)
     @NotNull
     String content;
     
+    
     @ApiModelProperty(required = true)
     @NotNull
-    boolean selected;
+    boolean allow;
     
     @ApiModelProperty(required = true)
     @NotNull
     boolean secret;
 
-    public BigInteger getPostNo() {
-        return postNo;
+    
+    
+    
+    public String getTitle() {
+        return title;
     }
 
-    public void setPostNo(BigInteger postNo) {
-        this.postNo = postNo;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public BigInteger getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(BigInteger categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getContent() {
@@ -48,15 +64,15 @@ public class ReplyCreateRequest {
         this.content = content;
     }
 
-    public boolean isSelected() {
-        return selected;
+    public boolean getAllow() {
+        return allow;
     }
 
-    public void setSelected(boolean selected) {
-        this.selected = selected;
+    public void setAllow(boolean allow) {
+        this.allow = allow;
     }
 
-    public boolean isSecret() {
+    public boolean getSecret() {
         return secret;
     }
 
@@ -64,12 +80,15 @@ public class ReplyCreateRequest {
         this.secret = secret;
     }
 
-    public String getWriter() {
-        return writer;
+    public BigInteger getNo() {
+        return no;
     }
 
-    public void setWriter(String writer) {
-        this.writer = writer;
+    public void setNo(BigInteger no) {
+        this.no = no;
     }
+
+    
+    
     
 }

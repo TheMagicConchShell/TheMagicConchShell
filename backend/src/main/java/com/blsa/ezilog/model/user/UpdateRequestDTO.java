@@ -16,9 +16,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class UpdateRequestDTO {
-    @ApiModelProperty(required = true)
-    @NotNull
-    long uid;
 
     String email;
     @ApiModelProperty(required = true)

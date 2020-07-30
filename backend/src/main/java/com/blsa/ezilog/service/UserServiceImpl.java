@@ -78,10 +78,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User update(UpdateRequestDTO request) {
+    public User update(UpdateRequestDTO request, String nickname) {
         User user = new User();
         user.setEmail(request.getEmail());
-        user.setUid(request.getUid());
+        user.setUid(dao.findByNickname(nickname).get().getUid());
         user.setNickname(request.getNickname());
         user.setPassword(request.getPassword());
         user.setProfileImg(request.getProfileImg());
@@ -90,13 +90,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User select(long uid) {
-        return dao.findByUid(uid).orElse(null);
+    public User select(String nickname) {
+        return dao.findByNickname(nickname).orElse(null);
     }
 
     @Override
-    public void withdraw(long uid) {
-        dao.deleteById(uid);
+    public void withdraw(String nickname) {
+        User du = dao.findByNickname(nickname).get();
+        dao.deleteById(du.getUid());
     }
 
     @Override

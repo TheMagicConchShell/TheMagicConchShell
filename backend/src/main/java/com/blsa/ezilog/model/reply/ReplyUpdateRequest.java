@@ -10,7 +10,11 @@ import lombok.ToString;
 
 @Valid
 @ToString
-public class ReplyCreateRequest {
+public class ReplyUpdateRequest {
+    
+    @ApiModelProperty(required = true)
+    @NotNull
+    BigInteger id;
     
     @ApiModelProperty(required = true)
     @NotNull
@@ -23,6 +27,7 @@ public class ReplyCreateRequest {
     @ApiModelProperty(required = true)
     @NotNull
     String content;
+    
     
     @ApiModelProperty(required = true)
     @NotNull
@@ -70,6 +75,14 @@ public class ReplyCreateRequest {
 
     public void setWriter(String writer) {
         this.writer = writer;
+    }
+
+    public BigInteger getId() {
+        return id;
+    }
+
+    public void setId(BigInteger id) {
+        this.id = id;
     }
     
 }

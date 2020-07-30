@@ -34,7 +34,7 @@ public class JwtService {
         return jwt;
     }
 
-    public void checkValid(final String jwt, final String nickname) {
+    public void checkValid(final String jwt, final String nickname) throws Exception{
         Jwts.parser().setSigningKey(nickname.getBytes()).parseClaimsJws(jwt);
     }
 
