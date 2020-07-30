@@ -270,7 +270,7 @@ export default {
                 if (res.data.status === 'S-200') {
                     console.log(res);
                     storage.setItem('jwt-auth-token', res.headers['jwt-auth-token']);
-                    storage.setItem('nickname', res.headers['nickname']);
+                    storage.setItem('nickname', this.nickname);
                     this.msg = '수정 완료되었습니다.';
                     this.$toast('안내', this.msg);
                 }
