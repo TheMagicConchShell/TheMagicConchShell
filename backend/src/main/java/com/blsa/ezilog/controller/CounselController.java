@@ -367,6 +367,11 @@ public class CounselController {
                     if (allList.get(i).isSecret() == true) {
                         allList.get(i).setWriter("익명의 작성자");
                     }
+                    
+                    if(allList.get(i).getWriter().equals(nickname)) {
+                        allList.get(i).setMine(true);
+                    }
+                        
                 }
 
                 Map<String, Object> PostMap = new HashMap<>();
