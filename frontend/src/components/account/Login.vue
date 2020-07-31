@@ -62,8 +62,7 @@
 </template>
 
 <script>
-
-import FindPW from './FindPassword.vue';
+import FindPW from '@/components/account/FindPassword.vue';
 
 const storage = window.sessionStorage;
 
@@ -102,9 +101,6 @@ export default {
             }).catch((error) => {
                 console.log(error.response);
             });
-        },
-        onClickLoginSuccess() {
-            this.$refs.loginCloseBtn.click();
         },
     },
 };
