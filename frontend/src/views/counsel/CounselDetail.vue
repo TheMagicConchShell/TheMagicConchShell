@@ -33,7 +33,7 @@
                         :is-author="Math.random() > 0.6"
                         :like-count="reply.likeCount"
                         :unlike-count="reply.unlikeCount"
-
+                        :is-mine="reply.mine"
                         :up-handler="dummy"
                         :delete-handler="dummy"
                         :modify-handler="dummy"
