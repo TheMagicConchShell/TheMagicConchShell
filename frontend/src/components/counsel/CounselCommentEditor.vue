@@ -1,7 +1,7 @@
 <template>
     <div 
         id="commenteditor" 
-        class="container row"
+        class="row"
     >
         <div class="col-md-2">
             <h2>
@@ -33,6 +33,7 @@
                 <editor 
                     ref="commentEditorText" 
                     v-model="content" 
+                    class="text-left"
                     :options="editorOpts" 
                     initial-edit-type="wysiwyg" 
                     height="150px"
@@ -120,6 +121,8 @@ export default {
                 url: this.submitUrl,
                 method: this.submitMethod,
                 headers: {
+                    'jwt-auth-token': sessionStorage.getItem('jwt-auth-token'),
+                    'nickname': sessionStorage.getItem('nickname'),
                 },
                 data: {
                     content:this.content,
@@ -133,6 +136,7 @@ export default {
 
             if (response) {
                 if (response.status >= 200 && response.status < 300) {
+                    this.$router.go();
                     this.$toast('답변', '답변이 작성되었습니다.');
                 } else {
                     console.log('글 작성이 실패하였습니다');
@@ -144,16 +148,24 @@ export default {
 </script>
 
 <style>
-#commenteditor{
+#commenteditor {
+    position: relative;
+    display: flex;
+    width: 85%;
+    left: -70px;
+    margin-bottom: 22px;
+    min-height: 160px;
     margin-top:20px;
-    border: 0.5px solid gray;
 }
 
-#commenteditor h2{
+#commenteditor h2 {
     margin-top: 50px;
-    text-align: center;
+    text-align: left;
 }
-#commentsubmit{
+#commentsubmit {
     margin:20px;
+}
+.text-left {
+    text-align: left;
 }
 </style>
