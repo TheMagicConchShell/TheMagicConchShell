@@ -11,8 +11,16 @@
                 :writer="post.writer"
                 :content="post.content"
                 :write-date="post.writeDate"
-                :is-mine="post._mine"
+                :is-mine="post.mine"
                 :is-author="true"
+                :like-count="post.likeCount"
+                :unlike-count="post.unlikeCount"
+
+                :up-handler="upPost"
+                :down-handler="downPost"
+                :delete-handler="deletePost"
+                :modify-handler="modifyPost"
+                :report-handler="reportPost"
             />
 
             <template v-if="replies && replies.length != 0">
@@ -24,6 +32,8 @@
                         :writer="reply.writer"
                         :write-date="reply.writeDate"
                         :is-author="Math.random() > 0.6"
+                        :like-count="reply.likeCount"
+                        :unlike-count="reply.unlikeCount"
                     />
                 </template>
             </template>
@@ -50,13 +60,11 @@
 
 <script>
 import CounselDetailComment from '@/components/counsel/CounselDetailComment.vue';
-// import BaseEditor from '@/components/BaseEditor';
 
 export default {
     name: 'CounselDetail',
     components: {
         CounselDetailComment,
-        // BaseEditor,
     },
     props: {
         no: {
@@ -141,6 +149,20 @@ export default {
                 .catch((e) => {
                     console.log(e.response);
                 });
+        },
+        upPost(type) {
+            this.$axios({
+                url: '/counsel/post/like',
+                method: 'post',
+                headers: {
+                    'jwt-auth-token': sessionStorage.getItem('jwt-auth-token'),
+                    'nickname': sessionStorage.getItem('nickname'),
+                },
+                data: {
+                    'postNo': this.no,
+                    'type': type,
+                },
+            });
         },
     }
 };

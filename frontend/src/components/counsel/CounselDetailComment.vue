@@ -27,16 +27,25 @@
                             </div>
 
                             <template v-if="isMine">
-                                <div class="button-item">
+                                <div
+                                    class="button-item"
+                                    @click="deleteHandler"
+                                >
                                     <svg-delete />
                                 </div>
                                 
-                                <div class="button-item">
+                                <div
+                                    class="button-item"
+                                    @click="modifyHandler"
+                                >
                                     <svg-pencil />
                                 </div>
                             </template>
                             <template v-else>
-                                <div class="button-item">
+                                <div
+                                    class="button-item"
+                                    @click="reportHandler"
+                                >
                                     <svg-exclamation />
                                 </div>
                             </template>
@@ -55,11 +64,17 @@
                                     :initial-value="content"
                                 />
                             </td>
-                            <td class="comment-side-up">
-                                +25
+                            <td
+                                class="comment-side-up"
+                                @click="upHandler('p')"
+                            >
+                                +{{ likeCount }}
                             </td>
-                            <td class="comment-side-down">
-                                -22
+                            <td
+                                class="comment-side-down"
+                                @click="upHandler('m')"
+                            >
+                                -{{ unlikeCount }}
                             </td>
                         </tbody>
                     </table>
@@ -111,6 +126,34 @@ export default {
         isAuthor: {
             type: Boolean,
             default: false,
+        },
+        likeCount: {
+            type: Number,
+            required: true,
+        },
+        unlikeCount: {
+            type: Number,
+            required: true,
+        },
+        upHandler: {
+            type: Function,
+            required: true,
+        },
+        downHandler: {
+            type: Function,
+            required: true,
+        },
+        deleteHandler: {
+            type: Function,
+            default: null,
+        },
+        modifyHandler: {
+            type: Function,
+            default: null,
+        },
+        reporyHandler: {
+            type: Function,
+            default: null,
         },
     },
 };
