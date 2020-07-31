@@ -23,7 +23,10 @@
                     class="w-100 m-0 border cursor"
                     @click="pageswap(post.no)"
                 >
-                    <div v-if="post.no===nowshowing.no" id="selected">
+                    <div
+                        v-if="post.no===nowshowing.no"
+                        id="selected"
+                    >
                         <h4>{{ post.title }}</h4>
                     </div>
                     <div v-else>
@@ -37,8 +40,12 @@
                     v-if="nowshowing"
                 >
                     <h3>{{ nowshowing.title }}</h3>
-                    <p class="d-flex">written by {{ nowshowing.writer }}</p>
-                    <div v-html="`${nowshowing.content}`" />
+                    <p class="d-flex">
+                        written by {{ nowshowing.writer }}
+                    </p>
+                    <viewer
+                        :initial-value="nowshowing.content"
+                    />
                 </div>
                 <div v-else>
                     이런... 사이트가 망해서 고민이 없습니다ㅠㅠ
