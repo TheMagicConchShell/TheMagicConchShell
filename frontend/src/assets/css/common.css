@@ -18,7 +18,18 @@
 #app {
     font-family: lp
 }
-
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-thumb {
+background-color: #9C8F96;
+border-radius: 10px;
+}
+::-webkit-scrollbar-track {
+background-color: #e9d6e0;
+border-radius: 10px;
+box-shadow: inset 0px 0px 5px white;
+}
 #content {
     margin: 150px 50px;
 }

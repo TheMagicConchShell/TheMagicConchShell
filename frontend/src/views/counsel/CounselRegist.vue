@@ -127,6 +127,7 @@
                 <editor 
                     ref="editorText" 
                     v-model="editorText" 
+                    class="text-left"
                     :options="editorOpts" 
                     initial-edit-type="wysiwyg" 
                     height="500px" 
@@ -264,5 +265,9 @@ h3{
 
 #registbtn{
     margin: 20px;
+}
+
+.text-left {
+    text-align: left;
 }
 </style>

@@ -10,31 +10,46 @@
             id="bloglist"
             class="d-flex"
         >
+            <div 
+                id="sidepost" 
+                v-infinite-scroll="loadMore" 
+                infinite-scroll-disabled="busy" 
+                infinite-scroll-distance="3"
+            >
+                <div
+                    v-for="post in list"
+                    :key="post.no"
+                    fluid
+                    class="w-100 m-0 border cursor"
+                    @click="pageswap(post.no)"
+                >
+                    <div
+                        v-if="post.no===nowshowing.no"
+                        id="selected"
+                    >
+                        <h4>{{ post.title }}</h4>
+                    </div>
+                    <div v-else>
+                        <h4>{{ post.title }}</h4>
+                    </div>
+                </div>
+                <!-- <infinite-loading @infinite="infiniteHandler" /> -->
+            </div>            
             <div id="mainpost">
-                asdf
-            </div>
-            <div id="sidepost">
-                <b-jumbotron
-                    fluid
-                    lead="연애가 하고 싶어요.."
-                    class="w-100 m-0 border"
+                <div
+                    v-if="nowshowing"
                 >
-                    <p>written by 연애고수</p>
-                </b-jumbotron>
-                <b-jumbotron
-                    fluid
-                    lead="취업 고민ㅠㅠ"
-                    class="w-100 m-0"
-                >
-                    <p>written by 30대 무직 남성</p>
-                </b-jumbotron>
-                <b-jumbotron
-                    lead="이 코인 존버가 답일까요?"
-                    class="w-100"
-                >
-                    <p>written by 개미</p>
-                </b-jumbotron>
-                <infinite-loading @infinite="infiniteHandler" />
+                    <h3>{{ nowshowing.title }}</h3>
+                    <p class="d-flex">
+                        written by {{ nowshowing.writer }}
+                    </p>
+                    <viewer
+                        :initial-value="nowshowing.content"
+                    />
+                </div>
+                <div v-else>
+                    이런... 사이트가 망해서 고민이 없습니다ㅠㅠ
+                </div>
             </div>
         </div>
 
@@ -59,7 +74,6 @@
                     <div id="answerheader">
                         답변들
                     </div>
-                    
                 </b-card-text>
             </b-card>
         </div>
@@ -68,41 +82,93 @@
 
 <script>
 import axios from 'axios';
+const api = 'http://i3a403.p.ssafy.io:8399';
+var count = 0;
 
 export default {
     name: 'Home',
     data() {
         return {
             nomouse: true,
-            /* 무한 스크롤 데이터 */
-            page: 1,
+            nowshowing: null,            
+            pageCount: 1,
+            page: 0,
             list: [],
+            busy: false,
         };
     },
+    watch: {
+        '$route'() {
+            this.page = this.$route.query.page;
+        },
+        page() {
+            this.fetchPosts(this.page);
+        },
+    },
+    created() {
+        this.page = Number.parseInt(this.$route.query.page);
+        this.fetchPosts();
+    },
     methods: {
+        loadMore() {
+            this.busy = true;
+            setTimeout(() => {
+                while (count < this.pageCount) {
+                    this.fetchPosts(count++);
+                }
+                this.busy = false;
+            }, 1000);
+        },
         mouseover() {
             this.nomouse = false;
         },
         mouseout() {
             this.nomouse = true;
         },
-        /* 무한스크롤 메서드 */
+        async fetchPosts(page) {
+            const response = await this.$axios.get(api + '/counsel/post', { params: { page: page || 1 }, headers: { nickname: '' }})
+                .catch(() => console.log('catch notices'));
+            if (response) {
+                if (response.status >= 200 && response.status < 300) {
+                    this.pageCount = response.data.data.totalPages;
+                    this.list = response.data.data.content;
+                }
+            }
+            this.nowshowing = this.list[0];
+        },
+        async pageswap(no) {
+            const response = await this.$axios({
+                url: `counsel/post/post-no`,
+                method: "get",
+                params: {
+                    no: no
+                }
+            }).catch(() => {
+                console.log("catch notices");
+            });
+            if (response) {
+                if (response.status >= 200 && response.status < 300) {
+                    this.pageCount = response.data.data.totalPages;
+                    this.nowshowing = response.data.data.post;
+                }
+            }
+        },
         infiniteHandler($state) {
-            axios.get('', {
+            axios.get((api + '/counsel/post', {
                 params: {
                     page: this.page,
                 },
+            }).then(({ response }) => {
+                console.log(response);
+                if (response.data.data.content / 3 === 0) {
+                    this.page += 1;
+                    fetchPosts(this.page);
+                    $state.loaded();
+                } else {
+                    $state.completed();
+                }
             })
-                .then(({ data }) => {
-                    if (data.hits.length) {
-                        this.page += 1;
-                        this.list.push(...data.hits);
-                        $state.loaded();
-                    } else {
-                        $state.complete();
-                    }
-                });
-        },
+            );},
     },
 };
 </script>
@@ -129,17 +195,41 @@ export default {
 #bloglist {
     width: 100%;
     height: 70vh;
-    border: 1px solid #b6b6b6;
-    border-radius: 5px;
 }
 #mainpost {
-    width: 70%;
+    border-radius: 0 5px 5px 0;
+    width: 80%;
     height: 100%;
+    border: 1px solid #cacaca;
+    background-size: cover;
+    padding: 100px;
+    overflow: auto;
+}
+#mainpost div {
+    max-width: 100%;
+    height: auto;
 }
 #sidepost {
-    width: 30%;
+    width: 20%;
     height: 100%;
     overflow: auto;
+    border-radius: 5px 0 0 5px;
+    border: 1px solid #cacaca;
+    background-color: #BEDAE5;
+}
+#sidepost div {
+    display: flex;
+    width:100%;
+    background-color: #A6C2CE;
+    border: 1px solid #cacaca;
+    color: black;
+}
+#sidepost div div{
+    border: none;
+    padding: 10px;
+}
+#selected {
+    background-color: #6B799E!important;
 }
 #slide {
     max-height: auto;

@@ -35,6 +35,12 @@
                         :page="page"
                     />
                 </div>
+                <button
+                    class="button-write"
+                    @click="write"
+                >
+                    작성
+                </button>
             </div>
             <div class="border m-3 w-25">
                 광고 배너
@@ -58,7 +64,7 @@ export default {
     methods: {
         write() {
             this.$router.push({
-                name: 'PostWrite'
+                name: 'counselregist'
             });
         },
     },
@@ -86,5 +92,9 @@ export default {
 }
 #article {
     margin-left: 20px;
+}
+
+.button-write {
+    float: right;
 }
 </style>

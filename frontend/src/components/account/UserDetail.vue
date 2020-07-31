@@ -153,6 +153,17 @@
                     </b-button>
                 </div>
             </ValidationObserver>
+            
+            <b-modal
+                id="user-delete-check"
+                title="탈퇴 완료"
+                ok-only
+                no-close-on-backdrop
+                no-close-on-esc
+                @ok="handleDeleteOk"
+            >
+                정상적으로 탈퇴 처리되었습니다.
+            </b-modal>
         </b-modal>
     </div>
 </template>
@@ -221,7 +232,7 @@ export default {
         console.log(this.nickname);
         this.$axios({
             method: 'get',
-            url: `/user/detail?nickname=${this.uid}`,
+            url: `/user/detail?nickname=${this.nickname}`,
         }).then((res) => {
             if (res.data.status === 'S-200') {
                 this.email = res.data.data.email;
@@ -246,6 +257,9 @@ export default {
             this.$axios({
                 method: 'put',
                 url: '/user/update',
+                headers: {
+                    nickname: sessionStorage.getItem('nickname'),
+                },
                 data: {
                     email: this.email,
                     nickname: this.nickname,
@@ -254,6 +268,9 @@ export default {
                 },
             }).then((res) => {
                 if (res.data.status === 'S-200') {
+                    console.log(res);
+                    storage.setItem('jwt-auth-token', res.headers['jwt-auth-token']);
+                    storage.setItem('nickname', res.headers['nickname']);
                     this.msg = '수정 완료되었습니다.';
                     this.$toast('안내', this.msg);
                 }
@@ -266,11 +283,9 @@ export default {
                 method: 'delete',
                 url: `/user/delete?nickname=${this.nickname}`,
             }).then((res) => {
-                if (res.data.status === 'S-200') {
-                    // 삭제 성공
-                    this.msg = '정상적으로 탈퇴 처리되었습니다.';
-                    this.$toast('안내', this.msg);
-                }
+                storage.setItem('jwt-auth-token', '');
+                storage.setItem('nickname', '');
+                this.$bvModal.show('user-delete-check');
             }).catch((error) => {
                 console.log(error.response);
             });
@@ -284,6 +299,9 @@ export default {
                 const file = e.target.files[0];
                 this.imageUrl = URL.createObjectURL(file);
             }
+        },
+        handleDeleteOk() {
+            this.$router.go();
         }
     },
 };

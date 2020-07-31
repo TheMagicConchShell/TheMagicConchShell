@@ -21,44 +21,85 @@
                         <div class="buttons">
                             <div
                                 v-if="isAuthor"
-                                class="button-item button-author"
+                                class="button-author"
                             >
                                 AUTHOR
                             </div>
 
                             <template v-if="isMine">
-                                <div class="button-item">
+                                <div
+                                    class="button-item"
+                                    @click="deleteHandler"
+                                >
                                     <svg-delete />
                                 </div>
-                                
-                                <div class="button-item">
+                                <div 
+                                    v-if="!isPost"
+                                    class="button-item"
+                                    @click="changeUpdate"
+                                >
+                                    <svg-pencil />
+                                </div>
+                                <div
+                                    v-else
+                                    class="button-item"
+                                    @click="modifyHandler"
+                                >
                                     <svg-pencil />
                                 </div>
                             </template>
                             <template v-else>
-                                <div class="button-item">
+                                <div
+                                    class="button-item"
+                                    @click="reportHandler"
+                                >
                                     <svg-exclamation />
                                 </div>
                             </template>
                         </div>
-                        <div class="title-text">
-                            TITLE
+                        <div
+                            v-if="isPost"
+                            class="title-text"
+                        >
+                            {{ title }}
                         </div>
                     </div>
                     <table class="content">
                         <tbody>
-                            <td class="comment-body">
-                                AAAAAAAAAAAAAAAAAAAAAAAAAAaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                                AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-                            </td>
-                            <td class="comment-side-up">
-                                +25
-                            </td>
-                            <td class="comment-side-down">
-                                -22
-                            </td>
+                            <template v-if="!isPost && isUpdate">
+                                <td class="comment-body">
+                                    <editor
+                                        :initial-value="content"
+                                        initial-edit-type="wysiwyg"
+                                        height="150px"
+                                    />
+                                </td>
+                                <td 
+                                    class="btn btn-info comment-update-btn"
+                                    @click="modifyHandler(content, replyId, secret)"
+                                >
+                                    수정
+                                </td>
+                            </template>
+                            <template v-else>
+                                <td class="comment-body">
+                                    <viewer
+                                        :initial-value="content"
+                                    />
+                                </td>
+                                <td
+                                    class="comment-side-up"
+                                    @click="upHandler('p')"
+                                >
+                                    +{{ likeCount }}
+                                </td>
+                                <td
+                                    class="comment-side-down"
+                                    @click="upHandler('m')"
+                                >
+                                    -{{ unlikeCount }}
+                                </td>
+                            </template>
                         </tbody>
                     </table>
                 </div>
@@ -81,6 +122,14 @@ export default {
         SvgExclamation,
     },
     props: {
+        replyId: {
+            type: Number,
+            default: 0,
+        },
+        secret: {
+            type: Boolean,
+            required: true,
+        },
         writer: {
             type: String,
             required: true,
@@ -88,6 +137,19 @@ export default {
         writeDate: {
             type: String,
             required: true,
+        },
+        title: {
+            type: String,
+            required: false,
+            default: '',
+        },
+        content: {
+            type: String,
+            required: true,
+        },
+        isPost: {
+            type: Boolean,
+            default: false,
         },
         isMine: {
             type: Boolean,
@@ -97,6 +159,40 @@ export default {
             type: Boolean,
             default: false,
         },
+        likeCount: {
+            type: Number,
+            required: true,
+        },
+        unlikeCount: {
+            type: Number,
+            required: true,
+        },
+        upHandler: {
+            type: Function,
+            required: true,
+        },
+        deleteHandler: {
+            type: Function,
+            required: true,
+        },
+        modifyHandler: {
+            type: Function,
+            required: true,
+        },
+        reportHandler: {
+            type: Function,
+            required: true,
+        },
+    },
+    data(){
+        return {
+            isUpdate: false,
+        };
+    },
+    methods: {
+        changeUpdate(){
+            this.isUpdate = !this.isUpdate;
+        }
     },
 };
 </script>
@@ -112,6 +208,7 @@ export default {
     width: 75%;
     left: -16px;
     margin-bottom: 22px;
+    min-height: 160px;
 }
 .avatar-container {
     max-width: 76px;
@@ -200,13 +297,22 @@ export default {
     color: brown;
     font-size: 140%;
 }
-
+.comment-update-btn{
+    float: right;
+    position: absolute;
+    right: 13px;
+    top: 60px;
+    font-size: 100%;
+}
 .buttons {
     float: right;
     flex-shrink: 0!important;
 }
 .button-item {
     display: inline-block;
+}
+.button-item:hover {
+    cursor: pointer;
 }
 .button-author {
     display: inline-block;
