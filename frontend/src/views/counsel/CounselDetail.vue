@@ -173,7 +173,7 @@ export default {
         },
         modifyReply(content, id, secret) {
             this.$axios({
-                url: '/counsel/post',
+                url: '/counsel/reply',
                 method: 'put',
                 headers: {
                     'jwt-auth-token': sessionStorage.getItem('jwt-auth-token'),
@@ -182,15 +182,13 @@ export default {
                 data: {
                     'content': content,
                     "id": id,
-                    "no": this.no,
+                    "postNo": this.no,
                     'secret': secret,
                     "selected": true,
                     'writer': sessionStorage.getItem('nickname'),
                 },
-            }).then(() => {
-                if (isPost) {
-                    this.$router.push({path: '/counsel/read/' + this.no});
-                } else {
+            }).then((res) => {
+                if(res.data.status==="S-200"){
                     this.$router.go();
                 }
             }).catch((error) => {
