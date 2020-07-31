@@ -21,7 +21,7 @@
                         <div class="buttons">
                             <div
                                 v-if="isAuthor"
-                                class="button-item button-author"
+                                class="button-author"
                             >
                                 AUTHOR
                             </div>
@@ -66,7 +66,7 @@
                     </div>
                     <table class="content">
                         <tbody>
-                            <template v-if="!isPost&&isUpdate">
+                            <template v-if="!isPost && isUpdate">
                                 <td class="comment-body">
                                     <editor
                                         :initial-value="content"
@@ -76,7 +76,7 @@
                                 </td>
                                 <td 
                                     class="btn btn-info comment-update-btn"
-                                    @click="modifyHandler"
+                                    @click="modifyHandler(content, replyId, secret)"
                                 >
                                     수정
                                 </td>
@@ -122,6 +122,14 @@ export default {
         SvgExclamation,
     },
     props: {
+        replyId: {
+            type: Number,
+            default: 0,
+        },
+        secret: {
+            type: Boolean,
+            required: true,
+        },
         writer: {
             type: String,
             required: true,
@@ -163,26 +171,22 @@ export default {
             type: Function,
             required: true,
         },
-        downHandler: {
+        deleteHandler: {
             type: Function,
             required: true,
         },
-        deleteHandler: {
-            type: Function,
-            default: null,
-        },
         modifyHandler: {
             type: Function,
-            default: null,
+            required: true,
         },
         reportHandler: {
             type: Function,
-            default: null,
+            required: true,
         },
     },
     data(){
         return {
-            isUpdate:false
+            isUpdate: false,
         };
     },
     methods: {
@@ -306,6 +310,9 @@ export default {
 }
 .button-item {
     display: inline-block;
+}
+.button-item:hover {
+    cursor: pointer;
 }
 .button-author {
     display: inline-block;

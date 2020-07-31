@@ -15,6 +15,7 @@
                 :is-author="true"
                 :like-count="post.likeCount"
                 :unlike-count="post.unlikeCount"
+                :secret="post.secret"
 
                 :up-handler="upPost"
                 :delete-handler="deletePost"
@@ -27,6 +28,7 @@
                     <CounselDetailComment
                         :key="reply.id"
                         name="reply"
+                        :reply-id="reply.id"
                         :content="reply.content"
                         :writer="reply.writer"
                         :write-date="reply.writeDate"
@@ -34,9 +36,10 @@
                         :like-count="reply.likeCount"
                         :unlike-count="reply.unlikeCount"
                         :is-mine="reply.mine"
+                        :secret="reply.secret"
                         :up-handler="dummy"
                         :delete-handler="dummy"
-                        :modify-handler="dummy"
+                        :modify-handler="modifyReply"
                         :report-handler="dummy"
                     />
                 </template>
@@ -160,7 +163,15 @@ export default {
                 this.$router.go();
             });
         },
-        modifyPost(allow, categoryId, content, secret, title) {
+        modifyPost() {
+            this.$router.push({
+                name: 'CounselUpdate',
+                params: {
+                    no: this.no,
+                },
+            });
+        },
+        modifyReply(content, id, secret) {
             this.$axios({
                 url: '/counsel/post',
                 method: 'put',
@@ -169,15 +180,21 @@ export default {
                     'nickname': sessionStorage.getItem('nickname'),
                 },
                 data: {
-                    'allow': allow,
-                    'categoryId': categoryId,
                     'content': content,
+                    "id": id,
                     "no": this.no,
                     'secret': secret,
-                    'title': title,
+                    "selected": true,
+                    'writer': sessionStorage.getItem('nickname'),
                 },
             }).then(() => {
-                this.$router.push({path: '/counsel/read/' + this.no});
+                if (isPost) {
+                    this.$router.push({path: '/counsel/read/' + this.no});
+                } else {
+                    this.$router.go();
+                }
+            }).catch((error) => {
+                console.log(error);
             });
         },
         deletePost() {
