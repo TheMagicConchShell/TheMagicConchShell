@@ -54,7 +54,7 @@
                 </b-navbar-nav>
 
                 <!-- Right aligned nav items -->
-                <b-navbar-nav class="ml-auto">
+                <b-navbar-nav class="ml-auto d-flex align-items-baseline">
                     <b-nav-form>
                         <b-form-input
                             size="sm"
@@ -64,35 +64,29 @@
                         <b-button
                             id="commonbutton"
                             size="sm"
-                            class="my-2 my-sm-0"
+                            class="my-2 mr-2 my-sm-0"
                             type="submit"
                         >
                             Search
                         </b-button>
                     </b-nav-form>
 
-                    <b-nav-item-dropdown
-                        right
-                        text="language"
-                    >
+                    <b-nav-item-dropdown right>
+                        <template v-slot:button-content>
+                            <i class="fas fa-language" style="color: #6B799E;"></i>
+                        </template>
                         <b-dropdown-item href="#">
                             EN
                         </b-dropdown-item>
                         <b-dropdown-item href="#">
-                            ES
-                        </b-dropdown-item>
-                        <b-dropdown-item href="#">
-                            RU
-                        </b-dropdown-item>
-                        <b-dropdown-item href="#">
-                            FA
+                            한국어
                         </b-dropdown-item>
                     </b-nav-item-dropdown>
 
                     <b-nav-item-dropdown right>
                         <!-- Using 'button-content' slot -->
                         <template v-slot:button-content>
-                            <em>User</em>
+                            <i class="fas fa-users" style="color: #6B799E;"></i>
                         </template>
                         <div v-if="isLogin">
                             <b-dropdown-item v-b-modal.userdetail>
@@ -141,6 +135,7 @@ export default {
     },
     data: () => ({
         isLogin: '',
+        language: <i class="fas fa-language"></i>
     }),
     created() {
         this.init();
@@ -172,10 +167,21 @@ export default {
     height: 100px;
     margin: 0;
     padding: 0;
+    font-size: 130%;
 }
 #spot_area {
     position: fixed;
     top: 100px;
     width: 100%;
+    z-index: 1;
+}
+.show {
+    background-color: #BEDAE5!important;
+    display: flex;
+    padding: 10px;
+}
+.show.nav-item {
+    color: black!important;
+    z-index:2;
 }
 </style>

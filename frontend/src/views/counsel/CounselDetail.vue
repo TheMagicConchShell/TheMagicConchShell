@@ -68,7 +68,7 @@ export default {
     components: {
         CounselDetailComment,
         //BaseEditor,
-        CounselCommentEditor,
+        // CounselCommentEditor,
     },
     props: {
         no: {

@@ -10,35 +10,39 @@
             id="bloglist"
             class="d-flex"
         >
-            <div id="mainpost">
-                <div
-                    v-if="nowshowing"
-                >
-                    <h3>{{ nowshowing.title }}</h3>
-                    <p>written by {{ nowshowing.writer }}</p>
-                    <div v-html="`${nowshowing.content}`" />
-                </div>
-                <div v-else>
-                    이런... 사이트가 망해서 고민이 없습니다ㅠㅠ
-                </div>
-            </div>
             <div 
                 id="sidepost" 
                 v-infinite-scroll="loadMore" 
                 infinite-scroll-disabled="busy" 
                 infinite-scroll-distance="3"
             >
-                <b-jumbotron
+                <div
                     v-for="post in list"
                     :key="post.no"
                     fluid
                     class="w-100 m-0 border cursor"
                     @click="pageswap(post.no)"
                 >
-                    <h4>{{ post.title }}</h4>
-                    <p>written by {{ post.writer }}</p>
-                </b-jumbotron>
-                <infinite-loading @infinite="infiniteHandler" />
+                    <div v-if="post.no===nowshowing.no" id="selected">
+                        <h4>{{ post.title }}</h4>
+                    </div>
+                    <div v-else>
+                        <h4>{{ post.title }}</h4>
+                    </div>
+                </div>
+                <!-- <infinite-loading @infinite="infiniteHandler" /> -->
+            </div>            
+            <div id="mainpost">
+                <div
+                    v-if="nowshowing"
+                >
+                    <h3>{{ nowshowing.title }}</h3>
+                    <p class="d-flex">written by {{ nowshowing.writer }}</p>
+                    <div v-html="`${nowshowing.content}`" />
+                </div>
+                <div v-else>
+                    이런... 사이트가 망해서 고민이 없습니다ㅠㅠ
+                </div>
             </div>
         </div>
 
@@ -186,12 +190,11 @@ export default {
     height: 70vh;
 }
 #mainpost {
-    border-radius: 5px;
+    border-radius: 0 5px 5px 0;
     width: 80%;
     height: 100%;
-    background-image: url(../../assets/images/parchment.jpg);
+    border: 1px solid #cacaca;
     background-size: cover;
-    margin: 0 20px;
     padding: 100px;
     overflow: auto;
 }
@@ -203,10 +206,23 @@ export default {
     width: 20%;
     height: 100%;
     overflow: auto;
-    border-radius: 5px;
+    border-radius: 5px 0 0 5px;
+    border: 1px solid #cacaca;
+    background-color: #BEDAE5;
 }
-.jumbotron {
+#sidepost div {
+    display: flex;
+    width:100%;
     background-color: #A6C2CE;
+    border: 1px solid #cacaca;
+    color: black;
+}
+#sidepost div div{
+    border: none;
+    padding: 10px;
+}
+#selected {
+    background-color: #6B799E!important;
 }
 #slide {
     max-height: auto;
