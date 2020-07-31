@@ -75,6 +75,7 @@ const routes = [
                     page: 1,
                 },
             },
+            {
                 path: 'update/:no',
                 name: 'CounselUpdate',
                 props: ({params}) => ({no: Number.parseInt(params.no, 10) || 0}),
