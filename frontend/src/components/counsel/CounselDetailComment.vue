@@ -33,8 +33,15 @@
                                 >
                                     <svg-delete />
                                 </div>
-                                
+                                <div 
+                                    v-if="!isPost"
+                                    class="button-item"
+                                    @click="changeUpdate"
+                                >
+                                    <svg-pencil />
+                                </div>
                                 <div
+                                    v-else
                                     class="button-item"
                                     @click="modifyHandler"
                                 >
@@ -51,7 +58,7 @@
                             </template>
                         </div>
                         <div
-                            v-if="showTitle"
+                            v-if="isPost"
                             class="title-text"
                         >
                             {{ title }}
@@ -59,23 +66,40 @@
                     </div>
                     <table class="content">
                         <tbody>
-                            <td class="comment-body">
-                                <viewer
-                                    :initial-value="content"
-                                />
-                            </td>
-                            <td
-                                class="comment-side-up"
-                                @click="upHandler('p')"
-                            >
-                                +{{ likeCount }}
-                            </td>
-                            <td
-                                class="comment-side-down"
-                                @click="upHandler('m')"
-                            >
-                                -{{ unlikeCount }}
-                            </td>
+                            <template v-if="!isPost&&isUpdate">
+                                <td class="comment-body">
+                                    <editor
+                                        :initial-value="content"
+                                        initial-edit-type="wysiwyg"
+                                        height="150px"
+                                    />
+                                </td>
+                                <td 
+                                    class="btn btn-info comment-update-btn"
+                                    @click="modifyHandler"
+                                >
+                                    수정
+                                </td>
+                            </template>
+                            <template v-else>
+                                <td class="comment-body">
+                                    <viewer
+                                        :initial-value="content"
+                                    />
+                                </td>
+                                <td
+                                    class="comment-side-up"
+                                    @click="upHandler('p')"
+                                >
+                                    +{{ likeCount }}
+                                </td>
+                                <td
+                                    class="comment-side-down"
+                                    @click="upHandler('m')"
+                                >
+                                    -{{ unlikeCount }}
+                                </td>
+                            </template>
                         </tbody>
                     </table>
                 </div>
@@ -115,7 +139,7 @@ export default {
             type: String,
             required: true,
         },
-        showTitle: {
+        isPost: {
             type: Boolean,
             default: false,
         },
@@ -151,10 +175,20 @@ export default {
             type: Function,
             default: null,
         },
-        reporyHandler: {
+        reportHandler: {
             type: Function,
             default: null,
         },
+    },
+    data(){
+        return {
+            isUpdate:false
+        };
+    },
+    methods: {
+        changeUpdate(){
+            this.isUpdate = !this.isUpdate;
+        }
     },
 };
 </script>
@@ -259,7 +293,13 @@ export default {
     color: brown;
     font-size: 140%;
 }
-
+.comment-update-btn{
+    float: right;
+    position: absolute;
+    right: 13px;
+    top: 60px;
+    font-size: 100%;
+}
 .buttons {
     float: right;
     flex-shrink: 0!important;
