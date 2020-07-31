@@ -320,64 +320,83 @@ public class CounselController {
 
     @ApiOperation(value = "고민 번호에 해당되는 고민 반환", response = List.class)
     @GetMapping("/post/post-no")
-    public Object seasrchPostByNo(@RequestParam BigInteger no) {
+    public Object seasrchPostByNo(@RequestParam BigInteger no,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        Optional<Post> optPost = postDao.findPostByNo(no);
+        Optional<User> optUser = userDao.findByNickname(nickname);
 
-        if (optPost.isPresent()) {
-            Post post = optPost.get();
+        if (optUser.isPresent()) {
+            Optional<Post> optPost = postDao.findPostByNo(no);
 
-            // 고민에 해당되는 좋아요, 싫어요 가져오기
-            if (post.isSecret() == true) {
-                post.setWriter("익명의 작성자");
-            }
-            Integer like = likecountDao.countTotal(post.getNo(), "p").intValue();
-            Integer likelike = likecountDao.countTotal(post.getNo(), "pp").intValue();
-            Integer unlike = likecountDao.countTotal(post.getNo(), "m").intValue();
+            if (optPost.isPresent()) {
+                Post post = optPost.get();
 
-            post.setLikeCount(like + likelike);
-            post.setUnlikeCount(unlike);
+                Integer like = likecountDao.countTotal(post.getNo(), "p").intValue();
+                Integer likelike = likecountDao.countTotal(post.getNo(), "pp").intValue();
+                Integer unlike = likecountDao.countTotal(post.getNo(), "m").intValue();
+                post.setViews(post.getViews() + 1);
+                post.setLikeCount(like + likelike);
+                post.setUnlikeCount(unlike);
 
-            List<Reply> allList = replyDao.ReplyByPostNum(post.getNo());
+                postDao.save(post);
 
-            // 같이오는 댓글들 목록 좋아요, 싫어요 수 가져오기
-            for (int i = 0; i < allList.size(); i++) {
-                Integer r_like = replylikecountDao.countTotal(allList.get(i).getId(), "p").intValue();
-                Integer r_likelike = replylikecountDao.countTotal(allList.get(i).getId(), "pp").intValue();
-                Integer r_unlike = replylikecountDao.countTotal(allList.get(i).getId(), "m").intValue();
-
-                allList.get(i).setLikeCount(r_like + r_likelike);
-                allList.get(i).setUnlikeCount(r_unlike);
-
-                if (allList.get(i).isSecret() == true) {
-                    allList.get(i).setWriter("익명의 작성자");
+                if (post.isSecret() == true) {
+                    post.setWriter("익명의 작성자");
                 }
+
+                if (post.getWriter().equals(nickname)) {
+                    post.setMine(true);
+                }
+
+                List<Reply> allList = replyDao.ReplyByPostNum(post.getNo());
+
+                // 같이오는 댓글들 목록 좋아요, 싫어요 수 가져오기
+                for (int i = 0; i < allList.size(); i++) {
+                    Integer r_like = replylikecountDao.countTotal(allList.get(i).getId(), "p").intValue();
+                    Integer r_likelike = replylikecountDao.countTotal(allList.get(i).getId(), "pp").intValue();
+                    Integer r_unlike = replylikecountDao.countTotal(allList.get(i).getId(), "m").intValue();
+
+                    allList.get(i).setLikeCount(r_like + r_likelike);
+                    allList.get(i).setUnlikeCount(r_unlike);
+
+                    if (allList.get(i).isSecret() == true) {
+                        allList.get(i).setWriter("익명의 작성자");
+                    }
+                }
+
+                Map<String, Object> PostMap = new HashMap<>();
+
+                result.status = "S-200";
+                result.message = "고민 ID를 이용하여 공지사항  및 댓글 가져오기 성공";
+
+                PostMap.put("post", post);
+                PostMap.put("replies", allList);
+
+                result.data = PostMap;
+                response = new ResponseEntity<>(result, HttpStatus.OK);
+            } else {
+                eresult.status = "S-4405";
+                eresult.message = "공지 번호에 해당되는 고민 글이  없습니다.";
+                eresult.data = null;
+                errorMap.put("field", "noPostByNo");
+                errorMap.put("data", null);
+                eresult.errors = errorMap;
+
+                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
             }
-
-            Map<String, Object> PostMap = new HashMap<>();
-
-            result.status = "S-200";
-            result.message = "고민 ID를 이용하여 공지사항  및 댓글 가져오기 성공";
-
-            PostMap.put("post", post);
-            PostMap.put("replies", allList);
-
-            result.data = PostMap;
-            response = new ResponseEntity<>(result, HttpStatus.OK);
         } else {
-            eresult.status = "S-4405";
-            eresult.message = "공지 번호에 해당되는 고민 글이  없습니다.";
+            eresult.status = "E-4408";
+            eresult.message = "알 수 없는 회원 입니다. 고민 글을 삭제 할 수 없습니다.";
             eresult.data = null;
-            errorMap.put("field", "noPostByNo");
+            errorMap.put("field", "unKnownUser");
             errorMap.put("data", null);
             eresult.errors = errorMap;
-
-            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+            response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
         }
 
         return response;
