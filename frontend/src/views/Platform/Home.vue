@@ -16,18 +16,23 @@
                 >
                     <h3>{{ nowshowing.title }}</h3>
                     <p>written by {{ nowshowing.writer }}</p>
-                    <div v-html="`${nowshowing.content}`"></div>
+                    <div v-html="`${nowshowing.content}`" />
                 </div>
                 <div v-else>
                     이런... 사이트가 망해서 고민이 없습니다ㅠㅠ
                 </div>
             </div>
-            <div id="sidepost">
+            <div 
+                id="sidepost" 
+                v-infinite-scroll="loadMore" 
+                infinite-scroll-disabled="busy" 
+                infinite-scroll-distance="3"
+            >
                 <b-jumbotron
                     v-for="post in list"
                     :key="post.no"
                     fluid
-                    class="w-100 m-0 border"
+                    class="w-100 m-0 border cursor"
                     @click="pageswap(post.no)"
                 >
                     <h4>{{ post.title }}</h4>
@@ -66,17 +71,19 @@
 
 <script>
 import axios from 'axios';
+const api = 'http://i3a403.p.ssafy.io:8399';
+var count = 0;
 
 export default {
     name: 'Home',
     data() {
         return {
             nomouse: true,
-            nowshowing: null,
-            /* 무한 스크롤 데이터 */
-            page: 0,
+            nowshowing: null,            
             pageCount: 1,
+            page: 0,
             list: [],
+            busy: false,
         };
     },
     watch: {
@@ -89,8 +96,18 @@ export default {
     },
     created() {
         this.page = Number.parseInt(this.$route.query.page);
+        this.fetchPosts();
     },
     methods: {
+        loadMore() {
+            this.busy = true;
+            setTimeout(() => {
+                while (count < this.pageCount) {
+                    this.fetchPosts(count++);
+                }
+                this.busy = false;
+            }, 1000);
+        },
         mouseover() {
             this.nomouse = false;
         },
@@ -98,18 +115,8 @@ export default {
             this.nomouse = true;
         },
         async fetchPosts(page) {
-            const response = await this.$axios({
-                url: `counsel/post`,
-                method: "get",
-                headers: {
-                    nickname: sessionStorage.getItem('nickname') || '',
-                },
-                params: {
-                    page: page || 1,
-                }
-            }).catch(() => {
-                console.log("catch notices");
-            });
+            const response = await this.$axios.get(api + '/counsel/post', { params: { page: page || 1 }, headers: { nickname: '' }})
+                .catch(() => console.log('catch notices'));
             if (response) {
                 if (response.status >= 200 && response.status < 300) {
                     this.pageCount = response.data.data.totalPages;
@@ -119,7 +126,6 @@ export default {
             this.nowshowing = this.list[0];
         },
         async pageswap(no) {
-            console.log(no);
             const response = await this.$axios({
                 url: `counsel/post/post-no`,
                 method: "get",
@@ -136,23 +142,22 @@ export default {
                 }
             }
         },
-        /* 무한스크롤 메서드 */
         infiniteHandler($state) {
-            axios.get('', {
+            axios.get((api + '/counsel/post', {
                 params: {
                     page: this.page,
                 },
+            }).then(({ response }) => {
+                console.log(response);
+                if (response.data.data.content / 3 === 0) {
+                    this.page += 1;
+                    fetchPosts(this.page);
+                    $state.loaded();
+                } else {
+                    $state.completed();
+                }
             })
-                .then(({ data }) => {
-                    if (data.hits.length) {
-                        this.page += 1;
-                        this.list.push(...data.hits);
-                        $state.loaded();
-                    } else {
-                        $state.complete();
-                    }
-                });
-        },
+            );},
     },
 };
 </script>
@@ -189,6 +194,10 @@ export default {
     margin: 0 20px;
     padding: 100px;
     overflow: auto;
+}
+#mainpost div {
+    max-width: 100%;
+    height: auto;
 }
 #sidepost {
     width: 20%;
