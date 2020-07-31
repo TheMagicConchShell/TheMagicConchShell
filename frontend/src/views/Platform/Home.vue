@@ -39,12 +39,14 @@
                 <div
                     v-if="nowshowing"
                 >
-                    <h3>{{ nowshowing.title }}</h3>
+                    <router-link :to="{path: `/counsel/read/${nowshowing.no}`}">
+                        <h3>{{ nowshowing.title }}</h3>
+                    </router-link>
                     <p class="d-flex">
                         written by {{ nowshowing.writer }}
                     </p>
                     <viewer
-                        :initial-value="nowshowing.content"
+                        v-html="nowshowing.content"
                     />
                 </div>
                 <div v-else>
@@ -241,5 +243,11 @@ export default {
 #slide {
     border: 1px solid;
     width: 50%;
+}
+a {
+    color: unset;
+}
+a:hover {
+    text-decoration: unset;
 }
 </style>

@@ -32,7 +32,7 @@
                         :content="reply.content"
                         :writer="reply.writer"
                         :write-date="reply.writeDate"
-                        :is-author="Math.random() > 0.6"
+                        :is-author="reply.author"
                         :like-count="reply.likeCount"
                         :unlike-count="reply.unlikeCount"
                         :is-mine="reply.mine"
