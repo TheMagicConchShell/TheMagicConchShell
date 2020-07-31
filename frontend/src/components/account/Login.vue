@@ -94,9 +94,9 @@ export default {
                     password: this.password,
                 },
             }).then((res) => {
-                console.log(res);
                 storage.setItem('jwt-auth-token', res.headers['jwt-auth-token']);
-                storage.setItem('nickname', res.data.data.nickname);
+                storage.setItem('nickname', res.headers['nickname']);
+                this.onClickLoginSuccess();
                 this.$router.go();
             }).catch((error) => {
                 console.log(error.response);
