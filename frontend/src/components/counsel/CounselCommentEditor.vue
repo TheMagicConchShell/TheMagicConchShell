@@ -125,6 +125,7 @@ export default {
                     content:this.content,
                     postNo: this.defaultPostNo,
                     secret:this.commentsecret,
+                    selected:false,
                     writer:sessionStorage.getItem("nickname")
                 },
             })

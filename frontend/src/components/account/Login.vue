@@ -62,8 +62,7 @@
 </template>
 
 <script>
-import Signup from './Signup.vue';
-import FindPW from './FindPassword.vue';
+import FindPW from '@/components/account/FindPassword.vue';
 
 const storage = window.sessionStorage;
 
@@ -86,7 +85,7 @@ export default {
             }
 
             storage.setItem('jwt-auth-token', '');
-            storage.setItem('login_user', '');
+            storage.setItem('nickname', '');
             this.$axios({
                 method: 'post',
                 url: '/user/login',
@@ -95,17 +94,13 @@ export default {
                     password: this.password,
                 },
             }).then((res) => {
-                console.log(res);
                 storage.setItem('jwt-auth-token', res.headers['jwt-auth-token']);
-                storage.setItem('login_user', res.data.data.uid);
+                storage.setItem('nickname', res.headers['nickname']);
                 this.onClickLoginSuccess();
                 this.$router.go();
             }).catch((error) => {
                 console.log(error.response);
             });
-        },
-        onClickLoginSuccess() {
-            this.$refs.loginCloseBtn.click();
         },
     },
 };

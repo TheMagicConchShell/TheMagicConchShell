@@ -11,6 +11,8 @@ import EmailAuthentication from '@/views/account/EmailAuthentication.vue';
 import CounselView from '@/views/counsel/CounselView.vue';
 import CounselDetail from '@/views/counsel/CounselDetail.vue';
 import CounselRegist from '@/views/counsel/CounselRegist.vue';
+import CounselSelectMain from '@/views/counsel/CounselSelectMain.vue';
+import CounselUpdate from '@/views/counsel/CounselUpdate.vue';
 
 import Support from '@/views/support/Support.vue';
 import NoticeView from '@/views/support/notice/NoticeView.vue';
@@ -64,6 +66,19 @@ const routes = [
                 path:"regist",
                 name:"counselregist",
                 component: CounselRegist
+            },
+            {
+                path: 'selectMain',
+                name: 'CounselSelectMain',
+                component: CounselSelectMain,
+                query: {
+                    page: 1,
+                },
+            },
+                path: 'update/:no',
+                name: 'CounselUpdate',
+                props: ({params}) => ({no: Number.parseInt(params.no, 10) || 0}),
+                component: CounselUpdate
             }
         ],
     },
