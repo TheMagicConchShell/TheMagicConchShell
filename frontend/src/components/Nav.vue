@@ -155,7 +155,7 @@ export default {
         },
         logout() {
             storage.setItem('jwt-auth-token', '');
-            storage.setItem('login_user', '');
+            storage.setItem('nickname', '');
             this.isLogin = false;
             this.$toast('안내', '로그아웃 되었습니다.');
         },

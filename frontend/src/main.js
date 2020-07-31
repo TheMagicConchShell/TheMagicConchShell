@@ -11,6 +11,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 
 import VueWait from 'vue-wait';
+import InfiniteScroll from 'vue-infinite-scroll';
 import InfiniteLoading from 'vue-infinite-loading';
 import 'codemirror/lib/codemirror.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
@@ -22,6 +23,7 @@ Vue.component('viewer',Viewer);
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 Vue.use(VueWait);
+Vue.use(InfiniteScroll);
 Vue.use(InfiniteLoading);
 
 Vue.component('paginate', Paginate);

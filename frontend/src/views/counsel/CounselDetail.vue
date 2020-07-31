@@ -60,11 +60,15 @@
 
 <script>
 import CounselDetailComment from '@/components/counsel/CounselDetailComment.vue';
+//import BaseEditor from '@/components/BaseEditor';
+import CounselCommentEditor from '@/components/counsel/CounselCommentEditor';
 
 export default {
     name: 'CounselDetail',
     components: {
         CounselDetailComment,
+        //BaseEditor,
+        CounselCommentEditor,
     },
     props: {
         no: {
