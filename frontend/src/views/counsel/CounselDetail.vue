@@ -6,7 +6,7 @@
         <div class="timeline">
             <CounselDetailComment
                 name="question"
-                :show-title="true"
+                :is-post="true"
                 :title="post.title"
                 :writer="post.writer"
                 :content="post.content"
@@ -17,10 +17,9 @@
                 :unlike-count="post.unlikeCount"
 
                 :up-handler="upPost"
-                :down-handler="downPost"
                 :delete-handler="deletePost"
                 :modify-handler="modifyPost"
-                :report-handler="reportPost"
+                :report-handler="dummy"
             />
 
             <template v-if="replies && replies.length != 0">
@@ -34,41 +33,33 @@
                         :is-author="Math.random() > 0.6"
                         :like-count="reply.likeCount"
                         :unlike-count="reply.unlikeCount"
+
+                        :up-handler="dummy"
+                        :delete-handler="dummy"
+                        :modify-handler="dummy"
+                        :report-handler="dummy"
                     />
                 </template>
             </template>
 
-            <div class="comment">
-                <editor 
-                    ref="editorText" 
-                    v-model="editorText" 
-                    class="editor-left"
-                    :options="editorOpts" 
-                    initial-edit-type="wysiwyg" 
-                    height="200px" 
-                />
-                <button
-                    class="button"
-                    @click.prevent="replyHandler"
-                >
-                    작성
-                </button>
-            </div>
+            <CounselCommentEditor
+                :submit-url="'/counsel/reply'"
+                :submit-method="'post'"
+                :default-post-no="no"
+            />
         </div>
     </v-wait>
 </template>
 
 <script>
 import CounselDetailComment from '@/components/counsel/CounselDetailComment.vue';
-//import BaseEditor from '@/components/BaseEditor';
-import CounselCommentEditor from '@/components/counsel/CounselCommentEditor';
+import CounselCommentEditor from '@/components/counsel/CounselCommentEditor.vue';
 
 export default {
     name: 'CounselDetail',
     components: {
         CounselDetailComment,
-        //BaseEditor,
-        // CounselCommentEditor,
+        CounselCommentEditor,
     },
     props: {
         no: {
@@ -146,8 +137,7 @@ export default {
                     'writer': sessionStorage.getItem('nickname'),
                 },
             })
-                .then((r) => {
-                    console.log(r);
+                .then(() => {
                     this.$router.go();
                 })
                 .catch((e) => {
@@ -166,7 +156,47 @@ export default {
                     'postNo': this.no,
                     'type': type,
                 },
+            }).then(() => {
+                this.$router.go();
             });
+        },
+        modifyPost(allow, categoryId, content, secret, title) {
+            this.$axios({
+                url: '/counsel/post',
+                method: 'put',
+                headers: {
+                    'jwt-auth-token': sessionStorage.getItem('jwt-auth-token'),
+                    'nickname': sessionStorage.getItem('nickname'),
+                },
+                data: {
+                    'allow': allow,
+                    'categoryId': categoryId,
+                    'content': content,
+                    "no": this.no,
+                    'secret': secret,
+                    'title': title,
+                },
+            }).then(() => {
+                this.$router.push({path: '/counsel/read/' + this.no});
+            });
+        },
+        deletePost() {
+            this.$axios({
+                url: '/counsel/post',
+                method: 'delete',
+                headers: {
+                    'jwt-auth-token': sessionStorage.getItem('jwt-auth-token'),
+                    'nickname': sessionStorage.getItem('nickname'),
+                },
+                params: {
+                    'no': this.no,
+                },
+            }).then(() => {
+                this.$router.push({name: 'List'});
+            });
+        },
+        dummy() {
+
         },
     }
 };
