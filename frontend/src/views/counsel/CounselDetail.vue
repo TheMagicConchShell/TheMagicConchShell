@@ -21,9 +21,10 @@
                     :is-author="Math.random() > 0.6"
                 />
             </template>
-            <BaseEditor
-                :submit-url="'/conunsel/read/' + no"
+            <CounselCommentEditor
+                :submit-url="'/counsel/reply'"
                 :submit-method="'post'"
+                :default-post-no="no"
             />
         </div>
     </v-wait>
@@ -31,13 +32,15 @@
 
 <script>
 import CounselDetailComment from '@/components/counsel/CounselDetailComment.vue';
-import BaseEditor from '@/components/BaseEditor';
+//import BaseEditor from '@/components/BaseEditor';
+import CounselCommentEditor from '@/components/counsel/CounselCommentEditor';
 
 export default {
     name: 'CounselDetail',
     components: {
         CounselDetailComment,
-        BaseEditor,
+        //BaseEditor,
+        CounselCommentEditor,
     },
     props: {
         no: {
