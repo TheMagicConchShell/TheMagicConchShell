@@ -141,7 +141,7 @@
 </template>
 <script>
 import CounselSelectMainPaginate from "@/components/CounselSelectMainPaginate";
-import moment from 'moment';
+// import moment from 'moment';
 
 export default {
     name: 'CounselSelectMain',
