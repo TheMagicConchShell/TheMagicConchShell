@@ -169,7 +169,7 @@ public class UserController {
         if (user == null) {
             errors.put("field", "nickname");
             errors.put("data", nickname);
-            final ErrorResponse result = setErrors("E-4005", "번호에 해당하는 유저가 존재하지 않습니다.", errors);
+            final ErrorResponse result = setErrors("E-4005", "해당 유저가 존재하지 않습니다.", errors);
             response = new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
         } else {
             final BasicResponse result = new BasicResponse();
@@ -191,7 +191,7 @@ public class UserController {
         if (user == null) {
             errors.put("field", "nickname");
             errors.put("data", nickname);
-            final ErrorResponse result = setErrors("E-4005", "번호에 해당하는 유저가 존재하지 않습니다.", errors);
+            final ErrorResponse result = setErrors("E-4005", "해당 유저가 존재하지 않습니다.", errors);
             response = new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
         } else {
             userService.withdraw(nickname);

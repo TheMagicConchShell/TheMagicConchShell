@@ -33,6 +33,6 @@ public class BackendApplication implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**").allowedOrigins("*").allowedMethods("*").allowedHeaders("*")
-                .exposedHeaders("jwt-auth-token");
+                .exposedHeaders("jwt-auth-token","nickname");
     }
 }

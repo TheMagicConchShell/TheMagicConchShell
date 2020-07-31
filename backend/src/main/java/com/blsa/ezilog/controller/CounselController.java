@@ -28,6 +28,7 @@ import com.blsa.ezilog.dao.CategoryDao;
 import com.blsa.ezilog.dao.LikeCountDao;
 import com.blsa.ezilog.dao.PostDao;
 import com.blsa.ezilog.dao.ReplyDao;
+import com.blsa.ezilog.dao.ReplyLikeCountDao;
 import com.blsa.ezilog.dao.UserDao;
 import com.blsa.ezilog.model.BasicResponse;
 import com.blsa.ezilog.model.ErrorResponse;
@@ -35,7 +36,9 @@ import com.blsa.ezilog.model.category.Category;
 import com.blsa.ezilog.model.category.CategoryCreateRequest;
 import com.blsa.ezilog.model.category.CategoryUpdateRequest;
 import com.blsa.ezilog.model.like.LikeCount;
-import com.blsa.ezilog.model.like.LikeCountCreateRequest;
+import com.blsa.ezilog.model.like.LikeCountRequest;
+import com.blsa.ezilog.model.like.ReplyLikeCount;
+import com.blsa.ezilog.model.like.ReplyLikeCountRequest;
 import com.blsa.ezilog.model.post.Post;
 import com.blsa.ezilog.model.post.PostCreateRequest;
 import com.blsa.ezilog.model.post.PostUpdateRequest;
@@ -64,11 +67,15 @@ public class CounselController {
     LikeCountDao likecountDao;
 
     @Autowired
+    ReplyLikeCountDao replylikecountDao;
+
+    @Autowired
     UserDao userDao;
 
     @ApiOperation(value = "고민 전체 목록 반환", notes = "Input : page, Output: 성공 : [status = true, data = 고민 리스트(Post)] 실패 : status = false, data = 에러메세지", response = List.class)
     @GetMapping("/post")
-    public Object retrievePost(@RequestParam int page, @RequestHeader("nickname") String nickname) {
+    public Object retrievePost(@RequestParam int page,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -94,8 +101,16 @@ public class CounselController {
             if (!pList.isEmpty()) {
 
                 pList.forEach((e) -> {
+
+                    Integer like = likecountDao.countTotal(e.getNo(), "p").intValue();
+                    Integer likelike = likecountDao.countTotal(e.getNo(), "pp").intValue();
+                    Integer unlike = likecountDao.countTotal(e.getNo(), "m").intValue();
+
+                    e.setLikeCount(like + likelike);
+                    e.setUnlikeCount(unlike);
+
                     if (e.getWriter().equals(nickname)) {
-                        e.set_mine(true);
+                        e.setMine(true);
                     }
                     if (e.isSecret() == true) {
                         e.setWriter("익명의 작성자");
@@ -126,7 +141,7 @@ public class CounselController {
     @ApiOperation(value = "카테고리에 해당 되는 작성자가 쓴 고민 반환", notes = "작성자 이름을 통해서 고민 검색", response = List.class)
     @GetMapping("/post/category")
     public Object searchNoticeByCategory(@RequestParam String category, @RequestParam int page,
-            @RequestHeader("nickname") String nickname) {
+            @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -155,12 +170,29 @@ public class CounselController {
 
                 if (!pList.isEmpty()) {
 
+                    pList.forEach((e) -> {
+
+                        Integer like = likecountDao.countTotal(e.getNo(), "p").intValue();
+                        Integer likelike = likecountDao.countTotal(e.getNo(), "pp").intValue();
+                        Integer unlike = likecountDao.countTotal(e.getNo(), "m").intValue();
+
+                        e.setLikeCount(like + likelike);
+                        e.setUnlikeCount(unlike);
+
+                        if (e.getWriter().equals(nickname)) {
+                            e.setMine(true);
+                        }
+                        if (e.isSecret() == true) {
+                            e.setWriter("익명의 작성자");
+                        }
+                    });
+
                     result.status = "S-200";
                     result.message = "작성자를 이용하여 고민 목록들 가져오기 성공";
                     result.data = pList;
                     response = new ResponseEntity<>(result, HttpStatus.OK);
                 } else {
-                    eresult.status = "E-4423";
+                    eresult.status = "E-4402";
                     eresult.message = "카테고리에 해당되는 고민이  없습니다.";
                     eresult.data = null;
                     errorMap.put("field", "noPostByCategory");
@@ -171,7 +203,7 @@ public class CounselController {
                 }
 
             } else {
-                eresult.status = "E-4424";
+                eresult.status = "E-4403";
                 eresult.message = "해당 카테고리가  없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "noCategory");
@@ -188,7 +220,7 @@ public class CounselController {
     @ApiOperation(value = "검색어에 해당 되는 작성자가 쓴 고민 반환", notes = "작성자 이름을 통해서 고민 검색", response = List.class)
     @GetMapping("/post/writer")
     public Object searchNoticeByWriter(@RequestParam String writer, @RequestParam int page,
-            @RequestHeader("nickname") String nickname) {
+            @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -215,8 +247,16 @@ public class CounselController {
                 if (!aList.isEmpty()) {
 
                     aList.forEach((e) -> {
+
+                        Integer like = likecountDao.countTotal(e.getNo(), "p").intValue();
+                        Integer likelike = likecountDao.countTotal(e.getNo(), "pp").intValue();
+                        Integer unlike = likecountDao.countTotal(e.getNo(), "m").intValue();
+
+                        e.setLikeCount(like + likelike);
+                        e.setUnlikeCount(unlike);
+
                         if (e.getWriter().equals(nickname)) {
-                            e.set_mine(true);
+                            e.setMine(true);
                         }
                         if (e.isSecret() == true) {
                             e.setWriter("익명의 작성자");
@@ -228,7 +268,7 @@ public class CounselController {
                     result.data = aList;
                     response = new ResponseEntity<>(result, HttpStatus.OK);
                 } else {
-                    eresult.status = "E-4402";
+                    eresult.status = "E-4404";
                     eresult.message = "작성자에 해당되는 고민이  없습니다.";
                     eresult.data = null;
                     errorMap.put("field", "noPostByWriter");
@@ -244,12 +284,25 @@ public class CounselController {
 
                 if (!pList.isEmpty()) {
 
+                    pList.forEach((e) -> {
+
+                        Integer like = likecountDao.countTotal(e.getNo(), "p").intValue();
+                        Integer likelike = likecountDao.countTotal(e.getNo(), "pp").intValue();
+                        Integer unlike = likecountDao.countTotal(e.getNo(), "m").intValue();
+                        e.setLikeCount(like + likelike);
+                        e.setUnlikeCount(unlike);
+
+                        if (e.getWriter().equals(nickname)) {
+                            e.setMine(true);
+                        }
+                    });
+
                     result.status = "S-200";
                     result.message = "작성자를 이용하여 고민 목록들 가져오기 성공";
                     result.data = pList;
                     response = new ResponseEntity<>(result, HttpStatus.OK);
                 } else {
-                    eresult.status = "E-4402";
+                    eresult.status = "E-4404";
                     eresult.message = "작성자에 해당되는 고민이  없습니다.";
                     eresult.data = null;
                     errorMap.put("field", "noPostByWriter");
@@ -267,7 +320,8 @@ public class CounselController {
 
     @ApiOperation(value = "고민 번호에 해당되는 고민 반환", response = List.class)
     @GetMapping("/post/post-no")
-    public Object seasrchPostByNo(@RequestParam BigInteger no) {
+    public Object seasrchPostByNo(@RequestParam BigInteger no,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -275,10 +329,53 @@ public class CounselController {
         Map<String, Object> errorMap = new HashMap<>();
 
         Optional<Post> optPost = postDao.findPostByNo(no);
-        Post post = optPost.get();
+
         if (optPost.isPresent()) {
+            Post post = optPost.get();
+
+            Integer like = likecountDao.countTotal(post.getNo(), "p").intValue();
+            Integer likelike = likecountDao.countTotal(post.getNo(), "pp").intValue();
+            Integer unlike = likecountDao.countTotal(post.getNo(), "m").intValue();
+            post.setViews(post.getViews() + 1);
+            post.setLikeCount(like + likelike);
+            post.setUnlikeCount(unlike);
+
+            postDao.save(post);
+
+
+            if (post.getWriter().equals(nickname)) {
+                post.setMine(true);
+            }
+            
+            if (post.isSecret() == true) {
+                post.setWriter("익명의 작성자");
+            }
 
             List<Reply> allList = replyDao.ReplyByPostNum(post.getNo());
+
+            // 같이오는 댓글들 목록 좋아요, 싫어요 수 가져오기
+            for (int i = 0; i < allList.size(); i++) {
+                Integer r_like = replylikecountDao.countTotal(allList.get(i).getId(), "p").intValue();
+                Integer r_likelike = replylikecountDao.countTotal(allList.get(i).getId(), "pp").intValue();
+                Integer r_unlike = replylikecountDao.countTotal(allList.get(i).getId(), "m").intValue();
+
+                allList.get(i).setLikeCount(r_like + r_likelike);
+                allList.get(i).setUnlikeCount(r_unlike);
+
+                
+                if (allList.get(i).getWriter().equals(nickname)) {
+                    allList.get(i).setMine(true);
+                }
+                
+                if(post.getWriter().equals(allList.get(i).getWriter())) {
+                    allList.get(i).setAuthor(true);
+                }
+                
+                if (allList.get(i).isSecret() == true) {
+                    allList.get(i).setWriter("익명의 작성자");
+                }
+
+            }
 
             Map<String, Object> PostMap = new HashMap<>();
 
@@ -291,7 +388,7 @@ public class CounselController {
             result.data = PostMap;
             response = new ResponseEntity<>(result, HttpStatus.OK);
         } else {
-            eresult.status = "S-4403";
+            eresult.status = "S-4405";
             eresult.message = "공지 번호에 해당되는 고민 글이  없습니다.";
             eresult.data = null;
             errorMap.put("field", "noPostByNo");
@@ -308,7 +405,7 @@ public class CounselController {
     @ApiOperation(value = "제목에 해당되는 고민 반환", response = List.class)
     @GetMapping("/post/post-title")
     public Object seasrchPostByTitle(@RequestParam String title, @RequestParam int page,
-            @RequestHeader("nickname") String nickname) {
+            @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -333,8 +430,16 @@ public class CounselController {
 
                 pList.forEach((e) -> {
 
+                    // 고민에 해당되는 좋아요, 싫어요 가져오기
+                    Integer like = likecountDao.countTotal(e.getNo(), "p").intValue();
+                    Integer likelike = likecountDao.countTotal(e.getNo(), "pp").intValue();
+                    Integer unlike = likecountDao.countTotal(e.getNo(), "m").intValue();
+
+                    e.setLikeCount(like + likelike);
+                    e.setUnlikeCount(unlike);
+
                     if (e.getWriter().equals(nickname)) {
-                        e.set_mine(true);
+                        e.setMine(true);
                     }
 
                     if (e.isSecret() == true) {
@@ -348,7 +453,7 @@ public class CounselController {
                 result.data = pList;
                 response = new ResponseEntity<>(result, HttpStatus.OK);
             } else {
-                eresult.status = "S-4404";
+                eresult.status = "S-4406";
                 eresult.message = "제목에 해당 되는고민 글들이  없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "noPostByTitle");
@@ -365,7 +470,7 @@ public class CounselController {
     @ApiOperation(value = "제목 또는 작성자에서 keyword를 포함하는 고민 반환", response = List.class)
     @GetMapping("/post/all")
     public Object seasrchPostByTitleORWriter(@RequestParam(required = false) String keyword, @RequestParam int page,
-            @RequestHeader("nickname") String nickname) {
+            @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -391,8 +496,17 @@ public class CounselController {
                 if (!aList.isEmpty()) {
 
                     aList.forEach((e) -> {
+
+                        // 고민에 해당되는 좋아요, 싫어요 가져오기
+                        Integer like = likecountDao.countTotal(e.getNo(), "p").intValue();
+                        Integer likelike = likecountDao.countTotal(e.getNo(), "pp").intValue();
+                        Integer unlike = likecountDao.countTotal(e.getNo(), "m").intValue();
+
+                        e.setLikeCount(like + likelike);
+                        e.setUnlikeCount(unlike);
+
                         if (e.getWriter().equals(nickname)) {
-                            e.set_mine(true);
+                            e.setMine(true);
                         }
                         if (e.isSecret() == true) {
                             e.setWriter("익명의 작성자");
@@ -404,10 +518,10 @@ public class CounselController {
                     result.data = aList;
                     response = new ResponseEntity<>(result, HttpStatus.OK);
                 } else {
-                    eresult.status = "E-4433";
-                    eresult.message = "해당되는 고민이  없습니다.";
+                    eresult.status = "E-4407";
+                    eresult.message = "제목 또는 작성자에 해당 되는고민 글들이  없습니다..";
                     eresult.data = null;
-                    errorMap.put("field", "noPostByAll");
+                    errorMap.put("field", "noPostByWriterORTitle");
                     errorMap.put("data", pageable);
                     eresult.errors = errorMap;
 
@@ -420,8 +534,16 @@ public class CounselController {
 
                     pList.forEach((e) -> {
 
+                        // 고민에 해당되는 좋아요, 싫어요 가져오기
+                        Integer like = likecountDao.countTotal(e.getNo(), "p").intValue();
+                        Integer likelike = likecountDao.countTotal(e.getNo(), "pp").intValue();
+                        Integer unlike = likecountDao.countTotal(e.getNo(), "m").intValue();
+
+                        e.setLikeCount(like + likelike);
+                        e.setUnlikeCount(unlike);
+
                         if (e.getWriter().equals(nickname)) {
-                            e.set_mine(true);
+                            e.setMine(true);
                         }
 
                         if (e.isSecret() == true) {
@@ -435,7 +557,7 @@ public class CounselController {
                     result.data = pList;
                     response = new ResponseEntity<>(result, HttpStatus.OK);
                 } else {
-                    eresult.status = "S-4405";
+                    eresult.status = "S-4407";
                     eresult.message = "제목 또는 작성자에 해당 되는고민 글들이  없습니다.";
                     eresult.data = null;
                     errorMap.put("field", "noPostByWriterORTitle");
@@ -459,11 +581,13 @@ public class CounselController {
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        if (post.getWriter().equals(null)) {
-            eresult.status = "E-4406";
+        Optional<User> optUser = userDao.findByNickname(post.getWriter());
+
+        if (!optUser.isPresent()) {
+            eresult.status = "E-4408";
             eresult.message = "알 수 없는 회원 입니다. 고민 글을 작성 할 수 없습니다.";
             eresult.data = null;
-            errorMap.put("field", "creatPost");
+            errorMap.put("field", "unKnownUser");
             errorMap.put("data", post.getWriter());
             eresult.errors = errorMap;
 
@@ -486,54 +610,58 @@ public class CounselController {
 
     @ApiOperation(value = "고민글 삭제", response = List.class)
     @DeleteMapping("/post")
-    public Object deletePost(@RequestParam BigInteger no, @RequestHeader("nickname") String nickname) {
+    public Object deletePost(@RequestParam BigInteger no,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        Optional<Post> optPost = postDao.findPostByNo(no);
+        Optional<User> optUser = userDao.findByNickname(nickname);
 
-        if (optPost.isPresent()) {
-            Post ptemp = optPost.get();
-            // 관리자 또는 글 작성자 인 경우
-            if (nickname.equals("admin") || ptemp.getWriter().equals(nickname)) {
+        if (optUser.isPresent()) {
+            Optional<Post> optPost = postDao.findPostByNo(no);
 
-                postDao.delete(ptemp);
+            if (optPost.isPresent()) {
+                Post ptemp = optPost.get();
+                // 관리자 또는 글 작성자 인 경우
+                if (nickname.equals("admin") || ptemp.getWriter().equals(nickname)) {
 
-                result.status = "S-200";
-                result.message = "고민 글 삭제 완료";
-                result.data = null;
-                response = new ResponseEntity<>(result, HttpStatus.OK);
-            } else if (nickname.equals(null)) {
-                eresult.status = "E-4407";
-                eresult.message = "알수 없는 회원 입니다. 글을 삭제 할 수 없습니다.";
-                eresult.data = null;
-                errorMap.put("field", "deletePost");
-                errorMap.put("data", nickname);
-                eresult.errors = errorMap;
+                    postDao.delete(ptemp);
 
-                response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
+                    result.status = "S-200";
+                    result.message = "고민 글 삭제 완료";
+                    result.data = null;
+                    response = new ResponseEntity<>(result, HttpStatus.OK);
+                } else {
+                    eresult.status = "E-4409";
+                    eresult.message = "허가 된 계정이 아닙니다. 글을 삭제 할 수 없습니다.";
+                    eresult.data = null;
+                    errorMap.put("field", "deletePost");
+                    errorMap.put("data", nickname);
+                    eresult.errors = errorMap;
+
+                    response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
+                }
             } else {
-                eresult.status = "E-4408";
-                eresult.message = "허가 된 계정이 아닙니다. 글을 삭제 할 수 없습니다.";
+                eresult.status = "E-4410";
+                eresult.message = "존재하지 않는 고민입니다. 고민을 삭제 할 수 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "deletePost");
-                errorMap.put("data", nickname);
+                errorMap.put("data", no);
                 eresult.errors = errorMap;
 
-                response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
+                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
             }
         } else {
-            eresult.status = "E-4409";
-            eresult.message = "존재하지 않는 고민입니다. 고민을 삭제 할 수 없습니다.";
+            eresult.status = "E-4408";
+            eresult.message = "알 수 없는 회원 입니다. 고민 글을 삭제 할 수 없습니다.";
             eresult.data = null;
-            errorMap.put("field", "deletePost");
-            errorMap.put("data", no);
+            errorMap.put("field", "unKnownUser");
+            errorMap.put("data", null);
             eresult.errors = errorMap;
-
-            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+            response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
         }
 
         return response;
@@ -541,59 +669,65 @@ public class CounselController {
 
     @ApiOperation(value = "고민 글 내용 변경", response = List.class)
     @PutMapping("/post")
-    public Object updatePost(@RequestBody PostUpdateRequest post, @RequestHeader("nickname") String nickname) {
+    public Object updatePost(@RequestBody PostUpdateRequest post,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        Optional<Post> optPost = postDao.findPostByNo(post.getNo());
-        Post updateTemp = optPost.get();
-        if (optPost.isPresent()) {
-            if (updateTemp.getWriter().equals(nickname) || nickname.equals("admin")) {
+        Optional<User> optUser = userDao.findByNickname(nickname);
 
-                updateTemp.setAllow(post.getAllow());
-                updateTemp.setCategoryId(post.getCategoryId());
-                updateTemp.setContent(post.getContent());
-                updateTemp.setTitle(post.getTitle());
-                updateTemp.setSecret(post.getSecret());
+        // 회원이 아닐 때
+        if (optUser.isPresent()) {
+            Optional<Post> optPost = postDao.findPostByNo(post.getNo());
+            Post updateTemp = optPost.get();
+            if (optPost.isPresent()) {
+                if (updateTemp.getWriter().equals(nickname) || nickname.equals("admin")) {
 
-                postDao.save(updateTemp);
-                result.status = "S-200";
-                result.message = "고민 글 수정 완료";
-                result.data = null;
+                    updateTemp.setAllow(post.getAllow());
+                    updateTemp.setCategoryId(post.getCategoryId());
+                    updateTemp.setContent(post.getContent());
+                    updateTemp.setTitle(post.getTitle());
+                    updateTemp.setSecret(post.getSecret());
 
-                response = new ResponseEntity<>(result, HttpStatus.OK);
+                    postDao.save(updateTemp);
+                    result.status = "S-200";
+                    result.message = "고민 글 수정 완료";
+                    result.data = null;
 
-            } else if (nickname.equals(null)) {
-                eresult.status = "E-4410";
-                eresult.message = "알수 없는 회원 입니다. 고민 글을 수정 할 수 없습니다.";
-                eresult.data = null;
-                errorMap.put("field", "updatePost");
-                errorMap.put("data", nickname);
-                eresult.errors = errorMap;
+                    response = new ResponseEntity<>(result, HttpStatus.OK);
 
-                response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
+                } else {
+                    eresult.status = "E-4411";
+                    eresult.message = "허가 된 계정이 아닙니다. 고민 글을 수정 할 수 없습니다.";
+                    eresult.data = null;
+                    errorMap.put("field", "updatePost");
+                    errorMap.put("data", nickname);
+                    eresult.errors = errorMap;
+
+                    response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
+                }
             } else {
-                eresult.status = "E-4411";
-                eresult.message = "허가 된 계정이 아닙니다. 고민 글을 수정 할 수 없습니다.";
+                eresult.status = "E-4412";
+                eresult.message = "존재하지 않는 질문입니다. 질문을 수정 할 수 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "updatePost");
-                errorMap.put("data", nickname);
+                errorMap.put("data", post.getNo());
                 eresult.errors = errorMap;
 
-                response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
+                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
             }
         } else {
-            eresult.status = "E-4412";
-            eresult.message = "존재하지 않는 질문입니다. 질문을 수정 할 수 없습니다.";
+            eresult.status = "E-4408";
+            eresult.message = "알수 없는 유저입니다. 질문을 수정 할 수 없습니다.";
             eresult.data = null;
-            errorMap.put("field", "deletePost");
-            errorMap.put("data", post.getNo());
+            errorMap.put("field", "unKnownUser");
+            errorMap.put("data", null);
             eresult.errors = errorMap;
-
-            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+            response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
         }
+
         return response;
 
     }
@@ -601,7 +735,7 @@ public class CounselController {
     @ApiOperation(value = "고민 글에 해당하는 답변 전체 목록 반환", notes = "Input : page, postNo Output: 성공 : [status = true, data = 고민 리스트(Post)] 실패 : status = false, data = 에러메세지", response = List.class)
     @GetMapping("/reply")
     public Object retrieveReplyByPostNo(@RequestParam BigInteger postNo, @RequestParam int page,
-            @RequestHeader("nickname") String nickname) {
+            @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -629,11 +763,19 @@ public class CounselController {
 
                 if (!rList.isEmpty()) {
                     rList.forEach((e) -> {
+
+                        // 답변에 해당되는 좋아요, 싫어요 가져오기
+                        Integer like = replylikecountDao.countTotal(e.getId(), "p").intValue();
+                        Integer likelike = replylikecountDao.countTotal(e.getId(), "pp").intValue();
+                        Integer unlike = replylikecountDao.countTotal(e.getId(), "m").intValue();
+
+                        e.setLikeCount(like + likelike);
+                        e.setUnlikeCount(unlike);
                         if (e.getWriter().equals(nickname)) {
-                            e.set_mine(true);
+                            e.setMine(true);
                         }
                         if (nickname.equals(post.getWriter())) {
-                            e.set_author(true);
+                            e.setAuthor(true);
                         }
                         if (e.isSecret() == true) {
                             e.setWriter("익명의 작성자");
@@ -655,7 +797,7 @@ public class CounselController {
                 }
 
             } else {
-                eresult.status = "E-4424";
+                eresult.status = "E-4414";
                 eresult.message = "불러 올 고민이  없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "noPost");
@@ -693,12 +835,23 @@ public class CounselController {
             PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "id");
             Page<Reply> rList = replyDao.findReplyByWriter(writer, pageable);
             if (!rList.isEmpty()) {
+
+                rList.forEach(e -> {
+                    // 답변에 해당되는 좋아요, 싫어요 가져오기
+                    Integer like = replylikecountDao.countTotal(e.getId(), "p").intValue();
+                    Integer likelike = replylikecountDao.countTotal(e.getId(), "pp").intValue();
+                    Integer unlike = replylikecountDao.countTotal(e.getId(), "m").intValue();
+
+                    e.setLikeCount(like + likelike);
+                    e.setUnlikeCount(unlike);
+                });
+
                 result.status = "S-200";
                 result.message = "작성자가 작성한 모든 답변 불러오기에 성공했습니다.";
                 result.data = rList;
                 response = new ResponseEntity<>(result, HttpStatus.OK);
             } else {
-                eresult.status = "E-4414";
+                eresult.status = "E-4413";
                 eresult.message = "불러 올 답변이  없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "noReply");
@@ -722,21 +875,21 @@ public class CounselController {
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        Optional<Post> optPost = postDao.findPostByNo(reply.getPostNo());
+        Optional<User> optUser = userDao.findByNickname(reply.getWriter());
 
-        if (optPost.isPresent()) {
+        if (!optUser.isPresent()) {
+            eresult.status = "E-4408";
+            eresult.message = "알수 없는 유저입니다. 답변을  작성 할 수 없습니다.";
+            eresult.data = null;
+            errorMap.put("field", "unKnownUser");
+            errorMap.put("data", null);
+            eresult.errors = errorMap;
+            response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
 
-            if (reply.getWriter().equals(null)) {
-                eresult.status = "E-4415";
-                eresult.message = "알 수 없는 회원 입니다. 답변 글을 작성 할 수 없습니다.";
-                eresult.data = null;
-                errorMap.put("field", "creatReply");
-                errorMap.put("data", reply.getWriter());
-                eresult.errors = errorMap;
+        } else {
+            Optional<Post> optPost = postDao.findPostByNo(reply.getPostNo());
 
-                response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
-
-            } else {
+            if (optPost.isPresent()) {
 
                 LocalDateTime currentTime = LocalDateTime.now();
                 Reply ptemp = new Reply(reply.getWriter(), reply.getPostNo(), reply.getContent(), currentTime,
@@ -746,132 +899,143 @@ public class CounselController {
                 result.message = "답변 작성에 성공했습니다.";
                 result.data = null;
                 response = new ResponseEntity<>(result, HttpStatus.OK);
-            }
-        } else {
-            eresult.status = "E-4416";
-            eresult.message = "존재하지 않는 고민글입니다. 답변 글을 작성 할 수  없습니다.";
-            eresult.data = null;
-            errorMap.put("field", "createReply");
-            errorMap.put("data", reply.getPostNo());
-            eresult.errors = errorMap;
 
-            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+            } else {
+                eresult.status = "E-4415";
+                eresult.message = "존재하지 않는 고민글입니다. 답변 글을 작성 할 수  없습니다.";
+                eresult.data = null;
+                errorMap.put("field", "createReply");
+                errorMap.put("data", reply.getPostNo());
+                eresult.errors = errorMap;
+
+                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+            }
         }
+
         return response;
     }
 
     @ApiOperation(value = "고민 답변 글 삭제", response = List.class)
     @DeleteMapping("/reply")
-    public Object deleteReply(@RequestParam BigInteger id, @RequestHeader("nickname") String nickname) {
+    public Object deleteReply(@RequestParam BigInteger id,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        Optional<Reply> rtemp = replyDao.findReplyById(id);
-        System.out.println(rtemp.isPresent());
+        Optional<User> optUser = userDao.findByNickname(nickname);
 
-        if (!rtemp.isPresent()) {
-            eresult.status = "E-4417";
-            eresult.message = "존재하지 않는 답변입니다. 답변을 삭제 할 수 없습니다.";
-            eresult.data = null;
-            errorMap.put("field", "deleteReply");
-            errorMap.put("data", id);
-            eresult.errors = errorMap;
+        if (optUser.isPresent()) {
+            Optional<Reply> rtemp = replyDao.findReplyById(id);
 
-            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
-        } else {
-            // 관리자 또는 글 작성자 인 경우
-            Reply temp = rtemp.get();
-            if (nickname.equals("admin") || temp.getWriter().equals(nickname)) {
-
-                Optional<Reply> rrtemp = replyDao.findReplyById(id);
-                temp = rrtemp.get();
-                replyDao.delete(temp);
-
-                result.status = "S-200";
-                result.message = "답변 글 삭제 완료";
-                result.data = null;
-                response = new ResponseEntity<>(result, HttpStatus.OK);
-            } else if (nickname.equals(null)) {
-                eresult.status = "E-4418";
-                eresult.message = "알수 없는 회원 입니다. 답변을 삭제 할 수 없습니다.";
+            if (!rtemp.isPresent()) {
+                eresult.status = "E-4416";
+                eresult.message = "존재하지 않는 답변입니다. 답변을 삭제 할 수 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "deleteReply");
-                errorMap.put("data", nickname);
+                errorMap.put("data", id);
                 eresult.errors = errorMap;
 
-                response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
+                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
             } else {
-                eresult.status = "E-4419";
-                eresult.message = "허가 된 계정이 아닙니다. 답변을 삭제 할 수 없습니다.";
-                eresult.data = null;
-                errorMap.put("field", "deleteReply");
-                errorMap.put("data", nickname);
-                eresult.errors = errorMap;
+                // 관리자 또는 글 작성자 인 경우
+                Reply temp = rtemp.get();
+                if (nickname.equals("admin") || temp.getWriter().equals(nickname)) {
 
-                response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
+                    Optional<Reply> rrtemp = replyDao.findReplyById(id);
+                    temp = rrtemp.get();
+                    replyDao.delete(temp);
+
+                    result.status = "S-200";
+                    result.message = "답변 글 삭제 완료";
+                    result.data = null;
+                    response = new ResponseEntity<>(result, HttpStatus.OK);
+                } else {
+                    eresult.status = "E-4417";
+                    eresult.message = "허가 된 계정이 아닙니다. 답변을 삭제 할 수 없습니다.";
+                    eresult.data = null;
+                    errorMap.put("field", "deleteReply");
+                    errorMap.put("data", nickname);
+                    eresult.errors = errorMap;
+
+                    response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
+                }
             }
+        } else {
+            eresult.status = "E-4408";
+            eresult.message = "알수 없는 유저입니다. 답변을 삭제 할 수 없습니다.";
+            eresult.data = null;
+            errorMap.put("field", "unknownUser");
+            errorMap.put("data", null);
+            eresult.errors = errorMap;
+            response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
         }
+
         return response;
     }
 
     @ApiOperation(value = "답변 글 내용 변경", response = List.class)
     @PutMapping("/reply")
-    public Object updateReply(@RequestBody ReplyUpdateRequest reply, @RequestHeader("nickname") String nickname) {
+    public Object updateReply(@RequestBody ReplyUpdateRequest reply,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        Optional<Reply> optReply = replyDao.findReplyById(reply.getId());
+        Optional<User> optUser = userDao.findByNickname(nickname);
 
-        if (optReply.isPresent()) {
-            Reply temp = optReply.get();
-            if (reply.getWriter().equals("admin") || temp.getWriter().equals(nickname)) {
-                Optional<Reply> utemp = replyDao.findReplyById(reply.getId());
-                Reply updateTemp = utemp.get();
-                updateTemp.setContent(reply.getContent());
-                updateTemp.setSecret(reply.isSecret());
-                updateTemp.setSelected(reply.isSelected());
+        if (optUser.isPresent()) {
+            Optional<Reply> optReply = replyDao.findReplyById(reply.getId());
 
-                replyDao.save(updateTemp);
-                result.status = "S-200";
-                result.message = "답변 글 수정 완료";
-                result.data = null;
+            if (optReply.isPresent()) {
+                Reply temp = optReply.get();
+                if (reply.getWriter().equals("admin") || temp.getWriter().equals(nickname)) {
+                    Optional<Reply> utemp = replyDao.findReplyById(reply.getId());
+                    Reply updateTemp = utemp.get();
+                    updateTemp.setContent(reply.getContent());
+                    updateTemp.setSecret(reply.isSecret());
+                    updateTemp.setSelected(reply.isSelected());
 
-                response = new ResponseEntity<>(result, HttpStatus.OK);
+                    replyDao.save(updateTemp);
+                    result.status = "S-200";
+                    result.message = "답변 글 수정 완료";
+                    result.data = null;
 
-            } else if (reply.getWriter().equals(null)) {
-                eresult.status = "E-4420";
-                eresult.message = "알수 없는 회원 입니다. 답변 글을 수정 할 수 없습니다.";
-                eresult.data = null;
-                errorMap.put("field", "updateReply");
-                errorMap.put("data", reply.getWriter());
-                eresult.errors = errorMap;
+                    response = new ResponseEntity<>(result, HttpStatus.OK);
 
-                response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
+                } else {
+                    eresult.status = "E-448";
+                    eresult.message = "허가 된 계정이 아닙니다. 답변 글을 수정 할 수 없습니다.";
+                    eresult.data = null;
+                    errorMap.put("field", "updateReply");
+                    errorMap.put("data", reply.getWriter());
+                    eresult.errors = errorMap;
+
+                    response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
+                }
             } else {
-                eresult.status = "E-4421";
-                eresult.message = "허가 된 계정이 아닙니다. 답변 글을 수정 할 수 없습니다.";
+                eresult.status = "E-4419";
+                eresult.message = "존재하지 않는 답변입니다. 답변을 수정 할 수 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "updateReply");
-                errorMap.put("data", reply.getWriter());
+                errorMap.put("data", reply.getId());
                 eresult.errors = errorMap;
 
-                response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
+                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
             }
         } else {
-            eresult.status = "E-4422";
-            eresult.message = "존재하지 않는 답변입니다. 답변을 수정 할 수 없습니다.";
+            eresult.status = "E-4408";
+            eresult.message = "알수 없는 유저입니다. 답변을 수정 할 수 없습니다.";
             eresult.data = null;
-            errorMap.put("field", "updateReply");
-            errorMap.put("data", reply.getId());
+            errorMap.put("field", "unknownUser");
+            errorMap.put("data", null);
             eresult.errors = errorMap;
-
-            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+            response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
         }
+
         return response;
 
     }
@@ -922,7 +1086,7 @@ public class CounselController {
             result.data = cList;
             response = new ResponseEntity<>(result, HttpStatus.OK);
         } else {
-            eresult.status = "E-4425";
+            eresult.status = "E-4420";
             eresult.message = "카테고리가 없습니다.";
             eresult.data = null;
             errorMap.put("field", "noCategory");
@@ -938,43 +1102,55 @@ public class CounselController {
     @ApiOperation(value = "카테고리 생성", notes = "현재 로그인 유저 닉네임, CategoryRequest")
     @PostMapping("/category")
     public Object createCategory(@RequestBody CategoryCreateRequest crequest,
-            @RequestHeader("nickname") String nickname) {
+            @RequestHeader(value = "nickname", required = false) String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        if (nickname.equals("admin")) {
-            Optional<Category> optCate = categoryDao.findCategoryByName(crequest.getName());
+        Optional<User> optUser = userDao.findByNickname(nickname);
 
-            if (!optCate.isPresent()) {
+        if (optUser.isPresent()) {
+            if (nickname.equals("admin")) {
+                Optional<Category> optCate = categoryDao.findCategoryByName(crequest.getName());
 
-                Category temp = new Category(crequest.getName(), crequest.getDescription());
-                categoryDao.save(temp);
+                if (!optCate.isPresent()) {
 
-                result.status = "S-200";
-                result.message = "카테고리 생성에 성공했습니다.";
-                result.data = crequest.getName();
-                response = new ResponseEntity<>(result, HttpStatus.OK);
+                    Category temp = new Category(crequest.getName(), crequest.getDescription());
+                    categoryDao.save(temp);
+
+                    result.status = "S-200";
+                    result.message = "카테고리 생성에 성공했습니다.";
+                    result.data = crequest.getName();
+                    response = new ResponseEntity<>(result, HttpStatus.OK);
+                } else {
+                    eresult.status = "E-4421";
+                    eresult.message = "이미 카테고리가 있습니다.";
+                    eresult.data = null;
+                    errorMap.put("field", "existCategory");
+                    errorMap.put("data", null);
+                    eresult.errors = errorMap;
+
+                    response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                }
             } else {
-                eresult.status = "E-4426";
-                eresult.message = "이미 카테고리가 있습니다.";
+                eresult.status = "E-4422";
+                eresult.message = "카테고리를 만들 수 있는 권한이 없습니다.";
                 eresult.data = null;
-                errorMap.put("field", "existCategory");
+                errorMap.put("field", "createCategory");
                 errorMap.put("data", null);
                 eresult.errors = errorMap;
 
-                response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
             }
         } else {
-            eresult.status = "E-4427";
-            eresult.message = "카테고리를 만들 수 있는 권한이 없습니다.";
+            eresult.status = "E-4408";
+            eresult.message = "알수 없는 유저입니다. 답변을 수정 할 수 없습니다.";
             eresult.data = null;
-            errorMap.put("field", "createCategory");
+            errorMap.put("field", "unknownUser");
             errorMap.put("data", null);
             eresult.errors = errorMap;
-
-            response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
+            response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
         }
 
         return response;
@@ -982,42 +1158,56 @@ public class CounselController {
 
     @ApiOperation(value = "카테고리 삭제", notes = "Input : 지우려는 카테고리 이름, 현재 로그인 되어있는 사람 Output: 성공 - null, 실패 : 중복시 카테고리 이름 반환")
     @DeleteMapping("/category")
-    public Object deleteCategory(@RequestParam String categoryName, @RequestHeader("nickname") String nickname) {
+    public Object deleteCategory(@RequestParam String categoryName,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        if (nickname.equals("admin")) {
-            Optional<Category> optCate = categoryDao.findCategoryByName(categoryName);
+        Optional<User> optUser = userDao.findByNickname(nickname);
 
-            if (optCate.isPresent()) {
-                Category ctemp = optCate.get();
-                categoryDao.delete(ctemp);
+        if (optUser.isPresent()) {
+            if (nickname.equals("admin")) {
+                Optional<Category> optCate = categoryDao.findCategoryByName(categoryName);
 
-                result.status = "S-200";
-                result.message = "카테고리 삭제에 성공했습니다.";
-                result.data = categoryName;
+                if (optCate.isPresent()) {
+                    Category ctemp = optCate.get();
+                    categoryDao.delete(ctemp);
+
+                    result.status = "S-200";
+                    result.message = "카테고리 삭제에 성공했습니다.";
+                    result.data = categoryName;
+                    response = new ResponseEntity<>(eresult, HttpStatus.OK);
+                } else {
+                    eresult.status = "E-4423";
+                    eresult.message = "지우려는 카테고리가 존재하지 않습니다.";
+                    eresult.data = null;
+                    errorMap.put("field", "noCategory");
+                    errorMap.put("data", categoryName);
+                    eresult.errors = errorMap;
+
+                    response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+                }
+
             } else {
-                eresult.status = "E-4428";
-                eresult.message = "지우려는 카테고리가 존재하지 않습니다.";
+                eresult.status = "E-4424";
+                eresult.message = "카테고리를 지울 수 있는 권한이 없습니다.";
                 eresult.data = null;
-                errorMap.put("field", "noCategory");
-                errorMap.put("data", categoryName);
+                errorMap.put("field", "deleteCategory");
+                errorMap.put("data", null);
                 eresult.errors = errorMap;
 
-                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+                response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
             }
-
         } else {
-            eresult.status = "E-4429";
-            eresult.message = "카테고리를 지울 수 있는 권한이 없습니다.";
+            eresult.status = "E-4408";
+            eresult.message = "알수 없는 유저입니다. 카테고리를 삭제 할 수 없습니다.";
             eresult.data = null;
-            errorMap.put("field", "deleteCategory");
+            errorMap.put("field", "unknownUser");
             errorMap.put("data", null);
             eresult.errors = errorMap;
-
-            response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
+            response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
         }
 
         return response;
@@ -1026,64 +1216,76 @@ public class CounselController {
     @ApiOperation(value = "카테고리 내용 변경", notes = "input CategoryRequest, 현재 로그인 닉네임 output : 성공 여부")
     @PutMapping("/category")
     public Object updateCategory(@RequestBody CategoryUpdateRequest urequest,
-            @RequestHeader("nickname") String nickname) {
+            @RequestHeader(value = "nickname", required = false) String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        if (nickname.equals("admin")) {
+        Optional<User> userOpt = userDao.findByNickname(nickname);
 
-            Optional<Category> cateOpt = categoryDao.findCategoryByName(urequest.getCurName());
+        if (!userOpt.isPresent()) {
+            eresult.status = "E-4408";
+            eresult.message = "알수 없는 유저입니다. 카테고리를 수정 할 수 없습니다.";
+            eresult.data = null;
+            errorMap.put("field", "unkownUser");
+            errorMap.put("data", null);
+            eresult.errors = errorMap;
+            response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
+        } else {
+            if (nickname.equals("admin")) {
 
-            if (cateOpt.isPresent()) {
+                Optional<Category> cateOpt = categoryDao.findCategoryByName(urequest.getCurName());
 
-                Optional<Category> duplicateOpt = categoryDao.findCategoryByName(urequest.getChangName());
+                if (cateOpt.isPresent()) {
 
-                if (!duplicateOpt.isPresent()) {
+                    Optional<Category> duplicateOpt = categoryDao.findCategoryByName(urequest.getChangName());
 
-                    Category ctemp = cateOpt.get();
-                    ctemp.setName(urequest.getChangName());
-                    ctemp.setDescription(urequest.getDescription());
-                    categoryDao.save(ctemp);
+                    if (!duplicateOpt.isPresent()) {
 
-                    result.status = "S-200";
-                    result.message = "카테고리 수정에 성공했습니다.";
-                    result.data = urequest.getChangName();
-                    response = new ResponseEntity<>(eresult, HttpStatus.OK);
-                }
+                        Category ctemp = cateOpt.get();
+                        ctemp.setName(urequest.getChangName());
+                        ctemp.setDescription(urequest.getDescription());
+                        categoryDao.save(ctemp);
 
-                else {
-                    eresult.status = "E-4430";
-                    eresult.message = "중복된 카테고리 이름입니다.";
+                        result.status = "S-200";
+                        result.message = "카테고리 수정에 성공했습니다.";
+                        result.data = urequest.getChangName();
+                        response = new ResponseEntity<>(result, HttpStatus.OK);
+                    }
+
+                    else {
+                        eresult.status = "E-4425";
+                        eresult.message = "중복된 카테고리 이름입니다.";
+                        eresult.data = null;
+                        errorMap.put("field", "existCategoryName");
+                        errorMap.put("data", urequest.getChangName());
+                        eresult.errors = errorMap;
+
+                        response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                    }
+
+                } else {
+                    eresult.status = "E-4426";
+                    eresult.message = "수정하려는 카테고리가 존재하지 않습니다.";
                     eresult.data = null;
-                    errorMap.put("field", "existCategoryName");
-                    errorMap.put("data", urequest.getChangName());
+                    errorMap.put("field", "noCategory");
+                    errorMap.put("data", urequest.getCurName());
                     eresult.errors = errorMap;
 
-                    response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                    response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
                 }
 
             } else {
-                eresult.status = "E-4431";
-                eresult.message = "수정하려는 카테고리가 존재하지 않습니다.";
+                eresult.status = "E-4427";
+                eresult.message = "카테고리를 수정 할 수 있는 권한이 없습니다.";
                 eresult.data = null;
-                errorMap.put("field", "noCategory");
-                errorMap.put("data", urequest.getCurName());
+                errorMap.put("field", "updateCategory");
+                errorMap.put("data", null);
                 eresult.errors = errorMap;
 
-                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+                response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
             }
-
-        } else {
-            eresult.status = "E-4432";
-            eresult.message = "카테고리를 수정 할 수 있는 권한이 없습니다.";
-            eresult.data = null;
-            errorMap.put("field", "updateCategory");
-            errorMap.put("data", null);
-            eresult.errors = errorMap;
-
-            response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
         }
 
         return response;
@@ -1091,8 +1293,8 @@ public class CounselController {
 
     @ApiOperation(value = "어떤 글의 고민 좋아요, 싫어요, 더 좋아요 총 갯수 가져오기")
     @GetMapping("/post/like")
-    public Object retrieveLikeCountPost(@RequestParam BigInteger uid, @RequestParam BigInteger postNo,
-            @RequestHeader("nickname") String nickname) {
+    public Object retrieveLikeCountPost(@RequestParam BigInteger postNo,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
@@ -1117,7 +1319,7 @@ public class CounselController {
             response = new ResponseEntity<>(result, HttpStatus.OK);
 
         } else {
-            eresult.status = "E-4433";
+            eresult.status = "E-4428";
             eresult.message = "해당 번호의 게시글이 없습니다";
             eresult.data = null;
             errorMap.put("field", "noPost");
@@ -1132,8 +1334,8 @@ public class CounselController {
 
     @ApiOperation("종아요, 싫어요 추가")
     @PostMapping("/post/like")
-    public Object createLikeCountPost(@RequestBody LikeCountCreateRequest lcrequest,
-            @RequestHeader("nickname") String nickname) {
+    public Object createLikeCountPost(@RequestBody LikeCountRequest lcrequest,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
@@ -1142,46 +1344,40 @@ public class CounselController {
         Optional<User> userOpt = userDao.findByNickname(nickname);
         if (userOpt.isPresent()) {
             User user = userOpt.get();
-            Optional<LikeCount> tOpt = likecountDao.checkExistLikeCount(user.getUid(), lcrequest.getType(), lcrequest.getPostNo());
+            Optional<LikeCount> tOpt = likecountDao.checkExistLikeCount(user.getUid(), lcrequest.getType(),
+                    lcrequest.getPostNo());
 
             if (lcrequest.getType().equals("p")) {
 
-                if (!tOpt.isPresent()) {
+                Optional<LikeCount> converseOpt = likecountDao.checkExistLikeCount(user.getUid(), "m",
+                        lcrequest.getPostNo());
 
-                    LocalDateTime currentTime = LocalDateTime.now();
-                    LikeCount lc = new LikeCount(lcrequest.getPostNo(), BigInteger.valueOf(user.getUid()), currentTime, lcrequest.getType());
-                    likecountDao.save(lc);
+                if (!converseOpt.isPresent()) {
+                    if (!tOpt.isPresent()) {
 
-                    result.status = "S-200";
-                    result.message = "좋아요 추가  성공";
-                    result.data = null;
+                        LocalDateTime currentTime = LocalDateTime.now();
+                        LikeCount lc = new LikeCount(lcrequest.getPostNo(), BigInteger.valueOf(user.getUid()),
+                                currentTime, lcrequest.getType());
+                        likecountDao.save(lc);
 
-                    response = new ResponseEntity<>(result, HttpStatus.OK);
+                        result.status = "S-200";
+                        result.message = "좋아요 추가  성공";
+                        result.data = null;
+
+                        response = new ResponseEntity<>(result, HttpStatus.OK);
+                    } else {
+                        eresult.status = "E-4429";
+                        eresult.message = "이미 좋아요를 눌렀습니다.";
+                        eresult.data = null;
+                        errorMap.put("field", "existLike");
+                        errorMap.put("data", null);
+                        eresult.errors = errorMap;
+
+                        response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                    }
                 } else {
-                    eresult.status = "E-4434";
-                    eresult.message = "이미 좋아요를 눌렀습니다.";
-                    eresult.data = null;
-                    errorMap.put("field", "existLike");
-                    errorMap.put("data", null);
-                    eresult.errors = errorMap;
-
-                    response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
-                }
-            } else if (lcrequest.getType().equals("m")) {
-                if (!tOpt.isPresent()) {
-
-                    LocalDateTime currentTime = LocalDateTime.now();
-                    LikeCount lc = new LikeCount(lcrequest.getPostNo(), BigInteger.valueOf(user.getUid()), currentTime, lcrequest.getType());
-                    likecountDao.save(lc);
-
-                    result.status = "S-200";
-                    result.message = "싫어요 추가  성공";
-                    result.data = null;
-
-                    response = new ResponseEntity<>(eresult, HttpStatus.OK);
-                } else {
-                    eresult.status = "E-4435";
-                    eresult.message = "이미 싫어요를 눌렀습니다.";
+                    eresult.status = "E-4430";
+                    eresult.message = "이미 싫어요를 눌렀습니다. 해제하고 다시 시도하세요";
                     eresult.data = null;
                     errorMap.put("field", "existUnLike");
                     errorMap.put("data", null);
@@ -1189,6 +1385,46 @@ public class CounselController {
 
                     response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
                 }
+
+            } else if (lcrequest.getType().equals("m")) {
+
+                Optional<LikeCount> converseOpt = likecountDao.checkExistLikeCount(user.getUid(), "p",
+                        lcrequest.getPostNo());
+
+                if (!converseOpt.isPresent()) {
+                    if (!tOpt.isPresent()) {
+
+                        LocalDateTime currentTime = LocalDateTime.now();
+                        LikeCount lc = new LikeCount(lcrequest.getPostNo(), BigInteger.valueOf(user.getUid()),
+                                currentTime, lcrequest.getType());
+                        likecountDao.save(lc);
+
+                        result.status = "S-200";
+                        result.message = "싫어요 추가  성공";
+                        result.data = null;
+
+                        response = new ResponseEntity<>(result, HttpStatus.OK);
+                    } else {
+                        eresult.status = "E-4431";
+                        eresult.message = "이미 싫어요를 눌렀습니다.";
+                        eresult.data = null;
+                        errorMap.put("field", "existUnLike");
+                        errorMap.put("data", null);
+                        eresult.errors = errorMap;
+
+                        response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                    }
+                } else {
+                    eresult.status = "E-4432";
+                    eresult.message = "이미 좋아요를 눌렀습니다. 해제하고 다시 시도하세요";
+                    eresult.data = null;
+                    errorMap.put("field", "existLike");
+                    errorMap.put("data", null);
+                    eresult.errors = errorMap;
+
+                    response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                }
+
                 // 추가 하는 것이 또 좋아요 기능인 경우
             } else if (lcrequest.getType().equals("pp")) {
                 Optional<LikeCount> pOpt = likecountDao.checkExistLikeCount(user.getUid(), "p", lcrequest.getPostNo());
@@ -1198,7 +1434,8 @@ public class CounselController {
                     // 또 좋아요가 있는지 체크
                     if (!tOpt.isPresent()) {
                         LocalDateTime currentTime = LocalDateTime.now();
-                        LikeCount lc = new LikeCount(lcrequest.getPostNo(), BigInteger.valueOf(user.getUid()), currentTime, lcrequest.getType());
+                        LikeCount lc = new LikeCount(lcrequest.getPostNo(), BigInteger.valueOf(user.getUid()),
+                                currentTime, lcrequest.getType());
                         likecountDao.save(lc);
 
                         result.status = "S-200";
@@ -1207,7 +1444,7 @@ public class CounselController {
 
                         response = new ResponseEntity<>(result, HttpStatus.OK);
                     } else {
-                        eresult.status = "E-4436";
+                        eresult.status = "E-4433";
                         eresult.message = "이미 또 좋아요를 눌렀습니다.";
                         eresult.data = null;
                         errorMap.put("field", "existUnLike");
@@ -1217,7 +1454,7 @@ public class CounselController {
                         response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
                     }
                 } else {
-                    eresult.status = "E-4437";
+                    eresult.status = "E-4434";
                     eresult.message = "좋아요를 누르지 않았습니다. 먼저 좋아요를 눌러주세요.";
                     eresult.data = null;
                     errorMap.put("field", "needPreLike");
@@ -1226,13 +1463,22 @@ public class CounselController {
 
                     response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
                 }
+            } else {
+                eresult.status = "E-4435";
+                eresult.message = "잘못 된 좋아요 타입 입니다";
+                eresult.data = null;
+                errorMap.put("field", "noExistType");
+                errorMap.put("data", lcrequest.getType());
+                eresult.errors = errorMap;
+
+                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
             }
 
         } else {
-            eresult.status = "E-4435";
+            eresult.status = "E-4408";
             eresult.message = "존재하지 않는 유저 입니다";
             eresult.data = null;
-            errorMap.put("field", "noLikeCount");
+            errorMap.put("field", "unKnownUser");
             errorMap.put("data", nickname);
             eresult.errors = errorMap;
 
@@ -1245,7 +1491,8 @@ public class CounselController {
 
     @ApiOperation("좋아요, 싫어요 삭제")
     @DeleteMapping("/post/like")
-    public Object deleteLikeCountPost(@RequestParam BigInteger postNo, @RequestHeader("nickname") String nickname) {
+    public Object deleteLikeCountPost(@RequestBody LikeCountRequest lcrequest,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
@@ -1255,23 +1502,255 @@ public class CounselController {
         if (userOpt.isPresent()) {
             User user = userOpt.get();
 
-            Optional<LikeCount> lcOpt = likecountDao.findLikeCountByUid(postNo, user.getUid());
+            if (lcrequest.getType().equals("p") || lcrequest.getType().equals("pp")
+                    || lcrequest.getType().equals("m")) {
+                Optional<LikeCount> lcOpt = likecountDao.checkExistLikeCount(user.getUid(), lcrequest.getType(),
+                        lcrequest.getPostNo());
+                if (lcOpt.isPresent()) {
+                    LikeCount lctemp = lcOpt.get();
+
+                    likecountDao.delete(lctemp);
+
+                    result.status = "S-200";
+                    result.message = "좋아요, 싫어요 삭제  성공";
+                    result.data = null;
+                    response = new ResponseEntity<>(result, HttpStatus.OK);
+
+                } else {
+                    eresult.status = "E-4436";
+                    eresult.message = "해당 글에 좋아요, 싫어요를 표시한 적이 없습니다";
+                    eresult.data = null;
+                    errorMap.put("field", "noLikeCount");
+                    errorMap.put("postNo", lcrequest.getPostNo());
+                    errorMap.put("nickname", nickname);
+                    eresult.errors = errorMap;
+
+                    response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+                }
+            } else {
+                eresult.status = "E-4435";
+                eresult.message = "잘못 된 좋아요 타입 입니다";
+                eresult.data = null;
+                errorMap.put("field", "noExistType");
+                errorMap.put("data", lcrequest.getType());
+                eresult.errors = errorMap;
+
+                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+            }
+
+        } else {
+            eresult.status = "E-4408";
+            eresult.message = "존재하지 않는 유저 입니다";
+            eresult.data = null;
+            errorMap.put("field", "unknownUser");
+            errorMap.put("data", nickname);
+            eresult.errors = errorMap;
+
+            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+        }
+
+        return response;
+
+    }
+
+    @ApiOperation(value = "어떤  답변 글의 고민 좋아요, 싫어요, 더 좋아요 총 갯수 가져오기")
+    @GetMapping("/reply/like")
+    public Object retrieveLikeCountReply(@RequestParam BigInteger replyId,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
+        ResponseEntity response = null;
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
+
+        Long plus = (long) 0, minus = (long) 0, plus_plus = (long) 0;
+
+        Optional<Reply> optReply = replyDao.findReplyById(replyId);
+
+        if (optReply.isPresent()) {
+            plus = replylikecountDao.countTotal(replyId, "p");
+            minus = replylikecountDao.countTotal(replyId, "m");
+            plus_plus = replylikecountDao.countTotal(replyId, "pp");
+
+            Map<String, Object> resultMap = new HashMap<>();
+
+            result.status = "S-200";
+            result.message = "답변 글의 좋아요 개수 불러오기 성공";
+            resultMap.put("like", plus + plus_plus);
+            resultMap.put("unlike", minus);
+            result.data = resultMap;
+            response = new ResponseEntity<>(result, HttpStatus.OK);
+
+        } else {
+            eresult.status = "E-4437";
+            eresult.message = "해당 번호의 게시글이 없습니다";
+            eresult.data = null;
+            errorMap.put("field", "noPost");
+            errorMap.put("data", null);
+            eresult.errors = errorMap;
+
+            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+        }
+
+        return response;
+    }
+
+    @ApiOperation("댓 글에 종아요, 싫어요 추가")
+    @PostMapping("/reply/like")
+    public Object createLikeCountReply(@RequestBody ReplyLikeCountRequest rlcrequest,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
+        ResponseEntity response = null;
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
+
+        Optional<User> userOpt = userDao.findByNickname(nickname);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            Optional<ReplyLikeCount> tOpt = replylikecountDao.checkExistLikeCount(user.getUid(), rlcrequest.getType(),
+                    rlcrequest.getReplyId());
+
+            if (rlcrequest.getType().equals("p")) {
+
+                if (!tOpt.isPresent()) {
+
+                    LocalDateTime currentTime = LocalDateTime.now();
+                    ReplyLikeCount rlc = new ReplyLikeCount(rlcrequest.getReplyId(), BigInteger.valueOf(user.getUid()),
+                            currentTime, rlcrequest.getType());
+                    replylikecountDao.save(rlc);
+
+                    result.status = "S-200";
+                    result.message = "좋아요 추가  성공";
+                    result.data = null;
+
+                    response = new ResponseEntity<>(result, HttpStatus.OK);
+                } else {
+                    eresult.status = "E-4431";
+                    eresult.message = "이미 좋아요를 눌렀습니다.";
+                    eresult.data = null;
+                    errorMap.put("field", "existLike");
+                    errorMap.put("data", null);
+                    eresult.errors = errorMap;
+
+                    response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                }
+            } else if (rlcrequest.getType().equals("m")) {
+                if (!tOpt.isPresent()) {
+
+                    LocalDateTime currentTime = LocalDateTime.now();
+                    ReplyLikeCount rlc = new ReplyLikeCount(rlcrequest.getReplyId(), BigInteger.valueOf(user.getUid()),
+                            currentTime, rlcrequest.getType());
+                    replylikecountDao.save(rlc);
+
+                    result.status = "S-200";
+                    result.message = "싫어요 추가  성공";
+                    result.data = null;
+
+                    response = new ResponseEntity<>(eresult, HttpStatus.OK);
+                } else {
+                    eresult.status = "E-4432";
+                    eresult.message = "이미 싫어요를 눌렀습니다.";
+                    eresult.data = null;
+                    errorMap.put("field", "existUnLike");
+                    errorMap.put("data", null);
+                    eresult.errors = errorMap;
+
+                    response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                }
+                // 추가 하는 것이 또 좋아요 기능인 경우
+            } else if (rlcrequest.getType().equals("pp")) {
+                Optional<ReplyLikeCount> pOpt = replylikecountDao.checkExistLikeCount(user.getUid(), "p",
+                        rlcrequest.getReplyId());
+
+                // 좋아요가 있는지 체크
+                if (pOpt.isPresent()) {
+                    // 또 좋아요가 있는지 체크
+                    if (!tOpt.isPresent()) {
+                        LocalDateTime currentTime = LocalDateTime.now();
+                        ReplyLikeCount rlc = new ReplyLikeCount(rlcrequest.getReplyId(),
+                                BigInteger.valueOf(user.getUid()), currentTime, rlcrequest.getType());
+                        replylikecountDao.save(rlc);
+                        result.status = "S-200";
+                        result.message = "또 좋아요 추가  성공";
+                        result.data = null;
+
+                        response = new ResponseEntity<>(result, HttpStatus.OK);
+                    } else {
+                        eresult.status = "E-4433";
+                        eresult.message = "이미 또 좋아요를 눌렀습니다.";
+                        eresult.data = null;
+                        errorMap.put("field", "existUnLike");
+                        errorMap.put("data", null);
+                        eresult.errors = errorMap;
+
+                        response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                    }
+                } else {
+                    eresult.status = "E-4434";
+                    eresult.message = "좋아요를 누르지 않았습니다. 먼저 좋아요를 눌러주세요.";
+                    eresult.data = null;
+                    errorMap.put("field", "needPreLike");
+                    errorMap.put("data", null);
+                    eresult.errors = errorMap;
+
+                    response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+                }
+            } else {
+                eresult.status = "E-4438";
+                eresult.message = "잘못 된 좋아요 타입 입니다";
+                eresult.data = null;
+                errorMap.put("field", "noExistType");
+                errorMap.put("data", rlcrequest.getType());
+                eresult.errors = errorMap;
+
+                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+            }
+
+        } else {
+            eresult.status = "E-4408";
+            eresult.message = "존재하지 않는 유저 입니다";
+            eresult.data = null;
+            errorMap.put("field", "unknowUser");
+            errorMap.put("data", nickname);
+            eresult.errors = errorMap;
+
+            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+        }
+
+        return response;
+
+    }
+
+    @ApiOperation("좋아요, 싫어요 삭제")
+    @DeleteMapping("/reply/like")
+    public Object deleteLikeCountReply(@RequestBody ReplyLikeCountRequest rlcrequest,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
+        ResponseEntity response = null;
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
+
+        Optional<User> userOpt = userDao.findByNickname(nickname);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+
+            Optional<LikeCount> lcOpt = likecountDao.checkExistLikeCount(user.getUid(), rlcrequest.getType(),
+                    rlcrequest.getReplyId());
             if (lcOpt.isPresent()) {
                 LikeCount lctemp = lcOpt.get();
 
                 likecountDao.delete(lctemp);
 
                 result.status = "S-200";
-                result.message = "좋아요 삭제  성공";
+                result.message = "좋아요, 싫어요 삭제  성공";
                 result.data = null;
                 response = new ResponseEntity<>(result, HttpStatus.OK);
 
             } else {
-                eresult.status = "E-4438";
+                eresult.status = "E-4439";
                 eresult.message = "해당 글에 좋아요, 싫어요를 표시한 적이 없습니다";
                 eresult.data = null;
                 errorMap.put("field", "noLikeCount");
-                errorMap.put("postNo", postNo);
+                errorMap.put("replyId", rlcrequest.getReplyId());
                 errorMap.put("nickname", nickname);
                 eresult.errors = errorMap;
 
@@ -1279,10 +1758,10 @@ public class CounselController {
             }
 
         } else {
-            eresult.status = "E-4435";
+            eresult.status = "E-4408";
             eresult.message = "존재하지 않는 유저 입니다";
             eresult.data = null;
-            errorMap.put("field", "noLikeCount");
+            errorMap.put("field", "unknownUser");
             errorMap.put("data", nickname);
             eresult.errors = errorMap;
 

@@ -55,7 +55,7 @@ public class Post {
     private boolean secret;
     
     @Transient
-    private boolean is_mine;
+    private boolean isMine;
     
     public Post(String writer, BigInteger categoryId, String title, String content, LocalDateTime writeDate,
             boolean allow, boolean secret) {
