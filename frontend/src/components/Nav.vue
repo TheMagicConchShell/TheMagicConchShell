@@ -73,7 +73,10 @@
 
                     <b-nav-item-dropdown right>
                         <template v-slot:button-content>
-                            <i class="fas fa-language" style="color: #6B799E;"></i>
+                            <i
+                                class="fas fa-language"
+                                style="color: #6B799E;"
+                            />
                         </template>
                         <b-dropdown-item href="#">
                             EN
@@ -86,7 +89,10 @@
                     <b-nav-item-dropdown right>
                         <!-- Using 'button-content' slot -->
                         <template v-slot:button-content>
-                            <i class="fas fa-users" style="color: #6B799E;"></i>
+                            <i
+                                class="fas fa-users"
+                                style="color: #6B799E;"
+                            />
                         </template>
                         <div v-if="isLogin">
                             <b-dropdown-item v-b-modal.userdetail>
@@ -135,7 +141,7 @@ export default {
     },
     data: () => ({
         isLogin: '',
-        language: <i class="fas fa-language"></i>
+        language: '<i class="fas fa-language"></i>'
     }),
     created() {
         this.init();
