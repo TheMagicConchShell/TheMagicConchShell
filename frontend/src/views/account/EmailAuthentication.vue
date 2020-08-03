@@ -3,7 +3,9 @@
         <div>
             <div>
                 <h1>이메일 인증</h1>
-                <h3 id="authText">{{ text }}</h3>
+                <h3 id="authText">
+                    {{ text }}
+                </h3>
 
                 <button @click="moveMain">
                     <span>
