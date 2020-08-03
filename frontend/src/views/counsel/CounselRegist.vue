@@ -161,7 +161,7 @@ export default {
         };
     },
     created() {
-        this.editorOpts = this.$editorOptions;
+        this.editorOpts = this.$store.getters.EDITOROPTIONS.options;
     },
     methods: {
         regist(){

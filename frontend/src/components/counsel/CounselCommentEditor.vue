@@ -78,7 +78,7 @@ export default {
         editorOpts:null,
     }),
     created() {
-        this.editorOpts = this.$editorOptions;
+        this.editorOpts = this.$store.getters.EDITOROPTIONS.options;
     },
     methods: {
         async submit() {

@@ -212,7 +212,7 @@ export default {
         };
     },
     mounted() {
-        this.editorOpts = this.$editorOptions;
+        this.editorOpts = this.$store.getters.EDITOROPTIONS.options;
         this.commentSecret = this.secret;
     },
     methods: {
