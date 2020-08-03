@@ -1,43 +1,26 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
+import * as auth from '@/store/modules/auth';
+import editorOptions from '@/store/editorOptions';
+
 import createPersistedState from "vuex-persistedstate";
-import editorOptions from './editorOptions';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-    plugins: [createPersistedState()],
+    modules: {
+        auth,
+    },
+    plugins: [createPersistedState({
+        paths: ['auth'],
+    })],
     state: {
-        nickname: "",
-        jwtAuthToken: "",
-        editorOptions : editorOptions,
+        editorOptions : editorOptions
     },
-    mutations: {
-        setJwtAuthToken(state, payload) {
-            state.jwtAuthToken = payload;
-        },
-        setNickname(state, payload) {
-            state.nickname = payload;
-        },
-    },
-    getters: {
-        jwtAuthToken(state) {
-            return state.jwtAuthToken;
-        },
-        nickname(state) {
-            return state.nickname;
-        },
-        EDITOROPTIONS : state =>{
+    getters:{
+        EDITOROPTIONS : (state) => {
             return state.editorOptions;
-        },
-    },
-    actions: {
-        jwtAuthToken({ commit }, payload) {
-            commit("setJwtAuthToken", payload);
-        },
-        nickname({ commit }, payload) {
-            commit("setNickname", payload);
-        },
+        }
     },
 });

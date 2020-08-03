@@ -4,7 +4,7 @@ import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
 export default Object.freeze({
     options : {
         hooks:{
-            addImageBlobHook :  async (blob, callback)=>{
+            addImageBlobHook :  async (blob, callback) => {
                 var u = window.URL.createObjectURL(blob);
                 var img = new Image();
                 img.src = u;

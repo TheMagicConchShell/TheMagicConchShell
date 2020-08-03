@@ -94,7 +94,7 @@
                                 style="color: #6B799E;"
                             />
                         </template>
-                        <div v-if="isLogin">
+                        <div v-if="nickname">
                             <b-dropdown-item v-b-modal.userdetail>
                                 <UserDetail />
                             </b-dropdown-item>
@@ -138,7 +138,6 @@ export default {
         UserDetail,
     },
     data: () => ({
-        isLogin: '',
         language: '<i class="fas fa-language"></i>'
     }),
     computed: {
@@ -148,22 +147,10 @@ export default {
             },
         }
     },
-    created() {
-        this.init();
-    },
     methods: {
-        init() {
-            if(this.nickname){
-                this.isLogin = true;
-            } else {
-                this.isLogin = false;
-            }
-        },
         logout() {
-            this.$store.dispatch('jwtAuthToken', '');
-            this.$store.dispatch('nickname', '');
-            
-            this.isLogin = false;
+            this.$store.dispatch('logout');
+
             this.$toast('안내', '로그아웃 되었습니다.');
         },
     },
