@@ -47,6 +47,7 @@
                     </p>
                     <!-- eslint-disable -->
                     <viewer
+                        class="align-left"
                         v-html="nowshowing.content"
                     />
                     <!-- eslint-disable -->
@@ -251,5 +252,8 @@ a {
 }
 a:hover {
     text-decoration: unset;
+}
+.align-left {
+    text-align: left;
 }
 </style>
