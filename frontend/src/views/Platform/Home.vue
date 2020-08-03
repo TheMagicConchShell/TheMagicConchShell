@@ -45,9 +45,11 @@
                     <p class="d-flex">
                         written by {{ nowshowing.writer }}
                     </p>
+                    <!-- eslint-disable -->
                     <viewer
                         v-html="nowshowing.content"
                     />
+                    <!-- eslint-disable -->
                 </div>
                 <div v-else>
                     이런... 사이트가 망해서 고민이 없습니다ㅠㅠ
