@@ -69,6 +69,8 @@
                             <template v-if="!isPost && isUpdate">
                                 <td class="comment-body">
                                     <editor
+                                        ref="commentUpdateEditor"
+                                        :options="editorOpts"
                                         :initial-value="content"
                                         initial-edit-type="wysiwyg"
                                         height="150px"
@@ -76,9 +78,27 @@
                                 </td>
                                 <td 
                                     class="btn btn-info comment-update-btn"
-                                    @click="modifyHandler(content, replyId, secret)"
+                                    @click="modifyComment"
                                 >
                                     수정
+                                </td>
+                                <td class="comment-update-secret">
+                                    <input 
+                                        id="commentupdatesecret" 
+                                        v-model="commentSecret"
+                                        type="checkbox" 
+                                        name="commentupdatesecret" 
+                                    >
+                                    <label 
+                                        v-if="commentSecret" 
+                                        for="commentupdatesecret"
+                                    >익명
+                                    </label>
+                                    <label 
+                                        v-else
+                                        for="commentupdatesecret"
+                                    >닉네임<br> 공개
+                                    </label>
                                 </td>
                             </template>
                             <template v-else>
@@ -187,11 +207,21 @@ export default {
     data(){
         return {
             isUpdate: false,
+            commentSecret:null,
+            editorOpts: null,
         };
+    },
+    mounted() {
+        this.editorOpts = this.$store.getters.EDITOROPTIONS.options;
+        this.commentSecret = this.secret;
     },
     methods: {
         changeUpdate(){
             this.isUpdate = !this.isUpdate;
+        },
+        modifyComment(){
+            const htmlText = this.$refs.commentUpdateEditor.invoke("getHtml");
+            this.modifyHandler(htmlText,this.replyId,this.commentSecret);
         }
     },
 };
@@ -302,6 +332,13 @@ export default {
     position: absolute;
     right: 13px;
     top: 60px;
+    font-size: 100%;
+}
+.comment-update-secret{
+    float: right;
+    position: absolute;
+    right: 22px;
+    top: 110px;
     font-size: 100%;
 }
 .buttons {
