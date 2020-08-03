@@ -28,6 +28,9 @@ export default new Vuex.Store({
         nickname(state) {
             return state.nickname;
         },
+        EDITOROPTIONS : state =>{
+            return state.editorOptions;
+        },
     },
     actions: {
         jwtAuthToken({ commit }, payload) {
@@ -37,9 +40,4 @@ export default new Vuex.Store({
             commit("setNickname", payload);
         },
     },
-    getters:{
-        EDITOROPTIONS : state =>{
-            return state.editorOptions;
-        }
-    }
 });
