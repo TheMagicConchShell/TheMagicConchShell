@@ -11,7 +11,7 @@ import EmailAuthentication from '@/views/account/EmailAuthentication.vue';
 import CounselView from '@/views/counsel/CounselView.vue';
 import CounselDetail from '@/views/counsel/CounselDetail.vue';
 import CounselRegist from '@/views/counsel/CounselRegist.vue';
-import CounselSelectMain from '@/views/counsel/CounselSelectMain.vue';
+import CounselSelect from '@/views/counsel/CounselSelect.vue';
 import CounselUpdate from '@/views/counsel/CounselUpdate.vue';
 
 import Support from '@/views/support/Support.vue';
@@ -68,9 +68,9 @@ const routes = [
                 component: CounselRegist
             },
             {
-                path: 'selectMain',
-                name: 'CounselSelectMain',
-                component: CounselSelectMain,
+                path: 'select',
+                name: 'CounselSelect',
+                component: CounselSelect,
                 query: {
                     page: 1,
                 },
