@@ -82,25 +82,14 @@ export default {
                 return;
             }
 
-            this.$store.dispatch("jwtAuthToken", "");
-            this.$store.dispatch("nickname", "");
-            this.$axios({
-                method: "post",
-                url: "/user/login",
-                data: {
-                    email: this.email,
-                    password: this.password,
-                },
-            })
-                .then((res) => {
-                    this.$store.dispatch("jwtAuthToken", res.headers["jwt-auth-token"]);
-                    this.$store.dispatch("nickname", res.headers["nickname"]);
-                    
-                    this.$router.go();
-                })
-                .catch((error) => {
-                    console.log(error.response);
-                });
+            this.$store.dispatch("login", {
+                email: this.email, 
+                password: this.password
+            }).then(() => {
+                this.$router.go();
+            }).catch(() => {
+                console.log("fail");
+            });
         },
     },
 };
