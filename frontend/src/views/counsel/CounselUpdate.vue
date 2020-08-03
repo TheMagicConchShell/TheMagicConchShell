@@ -147,8 +147,6 @@
 import 'tui-color-picker/dist/tui-color-picker.css';
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
 
-const storage = window.sessionStorage;
-
 export default {
     props: {
         no: {
@@ -208,7 +206,6 @@ export default {
         this.$axios({
             method:"get",
             url:`/counsel/post/post-no?no=${this.no}`,
-
         }).then((res)=>{
             if(res.data.status==="S-200"){
                 console.log(res.data.data);
@@ -226,17 +223,16 @@ export default {
             this.$axios({
                 method:"put",
                 url:"/counsel/post",
-                headers:{
-                    "jwt-auth-token" : storage.getItem("jwt-auth-token"),
-                    "nickname": storage.getItem("nickname")
-
+                headers: {
+                    'jwt-auth-token': this.jwtAuthToken,
+                    'nickname': this.nickname,
                 },
                 data:{
-                    allow:this.allow,
-                    categoryId:this.category,
-                    content:contentHtml,
-                    secret:this.secret,
-                    title:this.title,
+                    allow: this.allow,
+                    categoryId: this.category,
+                    content: contentHtml,
+                    secret: this.secret,
+                    title: this.title,
                     no: this.no
                 }
             }).then((res)=>{

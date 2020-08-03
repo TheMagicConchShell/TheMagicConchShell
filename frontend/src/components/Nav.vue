@@ -130,8 +130,6 @@ import Signup from '@/components/account/Signup.vue';
 import Login from '@/components/account/Login.vue';
 import UserDetail from '@/components/account/UserDetail.vue';
 
-const storage = window.sessionStorage;
-
 export default {
     name: 'Nav',
     components: {
@@ -143,20 +141,28 @@ export default {
         isLogin: '',
         language: '<i class="fas fa-language"></i>'
     }),
+    computed: {
+        nickname: {
+            get() {
+                return this.$store.getters.nickname;
+            },
+        }
+    },
     created() {
         this.init();
     },
     methods: {
         init() {
-            if(storage.getItem('jwt-auth-token')){
+            if(this.nickname){
                 this.isLogin = true;
             } else {
                 this.isLogin = false;
             }
         },
         logout() {
-            storage.setItem('jwt-auth-token', '');
-            storage.setItem('nickname', '');
+            this.$store.dispatch('jwtAuthToken', '');
+            this.$store.dispatch('nickname', '');
+            
             this.isLogin = false;
             this.$toast('안내', '로그아웃 되었습니다.');
         },

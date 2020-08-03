@@ -28,20 +28,21 @@
 
                             <template v-if="isMine">
                                 <div
+                                    v-if="nickname"
                                     class="button-item"
                                     @click="deleteHandler"
                                 >
                                     <svg-delete />
                                 </div>
                                 <div 
-                                    v-if="!isPost"
+                                    v-if="nickname && !isPost"
                                     class="button-item"
                                     @click="changeUpdate"
                                 >
                                     <svg-pencil />
                                 </div>
                                 <div
-                                    v-else
+                                    v-if="nickname && isPost"
                                     class="button-item"
                                     @click="modifyHandler"
                                 >
@@ -89,13 +90,13 @@
                                 </td>
                                 <td
                                     class="comment-side-up"
-                                    @click="upHandler('p')"
+                                    @click="likeHandler('p')"
                                 >
                                     +{{ likeCount }}
                                 </td>
                                 <td
                                     class="comment-side-down"
-                                    @click="upHandler('m')"
+                                    @click="likeHandler('m')"
                                 >
                                     -{{ unlikeCount }}
                                 </td>
@@ -167,7 +168,7 @@ export default {
             type: Number,
             required: true,
         },
-        upHandler: {
+        likeHandler: {
             type: Function,
             required: true,
         },
@@ -188,6 +189,13 @@ export default {
         return {
             isUpdate: false,
         };
+    },
+    computed: {
+        nickname: {
+            get() {
+                return this.$store.getters.nickname;
+            },
+        },
     },
     methods: {
         changeUpdate(){
