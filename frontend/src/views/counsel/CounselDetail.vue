@@ -7,15 +7,17 @@
             <CounselDetailComment
                 name="question"
                 :is-post="true"
+                :is-author="true"
+
                 :title="post.title"
                 :writer="post.writer"
                 :content="post.content"
                 :write-date="post.writeDate"
                 :is-mine="post.mine"
-                :is-author="true"
                 :like-count="post.likeCount"
                 :unlike-count="post.unlikeCount"
                 :secret="post.secret"
+
 
                 :like-handler="nickname ? likePost : dummy"
                 :delete-handler="deletePost"
@@ -26,9 +28,10 @@
             <template v-if="replies && replies.length != 0">
                 <template v-for="reply in replies">
                     <CounselDetailComment
+                        :id="reply.id"
                         :key="reply.id"
                         name="reply"
-                        :reply-id="reply.id"
+                        
                         :content="reply.content"
                         :writer="reply.writer"
                         :write-date="reply.writeDate"
@@ -161,7 +164,7 @@ export default {
                     console.log(e.response);
                 });
         },
-        likePost(type) {
+        likePost(type, id) {
             this.$axios({
                 url: '/counsel/post/like',
                 method: 'post',
@@ -177,7 +180,7 @@ export default {
                 this.$router.go();
             });
         },
-        likeReply(type) {
+        likeReply(type, id) {
             this.$axios({
                 url: '/counsel/reply/like',
                 method: 'post',
@@ -186,7 +189,7 @@ export default {
                     'nickname': this.nickname,
                 },
                 data: {
-                    'replyId': this.no,
+                    'replyId': id,
                     'type': type,
                 },
             }).then(() => {
