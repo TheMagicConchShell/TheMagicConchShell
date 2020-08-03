@@ -43,7 +43,7 @@ public class NoticeController {
     @GetMapping
     public Object retrieveNotice(@RequestParam int page) {
 
-        PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.ASC, "nid");
+        PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "nid");
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -75,7 +75,7 @@ public class NoticeController {
     @GetMapping("/writer")
     public Object searchNoticeByWriter(@RequestParam String writer, @RequestParam int page) {
 
-        PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.ASC, "nid");
+        PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "nid");
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
