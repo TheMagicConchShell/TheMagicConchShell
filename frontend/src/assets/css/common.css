@@ -1,0 +1,91 @@
+/* 디자인 컬러 조합
+ 1. 노랑F9E54E 오렌지F8981D 빨강E12E4B 하늘#5BBDCB
+ 2. 하늘#BEDAE5 노랑EECB27 빨강E13239 남색#1F1762
+ 3. 하늘#A6C2CE 브라운9C8F96 노랑EBC57C 남색6B799E*/
+
+
+@font-face { 
+    font-family: 'ko' ;
+    src: url('../fonts/koverwatch1.eot') format('eot');
+    src: local(※), url('../fonts/koverwatch1.woff') format('woff');
+}
+@font-face { 
+    font-family: 'lp' ;
+    src: url('../fonts/TypoluckypangB.eot') format('eot');
+    src: local(※), url('../fonts/TypoluckypangB.woff') format('woff');
+}
+
+#app {
+    font-family: lp
+}
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-thumb {
+background-color: #9C8F96;
+border-radius: 10px;
+}
+::-webkit-scrollbar-track {
+background-color: #e9d6e0;
+border-radius: 10px;
+box-shadow: inset 0px 0px 5px white;
+}
+#content {
+    margin: 150px 50px;
+}
+#photo {
+    height: 100px;
+}
+/*회원가입창과 로그인창의 사진*/
+#profilephoto {
+    width: 100%;
+}
+
+/*모달 설정*/
+.modal {
+    font-family: ko;
+}
+.modal-header {
+    background-color: #A6C2CE;
+    color: white;
+}
+.modal-footer {
+    height: 60px;
+}
+
+/*일반버튼 설정*/
+#commonbutton {
+    background-color: #9C8F96;
+    border: 0;
+}
+
+input {
+    width: 100%;
+    border: 1px solid #b6b6b6;
+    border-radius: 5px;
+    margin: 10px 0;
+}
+li {
+    list-style: none;
+}
+
+#title {
+    font-size: 50px;
+}
+
+/*마우스 오버 시 커서로 변경*/
+.cursor {
+    cursor: pointer
+}
+
+
+/* 버튼 호버시 시간 딜레이 */
+button {
+    transition-duration: 1s
+}
+
+/* 바운스 모션 */
+@keyframes motion {
+	0% {margin-top: 0px;}
+	100% {margin-top: 10px;}
+}

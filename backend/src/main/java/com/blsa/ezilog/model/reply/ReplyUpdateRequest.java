@@ -11,28 +11,19 @@ import lombok.ToString;
 @Valid
 @ToString
 public class ReplyUpdateRequest {
-    
+
     @ApiModelProperty(required = true)
     @NotNull
     BigInteger id;
-    
+
     @ApiModelProperty(required = true)
     @NotNull
     BigInteger postNo;
-    
-    @ApiModelProperty(required = true)
-    @NotNull 
-    String writer;
-    
+
     @ApiModelProperty(required = true)
     @NotNull
     String content;
-    
-    
-    @ApiModelProperty(required = true)
-    @NotNull
-    boolean selected;
-    
+
     @ApiModelProperty(required = true)
     @NotNull
     boolean secret;
@@ -53,28 +44,12 @@ public class ReplyUpdateRequest {
         this.content = content;
     }
 
-    public boolean isSelected() {
-        return selected;
-    }
-
-    public void setSelected(boolean selected) {
-        this.selected = selected;
-    }
-
     public boolean isSecret() {
         return secret;
     }
 
     public void setSecret(boolean secret) {
         this.secret = secret;
-    }
-
-    public String getWriter() {
-        return writer;
-    }
-
-    public void setWriter(String writer) {
-        this.writer = writer;
     }
 
     public BigInteger getId() {
@@ -84,5 +59,5 @@ public class ReplyUpdateRequest {
     public void setId(BigInteger id) {
         this.id = id;
     }
-    
+
 }

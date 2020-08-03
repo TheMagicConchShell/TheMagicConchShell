@@ -3,18 +3,17 @@ module.exports = {
     env: {
         node: true,
     },
-    extends: [
-        'plugin:vue/essential',
-        'plugin:vue/strongly-recommended',
-        'plugin:vue/recommended',
-        '@vue/airbnb',
-    ],
     parserOptions: {
         parser: 'babel-eslint',
         sourceType: 'module',
     },
     plugins: [
         'vue',
+    ],
+    extends: [
+        'plugin:vue/essential',
+        'plugin:vue/strongly-recommended',
+        'plugin:vue/recommended',
     ],
     rules: {
         'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
@@ -37,9 +36,19 @@ module.exports = {
             'error',
             'always',
         ],
-        'linebreak-style': [
-            'error',
-            'windows',
-        ],
+    },
+    settings: {
+        "webpack": {
+            "config": "path/to/setup/webpack.config.js"
+        },
+        "import/resolver": {
+            "alias": {
+                "map": [
+                    ["@", "./resources"],
+                    ["~", "./resources/js"]
+                ],
+                "extensions": [".js", ".vue"]
+            }
+        }
     },
 };
