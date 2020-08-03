@@ -16,6 +16,7 @@ import InfiniteLoading from 'vue-infinite-loading';
 import 'codemirror/lib/codemirror.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import '@toast-ui/editor/dist/toastui-editor-viewer.css';
+
 import { Editor,Viewer } from '@toast-ui/vue-editor';
 
 Vue.component('editor',Editor);
@@ -62,6 +63,7 @@ Vue.prototype.$axios.interceptors.response.use(
     },
 );
 
+
 const vm = new Vue({
     router,
     store,
@@ -77,3 +79,4 @@ Vue.prototype.$toast = (title, message, append = false, hideDelay = 5000) => {
         appendToast: append,
     });
 };
+

@@ -1,6 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+
 import createPersistedState from "vuex-persistedstate";
+import editorOptions from './editorOptions';
 
 Vue.use(Vuex);
 
@@ -9,6 +11,7 @@ export default new Vuex.Store({
     state: {
         nickname: "",
         jwtAuthToken: "",
+        editorOptions : editorOptions,
     },
     mutations: {
         setJwtAuthToken(state, payload) {
@@ -34,4 +37,9 @@ export default new Vuex.Store({
             commit("setNickname", payload);
         },
     },
+    getters:{
+        EDITOROPTIONS : state =>{
+            return state.editorOptions;
+        }
+    }
 });

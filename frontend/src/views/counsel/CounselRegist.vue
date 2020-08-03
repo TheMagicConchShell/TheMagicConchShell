@@ -3,7 +3,6 @@
         <h1> 고민 투고 </h1>
         <div 
             class="container" 
-            style="border:1px solid black;"
         >
             <div>
                 <h2>
@@ -125,6 +124,7 @@
             </div>
             <div>
                 <editor 
+                    v-if="editorOpts"
                     ref="editorText" 
                     v-model="editorText" 
                     class="text-left"
@@ -144,8 +144,6 @@
 </template>
 <script>
 
-import 'tui-color-picker/dist/tui-color-picker.css';
-import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
 
 export default {
     data () {
@@ -156,43 +154,7 @@ export default {
             secret:false,
             category:0,
             msg:'',
-            editorOpts:{
-                hooks:{
-                    addImageBlobHook :  async (blob, callback)=>{
-                        var u = window.URL.createObjectURL(blob);
-                        var img = new Image();
-                        img.src = u;
-                        var canvas = document.createElement('canvas');
-                        img.onload=function(){
-                            var MAX_WIDTH = 1000;
-                            var MAX_HEIGHT = 800;
-                            var width = img.width;
-                            var height = img.height;
-                                
-                            if (width > height) {
-                                if (width > MAX_WIDTH) {
-                                    height *= MAX_WIDTH / width;
-                                    width = MAX_WIDTH;
-                                }
-                            } else {
-                                if (height > MAX_HEIGHT) {
-                                    width *= MAX_HEIGHT / height;
-                                    height = MAX_HEIGHT;
-                                }
-                            }
-                            canvas.width = width;
-                            canvas.height = height;
-                            var ctx = canvas.getContext('2d');
-                            ctx.drawImage(img,0,0,width,height);
-                            var ret = canvas.toDataURL();
-                            callback(ret,"uploaded image");
-                        };
-                        
-                        return false;
-                    }
-                },
-                plugins: [colorSyntax],
-            },
+            editorOpts: null
             
         };
     },
@@ -207,6 +169,9 @@ export default {
                 return this.$store.getters.jwtAuthToken;
             },
         },
+    },
+    created() {
+        this.editorOpts = this.$store.getters.EDITOROPTIONS.options;
     },
     methods: {
         regist(){
