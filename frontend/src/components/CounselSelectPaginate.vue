@@ -16,7 +16,7 @@
 
 <script>
 export default {
-    name: 'CounselSelectMainPaginate',
+    name: 'CounselSelectPaginate',
     props: {
         current: {
             type: [Number],
@@ -36,7 +36,7 @@ export default {
     methods: {
         pageHandle(nextPage) {
             this.$router.push({
-                name: 'CounselSelectMain',
+                name: 'CounselSelect',
                 query: {
                     page: nextPage,
                 },
