@@ -21,7 +21,10 @@
             </div>
 
             <div class="content">
-                {{ content }}
+                <viewer
+                    v-if="content"
+                    :initial-value="content"
+                />
             </div>
         </div>
         
@@ -50,7 +53,7 @@ export default {
         writer: "",
         writeDate: "",
         title:  "",
-        content: "",
+        content: null,
     }),
     async created() {
         const response = await this.$axios({
