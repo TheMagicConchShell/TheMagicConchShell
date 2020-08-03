@@ -989,12 +989,11 @@ public class CounselController {
 
             if (optReply.isPresent()) {
                 Reply temp = optReply.get();
-                if (reply.getWriter().equals("admin") || temp.getWriter().equals(nickname)) {
+                if (nickname.equals("admin") || temp.getWriter().equals(nickname)) {
                     Optional<Reply> utemp = replyDao.findReplyById(reply.getId());
                     Reply updateTemp = utemp.get();
                     updateTemp.setContent(reply.getContent());
                     updateTemp.setSecret(reply.isSecret());
-                    updateTemp.setSelected(reply.isSelected());
 
                     replyDao.save(updateTemp);
                     result.status = "S-200";
@@ -1008,7 +1007,7 @@ public class CounselController {
                     eresult.message = "허가 된 계정이 아닙니다. 답변 글을 수정 할 수 없습니다.";
                     eresult.data = null;
                     errorMap.put("field", "updateReply");
-                    errorMap.put("data", reply.getWriter());
+                    errorMap.put("data", nickname);
                     eresult.errors = errorMap;
 
                     response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
