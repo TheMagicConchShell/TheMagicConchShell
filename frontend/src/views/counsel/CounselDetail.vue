@@ -17,7 +17,7 @@
                 :unlike-count="post.unlikeCount"
                 :secret="post.secret"
 
-                :up-handler="upPost"
+                :like-handler="nickname ? likePost : dummy"
                 :delete-handler="deletePost"
                 :modify-handler="modifyPost"
                 :report-handler="dummy"
@@ -37,7 +37,8 @@
                         :unlike-count="reply.unlikeCount"
                         :is-mine="reply.mine"
                         :secret="reply.secret"
-                        :up-handler="dummy"
+
+                        :like-handler="nickname ? likeReply : dummy"
                         :delete-handler="dummy"
                         :modify-handler="modifyReply"
                         :report-handler="dummy"
@@ -46,6 +47,7 @@
             </template>
 
             <CounselCommentEditor
+                v-if="nickname"
                 :submit-url="'/counsel/reply'"
                 :submit-method="'post'"
                 :default-post-no="no"
@@ -78,14 +80,26 @@ export default {
             hideModeSwitch: true,
         },
     }),
+    computed: {
+        nickname: {
+            get() {
+                return this.$store.getters.nickname;
+            },
+        },
+        jwtAuthToken: {
+            get() {
+                return this.$store.getters.jwtAuthToken;
+            },
+        },
+    },
     async created() {
         this.$wait.start('counsel loading');
         await this.$axios({
             url: '/counsel/post/post-no',
             method: 'get',
             headers: {
-                'jwt-auth-token': sessionStorage.getItem('jwt-auth-token'),
-                'nickname': sessionStorage.getItem('nickname'),
+                'jwt-auth-token': this.jwtAuthToken,
+                'nickname': this.nickname,
             },
             params: {
                 no: this.no,
@@ -129,15 +143,15 @@ export default {
                 url: '/counsel/reply',
                 method: 'post',
                 headers: {
-                    'jwt-auth-token': sessionStorage.getItem('jwt-auth-token'),
-                    'nickname': sessionStorage.getItem('nickname'),
+                    'jwt-auth-token': this.jwtAuthToken,
+                    'nickname': this.nickname,
                 },
                 data: {
                     'content': content,
                     'postNo': this.no,
                     'secret': true,
                     'selected': true,
-                    'writer': sessionStorage.getItem('nickname'),
+                    'writer': this.nickname,
                 },
             })
                 .then(() => {
@@ -147,16 +161,32 @@ export default {
                     console.log(e.response);
                 });
         },
-        upPost(type) {
+        likePost(type) {
             this.$axios({
                 url: '/counsel/post/like',
                 method: 'post',
                 headers: {
-                    'jwt-auth-token': sessionStorage.getItem('jwt-auth-token'),
-                    'nickname': sessionStorage.getItem('nickname'),
+                    'jwt-auth-token': this.jwtAuthToken,
+                    'nickname': this.nickname,
                 },
                 data: {
                     'postNo': this.no,
+                    'type': type,
+                },
+            }).then(() => {
+                this.$router.go();
+            });
+        },
+        likeReply(type) {
+            this.$axios({
+                url: '/counsel/reply/like',
+                method: 'post',
+                headers: {
+                    'jwt-auth-token': this.jwtAuthToken,
+                    'nickname': this.nickname,
+                },
+                data: {
+                    'replyId': this.no,
                     'type': type,
                 },
             }).then(() => {
@@ -176,8 +206,8 @@ export default {
                 url: '/counsel/reply',
                 method: 'put',
                 headers: {
-                    'jwt-auth-token': sessionStorage.getItem('jwt-auth-token'),
-                    'nickname': sessionStorage.getItem('nickname'),
+                    'jwt-auth-token': this.jwtAuthToken,
+                    'nickname': this.nickname,
                 },
                 data: {
                     'content': content,
@@ -185,7 +215,7 @@ export default {
                     "postNo": this.no,
                     'secret': secret,
                     "selected": true,
-                    'writer': sessionStorage.getItem('nickname'),
+                    'writer': this.nickname,
                 },
             }).then((res) => {
                 if(res.data.status==="S-200"){
@@ -200,8 +230,8 @@ export default {
                 url: '/counsel/post',
                 method: 'delete',
                 headers: {
-                    'jwt-auth-token': sessionStorage.getItem('jwt-auth-token'),
-                    'nickname': sessionStorage.getItem('nickname'),
+                    'jwt-auth-token': this.jwtAuthToken,
+                    'nickname': this.nickname,
                 },
                 params: {
                     'no': this.no,

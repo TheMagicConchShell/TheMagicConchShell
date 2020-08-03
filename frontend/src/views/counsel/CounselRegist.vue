@@ -145,8 +145,6 @@
 <script>
 
 
-const storage = window.sessionStorage;
-
 export default {
     data () {
         return {
@@ -160,6 +158,18 @@ export default {
             
         };
     },
+    computed: {
+        nickname: {
+            get() {
+                return this.$store.getters.nickname;
+            },
+        },
+        jwtAuthToken: {
+            get() {
+                return this.$store.getters.jwtAuthToken;
+            },
+        },
+    },
     created() {
         this.editorOpts = this.$store.getters.EDITOROPTIONS.options;
     },
@@ -169,13 +179,17 @@ export default {
             this.$axios({
                 method:"post",
                 url:"/counsel/post",
+                headers: {
+                    'jwt-auth-token': this.jwtAuthToken,
+                    'nickname': this.nickname,
+                },
                 data:{
-                    allow:this.allow,
-                    categoryId:this.category,
-                    content:this.content,
-                    secret:this.secret,
-                    title:this.title,
-                    writer:sessionStorage.getItem("nickname")
+                    allow: this.allow,
+                    categoryId: this.category,
+                    content: this.content,
+                    secret: this.secret,
+                    title: this.title,
+                    writer: this.nickname,
                 }
             }).then((res)=>{
                 if(res.data.status==="S-200"){

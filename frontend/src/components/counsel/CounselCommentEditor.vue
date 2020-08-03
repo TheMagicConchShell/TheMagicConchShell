@@ -55,8 +55,6 @@ import 'tui-color-picker/dist/tui-color-picker.css';
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
 import { integer } from 'vee-validate/dist/rules';
 
-const storage = window.sessionStorage;
-
 export default {
     props: {
         submitUrl: {
@@ -77,6 +75,18 @@ export default {
         commentsecret:true,
         editorOpts:null,
     }),
+    computed: {
+        nickname: {
+            get() {
+                return this.$store.getters.nickname;
+            },
+        },
+        jwtAuthToken: {
+            get() {
+                return this.$store.getters.jwtAuthToken;
+            },
+        },
+    },
     created() {
         this.editorOpts = this.$store.getters.EDITOROPTIONS.options;
     },
@@ -88,15 +98,15 @@ export default {
                 url: this.submitUrl,
                 method: this.submitMethod,
                 headers: {
-                    'jwt-auth-token': sessionStorage.getItem('jwt-auth-token'),
-                    'nickname': sessionStorage.getItem('nickname'),
+                    'jwt-auth-token': this.jwtAuthToken,
+                    'nickname': this.nickname,
                 },
                 data: {
-                    content:this.content,
+                    content: this.content,
                     postNo: this.defaultPostNo,
-                    secret:this.commentsecret,
-                    selected:false,
-                    writer:sessionStorage.getItem("nickname")
+                    secret: this.commentsecret,
+                    selected: false,
+                    writer: this.nickname,
                 },
             })
                 .catch((error) => { console.log(error.response); });
