@@ -39,6 +39,7 @@ import com.blsa.ezilog.model.like.LikeCount;
 import com.blsa.ezilog.model.like.LikeCountRequest;
 import com.blsa.ezilog.model.like.ReplyLikeCount;
 import com.blsa.ezilog.model.like.ReplyLikeCountRequest;
+import com.blsa.ezilog.model.point.PointHistory;
 import com.blsa.ezilog.model.post.Post;
 import com.blsa.ezilog.model.post.PostCreateRequest;
 import com.blsa.ezilog.model.post.PostUpdateRequest;
@@ -46,6 +47,8 @@ import com.blsa.ezilog.model.reply.Reply;
 import com.blsa.ezilog.model.reply.ReplyCreateRequest;
 import com.blsa.ezilog.model.reply.ReplyUpdateRequest;
 import com.blsa.ezilog.model.user.User;
+import com.blsa.ezilog.service.UserService;
+import com.blsa.ezilog.service.point.PointService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -71,6 +74,12 @@ public class CounselController {
 
     @Autowired
     UserDao userDao;
+
+    @Autowired
+    PointService pointservice;
+
+    @Autowired
+    UserService userservice;
 
     @ApiOperation(value = "고민 전체 목록 반환", notes = "Input : page, Output: 성공 : [status = true, data = 고민 리스트(Post)] 실패 : status = false, data = 에러메세지", response = List.class)
     @GetMapping("/post")
@@ -541,14 +550,30 @@ public class CounselController {
 
         } else {
 
+            User utemp = optUser.get();
             LocalDateTime currentTime = LocalDateTime.now();
             Post ctemp = new Post(post.getWriter(), post.getCategoryId(), post.getTitle(), post.getContent(),
                     currentTime, post.getAllow(), post.getSecret());
             postDao.save(ctemp);
-            result.status = "S-200";
-            result.message = "고민 글 작성에 성공했습니다.";
-            result.data = null;
-            response = new ResponseEntity<>(result, HttpStatus.OK);
+
+            // 글 작성 포인트 추가.
+            PointHistory p = new PointHistory(BigInteger.valueOf(utemp.getUid()), currentTime, 100, "고민글 작성");
+
+            if (pointservice.addPoint(p)) {
+                result.status = "S-200";
+                result.message = "고민  작성에 성공했습니다.";
+                result.data = null;
+                response = new ResponseEntity<>(result, HttpStatus.OK);
+            } else {
+                eresult.status = "E-4443";
+                eresult.message = "포인트를 얻을 수 없습니다.";
+                eresult.data = null;
+                errorMap.put("field", "addPoint");
+                errorMap.put("data", "fail");
+                eresult.errors = errorMap;
+
+                response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+            }
 
         }
         return response;
@@ -717,10 +742,27 @@ public class CounselController {
                     rtemp.setSelected(true);
 
                     replyDao.save(rtemp);
-                    result.status = "S-200";
-                    result.message = "고민  선정에 성공했습니다.";
-                    result.data = null;
-                    response = new ResponseEntity<>(result, HttpStatus.OK);
+
+                    LocalDateTime currentTime = LocalDateTime.now();
+
+                    User putemp = userservice.select(ptemp.getWriter());
+
+                    PointHistory p = new PointHistory(BigInteger.valueOf(putemp.getUid()), currentTime, 200, "답글 선정");
+                    if (pointservice.addPoint(p)) {
+                        result.status = "S-200";
+                        result.message = "고민  선정에 성공했습니다.";
+                        result.data = null;
+                        response = new ResponseEntity<>(result, HttpStatus.OK);
+                    } else {
+                        eresult.status = "E-4443";
+                        eresult.message = "포인트를 얻을 수 없습니다.";
+                        eresult.data = null;
+                        errorMap.put("field", "addPoint");
+                        errorMap.put("data", "fail");
+                        eresult.errors = errorMap;
+
+                        response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                    }
 
                 } else {
                     eresult.status = "E-4409";
@@ -865,14 +907,15 @@ public class CounselController {
 
     @ApiOperation(value = "답변 작성", notes = "Input: ReplyCreateRequest OutPut: 성공(status = true, data= sucess), 실패(status=false, data=오류 디버그 메세지)", response = List.class)
     @PostMapping("/reply")
-    public Object createReply(@RequestBody ReplyCreateRequest reply) {
+    public Object createReply(@RequestBody ReplyCreateRequest reply,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        Optional<User> optUser = userDao.findByNickname(reply.getWriter());
+        Optional<User> optUser = userDao.findByNickname(nickname);
 
         if (!optUser.isPresent()) {
             eresult.status = "E-4408";
@@ -888,10 +931,29 @@ public class CounselController {
 
             if (optPost.isPresent()) {
 
+                User utemp = optUser.get();
+
                 LocalDateTime currentTime = LocalDateTime.now();
-                Reply ptemp = new Reply(reply.getWriter(), reply.getPostNo(), reply.getContent(), currentTime,
-                        reply.isSecret());
+                Reply ptemp = new Reply(nickname, reply.getPostNo(), reply.getContent(), currentTime, reply.isSecret());
                 replyDao.save(ptemp);
+
+                PointHistory p = new PointHistory(BigInteger.valueOf(utemp.getUid()), currentTime, 100, "댓글 작성");
+                if (pointservice.addPoint(p)) {
+                    result.status = "S-200";
+                    result.message = "답변  작성에 성공했습니다.";
+                    result.data = null;
+                    response = new ResponseEntity<>(result, HttpStatus.OK);
+                } else {
+                    eresult.status = "E-4443";
+                    eresult.message = "포인트를 얻을 수 없습니다.";
+                    eresult.data = null;
+                    errorMap.put("field", "addPoint");
+                    errorMap.put("data", "fail");
+                    eresult.errors = errorMap;
+
+                    response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                }
+
                 result.status = "S-200";
                 result.message = "답변 작성에 성공했습니다.";
                 result.data = null;
@@ -1445,15 +1507,29 @@ public class CounselController {
                                 currentTime, lcrequest.getType());
                         likecountDao.save(lc);
 
-                        Post ptemp = optPost.get();
-                        // 더 좋아요 추가
-                        ptemp.setLikeCount(ptemp.getLikeCount() + 1);
-                        postDao.save(ptemp);
-                        result.status = "S-200";
-                        result.message = "또 좋아요 추가  성공";
-                        result.data = null;
+                        PointHistory p = new PointHistory(BigInteger.valueOf(user.getUid()), currentTime, -100,
+                                "추가 추천");
+                        if (pointservice.addPoint(p)) {
+                            Post ptemp = optPost.get();
+                            // 더 좋아요 추가
+                            ptemp.setLikeCount(ptemp.getLikeCount() + 1);
+                            postDao.save(ptemp);
+                            result.status = "S-200";
+                            result.message = "또 좋아요 추가  성공";
+                            result.data = null;
 
-                        response = new ResponseEntity<>(result, HttpStatus.OK);
+                            response = new ResponseEntity<>(result, HttpStatus.OK);
+                        } else {
+                            eresult.status = "E-4445";
+                            eresult.message = "포인트가 부족하여 추가 추천을 할 수 없습니다.";
+                            eresult.data = null;
+                            errorMap.put("field", "addPoint");
+                            errorMap.put("data", "fail");
+                            eresult.errors = errorMap;
+
+                            response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                        }
+
                     } else {
                         eresult.status = "E-4433";
                         eresult.message = "이미 또 좋아요를 눌렀습니다.";
@@ -1721,14 +1797,29 @@ public class CounselController {
                                 BigInteger.valueOf(user.getUid()), currentTime, rlcrequest.getType());
                         replylikecountDao.save(rlc);
 
-                        rtemp.setLikeCount(rtemp.getLikeCount() + 1);
-                        replyDao.save(rtemp);
+                        PointHistory p = new PointHistory(BigInteger.valueOf(user.getUid()), currentTime, -100,
+                                "추가 추천");
+                        if (pointservice.addPoint(p)) {
+                            rtemp.setLikeCount(rtemp.getLikeCount() + 1);
+                            replyDao.save(rtemp);
 
-                        result.status = "S-200";
-                        result.message = "또 좋아요 추가  성공";
-                        result.data = null;
+                            result.status = "S-200";
+                            result.message = "또 좋아요 추가  성공";
+                            result.data = null;
 
-                        response = new ResponseEntity<>(result, HttpStatus.OK);
+                            response = new ResponseEntity<>(result, HttpStatus.OK);
+                            response = new ResponseEntity<>(result, HttpStatus.OK);
+                        } else {
+                            eresult.status = "E-4445";
+                            eresult.message = "포인트가 부족하여 추가 추천을 할 수 없습니다.";
+                            eresult.data = null;
+                            errorMap.put("field", "addPoint");
+                            errorMap.put("data", "fail");
+                            eresult.errors = errorMap;
+
+                            response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                        }
+
                     } else {
                         eresult.status = "E-4433";
                         eresult.message = "이미 또 좋아요를 눌렀습니다.";
