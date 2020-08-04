@@ -1,0 +1,44 @@
+stages:
+    - test
+    - deploy
+    
+build-test:
+    stage: test
+    script:
+        - cd /home/ubuntu/s03p13a403/frontend
+        - sudo yarn install
+        - sudo yarn build
+        - cd /home/ubuntu/s03p13a403/backend
+        - sudo mvn package
+    only:
+        - merge_requests
+        
+stop-server:
+    stage: deploy
+    only:
+        - master
+    script:
+        - sudo kill `ps -aux | grep 'sudo setsid nohup java -jar' | grep -v grep | awk '{print $2}'`
+    allow_failure: true
+
+frontend-deploy:
+    stage: deploy
+    only:
+        - master
+    script:
+        - cd /home/ubuntu/s03p13a403/frontend
+        - sudo yarn install
+        - sudo yarn build
+        - sudo service nginx restart
+
+backend-deploy:
+    stage: deploy
+    only:
+        - master
+    script:
+        - cd /home/ubuntu/s03p13a403/backend
+        - sudo cp /home/ubuntu/application.properties /home/ubuntu/s03p13a403/backend/src/main/resources/application.properties
+        - sudo mvn package
+        - cd /home/ubuntu/s03p13a403/backend/target
+        - sudo setsid nohup java -jar backend-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &
+        - cd /home/ubuntu/s03p13a403/frontend
