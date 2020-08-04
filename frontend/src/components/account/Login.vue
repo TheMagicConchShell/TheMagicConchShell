@@ -85,10 +85,11 @@ export default {
             this.$store.dispatch("login", {
                 email: this.email, 
                 password: this.password
-            }).then(() => {
+            }).then((res) => {
+                console.log(res);
                 this.$router.go();
-            }).catch(() => {
-                console.log("fail");
+            }).catch((err) => {
+                console.log(err);
             });
         },
     },

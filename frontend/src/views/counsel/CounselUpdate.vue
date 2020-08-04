@@ -187,10 +187,6 @@ export default {
             this.$axios({
                 method:"put",
                 url:"/counsel/post",
-                headers: {
-                    'jwt-auth-token': this.jwtAuthToken,
-                    'nickname': this.nickname,
-                },
                 data:{
                     allow: this.allow,
                     categoryId: this.category,
