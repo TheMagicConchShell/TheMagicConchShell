@@ -1,5 +1,7 @@
 package com.blsa.ezilog.model.notice;
 
+import java.math.BigInteger;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -8,7 +10,11 @@ import lombok.ToString;
 
 @Valid
 @ToString
-public class NoticeCreateRequest {
+public class NoticeUpdateRequest {
+    @ApiModelProperty(required = true)
+    @NotNull
+    private BigInteger nid;
+
     @ApiModelProperty(required = true)
     @NotNull
     String title;
@@ -31,6 +37,14 @@ public class NoticeCreateRequest {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public BigInteger getNid() {
+        return nid;
+    }
+
+    public void setNid(BigInteger nid) {
+        this.nid = nid;
     }
 
 }

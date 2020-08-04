@@ -108,20 +108,26 @@ public class SelectionController {
     }
     
     @GetMapping("/post")
-    @ApiOperation(value = "선정된 메인 고민 목록 가져오기", notes = "lastMainPostNo: 현재까지 페이지에 그려진 고민글 no 중 가장 작은 값, size: 가져올 글의 개수 ")
-    public Object retrieveMainPost(@RequestParam BigInteger lastMainPostNo, @RequestParam int size) {
+    @ApiOperation(value = "선정된 메인 고민 목록 가져오기", notes = "lastPostNo: 현재까지 페이지에 그려진 고민글 no 중 가장 작은 값, size: 가져올 글의 개수 ")
+    public Object retrieveMainPost(@RequestParam(required = false) BigInteger lastPostNo, @RequestParam int size) {
         ResponseEntity<BasicResponse> response = null;
         Map<String, Object> errors = new HashMap<>();
         
         Pageable pageable = PageRequest.of(0, size);
-        Page<Post> list = postDao.findByNoLessThanOrderByNoDesc(lastMainPostNo, pageable);
+        Page<Post> list = null;
+        
+        if(lastPostNo == null) {
+            list = postDao.findPostInSelection(pageable);
+        }else {
+            list = postDao.findPostByNoLessThanInSelection(lastPostNo, pageable);
+        }
         
         if(list.isEmpty()) {
-            errors.put("field", "lastMainPostNo");
-            errors.put("data", lastMainPostNo);
+            errors.put("field", "lastPostNo");
+            errors.put("data", lastPostNo);
             final ErrorResponse result = new ErrorResponse();
             result.status = "E-4430";
-            result.message = "불러올 메인 고민이  없습니다.";
+            result.message = "불러올 메인 고민이 없습니다.";
             result.errors = errors;
             
             response = new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
@@ -163,6 +169,43 @@ public class SelectionController {
             response = new ResponseEntity<>(result, HttpStatus.OK);
         }
         
+        return response;
+    }
+    
+    
+    @GetMapping("/history")
+    @ApiOperation(value = "메인 고민 히스토리 목록 가져오기", notes = "lastPostNo: 현재까지 페이지에 그려진 고민글 no 중 가장 작은 값, size: 가져올 글의 개수 ")
+    public Object retrieveMainHistory(@RequestParam(required = false) BigInteger lastPostNo, @RequestParam int size) {
+        ResponseEntity<BasicResponse> response = null;
+        Map<String, Object> errors = new HashMap<>();
+        
+        Pageable pageable = PageRequest.of(0, size);
+        Page<Post> list = null;
+        
+        if(lastPostNo == null) {
+            list = postDao.findPostInHistory(pageable);
+        }else {
+            list = postDao.findPostByNoLessThanInHistory(lastPostNo, pageable);
+        }
+        
+        if(list.isEmpty()) {
+            errors.put("field", "lastPostNo");
+            errors.put("data", lastPostNo);
+            final ErrorResponse result = new ErrorResponse();
+            result.status = "E-4434";
+            result.message = "불러올 고민 히스토리가 없습니다.";
+            result.errors = errors;
+            
+            response = new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+        }else {
+            final BasicResponse result = new BasicResponse();
+            
+            result.status = "S-200";
+            result.message = "고민 히스토리 목록 조회에 성공했습니다.";
+            result.data = list.getContent();
+            
+            response = new ResponseEntity<>(result, HttpStatus.OK);            
+        }
         return response;
     }
 }
