@@ -1,23 +1,44 @@
 <template>
-    <form
-        ref="form"
-        @submit.prevent="submit"
-    >
-        <input
-            v-model="title"
-            type="text"
+    <div>
+        <div 
+            class="container" 
         >
-        <input
-            v-model="content"
-            type="text"
-        >
-        <button type="submit">
-            제출
-        </button>
-    </form>
+            <div>
+                <h2>
+                    <label for="noticetitle"> 제목: </label>
+                    <input 
+                        id="noticetitle"
+                        v-model="title"
+                        type="text"
+                        name="noticetitle"
+                        placeholder="제목을 입력해주세요."
+                        style="width:90%"
+                    >
+                </h2>
+            </div>
+            <div>
+                <editor 
+                    v-if="content!=null"
+                    ref="editorText" 
+                    class="text-left"
+                    :initial-value="content"
+                    :options="editorOpts" 
+                    initial-edit-type="wysiwyg" 
+                    height="500px" 
+                />
+                <button 
+                    id="submitbtn" 
+                    @click="submit"
+                >
+                    작성
+                </button>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
+const storage = window.sessionStorage;
 export default {
     props: {
         submitUrl: {
@@ -28,7 +49,7 @@ export default {
             type: String,
             required: true,
         },
-        defaultId: {
+        defaultNid: {
             type: Number,
             required: false,
             default: 0,
@@ -36,7 +57,7 @@ export default {
         defaultWriter: {
             type: String,
             required: false,
-            default: 'ssafy',
+            default: '',
         },
         defaultTitle: {
             type: String,
@@ -50,32 +71,61 @@ export default {
         },
     },
     data: () => ({
-        id: '',
+        nid: '',
         title: '',
         writer: '',
-        content: '',
+        content: null,
+        editorOpts:null
     }),
+    computed: {
+        nickname: {
+            get() {
+                return this.$store.getters.nickname;
+            },
+        }
+    },
     watch: {
         defaultTitle() {
-            this.id = this.defaultId;
+            this.nid = this.defaultNid;
             this.writer = this.defaultWriter;
             this.title = this.defaultTitle;
             this.content = this.defaultContent;
         },
     },
+    mounted() {
+        this.nid = this.defaultNid;
+        this.writer = this.defaultWriter;
+        this.title = this.defaultTitle;
+        this.content = this.defaultContent;
+        this.editorOpts = this.$store.getters.EDITOROPTIONS.options;
+    },
     methods: {
         async submit() {
+            var submitData = null;
+            if(this.submitMethod==='post'){
+                submitData = {
+                    title: this.title,
+                    writer: sessionStorage.getItem('nickname'),
+                    content: this.$refs.editorText.invoke("getHtml"),
+                };
+            }else if(this.submitMethod==='put'){
+                submitData = {
+                    nid: this.nid,
+                    title: this.title,
+                    writer: sessionStorage.getItem('nickname'),
+                    content: this.$refs.editorText.invoke("getHtml"),
+                    writeDate:"2020-08-03T05:57:45"
+                };
+            }
+            console.log(submitData);
             const response = await this.$axios({
                 url: this.submitUrl,
                 method: this.submitMethod,
                 headers: {
+                    'jwt-auth-token': sessionStorage.getItem('jwt-auth-token'),
+                    'nickname': sessionStorage.getItem('nickname'),
                 },
-                data: {
-                    nid: this.id,
-                    title: this.title,
-                    writer: this.writer,
-                    content: this.content,
-                },
+                data:submitData
             })
                 .catch((error) => { console.log(error.response); });
 
@@ -89,12 +139,6 @@ export default {
                     console.log('글 작성이 실패하였습니다');
                 }
             }
-
-            // this.$emit('submit-done', {
-            //     title: this.title,
-            //     writer: this.writer,
-            //     content: this.content,
-            // });
         },
     },
 };

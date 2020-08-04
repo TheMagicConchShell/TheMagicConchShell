@@ -8,6 +8,8 @@ target/
 !**/src/test/**
 test/
 
+application.properties
+
 ### STS ###
 .apt_generated
 .classpath

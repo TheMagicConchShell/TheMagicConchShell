@@ -79,7 +79,7 @@
                             {{ getFormatDate(item.writeDate) }}
                         </td>
                         <td>
-                            <b-button @click.prevent="openSelectMainModal(item.no)">
+                            <b-button @click.prevent="openSelectModal(item.no)">
                                 메인 선정
                             </b-button>
                         </td>
@@ -95,7 +95,7 @@
         </template>
         
         <template v-if="list && list.length">
-            <CounselSelectMainPaginate
+            <CounselSelectPaginate
                 :current="page"
                 :last="pageCount"
             />
@@ -140,13 +140,13 @@
     </div>
 </template>
 <script>
-import CounselSelectMainPaginate from "@/components/CounselSelectMainPaginate";
-// import moment from 'moment';
+import CounselSelectPaginate from "@/components/CounselSelectPaginate";
+import moment from 'moment';
 
 export default {
-    name: 'CounselSelectMain',
+    name: 'CounselSelect',
     components: {
-        CounselSelectMainPaginate,
+        CounselSelectPaginate,
     },
     data () {
         return {
@@ -195,7 +195,7 @@ export default {
             this.descriptionState = valid;
             return valid;
         },
-        openSelectMainModal(no) {
+        openSelectModal(no) {
             this.$bvModal.show('modal-select-main');
             this.no = no;
         },

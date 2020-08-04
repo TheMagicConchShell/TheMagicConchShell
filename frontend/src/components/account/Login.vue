@@ -27,7 +27,7 @@
                 placeholder="비밀번호"
             >
             <div>
-                <b-button 
+                <b-button
                     v-b-modal.signup
                     variant="link"
                 >
@@ -35,7 +35,7 @@
                 </b-button>
             </div>
             <div>
-                <b-button 
+                <b-button
                     v-b-modal.findpw
                     variant="link"
                 >
@@ -62,44 +62,33 @@
 </template>
 
 <script>
-import FindPW from '@/components/account/FindPassword.vue';
-
-const storage = window.sessionStorage;
+import FindPW from "@/components/account/FindPassword.vue";
 
 export default {
     components: {
         FindPW,
     },
     data: () => ({
-        email: '',
-        password: '',
-        msg: '',
+        email: "",
+        password: "",
+        msg: "",
     }),
     methods: {
         login() {
             // empty check
             if (!this.email || !this.password) {
-                this.msg = '아이디(이메일)와 비밀번호를 입력해주세요.';
-                this.$toast('안내', this.msg);
+                this.msg = "아이디(이메일)와 비밀번호를 입력해주세요.";
+                this.$toast("안내", this.msg);
                 return;
             }
 
-            storage.setItem('jwt-auth-token', '');
-            storage.setItem('nickname', '');
-            this.$axios({
-                method: 'post',
-                url: '/user/login',
-                data: {
-                    email: this.email,
-                    password: this.password,
-                },
-            }).then((res) => {
-                storage.setItem('jwt-auth-token', res.headers['jwt-auth-token']);
-                storage.setItem('nickname', res.headers['nickname']);
-                //this.onClickLoginSuccess();
+            this.$store.dispatch("login", {
+                email: this.email, 
+                password: this.password
+            }).then(() => {
                 this.$router.go();
-            }).catch((error) => {
-                console.log(error.response);
+            }).catch(() => {
+                console.log("fail");
             });
         },
     },

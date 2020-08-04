@@ -1,0 +1,78 @@
+variables:
+    CI_PATH: "/home/ubuntu/project"
+    CI_TEST_PATH: "/home/ubuntu/project-test"
+
+stages:
+    - test
+    - prepare
+    - build
+    - deploy
+
+build-test:
+    stage: test
+    script:
+        - sudo rm -rf $CI_TEST_PATH
+        - sudo cp -r $CI_PROJECT_DIR $CI_TEST_PATH
+        - cd $CI_TEST_PATH/frontend
+        - sudo yarn install
+        - sudo yarn build
+        - cd $CI_TEST_PATH/backend
+        - sudo mvn package
+    only:
+        - merge_requests
+
+
+copy-repository:
+    stage: prepare
+    only:
+        - master
+    script:
+        - sudo rm -rf $CI_PATH
+        - sudo cp -r $CI_PROJECT_DIR $CI_PATH
+
+stop-server:
+    stage: prepare
+    only:
+        - master
+    script:
+        - sudo kill `ps -aux | grep 'backend-0.0.1-SNAPSHOT.jar' | grep -v grep | awk '{print $2}'`
+    allow_failure: true
+
+frontend-build:
+    stage: build
+    only:
+        - master
+    script:
+        - pwd
+        - cd $CI_PATH/frontend
+        - sudo yarn install
+        - sudo yarn build
+
+backend-build:
+    stage: build
+    only:
+        - master
+    script:
+        - pwd
+        - cd $CI_PATH/backend
+        - sudo cp /home/ubuntu/application.properties $CI_PATH/backend/src/main/resources/application.properties
+        - sudo mvn package
+
+frontend-deploy:
+    stage: deploy
+    only: 
+        - master
+    script:
+        - sudo rm -rf /home/ubuntu/dist
+        - sudo mv $CI_PATH/frontend/dist /home/ubuntu/dist
+        - sudo service nginx restart
+
+backend-deploy:
+    stage: deploy
+    only: 
+        - master
+    script:
+        - sudo rm -rf /home/ubuntu/jar
+        - sudo mv $CI_PATH/backend/target /home/ubuntu/jar
+        - cd /home/ubuntu/jar
+        - nohup java -jar backend-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &
