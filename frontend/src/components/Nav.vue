@@ -94,7 +94,7 @@
                                 style="color: #6B799E;"
                             />
                         </template>
-                        <div v-if="isLogin">
+                        <div v-if="nickname">
                             <b-dropdown-item v-b-modal.userdetail>
                                 <UserDetail />
                             </b-dropdown-item>
@@ -130,8 +130,6 @@ import Signup from '@/components/account/Signup.vue';
 import Login from '@/components/account/Login.vue';
 import UserDetail from '@/components/account/UserDetail.vue';
 
-const storage = window.sessionStorage;
-
 export default {
     name: 'Nav',
     components: {
@@ -140,24 +138,19 @@ export default {
         UserDetail,
     },
     data: () => ({
-        isLogin: '',
         language: '<i class="fas fa-language"></i>'
     }),
-    created() {
-        this.init();
+    computed: {
+        nickname: {
+            get() {
+                return this.$store.getters.nickname;
+            },
+        }
     },
     methods: {
-        init() {
-            if(storage.getItem('jwt-auth-token')){
-                this.isLogin = true;
-            } else {
-                this.isLogin = false;
-            }
-        },
         logout() {
-            storage.setItem('jwt-auth-token', '');
-            storage.setItem('nickname', '');
-            this.isLogin = false;
+            this.$store.dispatch('logout');
+
             this.$toast('안내', '로그아웃 되었습니다.');
         },
     },

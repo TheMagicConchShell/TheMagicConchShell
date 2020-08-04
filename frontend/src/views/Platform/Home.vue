@@ -39,13 +39,18 @@
                 <div
                     v-if="nowshowing"
                 >
-                    <h3>{{ nowshowing.title }}</h3>
+                    <router-link :to="{path: `/counsel/read/${nowshowing.no}`}">
+                        <h3>{{ nowshowing.title }}</h3>
+                    </router-link>
                     <p class="d-flex">
                         written by {{ nowshowing.writer }}
                     </p>
+                    <!-- eslint-disable -->
                     <viewer
-                        :initial-value="nowshowing.content"
+                        class="align-left"
+                        v-html="nowshowing.content"
                     />
+                    <!-- eslint-disable -->
                 </div>
                 <div v-else>
                     이런... 사이트가 망해서 고민이 없습니다ㅠㅠ
@@ -241,5 +246,14 @@ export default {
 #slide {
     border: 1px solid;
     width: 50%;
+}
+a {
+    color: unset;
+}
+a:hover {
+    text-decoration: unset;
+}
+.align-left {
+    text-align: left;
 }
 </style>

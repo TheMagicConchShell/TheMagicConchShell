@@ -17,8 +17,8 @@
         }
     },
     "lint-staged": {
-        "*.{js, vue}": [
-            "eslint --fix",
+        "*.{js,vue}": [
+            "yarn lint --max-warnings=0",
             "git add"
         ]
     },
@@ -33,6 +33,7 @@
         "core-js": "^3.6.5",
         "jquery": "^3.5.1",
         "moment": "^2.27.0",
+        "popper.js": "^1.16.1",
         "vee-validate": "^3.3.7",
         "vue": "^2.6.11",
         "vue-infinite-loading": "^2.4.5",
@@ -41,7 +42,8 @@
         "vue-sidebar-modal": "^1.0.0",
         "vue-wait": "^1.4.8",
         "vuejs-paginate": "^2.1.0",
-        "vuex": "^3.4.0"
+        "vuex": "^3.4.0",
+        "vuex-persistedstate": "^3.0.1"
     },
     "devDependencies": {
         "@vue/cli-plugin-babel": "~4.4.0",
@@ -50,13 +52,11 @@
         "@vue/cli-plugin-vuex": "~4.4.0",
         "@vue/cli-service": "~4.4.0",
         "babel-eslint": "^10.1.0",
-        "eslint": "^7.5.0",
-        "eslint-import-resolver-alias": "^1.1.2",
-        "eslint-import-resolver-webpack": "^0.12.2",
-        "eslint-plugin-import": "2.7.0",
+        "eslint": "^6.0.0",
         "eslint-plugin-vue": "^6.2.2",
         "husky": "^4.2.5",
         "lint-staged": "^10.2.11",
+        "pre-commit": "^1.2.2",
         "vue-template-compiler": "^2.6.11"
     },
     "_id": "ezi@1.0.0",
