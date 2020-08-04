@@ -1,13 +1,14 @@
 <template>
     <div id="app">
-        <Nav v-show="nowPlatform" />
+        <Nav
+            v-show="nowPlatform"
+            @language="languageset"
+        />
         <div id="content">
             <router-view />
-            <div
-                v-show="windowTop"
-                id="go-up"
-            >
+            <transition name="bottom-side">
                 <button
+                    v-show="windowTop"
                     id="go-up"
                 >
                     <i
@@ -15,7 +16,7 @@
                         @click="top"
                     />
                 </button>
-            </div>
+            </transition>
         </div>
     </div>
 </template>
@@ -74,7 +75,9 @@ export default {
             // this.y -= step;
             window.scrollTo(0, y - step);
         },
-
+        languageset(language) {
+            this.language = language;
+        }
     },
 };
 </script>

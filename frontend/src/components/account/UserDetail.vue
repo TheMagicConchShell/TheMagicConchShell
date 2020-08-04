@@ -217,6 +217,7 @@ export default {
     },
     data: () => ({
         email: '',
+        nickname: '',
         password: '',
         passwordConfirm: '',
         profileImg: '',
@@ -226,14 +227,9 @@ export default {
         imageUrl: '',
         msg: '',
     }),
-    computed: {
-        nickname: {
-            get() {
-                return this.$store.getters.nickname;
-            },
-        },
-    },
     created() {
+        this.nickname = storage.getItem('nickname');
+        console.log(this.nickname);
         this.$axios({
             method: 'get',
             url: `/user/detail?nickname=${this.nickname}`,
@@ -261,6 +257,9 @@ export default {
             this.$axios({
                 method: 'put',
                 url: '/user/update',
+                headers: {
+                    nickname: sessionStorage.getItem('nickname'),
+                },
                 data: {
                     email: this.email,
                     nickname: this.nickname,

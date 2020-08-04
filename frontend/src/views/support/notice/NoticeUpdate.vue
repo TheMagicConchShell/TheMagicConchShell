@@ -1,9 +1,8 @@
 <template>
     <base-editor
-        v-if="content"
         :submit-url="'/support/notice'"
         :submit-method="'put'"
-        :default-nid="id"
+        :default-id="id"
         :default-title="title"
         :default-content="content"
         :default-writer="writer"
@@ -28,7 +27,7 @@ export default {
         id: 0,
         writer: "",
         title:  "",
-        content: null,
+        content: "",
     }),
     async created() {
         const response = await this.$axios({
@@ -44,7 +43,7 @@ export default {
             if (response.status == 200) {
                 this.id = response.data.data.nid;
                 this.writer = response.data.data.writer;
-                this.writeDate = response.data.data.writeDate;
+                this.writeDate = "1234";
                 this.title = response.data.data.title;
                 this.content = response.data.data.content;
             }

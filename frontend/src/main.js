@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import axios from 'axios';
 import App from '@/App.vue';
 import router from '@/router';
 import store from '@/store';
@@ -15,7 +16,6 @@ import InfiniteLoading from 'vue-infinite-loading';
 import 'codemirror/lib/codemirror.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import '@toast-ui/editor/dist/toastui-editor-viewer.css';
-
 import { Editor,Viewer } from '@toast-ui/vue-editor';
 
 Vue.component('editor',Editor);
@@ -33,8 +33,34 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 import './assets/css/common.css';
 
 Vue.config.productionTip = false;
-import axios from '@/axios';
-Vue.prototype.$axios = axios;
+
+Vue.prototype.$axios = axios.create({
+    // baseURL: 'http://localhost:8399'
+    baseURL: 'http://i3a403.p.ssafy.io:8399',
+});
+
+Vue.prototype.$axios.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (!error.response) {
+            // Server do not response
+            // vm.$router.push({
+            //     name: 'ERROR',
+            //     params: { error: 'error' },
+            // });
+        }
+
+        const message = error.response.data.message;
+        const vm = new Vue();
+        vm.$bvToast.toast(`${message}`, {
+            title: `Error ${error.response.status} (${error.response.data.status})`,
+            toaster: 'b-toaster-top-center',
+            autoHideDelay: 5000,
+        });
+
+        return Promise.reject(error);
+    },
+);
 
 const vm = new Vue({
     router,
@@ -51,4 +77,3 @@ Vue.prototype.$toast = (title, message, append = false, hideDelay = 5000) => {
         appendToast: append,
     });
 };
-
