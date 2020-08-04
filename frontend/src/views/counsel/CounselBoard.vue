@@ -79,9 +79,6 @@ export default {
             this.$axios({
                 url: '/counsel/post',
                 method: 'get',
-                headers: {
-                    nickname: sessionStorage.getItem('nickname') || '',
-                },
                 params: {
                     page: page || 1,
                 }

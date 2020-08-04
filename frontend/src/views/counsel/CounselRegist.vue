@@ -164,11 +164,6 @@ export default {
                 return this.$store.getters.nickname;
             },
         },
-        jwtAuthToken: {
-            get() {
-                return this.$store.getters.jwtAuthToken;
-            },
-        },
     },
     created() {
         this.editorOpts = this.$store.getters.EDITOROPTIONS.options;
@@ -179,10 +174,6 @@ export default {
             this.$axios({
                 method:"post",
                 url:"/counsel/post",
-                headers: {
-                    'jwt-auth-token': this.jwtAuthToken,
-                    'nickname': this.nickname,
-                },
                 data:{
                     allow: this.allow,
                     categoryId: this.category,

@@ -89,21 +89,12 @@ export default {
                 return this.$store.getters.nickname;
             },
         },
-        jwtAuthToken: {
-            get() {
-                return this.$store.getters.jwtAuthToken;
-            },
-        },
     },
     async created() {
         this.$wait.start('counsel loading');
         await this.$axios({
             url: '/counsel/post/post-no',
             method: 'get',
-            headers: {
-                'jwt-auth-token': this.jwtAuthToken,
-                'nickname': this.nickname,
-            },
             params: {
                 no: this.no,
             },
@@ -145,10 +136,6 @@ export default {
             this.$axios({
                 url: '/counsel/reply',
                 method: 'post',
-                headers: {
-                    'jwt-auth-token': this.jwtAuthToken,
-                    'nickname': this.nickname,
-                },
                 data: {
                     'content': content,
                     'postNo': this.no,
@@ -168,10 +155,6 @@ export default {
             this.$axios({
                 url: '/counsel/post/like',
                 method: 'post',
-                headers: {
-                    'jwt-auth-token': this.jwtAuthToken,
-                    'nickname': this.nickname,
-                },
                 data: {
                     'postNo': this.no,
                     'type': type,
@@ -184,10 +167,6 @@ export default {
             this.$axios({
                 url: '/counsel/reply/like',
                 method: 'post',
-                headers: {
-                    'jwt-auth-token': this.jwtAuthToken,
-                    'nickname': this.nickname,
-                },
                 data: {
                     'replyId': id,
                     'type': type,
@@ -208,10 +187,6 @@ export default {
             this.$axios({
                 url: '/counsel/reply',
                 method: 'put',
-                headers: {
-                    'jwt-auth-token': this.jwtAuthToken,
-                    'nickname': this.nickname,
-                },
                 data: {
                     'content': content,
                     "id": id,
@@ -232,10 +207,6 @@ export default {
             this.$axios({
                 url: '/counsel/post',
                 method: 'delete',
-                headers: {
-                    'jwt-auth-token': this.jwtAuthToken,
-                    'nickname': this.nickname,
-                },
                 params: {
                     'no': this.no,
                 },
