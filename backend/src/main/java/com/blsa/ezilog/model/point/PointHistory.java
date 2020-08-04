@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,15 +28,15 @@ public class PointHistory {
     @Column
     BigInteger uid;
 
-    @Column
+    @Column 
     LocalDateTime stamp;
 
     @Column(name="change_val")
     int change;
 
-    @Column
+    @Column 
     String reason;
-
+    
     public PointHistory(BigInteger uid, LocalDateTime timestamp, int change, String reason) {
         super();
         this.uid = uid;

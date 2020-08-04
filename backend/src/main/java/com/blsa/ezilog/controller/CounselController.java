@@ -551,6 +551,7 @@ public class CounselController {
         } else {
 
             User utemp = optUser.get();
+            
             LocalDateTime currentTime = LocalDateTime.now();
             Post ctemp = new Post(post.getWriter(), post.getCategoryId(), post.getTitle(), post.getContent(),
                     currentTime, post.getAllow(), post.getSecret());
@@ -558,8 +559,10 @@ public class CounselController {
 
             // 글 작성 포인트 추가.
             PointHistory p = new PointHistory(BigInteger.valueOf(utemp.getUid()), currentTime, 100, "고민글 작성");
-
+            
             if (pointservice.addPoint(p)) {
+                utemp.setPoint(utemp.getPoint()+100);
+                userDao.save(utemp);
                 result.status = "S-200";
                 result.message = "고민  작성에 성공했습니다.";
                 result.data = null;
@@ -749,6 +752,8 @@ public class CounselController {
 
                     PointHistory p = new PointHistory(BigInteger.valueOf(putemp.getUid()), currentTime, 200, "답글 선정");
                     if (pointservice.addPoint(p)) {
+                        putemp.setPoint(putemp.getPoint()+200);
+                        userDao.save(putemp);
                         result.status = "S-200";
                         result.message = "고민  선정에 성공했습니다.";
                         result.data = null;
@@ -939,6 +944,8 @@ public class CounselController {
 
                 PointHistory p = new PointHistory(BigInteger.valueOf(utemp.getUid()), currentTime, 100, "댓글 작성");
                 if (pointservice.addPoint(p)) {
+                    utemp.setPoint(utemp.getPoint()+100);
+                    userDao.save(utemp);
                     result.status = "S-200";
                     result.message = "답변  작성에 성공했습니다.";
                     result.data = null;
@@ -1514,6 +1521,10 @@ public class CounselController {
                             // 더 좋아요 추가
                             ptemp.setLikeCount(ptemp.getLikeCount() + 1);
                             postDao.save(ptemp);
+                            
+                            user.setPoint(user.getPoint()-100);
+                            userDao.save(user);
+                            
                             result.status = "S-200";
                             result.message = "또 좋아요 추가  성공";
                             result.data = null;

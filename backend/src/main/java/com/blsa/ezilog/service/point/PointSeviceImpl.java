@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.blsa.ezilog.dao.PointDao;
@@ -17,9 +19,9 @@ public class PointSeviceImpl implements PointService {
     PointDao pointDao;
 
     @Override
-    public Optional<List<PointHistory>> selectPointByUser(BigInteger Uid) {
+    public Page<PointHistory> selectPointByUser(BigInteger Uid, Pageable pageable) {
 
-        return pointDao.getPointByUid(Uid);
+        return pointDao.getPointByUid(Uid, pageable);
     }
 
     @Override
@@ -48,11 +50,22 @@ public class PointSeviceImpl implements PointService {
     @Override
     public int totalPoint(BigInteger Uid) {
         int total = 0;
+        // 포인트 이력이 있으면 그것으로 계산, 없으면 0 점
         Optional<Integer> optTotal = pointDao.totalPointByUid(Uid);
         if (optTotal.isPresent()) {
             total = optTotal.get();
         }
         return total;
     }
+
+    @Override
+    public List<PointHistory> selectRankByTotalPoint() {
+        
+        System.out.println(pointDao.getRankByPoint().get(0).toString());
+        
+        return pointDao.getRankByPoint();
+        //return null;
+    }
+    
 
 }
