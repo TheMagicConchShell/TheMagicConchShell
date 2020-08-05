@@ -112,7 +112,7 @@ public class NoticeController {
 
     @ApiOperation(value = "공지 번호에 해당되는 공지사항 반환", response = List.class)
     @GetMapping("/noticeId")
-    public Object seasrchNoticeById(@RequestParam(required = true) BigInteger id) {
+    public Object seasrchNoticeById(@RequestParam(required = true) Long id) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -190,7 +190,7 @@ public class NoticeController {
 
     @ApiOperation(value = "공지사항 삭제", response = List.class)
     @DeleteMapping
-    public Object deleteNotice(@RequestParam BigInteger nid, @RequestParam String nickname) {
+    public Object deleteNotice(@RequestParam Long nid, @RequestParam String nickname) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
