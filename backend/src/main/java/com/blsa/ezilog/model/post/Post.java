@@ -22,13 +22,13 @@ public class Post {
     
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private BigInteger no;
+    private Long no;
     
     @Column (name = "writer")
     private String writer;
     
     @Column(name = "category_id")
-    private BigInteger categoryId;
+    private Long categoryId;
     
     @Column (name = "title")
     private String title;
@@ -57,7 +57,7 @@ public class Post {
     @Transient
     private boolean isMine;
     
-    public Post(String writer, BigInteger categoryId, String title, String content, LocalDateTime writeDate,
+    public Post(String writer, Long categoryId, String title, String content, LocalDateTime writeDate,
             boolean allow, boolean secret) {
         super();
         this.writer = writer;

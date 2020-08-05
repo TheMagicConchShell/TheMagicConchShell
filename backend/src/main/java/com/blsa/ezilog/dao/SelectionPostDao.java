@@ -11,11 +11,11 @@ import org.springframework.data.jpa.repository.Query;
 import com.blsa.ezilog.model.post.Post;
 import com.blsa.ezilog.model.post.SelectionPost;
 
-public interface SelectionPostDao extends JpaRepository<SelectionPost, BigInteger>{
+public interface SelectionPostDao extends JpaRepository<SelectionPost, Long>{
 
-    Optional<SelectionPost> findByNo(BigInteger no);
+    Optional<SelectionPost> findByNo(Long no);
     
 
-    void deleteByNo(BigInteger no);
+    void deleteByNo(Long no);
     
 }

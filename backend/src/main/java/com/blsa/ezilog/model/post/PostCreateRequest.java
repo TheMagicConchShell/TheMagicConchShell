@@ -17,7 +17,7 @@ public class PostCreateRequest {
     
     @ApiModelProperty(required = true)
     @NotNull
-    BigInteger categoryId;
+    Long categoryId;
     
     @ApiModelProperty(required = true)
     @NotNull
@@ -44,11 +44,11 @@ public class PostCreateRequest {
         this.title = title;
     }
 
-    public BigInteger getCategoryId() {
+    public Long getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(BigInteger categoryId) {
+    public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
     }
 

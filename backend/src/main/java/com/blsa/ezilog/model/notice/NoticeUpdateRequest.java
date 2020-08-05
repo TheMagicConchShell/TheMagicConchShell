@@ -13,7 +13,7 @@ import lombok.ToString;
 public class NoticeUpdateRequest {
     @ApiModelProperty(required = true)
     @NotNull
-    private BigInteger nid;
+    private Long nid;
 
     @ApiModelProperty(required = true)
     @NotNull
@@ -39,11 +39,11 @@ public class NoticeUpdateRequest {
         this.content = content;
     }
 
-    public BigInteger getNid() {
+    public Long getNid() {
         return nid;
     }
 
-    public void setNid(BigInteger nid) {
+    public void setNid(Long nid) {
         this.nid = nid;
     }
 

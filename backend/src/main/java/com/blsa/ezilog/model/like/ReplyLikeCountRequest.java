@@ -10,15 +10,15 @@ import lombok.ToString;
 @ToString
 public class ReplyLikeCountRequest {
     
-    BigInteger replyId;
+	Long replyId;
     
     String type;
 
-    public BigInteger getReplyId() {
+    public Long getReplyId() {
         return replyId;
     }
 
-    public void setReplyId(BigInteger replyId) {
+    public void setReplyId(Long replyId) {
         this.replyId = replyId;
     }
 

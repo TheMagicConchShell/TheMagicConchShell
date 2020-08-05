@@ -1,7 +1,5 @@
 package com.blsa.ezilog.model.qna;
 
-import java.math.BigInteger;
-
 import javax.validation.constraints.NotNull;
 
 import io.swagger.annotations.ApiModelProperty;
@@ -10,7 +8,7 @@ public class QuestionUpdateRequest {
     
     @ApiModelProperty(required = true)
     @NotNull
-    BigInteger no;
+    Long no;
     
     @ApiModelProperty(required = true)
     @NotNull
@@ -24,11 +22,11 @@ public class QuestionUpdateRequest {
     @NotNull
     String writer;
 
-    public BigInteger getNo() {
+    public Long getNo() {
         return no;
     }
 
-    public void setNo(BigInteger no) {
+    public void setNo(Long no) {
         this.no = no;
     }
 

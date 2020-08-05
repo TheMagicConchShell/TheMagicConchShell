@@ -18,7 +18,7 @@ import lombok.ToString;
 public class SelectionPostRequestDTO {
     @ApiModelProperty(required = true)
     @NotNull
-    BigInteger no;
+    Long no;
     
     @ApiModelProperty(required = true)
     @NotBlank(message = "설명은 필수 입력값입니다.")

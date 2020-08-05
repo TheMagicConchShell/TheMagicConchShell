@@ -19,7 +19,7 @@ public class PointSeviceImpl implements PointService {
     PointDao pointDao;
 
     @Override
-    public Page<PointHistory> selectPointByUser(BigInteger Uid, Pageable pageable) {
+    public Page<PointHistory> selectPointByUser(Long Uid, Pageable pageable) {
 
         return pointDao.getPointByUid(Uid, pageable);
     }
@@ -40,7 +40,7 @@ public class PointSeviceImpl implements PointService {
     }
 
     @Override
-    public void deletePoint(BigInteger id) {
+    public void deletePoint(Long id) {
         PointHistory ptemp = pointDao.getOne(id);
 
         pointDao.delete(ptemp);
@@ -48,7 +48,7 @@ public class PointSeviceImpl implements PointService {
     }
 
     @Override
-    public int totalPoint(BigInteger Uid) {
+    public int totalPoint(Long Uid) {
         int total = 0;
         // 포인트 이력이 있으면 그것으로 계산, 없으면 0 점
         Optional<Integer> optTotal = pointDao.totalPointByUid(Uid);

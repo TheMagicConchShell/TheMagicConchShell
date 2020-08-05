@@ -14,7 +14,7 @@ public class ReplyCreateRequest {
 
     @ApiModelProperty(required = true)
     @NotNull
-    BigInteger postNo;
+    Long postNo;
 
     @ApiModelProperty(required = true)
     @NotNull
@@ -28,11 +28,11 @@ public class ReplyCreateRequest {
     @NotNull
     boolean secret;
 
-    public BigInteger getPostNo() {
+    public Long getPostNo() {
         return postNo;
     }
 
-    public void setPostNo(BigInteger postNo) {
+    public void setPostNo(Long postNo) {
         this.postNo = postNo;
     }
 

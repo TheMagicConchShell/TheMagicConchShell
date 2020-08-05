@@ -15,5 +15,5 @@ public interface NoticeDao extends JpaRepository<Notice, Long> {
             nativeQuery = true)
     Page<Notice> findNoticeByWriter(String writer, Pageable request);
 
-    Notice getNoticeByNid(BigInteger id);
+    Notice getNoticeByNid(Long id);
 }

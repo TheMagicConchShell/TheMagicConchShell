@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long uid;
+    private Long uid;
 
     @Column
     private String email;
@@ -40,9 +40,9 @@ public class User {
     private LocalDateTime authDate;
 
     @Column
-    private int point;
+    private Integer point;
 
     @Column
-    private int level;
+    private Integer level;
 
 }

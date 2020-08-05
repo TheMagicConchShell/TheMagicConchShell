@@ -63,10 +63,10 @@ public class PointController {
         if (!useropt.equals(null)) {
             Map<String, Object> resultMap = new HashMap<>();
 
-            Page<PointHistory> phList = pointService.selectPointByUser(BigInteger.valueOf(useropt.getUid()), pageable);
+            Page<PointHistory> phList = pointService.selectPointByUser(useropt.getUid(), pageable);
             if (!phList.isEmpty()) {
 
-                int total = pointService.totalPoint(BigInteger.valueOf(useropt.getUid()));
+                int total = pointService.totalPoint(useropt.getUid());
 
                 resultMap.put("pList", phList);
                 resultMap.put("totalPoint", total);
@@ -113,7 +113,7 @@ public class PointController {
 
         if (!useropt.equals(null)) {
 
-            int total = pointService.totalPoint(BigInteger.valueOf(useropt.getUid()));
+            int total = pointService.totalPoint(useropt.getUid());
 
             result.status = "S-200";
             result.message = "포인트 이력 가져오기에 성공했습니다.";
