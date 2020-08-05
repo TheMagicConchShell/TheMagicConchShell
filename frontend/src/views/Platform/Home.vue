@@ -2,15 +2,76 @@
     <div>
         <div id="home">
             <div class="d-flex flex-column-reverse">
-                금주의 싸피고둥이들
+                <transition name="conversion">
+                    <span
+                        v-if="language==='ko'"
+                        key="1"
+                    >금주의 싸피고둥이들</span>
+                    <span
+                        v-else
+                        key="2"
+                    >Wise Conches of the Week </span>
+                </transition>
             </div>
         </div>
         <!-- 금주 -->
         <div
             id="bloglist"
-            class="d-flex"
         >
-            <div 
+            <swiper
+                ref="mySwiper"
+                class="swiper"
+                :options="swiperOption"
+                style="overflow:hidden"
+            >
+                <swiper-slide
+                    v-for="post in list"
+                    :key="post.no"
+                >
+                    <h3>{{ post.title }}</h3>
+                    <p class="d-flex">
+                        written by {{ post.writer }}
+                    </p>
+                    <viewer
+                        :initial-value="post.content"
+                    />
+                </swiper-slide>
+                <div
+                    slot="pagination"
+                    class="swiper-pagination"
+                />
+                <div
+                    slot="button-prev"
+                    class="swiper-button-prev"
+                />
+                <div
+                    slot="button-next"
+                    class="swiper-button-next"
+                />
+            </swiper>          
+            <!-- <div id="mainpost">
+                <transition name="fade-in">
+                    <div
+                        v-if="nowshowing"
+                        key="1"
+                    >
+                        <h3>{{ nowshowing.title }}</h3>
+                        <p class="d-flex">
+                            written by {{ nowshowing.writer }}
+                        </p>
+                        <viewer
+                            :initial-value="nowshowing.content"
+                        />
+                    </div>
+                    <div
+                        v-else
+                        key="2"
+                    >
+                        이런... 사이트가 망해서 고민이 없습니다ㅠㅠ
+                    </div>
+                </transition> -->
+        </div>
+        <!-- <div 
                 id="sidepost" 
                 v-infinite-scroll="loadMore" 
                 infinite-scroll-disabled="busy" 
@@ -19,53 +80,43 @@
                 <div
                     v-for="post in list"
                     :key="post.no"
-                    fluid
-                    class="w-100 m-0 border cursor"
+                    class="w-100 m-0 p-0 cursor"
                     @click="pageswap(post.no)"
                 >
                     <div
                         v-if="post.no===nowshowing.no"
                         id="selected"
                     >
-                        <h4>{{ post.title }}</h4>
+                        <p style="text-overflow:ellipsis">
+                            {{ post.title }}
+                        </p>
                     </div>
-                    <div v-else>
-                        <h4>{{ post.title }}</h4>
+                    <div
+                        v-if="post.no!==nowshowing.no"
+                        id="spcontent"
+                    >
+                        <p>{{ post.title }}</p>
                     </div>
                 </div>
-                <!-- <infinite-loading @infinite="infiniteHandler" /> -->
-            </div>            
-            <div id="mainpost">
-                <div
-                    v-if="nowshowing"
-                >
-                    <router-link :to="{path: `/counsel/read/${nowshowing.no}`}">
-                        <h3>{{ nowshowing.title }}</h3>
-                    </router-link>
-                    <p class="d-flex">
-                        written by {{ nowshowing.writer }}
-                    </p>
-                    <!-- eslint-disable -->
-                    <viewer
-                        class="align-left"
-                        v-html="nowshowing.content"
-                    />
-                    <!-- eslint-disable -->
-                </div>
-                <div v-else>
-                    이런... 사이트가 망해서 고민이 없습니다ㅠㅠ
-                </div>
-            </div>
-        </div>
+            </div>   -->
 
-        <div id="home">
+        <!-- <div id="home">
             <div class="d-flex flex-column-reverse">
-                지난 대나무숲
+                <transition name="conversion">
+                    <span
+                        v-if="language==='ko'"
+                        key="1"
+                    >지난 대나무숲</span>
+                    <span
+                        v-else
+                        key="2"
+                    >Spilled beans</span>
+                </transition>
             </div>
-        </div>
+        </div> -->
 
         <!-- 지난주 -->
-        <div
+        <!-- <div
             id="bloglist"
             class="cursor"
         >
@@ -81,17 +132,22 @@
                     </div>
                 </b-card-text>
             </b-card>
-        </div>
+        </div> -->
     </div>
 </template>
 
 <script>
+import {mapState} from 'vuex';
 import axios from 'axios';
+import { Swiper, SwiperSlide } from 'vue-awesome-swiper';
 const api = 'http://i3a403.p.ssafy.io:8399';
 var count = 0;
 
 export default {
     name: 'Home',
+    components: {
+        Swiper, SwiperSlide
+    },
     data() {
         return {
             nomouse: true,
@@ -100,7 +156,41 @@ export default {
             page: 0,
             list: [],
             busy: false,
+            /* swiper */
+            swiperOption: {
+                effect: 'coverflow',
+                grabCursor: true,
+                centeredSlides: true,
+                slidesPerView: 3,
+                spaceBetween: 30,
+                loop: true, 
+                coverflowEffect: {
+                    rotate: 50,
+                    stretch: 0,
+                    depth: 100,
+                    modifier: 1,
+                    slideShadows : true
+                },
+                mousewheel: true,
+                keyboard: {
+                    enabled: true,
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev'
+                }
+            }
         };
+    },
+    computed: {
+        ...mapState(['language']),
+        swiper() {
+            return this.$refs.mySwiper.swiper;
+        }
     },
     watch: {
         '$route'() {
@@ -156,7 +246,7 @@ export default {
                     this.pageCount = response.data.data.totalPages;
                     this.nowshowing = response.data.data.post;
                 }
-            }
+            };
         },
         infiniteHandler($state) {
             axios.get((api + '/counsel/post', {
@@ -193,67 +283,78 @@ export default {
   border-radius: 10px;
   text-decoration: none;
 }
-#click {
-  animation: motion 0.5s linear 0s infinite alternate;
-}
 
 #bloglist {
     width: 100%;
-    height: 70vh;
+    height: 80vh;
+    padding-top: 50px;
+    padding-bottom: 50px;
 }
 #mainpost {
     border-radius: 0 5px 5px 0;
-    width: 80%;
     height: 100%;
-    border: 1px solid #cacaca;
+    border-top: 1px solid #cacaca;
+    border-left: 1px solid #cacaca;
+    border-right: 1px solid #cacaca;
+    padding: 10px;
     background-size: cover;
-    padding: 100px;
-    overflow: auto;
+    background-color: #ffffff;
+    text-overflow: ellipsis;
 }
 #mainpost div {
     max-width: 100%;
     height: auto;
 }
 #sidepost {
-    width: 20%;
-    height: 100%;
-    overflow: auto;
-    border-radius: 5px 0 0 5px;
-    border: 1px solid #cacaca;
-    background-color: #BEDAE5;
+    display: flex;
+    height: 24px;
+    white-space: nowrap;
 }
 #sidepost div {
     display: flex;
-    width:100%;
-    background-color: #A6C2CE;
-    border: 1px solid #cacaca;
+    justify-content: center;
     color: black;
+    background-color: #A6C2CE;
+    border-radius: 0 0 5px 5px;
 }
-#sidepost div div{
-    border: none;
-    padding: 10px;
+#spcontent {
+    width: 100%;
+    text-overflow:hidden;
+    border-left: 1px solid #cacaca;
+    border-right: 1px solid #cacaca;
+    border-bottom: 1px solid #cacaca;
+}
+#spcontent:hover {
+    background-color: #ffffff;
+    transition-duration: 0.5s;
+    border-radius: 0 0 5px 5px;
 }
 #selected {
-    background-color: #6B799E!important;
-}
-#slide {
-    max-height: auto;
-    max-width: auto;
+    width: 100%;
+    background-color: #ffffff!important;
+    border-left: 1px solid #cacaca;
+    border-right: 1px solid #cacaca;
+    border-bottom: 1px solid #cacaca;
+    border-radius: 0 0 5px 5px;
 }
 #answerheader {
     height: 100px;
 }
-#slide {
-    border: 1px solid;
-    width: 50%;
+.swiper {
+    height: 100%;
+    width: 100%;
 }
-a {
-    color: unset;
-}
-a:hover {
-    text-decoration: unset;
-}
-.align-left {
-    text-align: left;
+.swiper-slide {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 300px;
+      height: 100%;
+      text-align: center;
+      font-weight: bold;
+      background-position: center;
+      background-size: cover;
+      color: $white;
 }
 </style>
