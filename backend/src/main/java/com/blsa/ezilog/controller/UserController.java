@@ -4,25 +4,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -58,6 +54,7 @@ public class UserController {
     @Autowired
     private MailSendService mailSendService;
 
+    @Transactional
     @PostMapping("/user/signup")
     @ApiOperation(value = "회원 가입")
     public Object signup(@Valid @RequestBody SignupRequestDTO request) {
@@ -65,6 +62,7 @@ public class UserController {
         Map<String, Object> errors = new HashMap<>();
         String check = userService.duplicateCheck(request.getEmail(), request.getNickname());
         String authTableCheck = userService.authDuplicateCheck(request.getEmail(), request.getNickname());
+        
         if (check.equals("email") || authTableCheck.equals("email")) {
             errors.put("field", "email");
             errors.put("data", request.getEmail());

@@ -60,7 +60,7 @@ public class MailSendService {
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
 
-        Session session = Session.getDefaultInstance(props, new Authenticator() {
+        Session session = Session.getInstance(props, new Authenticator() {
             protected javax.mail.PasswordAuthentication getPasswordAuthentication() {
                 return new javax.mail.PasswordAuthentication(MyEmail, MyPassword);
             }
@@ -75,6 +75,9 @@ public class MailSendService {
         String htmlStr = "<h2>안녕하세요 마법의 싸피고동 입니다!</h2><br><br>" + "<h3>" + nickname + "님</h3>"
                 + "<p>인증하기 버튼을 누르시면 인증이 완료되어 로그인이 가능해 집니다 : " + "<a href='http://i3a403.p.ssafy.io/user/authentication?aid=" + aid
                 + "&token=" + token + "'>인증하기</a></p>" + "(혹시 잘못 전달된 메일이라면 이 이메일을 무시하셔도 됩니다)";
+//        String htmlStr = "<h2>안녕하세요 마법의 싸피고동 입니다!</h2><br><br>" + "<h3>" + nickname + "님</h3>"
+//                + "<p>인증하기 버튼을 누르시면 인증이 완료되어 로그인이 가능해 집니다 : " + "<a href='http://localhost:3000/user/authentication?aid=" + aid
+//                + "&token=" + token + "'>인증하기</a></p>" + "(혹시 잘못 전달된 메일이라면 이 이메일을 무시하셔도 됩니다)";
 
         MimeMessage message = new MimeMessage(session);
 
