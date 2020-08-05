@@ -12,6 +12,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.blsa.ezilog.interceptor.JwtInterceptor;
+
 @EnableScheduling
 @SpringBootApplication
 public class BackendApplication implements WebMvcConfigurer {
@@ -27,13 +28,13 @@ public class BackendApplication implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor).addPathPatterns("/user/test/test"); // 적용
-        // "/user/update","/user/detail","/user/delete","/user/extendJWT" 예상 적용 경로                                                                           // 경로
+        // "/user/update","/user/detail","/user/delete","/user/extendJWT" 예상 적용 경로 // 경로
         // .excludePathPatterns(Arrays.asList());// 적용 제외 경로
     }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**").allowedOrigins("*").allowedMethods("*").allowedHeaders("*")
-                .exposedHeaders("jwt-auth-token","nickname");
+                .exposedHeaders("jwt-auth-token", "nickname");
     }
 }
