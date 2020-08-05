@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.blsa.ezilog.config.util.BCryptImpl;
 import com.blsa.ezilog.dao.UserAuthDao;
 import com.blsa.ezilog.dao.UserDao;
 import com.blsa.ezilog.model.user.LoginRequestDTO;
@@ -21,12 +22,17 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserAuthDao authDao;
+    
+    @Autowired
+    private BCryptImpl bcryptimpl;
 
     @Override
     public UserAuth signup(SignupRequestDTO request, String token) {
         UserAuth user = new UserAuth();
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
+        String encrypted = bcryptimpl.encrypt(request.getPassword());
+        user.setPassword(encrypted);
+        System.out.println(user.getPassword());
         user.setNickname(request.getNickname());
         user.setToken(token);
 
@@ -36,17 +42,32 @@ public class UserServiceImpl implements UserService {
     @Override
     public Object login(LoginRequestDTO request) {
         Object res = null;
-        Optional<User> user = dao.findByEmailAndPassword(request.getEmail(), request.getPassword());
-        if (user.isPresent()) {
-            res = user.get();
-        } else {
-            Optional<User> email = dao.findByEmail(request.getEmail());
-            if (email.isPresent()) {
+        
+        Optional<User> userOpt = dao.findByEmail(request.getEmail());
+        if(userOpt.isPresent()) {
+            User user = userOpt.get();
+            System.out.println(user.getPassword());
+            System.out.println(request.getPassword());
+            
+            if(bcryptimpl.isMatch(request.getPassword(), user.getPassword())) {
+                res = user;
+            }else {
                 res = "password";
-            } else {
-                res = "email";
             }
+        }else {
+            res = "email";
         }
+//        Optional<User> user = dao.findByEmailAndPassword(request.getEmail(), request.getPassword());
+//        if (user.isPresent()) {
+//            res = user.get();
+//        } else {
+//            Optional<User> email = dao.findByEmail(request.getEmail());
+//            if (email.isPresent()) {
+//                res = "password";
+//            } else {
+//                res = "email";
+//            }
+//        }
         return res;
     }
 
@@ -123,7 +144,13 @@ public class UserServiceImpl implements UserService {
         String res = null;
         if (ou.isPresent()) {
             User u = ou.get();
-            res = u.getPassword();
+            String temppw = "temp1234";
+            u.setPassword(bcryptimpl.encrypt(temppw));
+            System.out.println(u.getPassword());
+            dao.save(u);
+            
+            //res = u.getPassword();
+            res = temppw;
         } else {
             if (dao.findByEmail(email).isPresent()) {
                 res = "nickname";

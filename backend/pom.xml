@@ -95,13 +95,19 @@
         </dependency>
 
 
-		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation -->
-		<dependency>
-		    <groupId>org.springframework.boot</groupId>
-		    <artifactId>spring-boot-starter-validation</artifactId>
-		</dependency>
-        
-        
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!--  암호화를 위한 dependecy -->
+        <!-- https://mvnrepository.com/artifact/org.mindrot/jbcrypt -->
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>0.3m</version>
+        </dependency>
 
     </dependencies>
 
