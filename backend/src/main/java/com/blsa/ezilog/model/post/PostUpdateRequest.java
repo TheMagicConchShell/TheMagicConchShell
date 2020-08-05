@@ -14,7 +14,7 @@ public class PostUpdateRequest {
     
     @ApiModelProperty(required = true)
     @NotNull
-    BigInteger no;
+    Long no;
     
     @ApiModelProperty(required = true)
     @NotNull
@@ -22,7 +22,7 @@ public class PostUpdateRequest {
     
     @ApiModelProperty(required = true)
     @NotNull
-    BigInteger categoryId;
+    Long categoryId;
     
     @ApiModelProperty(required = true)
     @NotNull
@@ -48,11 +48,11 @@ public class PostUpdateRequest {
         this.title = title;
     }
 
-    public BigInteger getCategoryId() {
+    public Long getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(BigInteger categoryId) {
+    public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
     }
 
@@ -80,11 +80,11 @@ public class PostUpdateRequest {
         this.secret = secret;
     }
 
-    public BigInteger getNo() {
+    public Long getNo() {
         return no;
     }
 
-    public void setNo(BigInteger no) {
+    public void setNo(Long no) {
         this.no = no;
     }
 

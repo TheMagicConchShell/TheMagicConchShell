@@ -3,24 +3,68 @@ variables:
     CI_TEST_PATH: "/home/ubuntu/project-test"
 
 stages:
-    - test
     - prepare
     - build
+    - test
     - deploy
+    - clean
 
-build-test:
-    stage: test
+test-copy-repository:
+    stage: prepare
+    only:
+        - merge_requests
     script:
         - sudo rm -rf $CI_TEST_PATH
         - sudo cp -r $CI_PROJECT_DIR $CI_TEST_PATH
+
+test-stop-server:
+    stage: prepare
+    only:
+        - merge_requests
+    script:
+        - sudo kill `ps -aux | grep 'backend-0.0.1-SNAPSHOT-TEST.jar' | grep -v grep | awk '{print $2}'`
+    allow_failure: true
+
+test-backend-build:
+    stage: prepare
+    only:
+        - merge_requests
+    script:
+        - cd $CI_TEST_PATH/backend
+        - sudo cp /home/ubuntu/application.test.properties $CI_TEST_PATH/backend/src/main/resources/application.properties
+        - echo $CI_TEST_PATH/backend/src/main/resources/application.properties
+        - sudo mvn package
+        - sudo rm -rf /home/ubuntu/jar-test
+        - sudo mv $CI_TEST_PATH/backend/target /home/ubuntu/jar-test
+        - cd /home/ubuntu/jar-test
+        - sudo mv backend-0.0.1-SNAPSHOT.jar backend-0.0.1-SNAPSHOT-TEST.jar
+        - nohup java -jar backend-0.0.1-SNAPSHOT-TEST.jar > /dev/null 2>&1 &
+        - echo `ps -aux | grep 'backend-0.0.1-SNAPSHOT-TEST.jar' | grep -v grep | awk '{print $2}'`
+
+test-frontend:
+    stage: test
+    only:
+        - merge_requests
+    script:
         - cd $CI_TEST_PATH/frontend
         - sudo yarn install
         - sudo yarn build
-        - cd $CI_TEST_PATH/backend
-        - sudo mvn package
+
+test-backend:
+    stage: test
     only:
         - merge_requests
+    script:
+        - sudo kill `ps -aux | grep 'backend-0.0.1-SNAPSHOT-TEST.jar' | grep -v grep | awk '{print $2}'`
 
+        
+        
+test-clean-up:
+    stage: clean
+    only:
+        - merge_requests
+    script:
+        - sudo rm -rf $CI_TEST_PATH
 
 copy-repository:
     stage: prepare
@@ -76,3 +120,10 @@ backend-deploy:
         - sudo mv $CI_PATH/backend/target /home/ubuntu/jar
         - cd /home/ubuntu/jar
         - nohup java -jar backend-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &
+
+clean-up:
+    stage: clean
+    only:
+        - master
+    script:
+        - sudo rm -rf $CI_PATH

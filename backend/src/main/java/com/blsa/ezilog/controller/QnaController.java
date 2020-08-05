@@ -313,7 +313,7 @@ public class QnaController {
 
     @DeleteMapping("/qeuestion")
     @ApiOperation(value = "질문 삭제 삭제", notes = "Input : 해당 질문 no를 받아서 삭제")
-    public Object deleteQuestion(@RequestParam BigInteger no) {
+    public Object deleteQuestion(@RequestParam Long no) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -348,7 +348,7 @@ public class QnaController {
 
     @DeleteMapping("/answer")
     @ApiOperation(value = "답변 삭제 삭제", notes = "Input : 해당 답변 no를 받아서 삭제")
-    public Object deleteAnswer(@RequestParam BigInteger no) {
+    public Object deleteAnswer(@RequestParam Long no) {
 
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();

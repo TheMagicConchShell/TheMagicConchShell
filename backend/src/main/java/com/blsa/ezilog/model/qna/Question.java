@@ -22,7 +22,7 @@ public class Question {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "no")
-    BigInteger no;
+    Long no;
     
     @Column(name = "title")
     String title;

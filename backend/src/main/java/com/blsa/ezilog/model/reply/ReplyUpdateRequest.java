@@ -14,11 +14,11 @@ public class ReplyUpdateRequest {
 
     @ApiModelProperty(required = true)
     @NotNull
-    BigInteger id;
+    Long id;
 
     @ApiModelProperty(required = true)
     @NotNull
-    BigInteger postNo;
+    Long postNo;
 
     @ApiModelProperty(required = true)
     @NotNull
@@ -28,11 +28,11 @@ public class ReplyUpdateRequest {
     @NotNull
     boolean secret;
 
-    public BigInteger getPostNo() {
+    public Long getPostNo() {
         return postNo;
     }
 
-    public void setPostNo(BigInteger postNo) {
+    public void setPostNo(Long postNo) {
         this.postNo = postNo;
     }
 
@@ -52,11 +52,11 @@ public class ReplyUpdateRequest {
         this.secret = secret;
     }
 
-    public BigInteger getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(BigInteger id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

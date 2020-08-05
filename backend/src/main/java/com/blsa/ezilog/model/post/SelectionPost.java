@@ -22,10 +22,10 @@ import lombok.NoArgsConstructor;
 public class SelectionPost {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private Long id;
 
     @Column
-    private BigInteger no;
+    private Long no;
 
     @Column
     private String description;
