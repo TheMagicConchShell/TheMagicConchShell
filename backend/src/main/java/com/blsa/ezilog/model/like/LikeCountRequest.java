@@ -19,15 +19,15 @@ import lombok.ToString;
 @ToString
 public class LikeCountRequest {
 
-    BigInteger postNo;
+	Long postNo;
 
     String type;
 
-    public BigInteger getPostNo() {
+    public Long getPostNo() {
         return postNo;
     }
 
-    public void setPostNo(BigInteger postNo) {
+    public void setPostNo(Long postNo) {
         this.postNo = postNo;
     }
 

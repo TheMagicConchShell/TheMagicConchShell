@@ -21,13 +21,13 @@ public class ReplyLikeCount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    BigInteger id;
+    Long id;
     
     @Column(name="reply_id")
-    BigInteger replyId;
+    Long replyId;
     
     @Column
-    BigInteger uid;
+    Long uid;
     
     @Column
     LocalDateTime stamp;
@@ -35,7 +35,7 @@ public class ReplyLikeCount {
     @Column
     String type;
 
-    public ReplyLikeCount(BigInteger replyId, BigInteger uid, LocalDateTime stamp, String type) {
+    public ReplyLikeCount(Long replyId, Long uid, LocalDateTime stamp, String type) {
         super();
         this.replyId = replyId;
         this.uid = uid;

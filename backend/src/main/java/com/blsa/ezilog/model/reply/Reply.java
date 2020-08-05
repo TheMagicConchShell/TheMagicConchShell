@@ -22,13 +22,13 @@ public class Reply {
     
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private BigInteger id;
+    private Long id;
     
     @Column
     private String writer;
     
     @Column(name = "post_no")
-    private BigInteger postNo;
+    private Long postNo;
     
     @Column
     private String content;
@@ -54,7 +54,7 @@ public class Reply {
     @Transient
     private boolean isAuthor;
 
-    public Reply(String writer, BigInteger postNo, String content, LocalDateTime writeDate, boolean secret) {
+    public Reply(String writer, Long postNo, String content, LocalDateTime writeDate, boolean secret) {
         super();
         this.writer = writer;
         this.postNo = postNo;

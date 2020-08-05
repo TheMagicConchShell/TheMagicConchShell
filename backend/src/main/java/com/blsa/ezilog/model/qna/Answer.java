@@ -22,7 +22,7 @@ public class Answer {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name ="no")
-    BigInteger no;
+    Long no;
     
     @Column(name ="content")
     String content;
@@ -31,12 +31,12 @@ public class Answer {
     String writer;
     
     @Column (name="qid")
-    BigInteger qid;
+    Long qid;
     
     @Column (name="write_date")
     LocalDateTime writeDate;
 
-    public Answer(String content, String writer, BigInteger qid, LocalDateTime writeDate) {
+    public Answer(String content, String writer, Long qid, LocalDateTime writeDate) {
         super();
         this.content = content;
         this.writer = writer;

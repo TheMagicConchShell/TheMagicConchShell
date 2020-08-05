@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 public class Notice {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private BigInteger nid;
+    private Long nid;
 	
     @Column (name = "title")
     private String title;

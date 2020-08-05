@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.blsa.ezilog.model.qna.Question;
 
 public interface QuestionDao extends JpaRepository<Question, Long> {
-    Optional<Question> getQuestionByNo(BigInteger qid);
+    Optional<Question> getQuestionByNo(Long qid);
     Optional<Question> getQuestionByWriter(String writer);
     Optional<Question> getQuestionByTitle(String title);
     

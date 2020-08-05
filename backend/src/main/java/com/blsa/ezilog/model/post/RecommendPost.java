@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RecommendPost {
-    private BigInteger no;
+    private Long no;
 
     private String writer;
 
-    private BigInteger categoryId;
+    private Long categoryId;
 
     private String title;
 

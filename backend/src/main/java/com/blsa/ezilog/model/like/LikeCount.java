@@ -21,13 +21,13 @@ public class LikeCount {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    BigInteger id;
+    Long id;
     
     @Column(name="post_no")
-    BigInteger postNo;
+    Long postNo;
     
     @Column
-    BigInteger uid;
+    Long uid;
     
     @Column
     LocalDateTime stamp;
@@ -35,7 +35,7 @@ public class LikeCount {
     @Column
     String type;
 
-    public LikeCount(BigInteger postNo, BigInteger uid, LocalDateTime stamp, String type) {
+    public LikeCount(Long postNo, Long uid, LocalDateTime stamp, String type) {
         super();
         this.postNo = postNo;
         this.uid = uid;

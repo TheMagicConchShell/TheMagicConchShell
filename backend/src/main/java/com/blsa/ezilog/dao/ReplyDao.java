@@ -11,12 +11,12 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.blsa.ezilog.model.reply.Reply;
 
-public interface ReplyDao extends JpaRepository<Reply, BigInteger> {
+public interface ReplyDao extends JpaRepository<Reply, Long> {
     
-    Page<Reply> findReplyByPostNo(BigInteger postNo, Pageable request);
+    Page<Reply> findReplyByPostNo(Long postNo, Pageable request);
     
     @Query(value="SELECT * FROM reply WHERE post_no =:postNo", nativeQuery=true)
-    List<Reply> ReplyByPostNum(BigInteger postNo);
+    List<Reply> ReplyByPostNum(Long postNo);
     
     
     @Query(value = "SELECT * FROM reply WHERE writer LIKE %:writer% AND secret=false",
@@ -26,6 +26,6 @@ public interface ReplyDao extends JpaRepository<Reply, BigInteger> {
     
     //Reply findReplyById(BigInteger id);
     
-    Optional<Reply> findReplyById(BigInteger id);
+    Optional<Reply> findReplyById(Long id);
     
 }

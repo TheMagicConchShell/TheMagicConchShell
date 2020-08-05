@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,15 +18,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class PointHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    BigInteger id;
+    Long id;
 
     @Column
-    BigInteger uid;
+    Long uid;
 
     @Column 
     LocalDateTime stamp;
@@ -37,7 +36,7 @@ public class PointHistory {
     @Column 
     String reason;
     
-    public PointHistory(BigInteger uid, LocalDateTime timestamp, int change, String reason) {
+    public PointHistory(Long uid, LocalDateTime timestamp, int change, String reason) {
         super();
         this.uid = uid;
         this.stamp = timestamp;

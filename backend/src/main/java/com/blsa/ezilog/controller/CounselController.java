@@ -308,7 +308,7 @@ public class CounselController {
 
     @ApiOperation(value = "고민 번호에 해당되는 고민 반환", response = List.class)
     @GetMapping("/post/post-no")
-    public Object seasrchPostByNo(@RequestParam BigInteger no,
+    public Object seasrchPostByNo(@RequestParam Long no,
             @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
@@ -558,7 +558,7 @@ public class CounselController {
             postDao.save(ctemp);
 
             // 글 작성 포인트 추가.
-            PointHistory p = new PointHistory(BigInteger.valueOf(utemp.getUid()), currentTime, 100, "고민글 작성");
+            PointHistory p = new PointHistory(utemp.getUid(), currentTime, 100, "고민글 작성");
             
             if (pointservice.addPoint(p)) {
                 utemp.setPoint(utemp.getPoint()+100);
@@ -584,7 +584,7 @@ public class CounselController {
 
     @ApiOperation(value = "고민글 삭제", response = List.class)
     @DeleteMapping("/post")
-    public Object deletePost(@RequestParam BigInteger no,
+    public Object deletePost(@RequestParam Long no,
             @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
@@ -716,8 +716,8 @@ public class CounselController {
         Map<String, Object> errorMap = new HashMap<>();
 
         Optional<User> optUser = userDao.findByNickname(nickname);
-        Optional<Reply> optReply = replyDao.findReplyById(BigInteger.valueOf(reply_id));
-        Optional<Post> optPost = postDao.findById(BigInteger.valueOf(post_no));
+        Optional<Reply> optReply = replyDao.findReplyById(Long.valueOf(reply_id));
+        Optional<Post> optPost = postDao.findById(post_no);
 
         if (optUser.isPresent()) {
             if (!optPost.isPresent()) {
@@ -750,7 +750,7 @@ public class CounselController {
 
                     User putemp = userservice.select(ptemp.getWriter());
 
-                    PointHistory p = new PointHistory(BigInteger.valueOf(putemp.getUid()), currentTime, 200, "답글 선정");
+                    PointHistory p = new PointHistory(putemp.getUid(), currentTime, 200, "답글 선정");
                     if (pointservice.addPoint(p)) {
                         putemp.setPoint(putemp.getPoint()+200);
                         userDao.save(putemp);
@@ -795,7 +795,7 @@ public class CounselController {
 
     @ApiOperation(value = "고민 글에 해당하는 답변 전체 목록 반환", notes = "Input : page, postNo Output: 성공 : [status = true, data = 고민 리스트(Post)] 실패 : status = false, data = 에러메세지", response = List.class)
     @GetMapping("/reply")
-    public Object retrieveReplyByPostNo(@RequestParam BigInteger postNo, @RequestParam int page,
+    public Object retrieveReplyByPostNo(@RequestParam Long postNo, @RequestParam int page,
             @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
@@ -942,7 +942,7 @@ public class CounselController {
                 Reply ptemp = new Reply(nickname, reply.getPostNo(), reply.getContent(), currentTime, reply.isSecret());
                 replyDao.save(ptemp);
 
-                PointHistory p = new PointHistory(BigInteger.valueOf(utemp.getUid()), currentTime, 100, "댓글 작성");
+                PointHistory p = new PointHistory(utemp.getUid(), currentTime, 100, "댓글 작성");
                 if (pointservice.addPoint(p)) {
                     utemp.setPoint(utemp.getPoint()+100);
                     userDao.save(utemp);
@@ -983,7 +983,7 @@ public class CounselController {
 
     @ApiOperation(value = "고민 답변 글 삭제", response = List.class)
     @DeleteMapping("/reply")
-    public Object deleteReply(@RequestParam BigInteger id,
+    public Object deleteReply(@RequestParam Long id,
             @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
@@ -1358,7 +1358,7 @@ public class CounselController {
 
     @ApiOperation(value = "어떤 글의 고민 좋아요, 싫어요, 더 좋아요 총 갯수 가져오기")
     @GetMapping("/post/like")
-    public Object retrieveLikeCountPost(@RequestParam BigInteger postNo,
+    public Object retrieveLikeCountPost(@RequestParam Long postNo,
             @RequestHeader(value = "nickname", required = false) String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -1423,7 +1423,7 @@ public class CounselController {
                     if (!tOpt.isPresent()) {
 
                         LocalDateTime currentTime = LocalDateTime.now();
-                        LikeCount lc = new LikeCount(lcrequest.getPostNo(), BigInteger.valueOf(user.getUid()),
+                        LikeCount lc = new LikeCount(lcrequest.getPostNo(), user.getUid(),
                                 currentTime, lcrequest.getType());
 
                         likecountDao.save(lc);
@@ -1467,7 +1467,7 @@ public class CounselController {
                     if (!tOpt.isPresent()) {
 
                         LocalDateTime currentTime = LocalDateTime.now();
-                        LikeCount lc = new LikeCount(lcrequest.getPostNo(), BigInteger.valueOf(user.getUid()),
+                        LikeCount lc = new LikeCount(lcrequest.getPostNo(), user.getUid(),
                                 currentTime, lcrequest.getType());
                         likecountDao.save(lc);
 
@@ -1510,11 +1510,11 @@ public class CounselController {
                     // 또 좋아요가 있는지 체크
                     if (!tOpt.isPresent()) {
                         LocalDateTime currentTime = LocalDateTime.now();
-                        LikeCount lc = new LikeCount(lcrequest.getPostNo(), BigInteger.valueOf(user.getUid()),
+                        LikeCount lc = new LikeCount(lcrequest.getPostNo(), user.getUid(),
                                 currentTime, lcrequest.getType());
                         likecountDao.save(lc);
 
-                        PointHistory p = new PointHistory(BigInteger.valueOf(user.getUid()), currentTime, -100,
+                        PointHistory p = new PointHistory(user.getUid(), currentTime, -100,
                                 "추가 추천");
                         if (pointservice.addPoint(p)) {
                             Post ptemp = optPost.get();
@@ -1684,7 +1684,7 @@ public class CounselController {
 
     @ApiOperation(value = "어떤  답변 글의 고민 좋아요, 싫어요, 더 좋아요 총 갯수 가져오기")
     @GetMapping("/reply/like")
-    public Object retrieveLikeCountReply(@RequestParam BigInteger replyId,
+    public Object retrieveLikeCountReply(@RequestParam Long replyId,
             @RequestHeader(value = "nickname", required = false) String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
@@ -1746,7 +1746,7 @@ public class CounselController {
                 if (!tOpt.isPresent()) {
 
                     LocalDateTime currentTime = LocalDateTime.now();
-                    ReplyLikeCount rlc = new ReplyLikeCount(rlcrequest.getReplyId(), BigInteger.valueOf(user.getUid()),
+                    ReplyLikeCount rlc = new ReplyLikeCount(rlcrequest.getReplyId(), user.getUid(),
                             currentTime, rlcrequest.getType());
                     replylikecountDao.save(rlc);
 
@@ -1772,7 +1772,7 @@ public class CounselController {
                 if (!tOpt.isPresent()) {
 
                     LocalDateTime currentTime = LocalDateTime.now();
-                    ReplyLikeCount rlc = new ReplyLikeCount(rlcrequest.getReplyId(), BigInteger.valueOf(user.getUid()),
+                    ReplyLikeCount rlc = new ReplyLikeCount(rlcrequest.getReplyId(), user.getUid(),
                             currentTime, rlcrequest.getType());
                     replylikecountDao.save(rlc);
 
@@ -1805,10 +1805,10 @@ public class CounselController {
                     if (!tOpt.isPresent()) {
                         LocalDateTime currentTime = LocalDateTime.now();
                         ReplyLikeCount rlc = new ReplyLikeCount(rlcrequest.getReplyId(),
-                                BigInteger.valueOf(user.getUid()), currentTime, rlcrequest.getType());
+                                user.getUid(), currentTime, rlcrequest.getType());
                         replylikecountDao.save(rlc);
 
-                        PointHistory p = new PointHistory(BigInteger.valueOf(user.getUid()), currentTime, -100,
+                        PointHistory p = new PointHistory(user.getUid(), currentTime, -100,
                                 "추가 추천");
                         if (pointservice.addPoint(p)) {
                             rtemp.setLikeCount(rtemp.getLikeCount() + 1);
