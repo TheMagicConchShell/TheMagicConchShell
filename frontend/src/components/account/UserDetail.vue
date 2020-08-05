@@ -261,9 +261,6 @@ export default {
             this.$axios({
                 method: 'put',
                 url: '/user/update',
-                headers: {
-                    nickname: this.nickname,
-                },
                 data: {
                     email: this.email,
                     nickname: this.nickname,
