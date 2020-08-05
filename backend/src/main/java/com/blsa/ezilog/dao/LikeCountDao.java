@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.blsa.ezilog.model.like.LikeCount;
 
-public interface LikeCountDao extends JpaRepository<LikeCount, BigInteger> {
+public interface LikeCountDao extends JpaRepository<LikeCount, Long> {
 
     // 현재 이글에 내가 좋아요, 싫어요를 눌렀는지 체크
     @Query(value = "SELECT * FROM like_count WHERE uid=:uid AND type=:type AND post_no=:postno", nativeQuery = true)

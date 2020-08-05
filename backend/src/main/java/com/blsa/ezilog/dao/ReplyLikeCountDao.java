@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.blsa.ezilog.model.like.ReplyLikeCount;
 
-public interface ReplyLikeCountDao extends JpaRepository<ReplyLikeCount, BigInteger> {
+public interface ReplyLikeCountDao extends JpaRepository<ReplyLikeCount, Long> {
     // 어떤 댓글에 좋아요, 싫어요 갯수가 몇개인지 타입에 따라 가져오기
     @Query(value = "SELECT count(*) FROM reply_like_count WHERE reply_id=:replyid AND type=:type", nativeQuery = true)
     Long countTotal(Long replyid, String type);
