@@ -48,26 +48,33 @@
                 </li>
             </ul>
         </v-wait>
+        <template v-if="list && list.length">
+            <CounselSelectPaginate
+                :current="page"
+                :last="pageCount"
+                :page-handler="pageHandle"
+            />
+        </template>
     </div>
 </template>
 
 <script>
+import CounselSelectPaginate from "@/components/CounselSelectPaginate";
 export default {
-    props: {
-        page: {
-            type: Number,
-            required: true,
-        },
+    components: {
+        CounselSelectPaginate,
     },
     data: () => ({
         list: [],
+        page: 0,
+        pageCount: 1,
     }),
     watch: {
         '$route'() {
             this.page = this.$route.query.page;
         },
         page() {
-            this.fetchNotices(this.page);
+            this.fetchPost(this.page);
         },
     },
     async created() {
@@ -99,7 +106,7 @@ export default {
 
                             return [month, day].join('-');
                         };
-
+                        this.pageCount = response.data.data.totalPages;
                         this.list = response.data.data.content.map((e) => {
                             let n = e;
                             n.writeDate = formatDate(e.writeDate);
@@ -112,6 +119,14 @@ export default {
                 });
             
             this.$wait.end("board list load");
+        },
+        pageHandle(nextPage) {
+            this.$router.push({
+                name: 'List',
+                query: {
+                    page: nextPage,
+                },
+            }).catch(() => {});
         },
     },
 };

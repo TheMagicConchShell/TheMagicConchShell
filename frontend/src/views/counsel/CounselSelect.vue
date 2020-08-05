@@ -210,6 +210,7 @@
             <CounselSelectPaginate
                 :current="page"
                 :last="pageCount"
+                :page-handler="pageHandle"
             />
         </template>
 
@@ -366,7 +367,15 @@ export default {
             }).catch((error) => {
                 console.log(error.response);
             });
-        }
+        },
+        pageHandle(nextPage) {
+            this.$router.push({
+                name: 'CounselSelect',
+                query: {
+                    page: nextPage,
+                },
+            }).catch(() => {});
+        },
     },
 };
 
