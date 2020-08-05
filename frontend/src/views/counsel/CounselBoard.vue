@@ -66,9 +66,9 @@ export default {
         '$route'() {
             this.page = this.$route.query.page;
         },
-        // page() {
-        //     this.fetchNotices(this.page);
-        // },
+        page() {
+            this.fetchNotices(this.page);
+        },
     },
     async created() {
         await this.fetchPost(this.page);
@@ -79,9 +79,6 @@ export default {
             this.$axios({
                 url: '/counsel/post',
                 method: 'get',
-                headers: {
-                    nickname: sessionStorage.getItem('nickname') || '',
-                },
                 params: {
                     page: page || 1,
                 }

@@ -1,26 +1,40 @@
 <template>
     <div>
-        <div id="home">
-            <span v-if="language==='ko'">고민게시판</span>
-            <span v-else>Counsel</span>
-        </div>
+        고민게시판
         <div class="d-flex">
+            <div id="category">
+                고민 카테고리
+                <ul>
+                    <li>연애</li>
+                    <li>일상</li>
+                    <li>직장</li>
+                    <li>결혼</li>
+                    <li>문화</li>
+                    <li>주식</li>
+                    <li>치정</li>
+                </ul>
+                <div class="border h-25">
+                    광고 배너
+                </div>
+            </div>
             <div id="article">
                 <ul id="tab">
-                    <li>전체</li>
-                    <li
-                        v-for="cg in categories"
-                        :key="cg.no"
-                    >
-                        {{ cg.name }}
+                    <li style="background-color:#6B799E">
+                        실시간 인기
                     </li>
+                    <li>연애</li>
+                    <li>일상</li>
+                    <li>직장</li>
+                    <li>결혼</li>
+                    <li>문화</li>
+                    <li>주식</li>
+                    <li>치정</li>
                 </ul>
-                <div style="height:700px;">
+                <div>
                     <counsel-board
                         :page="page"
                     />
                 </div>
-                <div />
                 <button
                     class="button-write"
                     @click="write"
@@ -28,31 +42,14 @@
                     작성
                 </button>
             </div>
-            <transition name="right-side">
-                <div
-                    v-show="Y"
-                    id="category"
-                >
-                    고민 카테고리
-                    <ul>
-                        <li>
-                            전체
-                        </li>
-                        <li
-                            v-for="cg in categories"
-                            :key="cg.no"
-                        >
-                            {{ cg.name }}
-                        </li>
-                    </ul>
-                </div>
-            </transition>
+            <div class="border m-3 w-25">
+                광고 배너
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-import {mapState} from 'vuex';
 import CounselBoard from '@/views/counsel/CounselBoard.vue';
 
 export default {
@@ -61,86 +58,40 @@ export default {
         CounselBoard,
     },
     data: () => ({
-        page: 1,
+        page: 0,
         pageCount: 1,
-        categories: null,
-        Y: false,
-        nowcategory: null,
     }),
-    computed: {
-        ...mapState(['language'])
-    },
-    mounted() {
-        this.$nextTick(window.addEventListener('scroll', this.detectWindowScrollY));
-        // window.addEventListener('scroll', this.detectbottom);
-    },
-    created() {
-        this.fetchCategories();
-    },
     methods: {
         write() {
             this.$router.push({
                 name: 'counselregist'
             });
         },
-        detectWindowScrollY() {
-            this.Y = window.scrollY > 100;
-        },
-        // async detectbottom() {
-        //     if (window.scrollTop === document.height) {
-        //         this.page += 1;
-        //     };
-        // },
-        async fetchCategories() {
-            const response = await this.$axios({
-                url: `counsel/category`,
-                method: "get",
-            }).catch(() => {
-                console.log("catch notices");
-            });
-            if (response) {
-                if (response.status >= 200 && response.status < 300) {
-                    this.categories = response.data.data.content;
-                }
-            }
-        },
-    }
+    },
 };
 </script>
 
 <style scoped>
-#home {
-  display: flex;
-  margin: 30px 0;
-  justify-content: space-between;
-  font-size: 30px;
-}
 #category {
-    position: fixed;
-    right: 10px;
+    float: left;
     width: 10%;
+    max-height: 100vh;
     border: 1px solid;
-    background-color: #ffffff;
 }
 #tab {
     display:flex;
-    align-items: center;
     padding: 0;
     width: 100%;
-    height: 24px;
-    font-size: 16px;
-    background-color: #ffffff;
 }
 #tab li{
     clear: both;
     min-width: 12.5%;
+    padding: 0 20px;
     display: inline-block;
     border: 1px solid;
-    
 }
 #article {
     margin-left: 20px;
-    width: 85%;
 }
 
 .button-write {

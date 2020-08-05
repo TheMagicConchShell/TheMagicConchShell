@@ -13,22 +13,8 @@
                     <img
                         id="photo"
                         src="../assets/images/sora.png"
-                        style="height: 40px; width: auto;"
                     >
-                    <transition name="conversion">
-                        <span
-                            v-if="language==='ko'"
-                            key="1"
-                        >
-                            마법의 싸피고둥
-                        </span>
-                        <span
-                            v-else
-                            key="2"
-                        >
-                            Magic SSAFY conch
-                        </span>
-                    </transition>
+                    마법의 싸피고둥
                 </router-link>
             </b-navbar-brand>
 
@@ -39,67 +25,22 @@
                 is-nav
             >
                 <b-navbar-nav>
-                    <b-nav-item>
-                        <router-link
-                            :to="{name: 'Support'}"
-                            class="text-light text-decoration-none"
-                        >
-                            <transition name="conversion">
-                                <span
-                                    v-if="language==='ko'"
-                                    key="1"
-                                >
-                                    공지사항
-                                </span>
-                                <span
-                                    v-else
-                                    key="2"
-                                >
-                                    Notice
-                                </span>
-                            </transition>
-                        </router-link>
+                    <b-nav-item
+                        href="/support"
+                    >
+                        공지사항
                     </b-nav-item>
-                    <b-nav-item>
-                        <router-link
-                            :to="{name: ''}"
-                            class="text-light text-decoration-none"
-                        >
-                            <transition name="conversion">
-                                <span
-                                    v-if="language==='ko'"
-                                    key="1"
-                                >
-                                    문의
-                                </span>
-                                <span
-                                    v-else
-                                    key="2"
-                                >
-                                    Q&A
-                                </span>
-                            </transition>
-                        </router-link>
+                    <b-nav-item
+                        href="#"
+                    >
+                        Q&A
                     </b-nav-item>
                     <b-nav-item>
                         <router-link
                             :to="{name: 'List'}"
                             class="text-light text-decoration-none"
                         >
-                            <transition name="conversion">
-                                <span
-                                    v-if="language==='ko'"
-                                    key="1"
-                                >
-                                    고민게시판
-                                </span>
-                                <span
-                                    v-else
-                                    key="2"
-                                >
-                                    Counsel
-                                </span>
-                            </transition>
+                            고민게시판
                         </router-link>
                     </b-nav-item>
                     <b-nav-item>
@@ -107,20 +48,7 @@
                             :to="{name: 'Rank'}"
                             class="text-light text-decoration-none"
                         >
-                            <transition name="conversion">
-                                <span
-                                    v-if="language==='ko'"
-                                    key="1"
-                                >
-                                    랭킹
-                                </span>
-                                <span
-                                    v-else
-                                    key="2"
-                                >
-                                    Ranking
-                                </span>
-                            </transition>
+                            랭킹
                         </router-link>
                     </b-nav-item>
                 </b-navbar-nav>
@@ -150,10 +78,10 @@
                                 style="color: #6B799E;"
                             />
                         </template>
-                        <b-dropdown-item @click="setkor">
+                        <b-dropdown-item href="#">
                             EN
                         </b-dropdown-item>
-                        <b-dropdown-item @click="seteng">
+                        <b-dropdown-item href="#">
                             한국어
                         </b-dropdown-item>
                     </b-nav-item-dropdown>
@@ -166,7 +94,7 @@
                                 style="color: #6B799E;"
                             />
                         </template>
-                        <div v-if="isLogin">
+                        <div v-if="nickname">
                             <b-dropdown-item v-b-modal.userdetail>
                                 <UserDetail />
                             </b-dropdown-item>
@@ -198,12 +126,9 @@
 </template>
 
 <script>
-import {mapState, mapActions} from 'vuex';
 import Signup from '@/components/account/Signup.vue';
 import Login from '@/components/account/Login.vue';
 import UserDetail from '@/components/account/UserDetail.vue';
-
-const storage = window.sessionStorage;
 
 export default {
     name: 'Nav',
@@ -213,35 +138,21 @@ export default {
         UserDetail,
     },
     data: () => ({
-        isLogin: '',
+        language: '<i class="fas fa-language"></i>'
     }),
     computed: {
-        ...mapState(['language'])
-    },
-    created() {
-        this.init();
+        nickname: {
+            get() {
+                return this.$store.getters.nickname;
+            },
+        }
     },
     methods: {
-        ...mapActions(['setkor', 'seteng']),
-        init() {
-            if(storage.getItem('jwt-auth-token')){
-                this.isLogin = true;
-            } else {
-                this.isLogin = false;
-            }
-        },
         logout() {
-            storage.setItem('jwt-auth-token', '');
-            storage.setItem('nickname', '');
-            this.isLogin = false;
+            this.$store.dispatch('logout');
+
             this.$toast('안내', '로그아웃 되었습니다.');
         },
-        setkor() {
-            this.$store.commit('kor');
-        },
-        seteng() {
-            this.$store.commit('eng');            
-        }
     },
 };
 </script>
@@ -252,14 +163,14 @@ export default {
     position: fixed;
     top: 0;
     width: 100%;
-    height: 40px;
+    height: 100px;
     margin: 0;
     padding: 0;
     font-size: 130%;
 }
 #spot_area {
     position: fixed;
-    top: 40px;
+    top: 100px;
     width: 100%;
     z-index: 1;
 }

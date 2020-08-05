@@ -21,7 +21,10 @@
             </div>
 
             <div class="content">
-                {{ content }}
+                <viewer
+                    v-if="content"
+                    :initial-value="content"
+                />
             </div>
         </div>
         
@@ -50,7 +53,7 @@ export default {
         writer: "",
         writeDate: "",
         title:  "",
-        content: "",
+        content: null,
     }),
     async created() {
         const response = await this.$axios({
@@ -60,9 +63,7 @@ export default {
                 id: this.no
             }
         }).catch(() => {
-            this.writeDate = "2020.07.24";
-            this.title = "더미 제목";
-            this.content = "더미 콘텐츠";
+            this.$router.push('Error');
         });
 
         if (response) {
@@ -70,7 +71,6 @@ export default {
             if (response.status == 200) {
                 this.writer = response.data.data.writer;
                 this.writeDate = response.data.data.writeDate;
-                this.writeDate = "1234";
                 this.title = response.data.data.title;
                 this.content = response.data.data.content;
             }
