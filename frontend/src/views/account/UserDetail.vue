@@ -195,7 +195,7 @@
                         title="고민 투고 관리"
                         active
                     >
-                        <b-card-text>Tab contents 1</b-card-text>
+                        <MyPost />
                     </b-tab>
                     <b-tab title="답변 관리">
                         <b-card-text>Tab contents 2</b-card-text>
@@ -222,6 +222,7 @@
 
 <script>
 import PointHistory from '@/components/account/PointHistory.vue';
+import MyPost from '@/components/account/MyPost.vue';
 
 import {
     ValidationObserver,
@@ -268,7 +269,8 @@ export default {
     components: {
         ValidationProvider,
         ValidationObserver,
-        PointHistory
+        PointHistory,
+        MyPost
     },
     data: () => ({
         email: '',
