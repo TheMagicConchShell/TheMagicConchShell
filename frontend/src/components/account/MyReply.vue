@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-cloak>
         <template v-if="list && list.length">
             <b-list-group
                 id="my-post-list"
@@ -10,22 +10,22 @@
                     v-for="item in list"
                     :key="item.id"
                     router-link 
-                    :to="{path: `/counsel/read/${item.no}`}"
+                    :to="{path: `/counsel/read/${item.postNo}`}"
                     class="flex-column align-items-start"
-                    style="max-height: 200px;"
+                    style="max-height: 210px;"
                 >
                     <div class="d-flex w-100 justify-content-between">
                         <div>
-                            <span id="title">
-                                {{ item.title }}
+                            <span 
+                                id="title"
+                                :class="(item.selected)? 'selected' : ''"
+                            >
+                                {{ getSelected(item.selected) }}
+                                <i v-if="item.selected" class="far fa-check-circle"/>
                             </span>
-                            <span id="divider">|</span>
-                            <span>{{ getCategory(item.categoryId) }}</span>
                         </div>
                         <div>
-                            <span>{{ getFormatDate(item.writeDate) }} </span> 
-                            <span id="divider">|</span>
-                            <span>{{ item.views }}</span>
+                            <span>{{ getFormatDate(item.writeDate) }} </span>
                             <span id="divider">|</span>
                             <span style="margin-right: 0.5rem">
                                 <i class="far fa-thumbs-up up" />
@@ -46,6 +46,10 @@
                             v-if="getImg(item.content)"
                             :src="getImg(item.content)"
                         >
+                    </div>
+                    <hr>
+                    <div id="originPost">
+                        원글: {{ item.postTitle }}
                     </div>
                 </b-list-group-item>
             </b-list-group>
@@ -91,17 +95,17 @@ export default {
     },
     watch: {
         page() {
-            this.fetchMyPosts(this.page);
+            this.fetchMyReplies(this.page);
         },
     },
     created() {
-        this.fetchMyPosts(this.page);
+        this.fetchMyReplies(this.page);
     },
     methods: {
-        async fetchMyPosts(page) {
+        async fetchMyReplies(page) {
             const response = await this.$axios({
                 method: 'get',
-                url: `/counsel/post/all/writer`,
+                url: `/counsel/reply/all/writer`,
                 params: {
                     writer: this.nickname,
                     page: page || 1,
@@ -114,8 +118,9 @@ export default {
                 console.log(error.response);
             });
         },
-        getCategory(categoryId){
-            return this.$store.getters.categoryNameById(categoryId);
+        getSelected(selected){
+            if(selected) return '채택';
+            else return '미채택';
         },
         getFormatDate(date) {
             return moment(new Date(date)).format("YYYY.MM.DD HH:mm:ss");
@@ -144,9 +149,17 @@ export default {
 #title {
     font-size: x-large;
 }
+#originPost {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal; 
+    text-align: left;
+    color: darkgray;
+    margin-left: 1rem;
+}
 .content {
     width: 100%;
-    height: 100px;
+    height: 60px;
     margin: 1rem;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -154,13 +167,16 @@ export default {
     text-align: left;
 }
 img {
-    max-width: 120px;
-    max-height: 120px;
+    max-width: 100px;
+    max-height: 100px;
 }
 .up {
     color: teal;
 }
 .down {
     color: tomato;
+}
+.selected {
+    color: dodgerblue;
 }
 </style>
