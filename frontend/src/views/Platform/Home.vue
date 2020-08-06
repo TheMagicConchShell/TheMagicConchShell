@@ -6,7 +6,9 @@
                     <span
                         v-if="language==='ko'"
                         key="1"
-                    >금주의 싸피고둥이들</span>
+                    >
+                        <p>금주의 싸피고둥이들</p>
+                    </span>
                     <span
                         v-else
                         key="2"
@@ -16,7 +18,7 @@
         </div>
         <!-- 금주 -->
         <div
-            id="bloglist"
+            id="thisweek"
         >
             <swiper
                 ref="mySwiper"
@@ -27,14 +29,20 @@
                 <swiper-slide
                     v-for="post in list"
                     :key="post.no"
+                    style="overflow: auto"
                 >
-                    <h3>{{ post.title }}</h3>
-                    <p class="d-flex">
-                        written by {{ post.writer }}
-                    </p>
-                    <viewer
-                        :initial-value="post.content"
-                    />
+                    <router-link
+                        :to="{name: 'CounselDetail', params: {no: post.no}}"
+                        style="text-decoration: none;"
+                    >
+                        <h3>{{ post.title }}</h3>
+                        <p class="d-flex">
+                            written by {{ post.writer }}
+                        </p>
+                        <viewer
+                            :initial-value="post.content"
+                        />
+                    </router-link>
                 </swiper-slide>
                 <div
                     slot="pagination"
@@ -100,7 +108,7 @@
                 </div>
             </div>   -->
 
-        <!-- <div id="home">
+        <div id="home">
             <div class="d-flex flex-column-reverse">
                 <transition name="conversion">
                     <span
@@ -113,26 +121,61 @@
                     >Spilled beans</span>
                 </transition>
             </div>
-        </div> -->
+        </div>
 
         <!-- 지난주 -->
-        <!-- <div
-            id="bloglist"
-            class="cursor"
+        <div
+            v-for="history in histories"
+            id="history"
+            :key="history.no"
+            class="cursor"       
         >
             <b-card
-                img-src="https://placekitten.com/300/300"
-                img-alt="Card image"
-                img-left
+                id="detail"
+                class="mb-3"
+            >
+                <router-link
+                    :to="{name: 'CounselDetail', params: {no: history.no}}"
+                    style="text-decoration: none;"
+                >
+                    <b-card-text>
+                        <div id="answerheader">
+                            <h3>{{ history.title }}</h3>
+                            <viewer
+                                :initial-value="history.content"
+                            />
+                        </div>
+                    </b-card-text>
+                </router-link>
+            </b-card>
+            <b-card
                 class="mb-3"
             >
                 <b-card-text>
                     <div id="answerheader">
-                        답변들
+                        빈카드
                     </div>
                 </b-card-text>
             </b-card>
-        </div> -->
+            <b-card
+                class="mb-3"
+            >
+                <b-card-text>
+                    <div id="answerheader">
+                        빈카드
+                    </div>
+                </b-card-text>
+            </b-card>
+            <b-card
+                class="mb-3"
+            >
+                <b-card-text>
+                    <div id="answerheader">
+                        빈카드
+                    </div>
+                </b-card-text>
+            </b-card>
+        </div>
     </div>
 </template>
 
@@ -150,12 +193,13 @@ export default {
     },
     data() {
         return {
-            nomouse: true,
             nowshowing: null,            
-            pageCount: 1,
-            page: 0,
+            lastNo: 1,
+            size: 5,
             list: [],
+            histories: [],
             busy: false,
+            p_img: '',
             /* swiper */
             swiperOption: {
                 effect: 'coverflow',
@@ -192,17 +236,9 @@ export default {
             return this.$refs.mySwiper.swiper;
         }
     },
-    watch: {
-        '$route'() {
-            this.page = this.$route.query.page;
-        },
-        page() {
-            this.fetchPosts(this.page);
-        },
-    },
     created() {
-        this.page = Number.parseInt(this.$route.query.page);
-        this.fetchPosts();
+        this.fetchPosts(this.size);
+        this.fetchHistory(this.size);
     },
     methods: {
         loadMore() {
@@ -214,22 +250,35 @@ export default {
                 this.busy = false;
             }, 1000);
         },
-        mouseover() {
-            this.nomouse = false;
-        },
-        mouseout() {
-            this.nomouse = true;
-        },
-        async fetchPosts(page) {
-            const response = await this.$axios.get(api + '/counsel/post', { params: { page: page || 1 }, headers: { nickname: '' }})
+        async fetchPosts(size) {
+            const response = await this.$axios.get(api + '/selection/post', { params: { size: size }})
                 .catch(() => console.log('catch notices'));
             if (response) {
                 if (response.status >= 200 && response.status < 300) {
-                    this.pageCount = response.data.data.totalPages;
-                    this.list = response.data.data.content;
+                    this.list = response.data.data;
+                    this.lastNo = this.list[this.list.length-1].no;
                 }
             }
             this.nowshowing = this.list[0];
+        },
+        async fetchHistory(size) {
+            const response = await this.$axios.get(api + '/selection/history', {params: {size: size}})
+                .catch(() => console.log('catch notices'));
+            if (response) {
+                if (response.status >= 200 && response.status < 300) {
+                    this.histories = response.data.data;
+                    this.lastNo = this.histories[this.histories.length-1].no;
+                }
+            }
+        },
+        async fetchProfileimage(nickname) {
+            const response = await this.$axios.get(api + '/user/detail', {params: nickname})
+                .catch(() => console.log('catch notices'));
+            if (response) {
+                if (response.status >= 200 && response.status < 300) {
+                    this.p_img = response.data.data.profile_image;
+                }
+            }
         },
         async pageswap(no) {
             const response = await this.$axios({
@@ -275,16 +324,8 @@ export default {
   justify-content: space-between;
   font-size: 30px;
 }
-#bigbutton {
-  color: white;
-  padding: 10px;
-  background: linear-gradient( 0, #9C8F96, #ccbbc4);
-  width: 20%;
-  border-radius: 10px;
-  text-decoration: none;
-}
 
-#bloglist {
+#thisweek {
     width: 100%;
     height: 80vh;
     padding-top: 50px;
@@ -337,17 +378,24 @@ export default {
     border-bottom: 1px solid #cacaca;
     border-radius: 0 0 5px 5px;
 }
-#answerheader {
-    height: 100px;
+#history {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px 20px;
+}
+#detail {
+    border: 1px solid #cacaca;
+    box-shadow: 10px 10px 10px #9e9e9e;
 }
 .swiper {
     height: 100%;
     width: 100%;
 }
 .swiper-slide {
+      padding:20px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: center;
       width: 300px;
       height: 100%;
@@ -355,6 +403,7 @@ export default {
       font-weight: bold;
       background-position: center;
       background-size: cover;
-      color: $white;
+      border: 1px solid #cacaca;
+      box-shadow: 10px 10px 10px #9e9e9e;
 }
 </style>

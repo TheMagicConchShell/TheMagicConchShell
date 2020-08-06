@@ -89,8 +89,20 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-}
+  z-index: 1;
 
+}
+#app::before {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: url('assets/images/pattern.png');
+  opacity: 0.08;
+  background-size:contain;
+  z-index: -1;
+}
 #nav {
   padding: 30px;
 }

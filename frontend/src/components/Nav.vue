@@ -249,6 +249,7 @@ export default {
 <style scoped>
 .navbar {
     background-color:  #A6C2CE;
+    opacity: 0.8;
     position: fixed;
     top: 0;
     width: 100%;
