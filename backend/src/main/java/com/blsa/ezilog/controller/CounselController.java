@@ -2057,5 +2057,47 @@ public class CounselController {
         return response;
     }
 
+    @ApiOperation(value = "작성자가 작성한 전체 답변 목록 반환(익명 포함)", response = List.class)
+    @GetMapping("/reply/all/writer")
+    public Object retrieveAllReplyByWriter(@RequestParam String writer, @RequestParam int page) {
 
+        ResponseEntity response = null;
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
+
+        if (page <= 0) {
+            eresult.status = "E-4400";
+            eresult.message = "잘못 된 페이지 요청 입니다.";
+            eresult.data = null;
+            errorMap.put("field", "errorPageRequest");
+            errorMap.put("data", page);
+            eresult.errors = errorMap;
+
+            response = new ResponseEntity<>(eresult, HttpStatus.BAD_REQUEST);
+
+        } else {
+            PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "id");
+            Page<Reply> rList = replyDao.findAllReplyByWriter(writer, pageable);
+            if (!rList.isEmpty()) {
+
+                result.status = "S-200";
+                result.message = "작성자가 작성한 모든 답변 불러오기에 성공했습니다.";
+                result.data = rList;
+                response = new ResponseEntity<>(result, HttpStatus.OK);
+            } else {
+                eresult.status = "E-4413";
+                eresult.message = "불러 올 답변이  없습니다.";
+                eresult.data = null;
+                errorMap.put("field", "noReply");
+                errorMap.put("data", pageable);
+                eresult.errors = errorMap;
+
+                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+            }
+
+        }
+        return response;
+
+    }
 }
