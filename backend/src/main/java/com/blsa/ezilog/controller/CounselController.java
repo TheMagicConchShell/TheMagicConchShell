@@ -142,7 +142,7 @@ public class CounselController {
 
     @ApiOperation(value = "카테고리에 해당 되는 작성자가 쓴 고민 반환", notes = "작성자 이름을 통해서 고민 검색", response = List.class)
     @GetMapping("/post/category")
-    public Object searchNoticeByCategory(@RequestParam String category, @RequestParam int page,
+    public Object searcPostByCategory(@RequestParam String category, @RequestParam int page,
             @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
@@ -214,7 +214,7 @@ public class CounselController {
 
     @ApiOperation(value = "검색어에 해당 되는 작성자가 쓴 고민 반환", notes = "작성자 이름을 통해서 고민 검색", response = List.class)
     @GetMapping("/post/writer")
-    public Object searchNoticeByWriter(@RequestParam String writer, @RequestParam int page,
+    public Object searchPostByWriter(@RequestParam String writer, @RequestParam int page,
             @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
