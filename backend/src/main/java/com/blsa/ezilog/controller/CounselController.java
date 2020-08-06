@@ -1,6 +1,5 @@
 package com.blsa.ezilog.controller;
 
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -2080,7 +2079,9 @@ public class CounselController {
             PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "id");
             Page<Reply> rList = replyDao.findAllReplyByWriter(writer, pageable);
             if (!rList.isEmpty()) {
-
+                rList.forEach((e) -> {
+                    e.setPostTitle(postDao.findById(e.getPostNo()).get().getTitle());
+                });
                 result.status = "S-200";
                 result.message = "작성자가 작성한 모든 답변 불러오기에 성공했습니다.";
                 result.data = rList;
