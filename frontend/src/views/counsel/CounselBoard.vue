@@ -33,7 +33,7 @@
                         <router-link
                             :to="{name: 'CounselDetail', params: {no: item.no}}"
                         >
-                            {{ item.title }}
+                            [{{ item.category }}] {{ item.title }}
                         </router-link>
                     </div>
                     <div class="fz_hit">
@@ -76,6 +76,7 @@ export default {
     methods: {
         fetchPost(page) {
             this.$wait.start("board list load");
+            this.$store.dispatch('fetchCategories');
             this.$axios({
                 url: '/counsel/post',
                 method: 'get',
@@ -84,7 +85,6 @@ export default {
                 }
             })
                 .then((response) => {
-                    console.log(response.data.data);
                     if (200 <= response.status && response.status < 300) {
                         let formatDate = function (date) {
                             let d = new Date(date),
@@ -101,17 +101,17 @@ export default {
                         };
 
                         this.list = response.data.data.content.map((e) => {
-                            let n = e;
-                            n.writeDate = formatDate(e.writeDate);
-                            return n;
+                            e.writeDate = formatDate(e.writeDate);
+                            e.category = this.$store.getters.categoryNameById(e.categoryId);
+                            return e;
                         });
                     }
+            
+                    this.$wait.end("board list load");
                 })
                 .catch((error) => {
                     console.log(error.response);
                 });
-            
-            this.$wait.end("board list load");
         },
     },
 };
