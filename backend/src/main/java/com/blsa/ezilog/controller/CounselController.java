@@ -320,11 +320,16 @@ public class CounselController {
 
         if (optPost.isPresent()) {
             Post post = optPost.get();
-
+            // 조회수 증가
+            post.setViews(post.getViews()+1);
+            postDao.save(post);
+            
+            // 본인글 인지 확인 여부
             if (post.getWriter().equals(nickname)) {
                 post.setMine(true);
             }
 
+            // 글이 익명의 작성자인지 확인
             if (post.isSecret() == true) {
                 post.setWriter("익명의 작성자");
             }
