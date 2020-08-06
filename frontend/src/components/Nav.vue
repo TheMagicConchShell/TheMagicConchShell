@@ -95,8 +95,10 @@
                             />
                         </template>
                         <div v-if="nickname">
-                            <b-dropdown-item v-b-modal.userdetail>
-                                <UserDetail />
+                            <b-dropdown-item 
+                                @click.prevent="moveToUserDetail"
+                            >
+                                Profile
                             </b-dropdown-item>
                             <b-dropdown-item @click.prevent="logout">
                                 Log out
@@ -128,14 +130,12 @@
 <script>
 import Signup from '@/components/account/Signup.vue';
 import Login from '@/components/account/Login.vue';
-import UserDetail from '@/components/account/UserDetail.vue';
 
 export default {
     name: 'Nav',
     components: {
         Signup,
         Login,
-        UserDetail,
     },
     data: () => ({
         language: '<i class="fas fa-language"></i>'
@@ -152,6 +152,11 @@ export default {
             this.$store.dispatch('logout');
 
             this.$toast('안내', '로그아웃 되었습니다.');
+        },
+        moveToUserDetail() {
+            this.$router.push({
+                'name': 'userdetail'
+            });
         },
     },
 };

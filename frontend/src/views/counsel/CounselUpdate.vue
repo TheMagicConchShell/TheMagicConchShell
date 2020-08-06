@@ -20,62 +20,22 @@
             <div>
                 <h2>
                     카테고리:
-                    <input 
-                        id="radio1"
-                        v-model="category"
-                        type="radio" 
-                        name="category" 
-                        value="1"  
-                    >
-                    <label for="radio1">연애</label>
-                    <input 
-                        id="radio2"
-                        v-model="category"
-                        type="radio" 
-                        name="category" 
-                        value="2"  
-                    >                    
-                    <label for="radio2">일상</label>
-                    <input 
-                        id="radio3"
-                        v-model="category"
-                        type="radio" 
-                        name="category" 
-                        value="3"
-                    >                    
-                    <label for="radio3">직장</label>
-                    <input 
-                        id="radio4"
-                        v-model="category"
-                        type="radio" 
-                        name="category" 
-                        value="4"  
-                    >                    
-                    <label for="radio4">결혼</label>
-                    <input 
-                        id="radio5"
-                        v-model="category"
-                        type="radio" 
-                        name="category" 
-                        value="5"  
-                    >                    
-                    <label for="radio5">문화</label>
-                    <input 
-                        id="radio6"
-                        v-model="category"
-                        type="radio" 
-                        name="category" 
-                        value="6"  
-                    >                    
-                    <label for="radio6">주식</label>
-                    <input 
-                        id="radio7"
-                        v-model="category"
-                        type="radio" 
-                        name="category" 
-                        value="7"  
-                    >                    
-                    <label for="radio7">치정</label>
+                    <template v-for="item in categories">
+                        <input
+                            :id="`radio${item.id}`"
+                            :key="`${item.id}-input`"
+                            v-model="category"
+                            type="radio" 
+                            name="category" 
+                            :value="item.id"
+                        >
+                        <label
+                            :key="`${item.id}-label`"
+                            :for="`radio${item.id}`"
+                        >
+                            {{ item.name }}
+                        </label>
+                    </template>
                 </h2>
             </div>
             <div>
@@ -165,8 +125,16 @@ export default {
             
         };
     },
+    computed: {
+        categories: {
+            get() {
+                return this.$store.getters.categories;
+            },
+        },
+    },
     mounted() {
         this.editorOpts = this.$store.getters.EDITOROPTIONS.options;
+        this.$store.dispatch('fetchCategories');
         this.$axios({
             method:"get",
             url:`/counsel/post/post-no?no=${this.no}`,
