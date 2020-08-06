@@ -12,6 +12,9 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -62,7 +66,7 @@ public class UserController {
         Map<String, Object> errors = new HashMap<>();
         String check = userService.duplicateCheck(request.getEmail(), request.getNickname());
         String authTableCheck = userService.authDuplicateCheck(request.getEmail(), request.getNickname());
-        
+
         if (check.equals("email") || authTableCheck.equals("email")) {
             errors.put("field", "email");
             errors.put("data", request.getEmail());
@@ -265,6 +269,55 @@ public class UserController {
         result.status = "S-200";
         result.message = "토큰이 재발급 되었습니다.";
         response = new ResponseEntity<>(result, HttpStatus.CREATED);
+        return response;
+    }
+
+    @GetMapping("/user/all")
+    @ApiOperation(value = "전체 유저 불러오기")
+    public Object getAllUser(@RequestParam int page,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
+        ResponseEntity<BasicResponse> response = null;
+        Map<String, Object> errors = new HashMap<>();
+
+
+        if (page <= 0) {
+            errors.put("field", "errorPageRequest");
+            errors.put("data", page);
+            final ErrorResponse result = setErrors("E-4008", "잘못된 페이지 요청입니다.", errors);
+            response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        } else {
+            PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "uid");
+            User user = userService.select(nickname);
+            if (user == null) {
+                errors.put("field", "nickname");
+                errors.put("data", nickname);
+                final ErrorResponse result = setErrors("E-4005", "해당 유저가 존재하지 않습니다", errors);
+                response = new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+            } else {
+                if (nickname.equals("admin")) {
+                    Page<User> uList = userService.allUser(pageable);
+                    if (!uList.isEmpty()) {
+                        final BasicResponse result = new BasicResponse();
+                        result.status = "S-200";
+                        result.message = "전체 유저 불러오기 성공";
+                        result.data = uList;
+                        response = new ResponseEntity<>(result, HttpStatus.OK);
+                    } else {
+                        errors.put("field", "noUser");
+                        errors.put("data", null);
+                        final ErrorResponse result = setErrors("E-4010", "유저 목록이 존재하지 않습니다", errors);
+                        response = new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+                    }
+                } else {
+                    errors.put("field", "noAuthority");
+                    errors.put("data", null);
+                    final ErrorResponse result = setErrors("E-4011", "유저 목록을 볼 수 있는 권한이 없습니다.", errors);
+                    response = new ResponseEntity<>(result, HttpStatus.FORBIDDEN);
+                }
+            }
+
+        }
+
         return response;
     }
 

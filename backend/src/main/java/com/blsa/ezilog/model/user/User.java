@@ -40,9 +40,15 @@ public class User {
     private LocalDateTime authDate;
 
     @Column
-    private Integer point;
+    private int point;
+    
+//    @Column
+//    private Integer point;
 
     @Column
-    private Integer level;
+    private int level;
+    
+//    @Column
+//    private Integer level;
 
 }
