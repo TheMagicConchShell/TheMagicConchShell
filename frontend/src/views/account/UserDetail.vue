@@ -59,7 +59,7 @@
                     <b-input
                         id="nickname"
                         ref="nickname"
-                        v-model="nickname"
+                        v-model="nicknameInput"
                         type="text"
                         placeholder="별명"
                     />
@@ -271,6 +271,7 @@ export default {
         PointHistory
     },
     data: () => ({
+        nicknameInput: '',
         email: '',
         password: '',
         passwordConfirm: '',
@@ -289,19 +290,21 @@ export default {
         },
     },
     created() {
-        this.$axios({
-            method: 'get',
-            url: `/user/detail?nickname=${this.nickname}`,
-        }).then((res) => {
-            if (res.data.status === 'S-200') {
-                this.email = res.data.data.email;
-                this.profileImg = res.data.data.profileImg;
-                this.point = res.data.data.point;
-                this.level = res.data.data.level;
-            }
-        }).catch((error) => {
-            console.log(error.response);
-        });
+        this.nicknameInput = this.nickname;
+        this.$store.dispatch('fetchUser', {
+            nickname: this.nicknameInput
+        })
+            .then((res) => {
+                if (res.data.status === 'S-200') {
+                    this.email = res.data.data.email;
+                    this.profileImg = res.data.data.profileImg;
+                    this.point = res.data.data.point;
+                    this.level = res.data.data.level;
+                }
+            })
+            .catch((error) => {
+                console.log(error.response);
+            });
     },
     methods: {
         async userUpdate() {
@@ -312,39 +315,35 @@ export default {
                 this.$toast('안내', this.msg);
                 return;
             }
-
-            this.$axios({
-                method: 'put',
-                url: '/user/update',
-                data: {
-                    email: this.email,
-                    nickname: this.nickname,
-                    password: this.password,
-                    profileImg: this.profileImg,
-                },
-            }).then((res) => {
-                if (res.data.status === 'S-200') {
-                    console.log(res);
-                    storage.setItem('jwt-auth-token', res.headers['jwt-auth-token']);
-                    storage.setItem('nickname', res.headers['nickname']);
-                    this.msg = '수정 완료되었습니다.';
-                    this.$toast('안내', this.msg);
-                }
-            }).catch((error) => {
-                console.log(error.response);
-            });
+            
+            this.$store.dispatch('updateUser', { 
+                email: this.email,
+                nickname: this.nicknameInput,
+                password: this.password,
+                profileImg: 'wt',
+            })
+                .then((res) => {
+                    if (res.data.status === 'S-200') {
+                        console.log(res);
+                        
+                        this.msg = '수정 완료되었습니다.';
+                        this.$toast('안내', this.msg);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                });
         },
         userDelete() {
-            this.$axios({
-                method: 'delete',
-                url: `/user/delete?nickname=${this.nickname}`,
-            }).then((res) => {
-                storage.setItem('jwt-auth-token', '');
-                storage.setItem('nickname', '');
-                this.$bvModal.show('user-delete-check');
-            }).catch((error) => {
-                console.log(error.response);
-            });
+            this.$store.dispatch('deleteUser', { 
+                nickname: this.nickname,
+            })
+                .then((res) => {
+                    this.$bvModal.show('user-delete-check');
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                });
         },
         onClickImageUpload() {
             this.$refs.imageInput.click();
