@@ -22,11 +22,21 @@ export default new Vuex.Store({
         ],
     })],
     state: {
-        editorOptions : editorOptions
+        editorOptions : editorOptions,
+        language: 'ko'
     },
     getters:{
         EDITOROPTIONS : (state) => {
             return state.editorOptions;
+        },
+        currentlanguage: state => state.language
+    },
+    mutations: {
+        kor(state) {
+            state.language='en';
+        },
+        eng(state) {
+            state.language='ko';
         }
     },
 });

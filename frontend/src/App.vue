@@ -1,13 +1,14 @@
 <template>
     <div id="app">
-        <Nav v-show="nowPlatform" />
+        <Nav
+            v-show="nowPlatform"
+            @language="languageset"
+        />
         <div id="content">
             <router-view />
-            <div
-                v-show="windowTop"
-                id="go-up"
-            >
+            <transition name="bottom-side">
                 <button
+                    v-show="windowTop"
                     id="go-up"
                 >
                     <i
@@ -15,7 +16,7 @@
                         @click="top"
                     />
                 </button>
-            </div>
+            </transition>
         </div>
     </div>
 </template>
@@ -74,7 +75,9 @@ export default {
             // this.y -= step;
             window.scrollTo(0, y - step);
         },
-
+        languageset(language) {
+            this.language = language;
+        }
     },
 };
 </script>
@@ -86,8 +89,20 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-}
+  z-index: 1;
 
+}
+#app::before {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: url('assets/images/pattern.png');
+  opacity: 0.08;
+  background-size:contain;
+  z-index: -1;
+}
 #nav {
   padding: 30px;
 }

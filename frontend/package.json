@@ -34,8 +34,10 @@
         "jquery": "^3.5.1",
         "moment": "^2.27.0",
         "popper.js": "^1.16.1",
+        "swiper": "5.2.0",
         "vee-validate": "^3.3.7",
         "vue": "^2.6.11",
+        "vue-awesome-swiper": "^4.1.1",
         "vue-infinite-loading": "^2.4.5",
         "vue-infinite-scroll": "^2.0.2",
         "vue-router": "^3.2.0",
@@ -56,8 +58,11 @@
         "eslint-plugin-vue": "^6.2.2",
         "husky": "^4.2.5",
         "lint-staged": "^10.2.11",
+        "node-sass": "^4.14.1",
         "pre-commit": "^1.2.2",
-        "vue-template-compiler": "^2.6.11"
+        "sass-loader": "^9.0.3",
+        "vue-template-compiler": "^2.6.11",
+        "webpack": "4.44.1"
     },
     "_id": "ezi@1.0.0",
     "license": "MIT",

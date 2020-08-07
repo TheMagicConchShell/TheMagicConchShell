@@ -59,7 +59,7 @@
                     <b-input
                         id="nickname"
                         ref="nickname"
-                        v-model="nickname"
+                        v-model="nicknameInput"
                         type="text"
                         placeholder="별명"
                     />
@@ -192,15 +192,15 @@
                     fill
                 >
                     <b-tab
-                        title="고민 투고 관리"
+                        title="내 고민 글 목록"
                         active
                     >
-                        <b-card-text>Tab contents 1</b-card-text>
+                        <MyPost />
                     </b-tab>
-                    <b-tab title="답변 관리">
-                        <b-card-text>Tab contents 2</b-card-text>
+                    <b-tab title="내 답변 목록">
+                        <MyReply />
                     </b-tab>
-                    <b-tab title="포인트 사용 내역">
+                    <b-tab title="포인트 내역">
                         <PointHistory />
                     </b-tab>
                 </b-tabs>
@@ -222,6 +222,8 @@
 
 <script>
 import PointHistory from '@/components/account/PointHistory.vue';
+import MyPost from '@/components/account/MyPost.vue';
+import MyReply from '@/components/account/MyReply.vue';
 
 import {
     ValidationObserver,
@@ -268,9 +270,12 @@ export default {
     components: {
         ValidationProvider,
         ValidationObserver,
-        PointHistory
+        PointHistory,
+        MyPost,
+        MyReply
     },
     data: () => ({
+        nicknameInput: '',
         email: '',
         password: '',
         passwordConfirm: '',
@@ -289,19 +294,21 @@ export default {
         },
     },
     created() {
-        this.$axios({
-            method: 'get',
-            url: `/user/detail?nickname=${this.nickname}`,
-        }).then((res) => {
-            if (res.data.status === 'S-200') {
-                this.email = res.data.data.email;
-                this.profileImg = res.data.data.profileImg;
-                this.point = res.data.data.point;
-                this.level = res.data.data.level;
-            }
-        }).catch((error) => {
-            console.log(error.response);
-        });
+        this.nicknameInput = this.nickname;
+        this.$store.dispatch('fetchUser', {
+            nickname: this.nicknameInput
+        })
+            .then((res) => {
+                if (res.data.status === 'S-200') {
+                    this.email = res.data.data.email;
+                    this.profileImg = res.data.data.profileImg;
+                    this.point = res.data.data.point;
+                    this.level = res.data.data.level;
+                }
+            })
+            .catch((error) => {
+                console.log(error.response);
+            });
     },
     methods: {
         async userUpdate() {
@@ -312,39 +319,35 @@ export default {
                 this.$toast('안내', this.msg);
                 return;
             }
-
-            this.$axios({
-                method: 'put',
-                url: '/user/update',
-                data: {
-                    email: this.email,
-                    nickname: this.nickname,
-                    password: this.password,
-                    profileImg: this.profileImg,
-                },
-            }).then((res) => {
-                if (res.data.status === 'S-200') {
-                    console.log(res);
-                    storage.setItem('jwt-auth-token', res.headers['jwt-auth-token']);
-                    storage.setItem('nickname', res.headers['nickname']);
-                    this.msg = '수정 완료되었습니다.';
-                    this.$toast('안내', this.msg);
-                }
-            }).catch((error) => {
-                console.log(error.response);
-            });
+            
+            this.$store.dispatch('updateUser', { 
+                email: this.email,
+                nickname: this.nicknameInput,
+                password: this.password,
+                profileImg: 'wt',
+            })
+                .then((res) => {
+                    if (res.data.status === 'S-200') {
+                        console.log(res);
+                        
+                        this.msg = '수정 완료되었습니다.';
+                        this.$toast('안내', this.msg);
+                    }
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                });
         },
         userDelete() {
-            this.$axios({
-                method: 'delete',
-                url: `/user/delete?nickname=${this.nickname}`,
-            }).then((res) => {
-                storage.setItem('jwt-auth-token', '');
-                storage.setItem('nickname', '');
-                this.$bvModal.show('user-delete-check');
-            }).catch((error) => {
-                console.log(error.response);
-            });
+            this.$store.dispatch('deleteUser', { 
+                nickname: this.nickname,
+            })
+                .then((res) => {
+                    this.$bvModal.show('user-delete-check');
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                });
         },
         onClickImageUpload() {
             this.$refs.imageInput.click();

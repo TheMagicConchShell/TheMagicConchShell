@@ -223,13 +223,13 @@ export default {
 
 <style scoped>
 .timeline {
-    margin-left: 40px;
-    padding-left: 16px;
+    margin-left: 0px;
+    padding-left: 0px;
 }
 .button {
     float: right;
 }
-.comment {
+.comment-area {
     position: relative;
     width: 75%;
     left: -16px;
@@ -237,5 +237,11 @@ export default {
 }
 .editor-left {
     text-align: left;
+}
+@media all and (min-width:768px) {
+    .timeline {
+        margin-left: 40px;
+        padding-left: 16px;
+    }
 }
 </style>

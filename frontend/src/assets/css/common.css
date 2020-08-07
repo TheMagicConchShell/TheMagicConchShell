@@ -31,7 +31,13 @@ border-radius: 10px;
 box-shadow: inset 0px 0px 5px white;
 }
 #content {
-    margin: 150px 50px;
+    margin: 88px 0px;
+}
+
+@media all and (min-width:768px) {
+    #content {
+        margin: 88px 40px;
+    }
 }
 #photo {
     height: 100px;
@@ -89,3 +95,34 @@ button {
 	0% {margin-top: 0px;}
 	100% {margin-top: 10px;}
 }
+/*페이드인 모션*/
+.fade-in {
+	opacity: 1;
+	animation-name: fadeInOpacity;
+	animation-iteration-count: 1;
+	animation-timing-function: ease-in;
+	animation-duration: 0.5s;
+}
+
+@keyframes fadeInOpacity {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+/*오른쪽 사이드모션*/
+.right-side { transition: all 0.25s; } 
+.right-side-enter-active { transition: all 0.25s ease; } 
+.right-side-leave-active { transition: all 0.25s cubic-bezier(1, 0.5, 0.8, 1); } 
+.right-side-enter, .right-side-leave-active { opacity: 0; transform: translateX(100%); }
+/*바텀 사이드 모션*/
+.bottom-side { transition: all 0.25s; } 
+.bottom-side-enter-active { transition: all 0.25s ease; } 
+.bottom-side-leave-active { transition: all 0.25s cubic-bezier(1, 0.5, 0.8, 1); } 
+.bottom-side-enter, .bottom-side-leave-active { opacity: 0; transform: translateY(100%); }
+/*한영 변환 모션*/
+.conversion { transition: all 0.5s;}
+.conversion-enter-active { transition: all 0.5s ease; } 
+.conversion-enter, .conversion-leave-active { opacity: 0; transform: translateY(100%); }

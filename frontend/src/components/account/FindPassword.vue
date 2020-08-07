@@ -50,19 +50,19 @@ export default {
                 return;
             }
 
-            this.$axios({
-                method: 'post',
-                url: `/user/findpw?email=${this.email}&nickname=${this.nickname}`,
-            }).then((res) => {
-                if (res.data.status === 'S-200') {
+            this.$store.dispatch('findPassword', {
+                email: this.email,
+                nickname: this.nickname,
+            })
+                .then((response) => {
                     // 이메일 전송 성공
                     this.msg = '이메일이 전송되었습니다! 발송된 메일을 통하여 로그인하여 주세요.';
                     this.$toast('안내', this.msg);
                     this.$bvModal.hide('findpw');
-                }
-            }).catch((error) => {
-                console.log(error.response);
-            });
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                });
         },
     },
 };

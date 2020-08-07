@@ -2,15 +2,84 @@
     <div>
         <div id="home">
             <div class="d-flex flex-column-reverse">
-                금주의 싸피고둥이들
+                <transition name="conversion">
+                    <span
+                        v-if="language==='ko'"
+                        key="1"
+                    >
+                        <p>금주의 싸피고둥이들</p>
+                    </span>
+                    <span
+                        v-else
+                        key="2"
+                    >Wise Conches of the Week </span>
+                </transition>
             </div>
         </div>
         <!-- 금주 -->
         <div
-            id="bloglist"
-            class="d-flex"
+            id="thisweek"
         >
-            <div 
+            <swiper
+                ref="mySwiper"
+                class="swiper"
+                :options="swiperOption"
+                style="overflow:hidden"
+            >
+                <swiper-slide
+                    v-for="post in list"
+                    :key="post.no"
+                    style="overflow: auto"
+                >
+                    <router-link
+                        :to="{name: 'CounselDetail', params: {no: post.no}}"
+                        style="text-decoration: none;"
+                    >
+                        <h3>{{ post.title }}</h3>
+                        <p class="d-flex">
+                            written by {{ post.writer }}
+                        </p>
+                        <viewer
+                            :initial-value="post.content"
+                        />
+                    </router-link>
+                </swiper-slide>
+                <div
+                    slot="pagination"
+                    class="swiper-pagination"
+                />
+                <div
+                    slot="button-prev"
+                    class="swiper-button-prev"
+                />
+                <div
+                    slot="button-next"
+                    class="swiper-button-next"
+                />
+            </swiper>          
+            <!-- <div id="mainpost">
+                <transition name="fade-in">
+                    <div
+                        v-if="nowshowing"
+                        key="1"
+                    >
+                        <h3>{{ nowshowing.title }}</h3>
+                        <p class="d-flex">
+                            written by {{ nowshowing.writer }}
+                        </p>
+                        <viewer
+                            :initial-value="nowshowing.content"
+                        />
+                    </div>
+                    <div
+                        v-else
+                        key="2"
+                    >
+                        이런... 사이트가 망해서 고민이 없습니다ㅠㅠ
+                    </div>
+                </transition> -->
+        </div>
+        <!-- <div 
                 id="sidepost" 
                 v-infinite-scroll="loadMore" 
                 infinite-scroll-disabled="busy" 
@@ -19,65 +88,90 @@
                 <div
                     v-for="post in list"
                     :key="post.no"
-                    fluid
-                    class="w-100 m-0 border cursor"
+                    class="w-100 m-0 p-0 cursor"
                     @click="pageswap(post.no)"
                 >
                     <div
                         v-if="post.no===nowshowing.no"
                         id="selected"
                     >
-                        <h4>{{ post.title }}</h4>
+                        <p style="text-overflow:ellipsis">
+                            {{ post.title }}
+                        </p>
                     </div>
-                    <div v-else>
-                        <h4>{{ post.title }}</h4>
+                    <div
+                        v-if="post.no!==nowshowing.no"
+                        id="spcontent"
+                    >
+                        <p>{{ post.title }}</p>
                     </div>
                 </div>
-                <!-- <infinite-loading @infinite="infiniteHandler" /> -->
-            </div>            
-            <div id="mainpost">
-                <div
-                    v-if="nowshowing"
-                >
-                    <router-link :to="{path: `/counsel/read/${nowshowing.no}`}">
-                        <h3>{{ nowshowing.title }}</h3>
-                    </router-link>
-                    <p class="d-flex">
-                        written by {{ nowshowing.writer }}
-                    </p>
-                    <!-- eslint-disable -->
-                    <viewer
-                        class="align-left"
-                        v-html="nowshowing.content"
-                    />
-                    <!-- eslint-disable -->
-                </div>
-                <div v-else>
-                    이런... 사이트가 망해서 고민이 없습니다ㅠㅠ
-                </div>
-            </div>
-        </div>
+            </div>   -->
 
         <div id="home">
             <div class="d-flex flex-column-reverse">
-                지난 대나무숲
+                <transition name="conversion">
+                    <span
+                        v-if="language==='ko'"
+                        key="1"
+                    >지난 대나무숲</span>
+                    <span
+                        v-else
+                        key="2"
+                    >Spilled beans</span>
+                </transition>
             </div>
         </div>
 
         <!-- 지난주 -->
         <div
-            id="bloglist"
-            class="cursor"
+            v-for="history in histories"
+            id="history"
+            :key="history.no"
+            class="cursor"       
         >
             <b-card
-                img-src="https://placekitten.com/300/300"
-                img-alt="Card image"
-                img-left
+                id="detail"
+                class="mb-3"
+            >
+                <router-link
+                    :to="{name: 'CounselDetail', params: {no: history.no}}"
+                    style="text-decoration: none;"
+                >
+                    <b-card-text>
+                        <div id="answerheader">
+                            <h3>{{ history.title }}</h3>
+                            <viewer
+                                :initial-value="history.content"
+                            />
+                        </div>
+                    </b-card-text>
+                </router-link>
+            </b-card>
+            <b-card
                 class="mb-3"
             >
                 <b-card-text>
                     <div id="answerheader">
-                        답변들
+                        빈카드
+                    </div>
+                </b-card-text>
+            </b-card>
+            <b-card
+                class="mb-3"
+            >
+                <b-card-text>
+                    <div id="answerheader">
+                        빈카드
+                    </div>
+                </b-card-text>
+            </b-card>
+            <b-card
+                class="mb-3"
+            >
+                <b-card-text>
+                    <div id="answerheader">
+                        빈카드
                     </div>
                 </b-card-text>
             </b-card>
@@ -86,33 +180,65 @@
 </template>
 
 <script>
+import {mapState} from 'vuex';
 import axios from 'axios';
+import { Swiper, SwiperSlide } from 'vue-awesome-swiper';
 const api = 'http://i3a403.p.ssafy.io:8399';
 var count = 0;
 
 export default {
     name: 'Home',
+    components: {
+        Swiper, SwiperSlide
+    },
     data() {
         return {
-            nomouse: true,
             nowshowing: null,            
-            pageCount: 1,
-            page: 0,
+            lastNo: 1,
+            size: 5,
             list: [],
+            histories: [],
             busy: false,
+            p_img: '',
+            /* swiper */
+            swiperOption: {
+                effect: 'coverflow',
+                grabCursor: true,
+                centeredSlides: true,
+                slidesPerView: 3,
+                spaceBetween: 30,
+                loop: true, 
+                coverflowEffect: {
+                    rotate: 50,
+                    stretch: 0,
+                    depth: 100,
+                    modifier: 1,
+                    slideShadows : true
+                },
+                mousewheel: true,
+                keyboard: {
+                    enabled: true,
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev'
+                }
+            }
         };
     },
-    watch: {
-        '$route'() {
-            this.page = this.$route.query.page;
-        },
-        page() {
-            this.fetchPosts(this.page);
-        },
+    computed: {
+        ...mapState(['language']),
+        swiper() {
+            return this.$refs.mySwiper.swiper;
+        }
     },
     created() {
-        this.page = Number.parseInt(this.$route.query.page);
-        this.fetchPosts();
+        this.fetchPosts(this.size);
+        this.fetchHistory(this.size);
     },
     methods: {
         loadMore() {
@@ -124,22 +250,35 @@ export default {
                 this.busy = false;
             }, 1000);
         },
-        mouseover() {
-            this.nomouse = false;
-        },
-        mouseout() {
-            this.nomouse = true;
-        },
-        async fetchPosts(page) {
-            const response = await this.$axios.get(api + '/counsel/post', { params: { page: page || 1 }, headers: { nickname: '' }})
+        async fetchPosts(size) {
+            const response = await this.$axios.get(api + '/selection/post', { params: { size: size }})
                 .catch(() => console.log('catch notices'));
             if (response) {
                 if (response.status >= 200 && response.status < 300) {
-                    this.pageCount = response.data.data.totalPages;
-                    this.list = response.data.data.content;
+                    this.list = response.data.data;
+                    this.lastNo = this.list[this.list.length-1].no;
                 }
             }
             this.nowshowing = this.list[0];
+        },
+        async fetchHistory(size) {
+            const response = await this.$axios.get(api + '/selection/history', {params: {size: size}})
+                .catch(() => console.log('catch notices'));
+            if (response) {
+                if (response.status >= 200 && response.status < 300) {
+                    this.histories = response.data.data;
+                    this.lastNo = this.histories[this.histories.length-1].no;
+                }
+            }
+        },
+        async fetchProfileimage(nickname) {
+            const response = await this.$axios.get(api + '/user/detail', {params: nickname})
+                .catch(() => console.log('catch notices'));
+            if (response) {
+                if (response.status >= 200 && response.status < 300) {
+                    this.p_img = response.data.data.profile_image;
+                }
+            }
         },
         async pageswap(no) {
             const response = await this.$axios({
@@ -156,7 +295,7 @@ export default {
                     this.pageCount = response.data.data.totalPages;
                     this.nowshowing = response.data.data.post;
                 }
-            }
+            };
         },
         infiniteHandler($state) {
             axios.get((api + '/counsel/post', {
@@ -185,75 +324,86 @@ export default {
   justify-content: space-between;
   font-size: 30px;
 }
-#bigbutton {
-  color: white;
-  padding: 10px;
-  background: linear-gradient( 0, #9C8F96, #ccbbc4);
-  width: 20%;
-  border-radius: 10px;
-  text-decoration: none;
-}
-#click {
-  animation: motion 0.5s linear 0s infinite alternate;
-}
 
-#bloglist {
+#thisweek {
     width: 100%;
-    height: 70vh;
+    height: 80vh;
+    padding-top: 50px;
+    padding-bottom: 50px;
 }
 #mainpost {
     border-radius: 0 5px 5px 0;
-    width: 80%;
     height: 100%;
-    border: 1px solid #cacaca;
+    border-top: 1px solid #cacaca;
+    border-left: 1px solid #cacaca;
+    border-right: 1px solid #cacaca;
+    padding: 10px;
     background-size: cover;
-    padding: 100px;
-    overflow: auto;
+    background-color: #ffffff;
+    text-overflow: ellipsis;
 }
 #mainpost div {
     max-width: 100%;
     height: auto;
 }
 #sidepost {
-    width: 20%;
-    height: 100%;
-    overflow: auto;
-    border-radius: 5px 0 0 5px;
-    border: 1px solid #cacaca;
-    background-color: #BEDAE5;
+    display: flex;
+    height: 24px;
+    white-space: nowrap;
 }
 #sidepost div {
     display: flex;
-    width:100%;
-    background-color: #A6C2CE;
-    border: 1px solid #cacaca;
+    justify-content: center;
     color: black;
+    background-color: #A6C2CE;
+    border-radius: 0 0 5px 5px;
 }
-#sidepost div div{
-    border: none;
-    padding: 10px;
+#spcontent {
+    width: 100%;
+    text-overflow:hidden;
+    border-left: 1px solid #cacaca;
+    border-right: 1px solid #cacaca;
+    border-bottom: 1px solid #cacaca;
+}
+#spcontent:hover {
+    background-color: #ffffff;
+    transition-duration: 0.5s;
+    border-radius: 0 0 5px 5px;
 }
 #selected {
-    background-color: #6B799E!important;
+    width: 100%;
+    background-color: #ffffff!important;
+    border-left: 1px solid #cacaca;
+    border-right: 1px solid #cacaca;
+    border-bottom: 1px solid #cacaca;
+    border-radius: 0 0 5px 5px;
 }
-#slide {
-    max-height: auto;
-    max-width: auto;
+#history {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px 20px;
 }
-#answerheader {
-    height: 100px;
+#detail {
+    border: 1px solid #cacaca;
+    box-shadow: 10px 10px 10px #9e9e9e;
 }
-#slide {
-    border: 1px solid;
-    width: 50%;
+.swiper {
+    height: 100%;
+    width: 100%;
 }
-a {
-    color: unset;
-}
-a:hover {
-    text-decoration: unset;
-}
-.align-left {
-    text-align: left;
+.swiper-slide {
+      padding:20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      width: 300px;
+      height: 100%;
+      text-align: center;
+      font-weight: bold;
+      background-position: center;
+      background-size: cover;
+      border: 1px solid #cacaca;
+      box-shadow: 10px 10px 10px #9e9e9e;
 }
 </style>
