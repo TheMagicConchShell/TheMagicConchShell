@@ -192,15 +192,15 @@
                     fill
                 >
                     <b-tab
-                        title="고민 투고 관리"
+                        title="내 고민 글 목록"
                         active
                     >
-                        <b-card-text>Tab contents 1</b-card-text>
+                        <MyPost />
                     </b-tab>
-                    <b-tab title="답변 관리">
-                        <b-card-text>Tab contents 2</b-card-text>
+                    <b-tab title="내 답변 목록">
+                        <MyReply />
                     </b-tab>
-                    <b-tab title="포인트 사용 내역">
+                    <b-tab title="포인트 내역">
                         <PointHistory />
                     </b-tab>
                 </b-tabs>
@@ -222,6 +222,8 @@
 
 <script>
 import PointHistory from '@/components/account/PointHistory.vue';
+import MyPost from '@/components/account/MyPost.vue';
+import MyReply from '@/components/account/MyReply.vue';
 
 import {
     ValidationObserver,
@@ -268,7 +270,9 @@ export default {
     components: {
         ValidationProvider,
         ValidationObserver,
-        PointHistory
+        PointHistory,
+        MyPost,
+        MyReply
     },
     data: () => ({
         nicknameInput: '',
