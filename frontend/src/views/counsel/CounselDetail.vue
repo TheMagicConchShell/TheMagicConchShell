@@ -42,7 +42,7 @@
                         :secret="reply.secret"
 
                         :like-handler="nickname ? likeReply : dummy"
-                        :delete-handler="dummy"
+                        :delete-handler="deleteReply"
                         :modify-handler="modifyReply"
                         :report-handler="dummy"
                     />
@@ -212,6 +212,17 @@ export default {
                 },
             }).then(() => {
                 this.$router.push({name: 'List'});
+            });
+        },
+        deleteReply(id) {
+            this.$axios({
+                url: '/counsel/reply',
+                method: 'delete',
+                params: {
+                    'id': id,
+                },
+            }).then(() => {
+                this.$router.go();
             });
         },
         dummy() {

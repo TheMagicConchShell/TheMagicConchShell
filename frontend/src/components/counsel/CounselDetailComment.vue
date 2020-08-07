@@ -34,7 +34,7 @@
                         <div
                             v-if="nickname"
                             class="button-item"
-                            @click="deleteHandler"
+                            @click="deleteHandler(id)"
                         >
                             <svg-delete />
                         </div>

@@ -204,36 +204,23 @@ import {mapState, mapActions} from 'vuex';
 import Signup from '@/components/account/Signup.vue';
 import Login from '@/components/account/Login.vue';
 
-const storage = window.sessionStorage;
-
 export default {
     name: 'Nav',
     components: {
         Signup,
         Login,
     },
-    data: () => ({
-        isLogin: '',
-    }),
     computed: {
-        ...mapState(['language'])
-    },
-    created() {
-        this.init();
+        ...mapState(['language']),
+        ...mapState({
+            nickname: state => state.auth.nickname,
+        })
     },
     methods: {
         ...mapActions(['setkor', 'seteng']),
-        init() {
-            if(storage.getItem('jwt-auth-token')){
-                this.isLogin = true;
-            } else {
-                this.isLogin = false;
-            }
-        },
         logout() {
-            storage.setItem('jwt-auth-token', '');
-            storage.setItem('nickname', '');
-            this.isLogin = false;
+            this.$store.dispatch('logout');
+
             this.$toast('안내', '로그아웃 되었습니다.');
         },
         moveToUserDetail() {

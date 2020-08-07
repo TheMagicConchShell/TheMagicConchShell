@@ -63,7 +63,6 @@ export default {
     data: () => ({
         page: 1,
         pageCount: 1,
-        categories: null,
         Y: false,
         nowcategory: null,
     }),

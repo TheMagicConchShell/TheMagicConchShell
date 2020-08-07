@@ -38,10 +38,12 @@
                         </div>
                     </div>
                     <div class="d-flex w-100 justify-content-between">
-                        <p
+                        <!-- eslint-disable -->
+                        <viewer
                             class="item content"
                             v-html="removeImg(item.content)"
                         />
+                        <!-- eslint-disable -->
                         <img
                             v-if="getImg(item.content)"
                             :src="getImg(item.content)"

@@ -21,7 +21,10 @@
                                 :class="(item.selected)? 'selected' : ''"
                             >
                                 {{ getSelected(item.selected) }}
-                                <i v-if="item.selected" class="far fa-check-circle"/>
+                                <i
+                                    v-if="item.selected"
+                                    class="far fa-check-circle"
+                                />
                             </span>
                         </div>
                         <div>
@@ -38,10 +41,12 @@
                         </div>
                     </div>
                     <div class="d-flex w-100 justify-content-between">
-                        <p
+                        <!-- eslint-disable -->
+                        <viewer
                             class="item content"
                             v-html="removeImg(item.content)"
                         />
+                        <!-- eslint-disable -->
                         <img
                             v-if="getImg(item.content)"
                             :src="getImg(item.content)"
