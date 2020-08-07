@@ -1,6 +1,5 @@
 package com.blsa.ezilog.controller;
 
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -1996,4 +1995,110 @@ public class CounselController {
 
     }
 
+    
+    @ApiOperation(value = "작성자가 쓴 모든 고민 반환 (익명 포함)", response = List.class)
+    @GetMapping("/post/all/writer")
+    public Object searchAllPostByWriter(@RequestParam String writer, @RequestParam int page,
+            @RequestHeader(value = "nickname", required = false) String nickname) {
+
+        ResponseEntity response = null;
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
+
+        if (page <= 0) {
+            eresult.status = "E-4400";
+            eresult.message = "잘못 된 페이지 요청 입니다.";
+            eresult.data = null;
+            errorMap.put("field", "errorPageRequest");
+            errorMap.put("data", page);
+            eresult.errors = errorMap;
+
+            response = new ResponseEntity<>(eresult, HttpStatus.BAD_REQUEST);
+
+        } else {
+
+            PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "no");
+
+            Page<Post> pList = postDao.findAllPostByWriter(writer, pageable);
+
+            if (!pList.isEmpty()) {
+
+                pList.forEach((e) -> {
+
+                    Integer like = likecountDao.countTotal(e.getNo(), "p").intValue();
+                    Integer likelike = likecountDao.countTotal(e.getNo(), "pp").intValue();
+                    Integer unlike = likecountDao.countTotal(e.getNo(), "m").intValue();
+                    e.setLikeCount(like + likelike);
+                    e.setUnlikeCount(unlike);
+
+                    if (e.getWriter().equals(nickname)) {
+                        e.setMine(true);
+                    }
+                });
+
+                result.status = "S-200";
+                result.message = "작성자를 이용하여 고민 목록들 가져오기 성공";
+                result.data = pList;
+                response = new ResponseEntity<>(result, HttpStatus.OK);
+            } else {
+                eresult.status = "E-4404";
+                eresult.message = "작성자에 해당되는 고민이  없습니다.";
+                eresult.data = null;
+                errorMap.put("field", "noPostByWriter");
+                errorMap.put("data", pageable);
+                eresult.errors = errorMap;
+
+                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+            }
+
+        }
+        return response;
+    }
+
+    @ApiOperation(value = "작성자가 작성한 전체 답변 목록 반환(익명 포함)", response = List.class)
+    @GetMapping("/reply/all/writer")
+    public Object retrieveAllReplyByWriter(@RequestParam String writer, @RequestParam int page) {
+
+        ResponseEntity response = null;
+        final BasicResponse result = new BasicResponse();
+        final ErrorResponse eresult = new ErrorResponse();
+        Map<String, Object> errorMap = new HashMap<>();
+
+        if (page <= 0) {
+            eresult.status = "E-4400";
+            eresult.message = "잘못 된 페이지 요청 입니다.";
+            eresult.data = null;
+            errorMap.put("field", "errorPageRequest");
+            errorMap.put("data", page);
+            eresult.errors = errorMap;
+
+            response = new ResponseEntity<>(eresult, HttpStatus.BAD_REQUEST);
+
+        } else {
+            PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "id");
+            Page<Reply> rList = replyDao.findAllReplyByWriter(writer, pageable);
+            if (!rList.isEmpty()) {
+                rList.forEach((e) -> {
+                    e.setPostTitle(postDao.findById(e.getPostNo()).get().getTitle());
+                });
+                result.status = "S-200";
+                result.message = "작성자가 작성한 모든 답변 불러오기에 성공했습니다.";
+                result.data = rList;
+                response = new ResponseEntity<>(result, HttpStatus.OK);
+            } else {
+                eresult.status = "E-4413";
+                eresult.message = "불러 올 답변이  없습니다.";
+                eresult.data = null;
+                errorMap.put("field", "noReply");
+                errorMap.put("data", pageable);
+                eresult.errors = errorMap;
+
+                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+            }
+
+        }
+        return response;
+
+    }
 }

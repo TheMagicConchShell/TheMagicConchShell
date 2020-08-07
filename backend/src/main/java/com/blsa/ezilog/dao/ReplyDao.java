@@ -21,6 +21,10 @@ public interface ReplyDao extends JpaRepository<Reply, Long> {
     @Query(value = "SELECT * FROM reply WHERE writer LIKE %:writer% AND secret=false", countQuery = "SELECT count(*) FROM reply WHERE writer LIKE %:writer% AND secret=false", nativeQuery = true)
     Page<Reply> findReplyByWriter(String writer, Pageable request);
 
+    @Query(value = "SELECT * FROM reply WHERE writer=:writer", 
+            countQuery = "SELECT * FROM reply WHERE writer=:writer", nativeQuery = true)
+    Page<Reply> findAllReplyByWriter(String writer, Pageable request);
+    
     // Reply findReplyById(BigInteger id);
 
     Optional<Reply> findReplyById(Long id);
