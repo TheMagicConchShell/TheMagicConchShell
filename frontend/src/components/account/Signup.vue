@@ -232,11 +232,9 @@ export default {
                 password: this.password,
             })
                 .then((res) => {
-                    if (res.data.status === 'S-200') {
-                        this.msg = '가입에 성공했습니다! 인증 메일이 발송되었습니다. 메일로 인증 후 로그인하여 주세요.';
-                        this.$toast('안내', this.msg);
-                        this.$bvModal.hide('signup');
-                    }
+                    this.msg = '가입에 성공했습니다! 인증 메일이 발송되었습니다. 메일로 인증 후 로그인하여 주세요.';
+                    this.$toast('안내', this.msg);
+                    this.$bvModal.hide('signup');
                 }).catch((error) => {
                     console.log(error.response);
                 });

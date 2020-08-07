@@ -32,23 +32,19 @@ export default {
     created() {
         this.aid = this.$route.query.aid;
         this.token = this.$route.query.token;
-        console.log(this.aid);
-        console.log(this.token);
-        this.$axios({
-            method: 'get',
-            url: `/user/authentication?aid=${this.aid}&token=${this.token}`,
-
-        }).then((res) => {
-            if (res.data.status === 'S-200') {
+        
+        this.$store.dispatch('authentication', {
+            aid: this.aid,
+            token: this.token,
+        })
+            .then((res) => {
                 this.text = `이메일 인증이 완료되었습니다.
-                 정상적으로 서비스 이용이 가능합니다.`;
-            } else {
+                정상적으로 서비스 이용이 가능합니다.`;
+            })
+            .catch((error) => {
                 this.text = '이메일 인증에 실패하였습니다. 다시 시도해주세요.';
-            }
-        }).catch((error) => {
-            this.text = '이메일 인증에 실패하였습니다. 다시 시도해주세요.';
-            console.log(error.response);
-        });
+                console.log(error.response);
+            });
     },
     methods: {
         moveMain() {
