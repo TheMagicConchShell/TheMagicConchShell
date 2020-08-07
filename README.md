@@ -5,6 +5,8 @@
 [![license](https://img.shields.io/badge/license-MIT-green)](https://lab.ssafy.com/s03-webmobile1-sub3/s03p13a403/blob/master/LICENSE)
 
 ## Overview
+[![ssafy conch](https://drive.google.com/uc?id=1IXr3MyI9IYPse1iPQdtyqJ7bAj36jLb7)](http://i3a403.p.ssafy.io/)
+
 [i3a403.p.ssafy.io](http://i3a403.p.ssafy.io/)
 
 ## Project Setup
