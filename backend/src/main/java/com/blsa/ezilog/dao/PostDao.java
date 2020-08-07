@@ -1,6 +1,6 @@
 package com.blsa.ezilog.dao;
 
-import java.math.BigInteger;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -69,4 +69,7 @@ public interface PostDao extends JpaRepository<Post, Long>{
             countQuery = "SELECT count(*) FROM post WHERE secret=true OR title LIKE %:keyword%",
             nativeQuery = true)
     Page<Post> findPostByAnonymousAll(String keyword, Pageable request);
+    
+    @Query(value="SELECT * FROM post WHERE allow = true AND no not in (SELECT no FROM selection_history)", nativeQuery = true)
+    Optional<List<Post>> findRecommandPostAllowed();
 }
