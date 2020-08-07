@@ -45,7 +45,4 @@ public class User {
     @Column
     private int level;
 
-    @Column
-    private int level;
-
 }
