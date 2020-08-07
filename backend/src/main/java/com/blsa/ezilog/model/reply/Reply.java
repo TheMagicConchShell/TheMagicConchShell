@@ -53,6 +53,9 @@ public class Reply {
     
     @Transient
     private boolean isAuthor;
+    
+    @Transient
+    private int iLoveIt; // -1 싫어요 , 0 아무것도 없음 1 좋아요, 2 더 좋아요
 
     public Reply(String writer, Long postNo, String content, LocalDateTime writeDate, boolean secret) {
         super();

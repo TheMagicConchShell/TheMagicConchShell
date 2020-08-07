@@ -317,21 +317,37 @@ public class CounselController {
         Map<String, Object> errorMap = new HashMap<>();
 
         Optional<Post> optPost = postDao.findPostByNo(no);
+        Optional<User> optUser = userDao.findByNickname(nickname);
 
         if (optPost.isPresent()) {
             Post post = optPost.get();
             // 조회수 증가
-            post.setViews(post.getViews()+1);
+            post.setViews(post.getViews() + 1);
             postDao.save(post);
-            
+
             // 본인글 인지 확인 여부
             if (post.getWriter().equals(nickname)) {
                 post.setMine(true);
             }
 
-            // 글이 익명의 작성자인지 확인
-            if (post.isSecret() == true) {
-                post.setWriter("익명의 작성자");
+            if (!optUser.isPresent()) {
+                post.setILoveIt(0);
+            } else {
+                User user = optUser.get();
+                Optional<LikeCount> check = likecountDao.checkExistLikeCountNoType(user.getUid(), post.getNo());
+                if (!check.isPresent()) {
+                    post.setILoveIt(0);
+                } else {
+                    LikeCount lc = check.get();
+                    if (lc.getType().equals("p")) {
+                        post.setILoveIt(1);
+                    } else if (lc.getType().equals("m")) {
+                        post.setILoveIt(-1);
+                    } else {
+                        post.setILoveIt(2);
+                    }
+                }
+
             }
 
             List<Reply> allList = replyDao.ReplyByPostNum(post.getNo());
@@ -339,6 +355,25 @@ public class CounselController {
             // 같이오는 댓글들 목록 좋아요, 싫어요 수 가져오기
             for (int i = 0; i < allList.size(); i++) {
 
+                if (!optUser.isPresent()) {
+                    allList.get(i).setILoveIt(0);
+                }else {
+                    User user = optUser.get();
+                    Optional<ReplyLikeCount> check = replylikecountDao.checkExistLikeCountNoType(user.getUid(), allList.get(i).getId());
+                    if (!check.isPresent()) {
+                        post.setILoveIt(0);
+                    } else {
+                        ReplyLikeCount rlc = check.get();
+                        if (rlc.getType().equals("p")) {
+                            post.setILoveIt(1);
+                        } else if (rlc.getType().equals("m")) {
+                            post.setILoveIt(-1);
+                        } else {
+                            post.setILoveIt(2);
+                        }
+                    }
+                }
+                
                 if (allList.get(i).getWriter().equals(nickname)) {
                     allList.get(i).setMine(true);
                 }
@@ -351,6 +386,11 @@ public class CounselController {
                     allList.get(i).setWriter("익명의 작성자");
                 }
 
+            }
+
+            // 글이 익명의 작성자인지 확인
+            if (post.isSecret() == true) {
+                post.setWriter("익명의 작성자");
             }
 
             Map<String, Object> PostMap = new HashMap<>();
