@@ -15,7 +15,7 @@
                         {{ category.name }}
                     </li>
                 </ul>
-                <div style="height:700px;">
+                <div>
                     <counsel-board
                         :page="page"
                     />
