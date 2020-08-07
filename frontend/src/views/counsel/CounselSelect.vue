@@ -1,9 +1,121 @@
 <template>
     <div>
-        <h1 style="border: gray 1px solid">
-            추천 영역..
-        </h1>
+        <h2 id="recommendspace">
+            추천 영역
+        </h2>
+        <template v-if="recommendList && recommendList.length">
+            <table
+                class="table"
+            >
+                <colgroup>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                </colgroup>
+                <thead class="table-info">
+                    <tr>
+                        <th
+                            scope="col"
+                        >
+                            글 번호
+                        </th>
+                        <th
+                            class="text-left"
+                            scope="col"
+                        >
+                            제목
+                        </th>
+                        <th scope="col">
+                            작성자
+                        </th>
+                        <th scope="col">
+                            조회수
+                        </th>
+                        <th scope="col">
+                            추천수
+                        </th>
+                        <th scope="col">
+                            비추천수
+                        </th>
+                        <th scope="col">
+                            답변수
+                        </th>
+                        <th scope="col">
+                            총합
+                        </th>
+                        <th 
+                            scope="col"
+                            class="text-left"
+                        >
+                            작성시간
+                        </th>
+                        <th>
+                            <b-button
+                                class="btn-danger"
+                                @click.prevent="recommendUpdate"
+                            >
+                                갱신
+                            </b-button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr 
+                        v-for="recommend in recommendList"
+                        :key="recommend.no"
+                    >
+                        <td>{{ recommend.no }}</td>
+                        <td class="text-left">
+                            <router-link :to="{path: '/counsel/read/'+ recommend.no}">
+                                {{ recommend.title }}
+                            </router-link>
+                        </td>
+                        <td>
+                            {{ recommend.writer }}
+                        </td>
+                        <td>
+                            {{ recommend.views }}
+                        </td>
+                        <td>
+                            {{ recommend.likeCount }}
+                        </td>
+                        <td>
+                            {{ recommend.unlikeCount }}
+                        </td>
+                        <td>
+                            {{ recommend.replyCount }}
+                        </td>
+                        <td>
+                            {{ recommend.totalScore }}
+                        </td>
+                        <td class="text-left">
+                            {{ getFormatDate(recommend.writeDate) }}
+                        </td>
+                        <td>
+                            <b-button @click.prevent="openSelectModal(recommend.no)">
+                                메인 선정
+                            </b-button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </template>
 
+        <template v-else>
+            <td>
+                로딩중입니다..
+            </td>
+        </template>
+        <h2 id="recommendspace">
+            고민 목록
+        </h2>
         <template v-if="list && list.length">
             <table
                 class="table"
@@ -98,6 +210,7 @@
             <CounselSelectPaginate
                 :current="page"
                 :last="pageCount"
+                :page-handler="pageHandle"
             />
         </template>
 
@@ -156,6 +269,7 @@ export default {
             page: 0,
             pageCount: 1,
             list: [],
+            recommendList:[],
         };
     },
     watch: {
@@ -168,6 +282,17 @@ export default {
     },
     created() {
         this.page = Number.parseInt(this.$route.query.page);
+        this.$axios({
+            url:'/post/recommend/auto',
+            method:"get",
+        }).then((res)=>{
+            if(res.status >= 200 && res.status < 300){
+                this.recommendList = res.data.data;
+                console.log(res.data);
+            }
+        }).catch((error) => {
+            console.log(error.response);
+        });
     },
     mounted() {
     },
@@ -230,6 +355,27 @@ export default {
         getFormatDate(date) {
             return moment(new Date(date)).format("YYYY.MM.DD");
         },
+        async recommendUpdate(){
+            await this.$axios({
+                url:'/post/recommend',
+                method:'get'
+            }).then((res)=>{
+                if(res.status >= 200 && res.status < 300){
+                    this.recommendList = res.data.data;
+                    console.log(res.data);
+                }
+            }).catch((error) => {
+                console.log(error.response);
+            });
+        },
+        pageHandle(nextPage) {
+            this.$router.push({
+                name: 'CounselSelect',
+                query: {
+                    page: nextPage,
+                },
+            }).catch(() => {});
+        },
     },
 };
 
@@ -244,5 +390,8 @@ td {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap; 
+}
+#recommendspace{
+    text-align: center;
 }
 </style>

@@ -1,35 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import axios from 'axios';
+import axios from '@/axios';
 
 Vue.use(Vuex);
-
-const Axios = axios.create({
-    baseURL: 'http://i3a403.p.ssafy.io:8399',
-});
-
-Axios.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        if (!error.response) {
-            // Server do not response
-            // vm.$router.push({
-            //     name: 'ERROR',
-            //     params: { error: 'error' },
-            // });
-        }
-
-        const message = error.response.data.message;
-        const vm = new Vue();
-        vm.$bvToast.toast(`${message}`, {
-            title: `Error ${error.response.status} (${error.response.data.status})`,
-            toaster: 'b-toaster-top-center',
-            autoHideDelay: 5000,
-        });
-
-        return Promise.reject(error);
-    },
-);
 
 export const state = {
     nickname: '',
@@ -44,8 +17,8 @@ export const mutations = {
         state.nickname = nickname;
     },
     LOGOUT(state){
-        state.nickname = '';
-        state.jwtAuthToken = '';
+        state.nickname = null;
+        state.jwtAuthToken = null;
     },
 };
 
@@ -53,13 +26,16 @@ export const getters = {
     nickname: (state) => {
         return state.nickname;
     },
+    jwtAuthToken: (state) => {
+        return state.jwtAuthToken;
+    },
 };
 
 export const actions = {
     login({commit, dispatch}, {email, password}) {
         return new Promise((resolve, reject) => {
             commit('LOGOUT');
-            Axios({
+            axios({
                 method: "post",
                 url: "/user/login",
                 data: {
@@ -70,11 +46,9 @@ export const actions = {
                 .then((res) => {
                     const jwtAuthToken = res.headers['jwt-auth-token'];
                     const nickname = res.headers['nickname'];
-                    
-                    axios.defaults.headers.common['nickname'] = nickname;
-                    axios.defaults.headers.common['jwt-auth-token'] = jwtAuthToken;
 
-                    dispatch("loginSuccess", { jwtAuthToken, nickname });
+                    commit('LOGIN_SUCCESS_TOKEN', jwtAuthToken);
+                    commit('LOGIN_SUCCESS_NICKNAME', nickname);
                     resolve(res);
                 })
                 .catch((error) => {
@@ -83,18 +57,31 @@ export const actions = {
                 });
         });
     },
-    loginSuccess({ commit }, { jwtAuthToken, nickname }){
-        commit('LOGIN_SUCCESS_TOKEN', jwtAuthToken);
-        commit('LOGIN_SUCCESS_NICKNAME', nickname);
-    },
     logout({ commit }){
         return new Promise((resolve) => {
             commit('LOGOUT');
 
-            delete axios.defaults.headers.common['nickname'];
-            delete axios.defaults.headers.common['jwt-auth-token'];
-
             resolve();
+        });
+    },
+    register({  }, { email, nickname, password }) {
+        return new Promise((resolve, reject) => {
+            axios({
+                method: 'post',
+                url: '/user/signup',
+                data: {
+                    email,
+                    nickname,
+                    password,
+                },
+            })
+                .then((res) => {
+                    resolve(res);
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                    reject(error);
+                });
         });
     }
 };

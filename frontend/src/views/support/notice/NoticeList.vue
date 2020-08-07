@@ -106,11 +106,13 @@ export default {
                 params: {
                     page: page || 1,
                 }
-            }).catch(() => {
+            }).catch((r) => {
+                console.log(r);
                 console.log("catch notices");
             });
 
             if (response) {
+                console.log(response);
                 if (response.status >= 200 && response.status < 300) {
                     this.pageCount = response.data.data.totalPages;
                     this.list = response.data.data.content;
