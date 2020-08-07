@@ -1,7 +1,5 @@
 package com.blsa.ezilog.model.category;
 
-import java.math.BigInteger;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,7 +22,7 @@ public class Category {
     @Column
     private String name;
 
-    @Column
+    @Column(name = "desc")
     private String description;
 
     public Category(String name, String description) {
@@ -32,6 +30,5 @@ public class Category {
         this.name = name;
         this.description = description;
     }
-    
-    
+
 }

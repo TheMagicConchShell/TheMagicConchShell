@@ -1,5 +1,8 @@
 package com.blsa.ezilog.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.blsa.ezilog.model.user.LoginRequestDTO;
 import com.blsa.ezilog.model.user.SignupRequestDTO;
 import com.blsa.ezilog.model.user.UpdateRequestDTO;
@@ -24,4 +27,6 @@ public interface UserService {
     User authentication(long uaid, String token);
 
     String findPw(String email, String nickname);
+    
+    Page<User> allUser(Pageable pageable);
 }

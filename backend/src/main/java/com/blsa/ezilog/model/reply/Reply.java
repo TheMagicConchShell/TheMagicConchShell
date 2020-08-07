@@ -53,6 +53,9 @@ public class Reply {
     
     @Transient
     private boolean isAuthor;
+    
+    @Transient
+    private String postTitle;
 
     public Reply(String writer, Long postNo, String content, LocalDateTime writeDate, boolean secret) {
         super();

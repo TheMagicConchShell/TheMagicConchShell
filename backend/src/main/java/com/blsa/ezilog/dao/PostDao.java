@@ -17,6 +17,11 @@ public interface PostDao extends JpaRepository<Post, Long>{
             nativeQuery = true)
     Page<Post> findPostByWriter(String writer, Pageable request);
     
+    @Query(value = "SELECT * FROM post WHERE writer=:writer",
+            countQuery = "SELECT * FROM post WHERE writer=:writer",
+            nativeQuery = true)
+    Page<Post> findAllPostByWriter(String writer, Pageable request);
+    
     Optional<Post> findPostByNo(Long no);
     
     @Query(value ="SELECT * FROM post WHERE category_id =:id",
