@@ -141,7 +141,7 @@ public class CounselController {
 
     @ApiOperation(value = "카테고리에 해당 되는 작성자가 쓴 고민 반환", notes = "작성자 이름을 통해서 고민 검색", response = List.class)
     @GetMapping("/post/category")
-    public Object searchNoticeByCategory(@RequestParam String category, @RequestParam int page,
+    public Object searcPostByCategory(@RequestParam String category, @RequestParam int page,
             @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
@@ -213,7 +213,7 @@ public class CounselController {
 
     @ApiOperation(value = "검색어에 해당 되는 작성자가 쓴 고민 반환", notes = "작성자 이름을 통해서 고민 검색", response = List.class)
     @GetMapping("/post/writer")
-    public Object searchNoticeByWriter(@RequestParam String writer, @RequestParam int page,
+    public Object searchPostByWriter(@RequestParam String writer, @RequestParam int page,
             @RequestHeader(value = "nickname", required = false) String nickname) {
 
         ResponseEntity response = null;
@@ -319,11 +319,16 @@ public class CounselController {
 
         if (optPost.isPresent()) {
             Post post = optPost.get();
-
+            // 조회수 증가
+            post.setViews(post.getViews()+1);
+            postDao.save(post);
+            
+            // 본인글 인지 확인 여부
             if (post.getWriter().equals(nickname)) {
                 post.setMine(true);
             }
 
+            // 글이 익명의 작성자인지 확인
             if (post.isSecret() == true) {
                 post.setWriter("익명의 작성자");
             }

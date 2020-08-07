@@ -3,6 +3,8 @@ package com.blsa.ezilog.service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.blsa.ezilog.config.util.BCryptImpl;
@@ -57,17 +59,6 @@ public class UserServiceImpl implements UserService {
         }else {
             res = "email";
         }
-//        Optional<User> user = dao.findByEmailAndPassword(request.getEmail(), request.getPassword());
-//        if (user.isPresent()) {
-//            res = user.get();
-//        } else {
-//            Optional<User> email = dao.findByEmail(request.getEmail());
-//            if (email.isPresent()) {
-//                res = "password";
-//            } else {
-//                res = "email";
-//            }
-//        }
         return res;
     }
 
@@ -101,10 +92,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public User update(UpdateRequestDTO request, String nickname) {
         User user = new User();
+        User temp = select(nickname); // UpdateRequest에 없는 정보를 가져 오기 위해 nickname으로 검색된 유저 정보
         user.setEmail(request.getEmail());
         user.setUid(dao.findByNickname(nickname).get().getUid());
         user.setNickname(request.getNickname());
-        user.setPassword(request.getPassword());
+        String encrypted = bcryptimpl.encrypt(request.getPassword());
+        user.setPassword(encrypted);
+        user.setLevel(temp.getLevel());
+        user.setPoint(temp.getPoint());
         user.setProfileImg(request.getProfileImg());
         user = dao.save(user);
         return user;
@@ -160,6 +155,11 @@ public class UserServiceImpl implements UserService {
         }
 
         return res;
+    }
+
+    @Override
+    public Page<User> allUser(Pageable pageable) {
+        return dao.findAll(pageable);
     }
 
 }
