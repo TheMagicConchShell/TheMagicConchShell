@@ -57,57 +57,7 @@
                     class="swiper-button-next"
                 />
             </swiper>          
-            <!-- <div id="mainpost">
-                <transition name="fade-in">
-                    <div
-                        v-if="nowshowing"
-                        key="1"
-                    >
-                        <h3>{{ nowshowing.title }}</h3>
-                        <p class="d-flex">
-                            written by {{ nowshowing.writer }}
-                        </p>
-                        <viewer
-                            :initial-value="nowshowing.content"
-                        />
-                    </div>
-                    <div
-                        v-else
-                        key="2"
-                    >
-                        이런... 사이트가 망해서 고민이 없습니다ㅠㅠ
-                    </div>
-                </transition> -->
         </div>
-        <!-- <div 
-                id="sidepost" 
-                v-infinite-scroll="loadMore" 
-                infinite-scroll-disabled="busy" 
-                infinite-scroll-distance="3"
-            >
-                <div
-                    v-for="post in list"
-                    :key="post.no"
-                    class="w-100 m-0 p-0 cursor"
-                    @click="pageswap(post.no)"
-                >
-                    <div
-                        v-if="post.no===nowshowing.no"
-                        id="selected"
-                    >
-                        <p style="text-overflow:ellipsis">
-                            {{ post.title }}
-                        </p>
-                    </div>
-                    <div
-                        v-if="post.no!==nowshowing.no"
-                        id="spcontent"
-                    >
-                        <p>{{ post.title }}</p>
-                    </div>
-                </div>
-            </div>   -->
-
         <div id="home">
             <div class="d-flex flex-column-reverse">
                 <transition name="conversion">
@@ -125,55 +75,34 @@
 
         <!-- 지난주 -->
         <div
-            v-for="history in histories"
             id="history"
-            :key="history.no"
             class="cursor"       
         >
             <b-card
+                v-for="history in histories"
                 id="detail"
-                class="mb-3"
+                :key="history.no"
+                class="mb-3 d-inline"
+                @mouseover="select(history)"
+                @mouseleave="unselect()"
             >
                 <router-link
                     :to="{name: 'CounselDetail', params: {no: history.no}}"
                     style="text-decoration: none;"
                 >
                     <b-card-text>
-                        <div id="answerheader">
+                        <div id="history_detail">
                             <h3>{{ history.title }}</h3>
-                            <viewer
-                                :initial-value="history.content"
-                            />
+                            <transition name="open">
+                                <viewer
+                                    v-if="nowshowing===history"
+                                    id="history_content"
+                                    :initial-value="history.content"
+                                />
+                            </transition>
                         </div>
                     </b-card-text>
                 </router-link>
-            </b-card>
-            <b-card
-                class="mb-3"
-            >
-                <b-card-text>
-                    <div id="answerheader">
-                        빈카드
-                    </div>
-                </b-card-text>
-            </b-card>
-            <b-card
-                class="mb-3"
-            >
-                <b-card-text>
-                    <div id="answerheader">
-                        빈카드
-                    </div>
-                </b-card-text>
-            </b-card>
-            <b-card
-                class="mb-3"
-            >
-                <b-card-text>
-                    <div id="answerheader">
-                        빈카드
-                    </div>
-                </b-card-text>
             </b-card>
         </div>
     </div>
@@ -189,11 +118,12 @@ var count = 0;
 export default {
     name: 'Home',
     components: {
-        Swiper, SwiperSlide
+        Swiper, 
+        SwiperSlide,
     },
     data() {
         return {
-            nowshowing: null,            
+            nowshowing: null,          
             lastNo: 1,
             size: 5,
             list: [],
@@ -241,6 +171,12 @@ export default {
         this.fetchHistory(this.size);
     },
     methods: {
+        select(selected) {
+            this.nowshowing=selected;
+        },
+        unselect() {
+            this.nowshowing=false;
+        },
         loadMore() {
             this.busy = true;
             setTimeout(() => {
@@ -331,61 +267,10 @@ export default {
     padding-top: 50px;
     padding-bottom: 50px;
 }
-#mainpost {
-    border-radius: 0 5px 5px 0;
-    height: 100%;
-    border-top: 1px solid #cacaca;
-    border-left: 1px solid #cacaca;
-    border-right: 1px solid #cacaca;
-    padding: 10px;
-    background-size: cover;
-    background-color: #ffffff;
-    text-overflow: ellipsis;
-}
-#mainpost div {
-    max-width: 100%;
-    height: auto;
-}
-#sidepost {
-    display: flex;
-    height: 24px;
-    white-space: nowrap;
-}
-#sidepost div {
-    display: flex;
-    justify-content: center;
-    color: black;
-    background-color: #A6C2CE;
-    border-radius: 0 0 5px 5px;
-}
-#spcontent {
-    width: 100%;
-    text-overflow:hidden;
-    border-left: 1px solid #cacaca;
-    border-right: 1px solid #cacaca;
-    border-bottom: 1px solid #cacaca;
-}
-#spcontent:hover {
-    background-color: #ffffff;
-    transition-duration: 0.5s;
-    border-radius: 0 0 5px 5px;
-}
-#selected {
-    width: 100%;
-    background-color: #ffffff!important;
-    border-left: 1px solid #cacaca;
-    border-right: 1px solid #cacaca;
-    border-bottom: 1px solid #cacaca;
-    border-radius: 0 0 5px 5px;
-}
 #history {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 20px 20px;
-}
-#detail {
-    border: 1px solid #cacaca;
-    box-shadow: 10px 10px 10px #9e9e9e;
 }
 .swiper {
     height: 100%;
@@ -405,5 +290,17 @@ export default {
       background-size: cover;
       border: 1px solid #cacaca;
       box-shadow: 10px 10px 10px #9e9e9e;
+}
+#detail {
+    border: 1px solid #cacaca;
+    box-shadow: 10px 10px 10px #9e9e9e;
+    height: 80px;
+    -webkit-transition: all 0.45s ease-in-out;
+    transition: all 0.45s ease-in-out;
+    z-index: 0;
+}
+#detail:hover {
+    height: 100%;
+    z-index: 1;
 }
 </style>
