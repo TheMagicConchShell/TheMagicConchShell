@@ -1,6 +1,8 @@
 variables:
-    CI_PATH: "/home/ubuntu/project"
-    CI_TEST_PATH: "/home/ubuntu/project-test"
+    CI_BUILD_PATH: "/home/ubuntu/project"
+    CI_TEST_BUILD_PATH: "/home/ubuntu/project-test"
+    CI_RESOURCE_PATH: "/home/ubuntu"
+    CI_DISTRIBUTE_PATH: "/home/ubuntu"
 
 stages:
     - prepare
@@ -14,29 +16,19 @@ test-copy-repository:
     only:
         - merge_requests
     script:
-        - sudo rm -rf $CI_TEST_PATH
-        - sudo cp -r $CI_PROJECT_DIR $CI_TEST_PATH
-
-test-stop-server:
-    stage: prepare
-    only:
-        - merge_requests
-    script:
-        - sudo kill `ps -aux | grep 'backend-0.0.1-SNAPSHOT-TEST.jar' | grep -v grep | awk '{print $2}'`
-    allow_failure: true
+        - sudo rm -rf $CI_TEST_BUILD_PATH
+        - sudo cp -r $CI_PROJECT_DIR $CI_TEST_BUILD_PATH
 
 test-backend-build:
-    stage: prepare
+    stage: test
     only:
         - merge_requests
     script:
-        - cd $CI_TEST_PATH/backend
-        - sudo cp /home/ubuntu/application.test.properties $CI_TEST_PATH/backend/src/main/resources/application.properties
-        - echo $CI_TEST_PATH/backend/src/main/resources/application.properties
+        - cd $CI_TEST_BUILD_PATH/backend
+        - sudo cp $CI_RESOURCE_PATH/application.test.properties $CI_TEST_BUILD_PATH/backend/src/main/resources/application.properties
         - sudo mvn package
-        - sudo rm -rf /home/ubuntu/jar-test
-        - sudo mv $CI_TEST_PATH/backend/target /home/ubuntu/jar-test
-        - cd /home/ubuntu/jar-test
+        - sudo mv $CI_TEST_BUILD_PATH/backend/target $CI_DISTRIBUTE_PATH/jar-test
+        - cd $CI_DISTRIBUTE_PATH/jar-test
         - sudo mv backend-0.0.1-SNAPSHOT.jar backend-0.0.1-SNAPSHOT-TEST.jar
         - nohup java -jar backend-0.0.1-SNAPSHOT-TEST.jar > /dev/null 2>&1 &
         - echo `ps -aux | grep 'backend-0.0.1-SNAPSHOT-TEST.jar' | grep -v grep | awk '{print $2}'`
@@ -46,7 +38,8 @@ test-frontend:
     only:
         - merge_requests
     script:
-        - cd $CI_TEST_PATH/frontend
+        - sudo cp $CI_RESOURCE_PATH/initKakao.js $CI_TEST_BUILD_PATH/frontend/src/initKakao.js
+        - cd $CI_TEST_BUILD_PATH/frontend
         - sudo yarn install
         - sudo yarn build
 
@@ -57,22 +50,24 @@ test-backend:
     script:
         - sudo kill `ps -aux | grep 'backend-0.0.1-SNAPSHOT-TEST.jar' | grep -v grep | awk '{print $2}'`
 
-        
-        
 test-clean-up:
     stage: clean
     only:
         - merge_requests
     script:
-        - sudo rm -rf $CI_TEST_PATH
+        - sudo rm -rf $CI_DISTRIBUTE_PATH/jar-test
+        - sudo rm -rf $CI_TEST_BUILD_PATH
+        - sudo kill `ps -aux | grep 'backend-0.0.1-SNAPSHOT-TEST.jar' | grep -v grep | awk '{print $2}'`
+    when: always
+    allow_failure: true
 
 copy-repository:
     stage: prepare
     only:
         - master
     script:
-        - sudo rm -rf $CI_PATH
-        - sudo cp -r $CI_PROJECT_DIR $CI_PATH
+        - sudo rm -rf $CI_BUILD_PATH
+        - sudo cp -r $CI_PROJECT_DIR $CI_BUILD_PATH
 
 stop-server:
     stage: prepare
@@ -87,8 +82,8 @@ frontend-build:
     only:
         - master
     script:
-        - pwd
-        - cd $CI_PATH/frontend
+        - sudo cp $CI_RESOURCE_PATH/initKakao.js $CI_BUILD_PATH/frontend/src/initKakao.js
+        - cd $CI_BUILD_PATH/frontend
         - sudo yarn install
         - sudo yarn build
 
@@ -98,8 +93,8 @@ backend-build:
         - master
     script:
         - pwd
-        - cd $CI_PATH/backend
-        - sudo cp /home/ubuntu/application.properties $CI_PATH/backend/src/main/resources/application.properties
+        - cd $CI_BUILD_PATH/backend
+        - sudo cp $CI_RESOURCE_PATH/application.properties $CI_BUILD_PATH/backend/src/main/resources/application.properties
         - sudo mvn package
 
 frontend-deploy:
@@ -107,8 +102,8 @@ frontend-deploy:
     only: 
         - master
     script:
-        - sudo rm -rf /home/ubuntu/dist
-        - sudo mv $CI_PATH/frontend/dist /home/ubuntu/dist
+        - sudo rm -rf $CI_DISTRIBUTE_PATH/dist
+        - sudo mv $CI_BUILD_PATH/frontend/dist $CI_DISTRIBUTE_PATH/dist
         - sudo service nginx restart
 
 backend-deploy:
@@ -116,9 +111,9 @@ backend-deploy:
     only: 
         - master
     script:
-        - sudo rm -rf /home/ubuntu/jar
-        - sudo mv $CI_PATH/backend/target /home/ubuntu/jar
-        - cd /home/ubuntu/jar
+        - sudo rm -rf $CI_DISTRIBUTE_PATH/jar
+        - sudo mv $CI_BUILD_PATH/backend/target $CI_DISTRIBUTE_PATH/jar
+        - cd $CI_DISTRIBUTE_PATH/jar
         - nohup java -jar backend-0.0.1-SNAPSHOT.jar > /dev/null 2>&1 &
 
 clean-up:
@@ -126,4 +121,5 @@ clean-up:
     only:
         - master
     script:
-        - sudo rm -rf $CI_PATH
+        - sudo rm -rf $CI_BUILD_PATH
+    when: always
