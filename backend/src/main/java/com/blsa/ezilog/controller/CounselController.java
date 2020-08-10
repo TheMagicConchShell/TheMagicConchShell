@@ -364,15 +364,15 @@ public class CounselController {
                     Optional<ReplyLikeCount> check = replylikecountDao.checkExistLikeCountNoType(user.getUid(),
                             allList.get(i).getId());
                     if (!check.isPresent()) {
-                        post.setILoveIt(0);
+                        allList.get(i).setILoveIt(0);
                     } else {
                         ReplyLikeCount rlc = check.get();
                         if (rlc.getType().equals("p")) {
-                            post.setILoveIt(1);
+                            allList.get(i).setILoveIt(1);
                         } else if (rlc.getType().equals("m")) {
-                            post.setILoveIt(-1);
+                            allList.get(i).setILoveIt(-1);
                         } else {
-                            post.setILoveIt(2);
+                            allList.get(i).setILoveIt(2);
                         }
                     }
                 }
