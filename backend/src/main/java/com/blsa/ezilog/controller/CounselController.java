@@ -45,10 +45,12 @@ import com.blsa.ezilog.model.point.PointHistory;
 import com.blsa.ezilog.model.post.Post;
 import com.blsa.ezilog.model.post.PostCreateRequest;
 import com.blsa.ezilog.model.post.PostUpdateRequest;
+import com.blsa.ezilog.model.post.RecommendPost;
 import com.blsa.ezilog.model.reply.Reply;
 import com.blsa.ezilog.model.reply.ReplyCreateRequest;
 import com.blsa.ezilog.model.reply.ReplyUpdateRequest;
 import com.blsa.ezilog.model.user.User;
+import com.blsa.ezilog.service.RecommendService;
 import com.blsa.ezilog.service.UserService;
 import com.blsa.ezilog.service.point.PointService;
 
@@ -82,6 +84,9 @@ public class CounselController {
 
     @Autowired
     UserService userservice;
+
+    @Autowired
+    private RecommendService recommendService;
 
     @ApiOperation(value = "고민 전체 목록 반환", notes = "Input : page, Output: 성공 : [status = true, data = 고민 리스트(Post)] 실패 : status = false, data = 에러메세지", response = List.class)
     @GetMapping("/post")
@@ -336,17 +341,19 @@ public class CounselController {
                 post.setILoveIt(0);
             } else {
                 User user = optUser.get();
-                Optional<LikeCount> check = likecountDao.checkExistLikeCountNoType(user.getUid(), post.getNo());
-                if (!check.isPresent()) {
-                    post.setILoveIt(0);
+                Optional<LikeCount> checkP = likecountDao.checkExistLikeCount(user.getUid(), "p", post.getNo());
+                Optional<LikeCount> checkM = likecountDao.checkExistLikeCount(user.getUid(), "m", post.getNo());
+                Optional<LikeCount> checkPP = likecountDao.checkExistLikeCount(user.getUid(), "pp", post.getNo());
+
+                if (checkPP.isPresent()) {
+                    post.setILoveIt(2);
                 } else {
-                    LikeCount lc = check.get();
-                    if (lc.getType().equals("p")) {
+                    if (checkP.isPresent()) {
                         post.setILoveIt(1);
-                    } else if (lc.getType().equals("m")) {
+                    } else if (checkM.isPresent()) {
                         post.setILoveIt(-1);
                     } else {
-                        post.setILoveIt(2);
+                        post.setILoveIt(0);
                     }
                 }
 
@@ -361,18 +368,18 @@ public class CounselController {
                     allList.get(i).setILoveIt(0);
                 } else {
                     User user = optUser.get();
-                    Optional<ReplyLikeCount> check = replylikecountDao.checkExistLikeCountNoType(user.getUid(),
-                            allList.get(i).getId());
-                    if (!check.isPresent()) {
-                        post.setILoveIt(0);
+                    Optional<ReplyLikeCount> checkP = replylikecountDao.checkExistLikeCount(user.getUid(), "p", allList.get(i).getId());
+                    Optional<ReplyLikeCount> checkM = replylikecountDao.checkExistLikeCount(user.getUid(), "p", allList.get(i).getId());
+                    Optional<ReplyLikeCount> checkPP = replylikecountDao.checkExistLikeCount(user.getUid(), "p", allList.get(i).getId());
+                    if (checkPP.isPresent()) {
+                        allList.get(i).setILoveIt(2);
                     } else {
-                        ReplyLikeCount rlc = check.get();
-                        if (rlc.getType().equals("p")) {
-                            post.setILoveIt(1);
-                        } else if (rlc.getType().equals("m")) {
-                            post.setILoveIt(-1);
+                        if (checkP.isPresent()) {
+                            allList.get(i).setILoveIt(1);
+                        } else if (checkM.isPresent()) {
+                            allList.get(i).setILoveIt(-1);
                         } else {
-                            post.setILoveIt(2);
+                            allList.get(i).setILoveIt(0);
                         }
                     }
                 }
@@ -691,6 +698,14 @@ public class CounselController {
                 if (nickname.equals("admin") || ptemp.getWriter().equals(nickname)) {
 
                     postDao.delete(ptemp);
+
+                    List<RecommendPost> recommendPosts = recommendService.getRecommendPosts();
+                    for (RecommendPost p : recommendPosts) {
+                        if (p.getNo() == no) {
+                            recommendService.calculate();
+                            break;
+                        }
+                    }
 
                     result.status = "S-200";
                     result.message = "고민 글 삭제 완료";
@@ -1225,13 +1240,15 @@ public class CounselController {
 
     @ApiOperation(value = "카테고리 목록 가져오기", notes = "output: 전체 가테고리 리스트")
     @GetMapping("/category")
-    public Object retrieveCategory() {
+    public Object retrieveCategory(@RequestParam int page) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        List<Category> cList = categoryDao.findAll();
+        PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.ASC, "id");
+
+        Page<Category> cList = categoryDao.categoryList(pageable);
 
         if (!cList.isEmpty()) {
             result.status = "S-200";
@@ -1392,31 +1409,15 @@ public class CounselController {
 
                 if (cateOpt.isPresent()) {
 
-                    Optional<Category> duplicateOpt = categoryDao.findCategoryByName(urequest.getChangName());
+                    Category ctemp = cateOpt.get();
+                    ctemp.setName(urequest.getChangeName());
+                    ctemp.setDescription(urequest.getDescription());
+                    categoryDao.save(ctemp);
 
-                    if (!duplicateOpt.isPresent()) {
-
-                        Category ctemp = cateOpt.get();
-                        ctemp.setName(urequest.getChangName());
-                        ctemp.setDescription(urequest.getDescription());
-                        categoryDao.save(ctemp);
-
-                        result.status = "S-200";
-                        result.message = "카테고리 수정에 성공했습니다.";
-                        result.data = urequest.getChangName();
-                        response = new ResponseEntity<>(result, HttpStatus.OK);
-                    }
-
-                    else {
-                        eresult.status = "E-4425";
-                        eresult.message = "중복된 카테고리 이름입니다.";
-                        eresult.data = null;
-                        errorMap.put("field", "existCategoryName");
-                        errorMap.put("data", urequest.getChangName());
-                        eresult.errors = errorMap;
-
-                        response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
-                    }
+                    result.status = "S-200";
+                    result.message = "카테고리 수정에 성공했습니다.";
+                    result.data = urequest.getChangeName();
+                    response = new ResponseEntity<>(result, HttpStatus.OK);
 
                 } else {
                     eresult.status = "E-4426";
@@ -2083,7 +2084,6 @@ public class CounselController {
 
     }
 
-    
     @ApiOperation(value = "작성자가 쓴 모든 고민 반환 (익명 포함)", response = List.class)
     @GetMapping("/post/all/writer")
     public Object searchAllPostByWriter(@RequestParam String writer, @RequestParam int page,
