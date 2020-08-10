@@ -13,7 +13,6 @@
                     <img
                         id="photo"
                         src="../assets/images/sora.png"
-                        style="height: 64px; width: auto;"
                     >
                     <transition name="conversion">
                         <span
@@ -84,7 +83,6 @@
                     <b-nav-item>
                         <router-link
                             :to="{name: 'List'}"
-                            class="text-light text-decoration-none"
                         >
                             <transition name="conversion">
                                 <span
@@ -126,66 +124,68 @@
                 </b-navbar-nav>
 
                 <!-- Right aligned nav items -->
-                <b-navbar-nav class="ml-auto d-flex align-items-baseline">
-                    <b-nav-form>
-                        <b-form-input
-                            size="sm"
-                            class="mr-sm-2"
-                            placeholder="Search"
-                        />
-                        <b-button
-                            id="commonbutton"
-                            size="sm"
-                            class="my-2 mr-2 my-sm-0"
-                            type="submit"
-                        >
-                            Search
-                        </b-button>
-                    </b-nav-form>
-
-                    <b-nav-item-dropdown right>
-                        <template v-slot:button-content>
-                            <i
-                                class="fas fa-language"
-                                style="color: #6B799E;"
+                <b-navbar-nav class="ml-auto d-flexalign-items-baseline">
+                    <div id="rightnav">
+                        <b-nav-form>
+                            <b-form-input
+                                size="sm"
+                                class="mr-sm-2"
+                                placeholder="Search"
                             />
-                        </template>
-                        <b-dropdown-item @click="setkor">
-                            EN
-                        </b-dropdown-item>
-                        <b-dropdown-item @click="seteng">
-                            한국어
-                        </b-dropdown-item>
-                    </b-nav-item-dropdown>
-
-                    <b-nav-item-dropdown right>
-                        <!-- Using 'button-content' slot -->
-                        <template v-slot:button-content>
-                            <i
-                                class="fas fa-users"
-                                style="color: #6B799E;"
-                            />
-                        </template>
-                        <div v-if="nickname">
-                            <b-dropdown-item 
-                                @click.prevent="moveToUserDetail"
+                            <b-button
+                                id="commonbutton"
+                                size="sm"
+                                class="my-2 mr-2 my-sm-0"
+                                type="submit"
                             >
-                                Profile
-                            </b-dropdown-item>
-                            <b-dropdown-item @click.prevent="logout">
-                                Log out
-                            </b-dropdown-item>
-                        </div>
+                                Search
+                            </b-button>
+                        </b-nav-form>
 
-                        <div v-else>
-                            <b-dropdown-item v-b-modal.signup>
-                                <Signup />
+                        <b-nav-item-dropdown right>
+                            <template v-slot:button-content>
+                                <i
+                                    class="fas fa-language"
+                                    style="color: #6B799E;"
+                                />
+                            </template>
+                            <b-dropdown-item @click="setkor">
+                                EN
                             </b-dropdown-item>
-                            <b-dropdown-item v-b-modal.login>
-                                <Login />
+                            <b-dropdown-item @click="seteng">
+                                한국어
                             </b-dropdown-item>
-                        </div>
-                    </b-nav-item-dropdown>
+                        </b-nav-item-dropdown>
+
+                        <b-nav-item-dropdown right>
+                            <!-- Using 'button-content' slot -->
+                            <template v-slot:button-content>
+                                <i
+                                    class="fas fa-users"
+                                    style="color: #6B799E;"
+                                />
+                            </template>
+                            <div v-if="nickname">
+                                <b-dropdown-item 
+                                    @click.prevent="moveToUserDetail"
+                                >
+                                    Profile
+                                </b-dropdown-item>
+                                <b-dropdown-item @click.prevent="logout">
+                                    Log out
+                                </b-dropdown-item>
+                            </div>
+
+                            <div v-else>
+                                <b-dropdown-item v-b-modal.signup>
+                                    <Signup />
+                                </b-dropdown-item>
+                                <b-dropdown-item v-b-modal.login>
+                                    <Login />
+                                </b-dropdown-item>
+                            </div>
+                        </b-nav-item-dropdown>
+                    </div>
                 </b-navbar-nav>
             </b-collapse>
             <!-- spot area -->
@@ -250,6 +250,24 @@ export default {
     padding: 0;
     font-size: 130%;
 }
+#photo {
+    height: 64px; 
+    width: auto;
+}
+@media (max-width: 992px) {
+    .navbar {
+        height: 52px;
+        font-size: 100%;
+    }
+    #spot_area {
+        position: fixed;
+        top: 52px!important;
+        font-size: 75%;  
+    }
+    #photo {
+        height: 48px;
+    }
+}
 #spot_area {
     position: fixed;
     top: 68px;
@@ -261,8 +279,29 @@ export default {
     display: flex;
     padding: 10px;
 }
+a {
+    color: white;
+}
+.nav-link a:hover {
+    text-decoration: none;
+    color: white;
+    -webkit-transition: 0.5s ease;
+    transition: 0.5s ease;
+    border-bottom: 2px solid #6B799E;
+}
 .show.nav-item {
     color: black!important;
     z-index:2;
+}
+#rightnav {
+    display: flex;
+    justify-content: end;
+}
+.nav-item.b-nav-dropdown.dropdown {
+    height:48px;
+}
+.dropdown-menu.dropdown-menu-right.show {
+    position: fixed;
+    z-index:5;
 }
 </style>
