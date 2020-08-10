@@ -56,6 +56,7 @@
                 :submit-url="'/counsel/reply'"
                 :submit-method="'post'"
                 :default-post-no="no"
+                @submit="tempo"
             />
         </div>
     </v-wait>
@@ -96,6 +97,10 @@ export default {
         await this.fetchPost();
     },
     methods: {
+        tempo() {
+            console.log("fetching...");
+            this.fetchPost();
+        },
         async fetchPost() {
             this.$wait.start('counsel loading');
             await this.$axios({
@@ -136,24 +141,8 @@ export default {
                 });
             this.$wait.end('counsel loading');
         },
-        replyHandler() {
-            const content = this.$refs.editorText.invoke("getHtml");
-            this.$axios({
-                url: '/counsel/reply',
-                method: 'post',
-                data: {
-                    'content': content,
-                    'postNo': this.no,
-                    'secret': true,
-                    'selected': true,
-                    'writer': this.nickname,
-                },
-            })
-                .then(() => {
-                    this.fetchPost();
-                });
-        },
         likePost(type, id, iLoveIt, isDelete) {
+            this.$wait.start('counsel-chunk');
             this.$axios({
                 url: '/counsel/post/like',
                 method: isDelete ? 'delete' : 'post',
@@ -163,9 +152,12 @@ export default {
                 },
             }).then(() => {
                 this.fetchPost();
+            }).finally(() => {
+                this.$wait.end('counsel-chunk');
             });
         },
         likeReply(type, id, iLoveIt, isDelete) {
+            this.$wait.start('counsel-chunk');
             this.$axios({
                 url: '/counsel/reply/like',
                 method: isDelete ? 'delete' : 'post',
@@ -175,6 +167,8 @@ export default {
                 },
             }).then(() => {
                 this.fetchPost();
+            }).finally(() => {
+                this.$wait.end('counsel-chunk');
             });
         },
         modifyPost() {
@@ -186,6 +180,7 @@ export default {
             });
         },
         modifyReply(content, id, secret) {
+            this.$wait.start('counsel-chunk');
             this.$axios({
                 url: '/counsel/reply',
                 method: 'put',
@@ -203,9 +198,12 @@ export default {
                 }
             }).catch((error) => {
                 console.log(error);
+            }).finally(() => {
+                this.$wait.end('counsel-chunk');
             });
         },
         deletePost() {
+            this.$wait.start('counsel-chunk');
             this.$axios({
                 url: '/counsel/post',
                 method: 'delete',
@@ -217,6 +215,7 @@ export default {
             });
         },
         deleteReply(id) {
+            this.$wait.start('counsel-chunk');
             this.$axios({
                 url: '/counsel/reply',
                 method: 'delete',
@@ -225,6 +224,8 @@ export default {
                 },
             }).then(() => {
                 this.fetchPost();
+            }).finally(() => {
+                this.$wait.end('counsel-chunk');
             });
         },
         dummy() {

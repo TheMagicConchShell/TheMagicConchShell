@@ -23,6 +23,7 @@
                         <div class="comment-body-sidebar">
                             <button
                                 class="btn btn-info comment-update-btn"
+                                :disabled="$wait.is('counsel-chunk')"
                                 type="submit" 
                             >
                                 등록
@@ -98,7 +99,8 @@ export default {
         this.editorOpts = this.$store.getters.EDITOROPTIONS.options;
     },
     methods: {
-        async submit() {
+        async submit(e) {
+            this.$wait.start('counsel-chunk');
             this.content = this.$refs.commentEditorText.invoke("getHtml");
 
             const response = await this.$axios({
@@ -112,11 +114,16 @@ export default {
                     writer: this.nickname,
                 },
             })
-                .catch((error) => { console.log(error.response); });
+                .catch((error) => {
+                    console.log(error.response);
+                })
+                .finally(() => {
+                    this.$wait.end('counsel-chunk');
+                });
 
             if (response) {
                 if (response.status >= 200 && response.status < 300) {
-                    this.$router.go();
+                    this.$emit('submit');
                     this.$toast('답변', '답변이 작성되었습니다.');
                 } else {
                     console.log('글 작성이 실패하였습니다');
