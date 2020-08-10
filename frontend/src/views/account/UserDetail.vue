@@ -344,6 +344,17 @@ export default {
             })
                 .then((res) => {
                     this.$bvModal.show('user-delete-check');
+                    Kakao.API.request({
+                        url: '/v1/user/unlink',
+                        success: (response)=>{
+                            console.log(response);
+                            //this.$router.push("/");
+                        },
+                        fail: function(error) {
+                            console.log(error);
+                        },
+                    });
+
                 })
                 .catch((error) => {
                     console.log(error.response);

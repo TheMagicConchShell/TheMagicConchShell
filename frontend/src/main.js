@@ -22,6 +22,8 @@ import VueAwesomeSwiper from 'vue-awesome-swiper';
 import { Swiper as SwiperClass, Pagination, Mousewheel, Autoplay } from 'swiper/js/swiper.esm';
 import getAwesomeSwiper from 'vue-awesome-swiper/dist/exporter';
 import 'swiper/css/swiper.css';
+import Kakao from '@/initKakao.js';
+Kakao.init();
 
 Vue.component('editor',Editor);
 Vue.component('viewer',Viewer);

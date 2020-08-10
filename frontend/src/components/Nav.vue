@@ -220,6 +220,11 @@ export default {
         ...mapActions(['setkor', 'seteng']),
         logout() {
             this.$store.dispatch('logout');
+            if(Kakao.Auth.getAccessToken()!=null){
+                Kakao.Auth.logout(function(){
+                    
+                });
+            }
 
             this.$toast('안내', '로그아웃 되었습니다.');
         },
