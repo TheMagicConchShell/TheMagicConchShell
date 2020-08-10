@@ -1,6 +1,7 @@
 package com.blsa.ezilog.model.reply;
 
-import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -56,7 +57,10 @@ public class Reply {
     
     @Transient
     private int iLoveIt; // -1 싫어요 , 0 아무것도 없음 1 좋아요, 2 더 좋아요
-    
+
+    @Transient
+    private String SHA256Name;
+
     @Transient
     private String postTitle;
     
@@ -68,6 +72,27 @@ public class Reply {
         this.writeDate = writeDate;
         this.secret = secret;
     }
-
-   
+    
+    public String saveWriterSHA256(String writer) {
+        String result = "";
+        try { 
+            MessageDigest sh = MessageDigest.getInstance("SHA-256");
+            sh.update(writer.getBytes());
+            byte byteData[] = sh.digest();
+            StringBuffer sb = new StringBuffer();
+            for(int i = 0;i < byteData.length; i++) {
+                sb.append(Integer.toString((byteData[i]&0xff) + 0x100, 16).substring(1));
+            }
+            result = sb.toString().substring(0, 7);
+            this.SHA256Name = result;
+           
+        }catch(NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            this.SHA256Name = null;
+            result = "SHA256Failed";
+            
+        }
+        
+        return result;
+    }
 }
