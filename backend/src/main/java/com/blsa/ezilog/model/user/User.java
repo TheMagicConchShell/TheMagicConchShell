@@ -45,4 +45,6 @@ public class User {
     @Column
     private int level;
 
+    @Column
+    private boolean socialAccount;
 }

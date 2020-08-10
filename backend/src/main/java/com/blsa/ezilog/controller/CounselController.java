@@ -1,5 +1,8 @@
 package com.blsa.ezilog.controller;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -316,27 +319,63 @@ public class CounselController {
         Map<String, Object> errorMap = new HashMap<>();
 
         Optional<Post> optPost = postDao.findPostByNo(no);
+        Optional<User> optUser = userDao.findByNickname(nickname);
 
         if (optPost.isPresent()) {
             Post post = optPost.get();
             // 조회수 증가
-            post.setViews(post.getViews()+1);
+            post.setViews(post.getViews() + 1);
             postDao.save(post);
-            
+
             // 본인글 인지 확인 여부
             if (post.getWriter().equals(nickname)) {
                 post.setMine(true);
             }
 
-            // 글이 익명의 작성자인지 확인
-            if (post.isSecret() == true) {
-                post.setWriter("익명의 작성자");
+            if (!optUser.isPresent()) {
+                post.setILoveIt(0);
+            } else {
+                User user = optUser.get();
+                Optional<LikeCount> check = likecountDao.checkExistLikeCountNoType(user.getUid(), post.getNo());
+                if (!check.isPresent()) {
+                    post.setILoveIt(0);
+                } else {
+                    LikeCount lc = check.get();
+                    if (lc.getType().equals("p")) {
+                        post.setILoveIt(1);
+                    } else if (lc.getType().equals("m")) {
+                        post.setILoveIt(-1);
+                    } else {
+                        post.setILoveIt(2);
+                    }
+                }
+
             }
 
             List<Reply> allList = replyDao.ReplyByPostNum(post.getNo());
 
             // 같이오는 댓글들 목록 좋아요, 싫어요 수 가져오기
             for (int i = 0; i < allList.size(); i++) {
+
+                if (!optUser.isPresent()) {
+                    allList.get(i).setILoveIt(0);
+                } else {
+                    User user = optUser.get();
+                    Optional<ReplyLikeCount> check = replylikecountDao.checkExistLikeCountNoType(user.getUid(),
+                            allList.get(i).getId());
+                    if (!check.isPresent()) {
+                        post.setILoveIt(0);
+                    } else {
+                        ReplyLikeCount rlc = check.get();
+                        if (rlc.getType().equals("p")) {
+                            post.setILoveIt(1);
+                        } else if (rlc.getType().equals("m")) {
+                            post.setILoveIt(-1);
+                        } else {
+                            post.setILoveIt(2);
+                        }
+                    }
+                }
 
                 if (allList.get(i).getWriter().equals(nickname)) {
                     allList.get(i).setMine(true);
@@ -347,9 +386,15 @@ public class CounselController {
                 }
 
                 if (allList.get(i).isSecret() == true) {
+                    allList.get(i).saveWriterSHA256(allList.get(i).getWriter());
                     allList.get(i).setWriter("익명의 작성자");
                 }
 
+            }
+
+            // 글이 익명의 작성자인지 확인
+            if (post.isSecret() == true) {
+                post.setWriter("익명의 작성자");
             }
 
             Map<String, Object> PostMap = new HashMap<>();
@@ -1778,57 +1823,47 @@ public class CounselController {
         Optional<Reply> replyOpt = replyDao.findReplyById(rlcrequest.getReplyId());
 
         if (userOpt.isPresent() && replyOpt.isPresent()) {
-            User user = userOpt.get();
-            Reply rtemp = replyOpt.get();
+            User user = userOpt.get(); // 현재 유저가 회원인지 판단
+            Reply rtemp = replyOpt.get(); // 현재 답글이 존재하는 글인지 판단
             Optional<ReplyLikeCount> tOpt = replylikecountDao.checkExistLikeCount(user.getUid(), rlcrequest.getType(),
-                    rlcrequest.getReplyId());
+                    rlcrequest.getReplyId()); // 답글 좋아요 테이블에 현재 접속한 유저의 좋아요/싫어요 이력이 있는지를 확인
 
+            // 현재 좋아요를 입력하고자 한다면
             if (rlcrequest.getType().equals("p")) {
 
-                if (!tOpt.isPresent()) {
+                Optional<ReplyLikeCount> converseOpt = replylikecountDao.checkExistLikeCount(user.getUid(), "m",
+                        rlcrequest.getReplyId());
+                // 현재 좋아요를 눌렀는데 싫어요가 존재하는지 체크.
+                if (!converseOpt.isPresent()) {
+                    if (!tOpt.isPresent()) {
 
-                    LocalDateTime currentTime = LocalDateTime.now();
-                    ReplyLikeCount rlc = new ReplyLikeCount(rlcrequest.getReplyId(), user.getUid(), currentTime,
-                            rlcrequest.getType());
-                    replylikecountDao.save(rlc);
+                        LocalDateTime currentTime = LocalDateTime.now();
+                        ReplyLikeCount rlc = new ReplyLikeCount(rlcrequest.getReplyId(), user.getUid(), currentTime,
+                                rlcrequest.getType());
+                        replylikecountDao.save(rlc);
 
-                    rtemp.setLikeCount(rtemp.getLikeCount() + 1);
-                    replyDao.save(rtemp);
+                        rtemp.setLikeCount(rtemp.getLikeCount() + 1);
+                        replyDao.save(rtemp);
 
-                    result.status = "S-200";
-                    result.message = "좋아요 추가  성공";
-                    result.data = null;
+                        result.status = "S-200";
+                        result.message = "좋아요 추가  성공";
+                        result.data = null;
 
-                    response = new ResponseEntity<>(result, HttpStatus.OK);
+                        response = new ResponseEntity<>(result, HttpStatus.OK);
+                        // 이미 좋아요를 눌렀다면
+                    } else {
+                        eresult.status = "E-4431";
+                        eresult.message = "이미 좋아요를 눌렀습니다.";
+                        eresult.data = null;
+                        errorMap.put("field", "existLike");
+                        errorMap.put("data", null);
+                        eresult.errors = errorMap;
+
+                        response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                    }
                 } else {
-                    eresult.status = "E-4431";
-                    eresult.message = "이미 좋아요를 눌렀습니다.";
-                    eresult.data = null;
-                    errorMap.put("field", "existLike");
-                    errorMap.put("data", null);
-                    eresult.errors = errorMap;
-
-                    response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
-                }
-            } else if (rlcrequest.getType().equals("m")) {
-                if (!tOpt.isPresent()) {
-
-                    LocalDateTime currentTime = LocalDateTime.now();
-                    ReplyLikeCount rlc = new ReplyLikeCount(rlcrequest.getReplyId(), user.getUid(), currentTime,
-                            rlcrequest.getType());
-                    replylikecountDao.save(rlc);
-
-                    rtemp.setUnlikeCount(rtemp.getUnlikeCount() + 1);
-                    replyDao.save(rtemp);
-
-                    result.status = "S-200";
-                    result.message = "싫어요 추가  성공";
-                    result.data = null;
-
-                    response = new ResponseEntity<>(eresult, HttpStatus.OK);
-                } else {
-                    eresult.status = "E-4432";
-                    eresult.message = "이미 싫어요를 눌렀습니다.";
+                    eresult.status = "E-4447";
+                    eresult.message = "이미 싫어요를 눌렀습니다. 해제하고 다시 시도하세요";
                     eresult.data = null;
                     errorMap.put("field", "existUnLike");
                     errorMap.put("data", null);
@@ -1836,6 +1871,54 @@ public class CounselController {
 
                     response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
                 }
+                // 좋아요를 누르지 않았다면
+
+                // 현재 싫어요를 누르고자 한다면
+            } else if (rlcrequest.getType().equals("m")) {
+
+                Optional<ReplyLikeCount> converseOpt = replylikecountDao.checkExistLikeCount(user.getUid(), "p",
+                        rlcrequest.getReplyId());
+
+                // 현재 싫어요를 눌렀는데 좋아요가 존재하는지 체크.
+                if (!converseOpt.isPresent()) {
+                    // 아직 싫어요를 누르지 않았다면
+                    if (!tOpt.isPresent()) {
+
+                        LocalDateTime currentTime = LocalDateTime.now();
+                        ReplyLikeCount rlc = new ReplyLikeCount(rlcrequest.getReplyId(), user.getUid(), currentTime,
+                                rlcrequest.getType());
+                        replylikecountDao.save(rlc);
+
+                        rtemp.setUnlikeCount(rtemp.getUnlikeCount() + 1);
+                        replyDao.save(rtemp);
+
+                        result.status = "S-200";
+                        result.message = "싫어요 추가  성공";
+                        result.data = null;
+
+                        response = new ResponseEntity<>(result, HttpStatus.OK);
+                        // 이미 싫어요를 눌렀다면
+                    } else {
+                        eresult.status = "E-4432";
+                        eresult.message = "이미 싫어요를 눌렀습니다.";
+                        eresult.data = null;
+                        errorMap.put("field", "existUnLike");
+                        errorMap.put("data", null);
+                        eresult.errors = errorMap;
+
+                        response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                    }
+                } else {
+                    eresult.status = "E-44348";
+                    eresult.message = "이미 좋아요를 눌렀습니다. 해제하고 다시 시도하세요";
+                    eresult.data = null;
+                    errorMap.put("field", "existLike");
+                    errorMap.put("data", null);
+                    eresult.errors = errorMap;
+
+                    response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                }
+
                 // 추가 하는 것이 또 좋아요 기능인 경우
             } else if (rlcrequest.getType().equals("pp")) {
                 Optional<ReplyLikeCount> pOpt = replylikecountDao.checkExistLikeCount(user.getUid(), "p",

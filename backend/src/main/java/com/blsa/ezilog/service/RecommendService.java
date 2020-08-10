@@ -3,6 +3,7 @@ package com.blsa.ezilog.service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,18 +28,27 @@ public class RecommendService {
     @Scheduled(fixedRate = 3600000)
     public void autoCalculate() {
         recommendPosts = new ArrayList<>();
-        List<Post> posts = postDao.findAll();
-        for (Post p : posts) {
-            int replyCount = replyDao.countByPostNum(p.getNo());
-            RecommendPost rp = new RecommendPost(p.getNo(), p.getWriter(), p.getCategoryId(), p.getTitle(),
-                    p.getWriteDate(), p.getLikeCount(), p.getUnlikeCount(), p.getViews(), replyCount,
-                    p.getLikeCount() - p.getUnlikeCount() + p.getViews() + replyCount);
-            recommendPosts.add(rp);
+        Optional<List<Post>> optpost = postDao.findRecommandPostAllowed();
+        List<Post> posts = new ArrayList<>();
+        if (optpost.isPresent()) {
+            posts = optpost.get();
+            
+            for (Post p : posts) {
+                int replyCount = replyDao.countByPostNum(p.getNo());
+                RecommendPost rp = new RecommendPost(p.getNo(), p.getWriter(), p.getCategoryId(), p.getTitle(),
+                        p.getWriteDate(), p.getLikeCount(), p.getUnlikeCount(), p.getViews(), replyCount,
+                        p.getLikeCount() - p.getUnlikeCount() + p.getViews() + replyCount);
+                recommendPosts.add(rp);
+            }
+            Collections.sort(recommendPosts);
+            while (recommendPosts.size() > 5) {
+                recommendPosts.remove(5);
+            }
+        } else {
+            posts = null;
         }
-        Collections.sort(recommendPosts);
-        while (recommendPosts.size() > 5) {
-            recommendPosts.remove(5);
-        }
+
+        
     }
 
     public void calculate() {
