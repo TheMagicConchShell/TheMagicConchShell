@@ -1225,13 +1225,15 @@ public class CounselController {
 
     @ApiOperation(value = "카테고리 목록 가져오기", notes = "output: 전체 가테고리 리스트")
     @GetMapping("/category")
-    public Object retrieveCategory() {
+    public Object retrieveCategory(@RequestParam int page) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        List<Category> cList = categoryDao.findAll();
+        PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.ASC, "id");
+
+        Page<Category> cList = categoryDao.categoryList(pageable);
 
         if (!cList.isEmpty()) {
             result.status = "S-200";
@@ -1392,31 +1394,15 @@ public class CounselController {
 
                 if (cateOpt.isPresent()) {
 
-                    Optional<Category> duplicateOpt = categoryDao.findCategoryByName(urequest.getChangName());
+                    Category ctemp = cateOpt.get();
+                    ctemp.setName(urequest.getChangeName());
+                    ctemp.setDescription(urequest.getDescription());
+                    categoryDao.save(ctemp);
 
-                    if (!duplicateOpt.isPresent()) {
-
-                        Category ctemp = cateOpt.get();
-                        ctemp.setName(urequest.getChangName());
-                        ctemp.setDescription(urequest.getDescription());
-                        categoryDao.save(ctemp);
-
-                        result.status = "S-200";
-                        result.message = "카테고리 수정에 성공했습니다.";
-                        result.data = urequest.getChangName();
-                        response = new ResponseEntity<>(result, HttpStatus.OK);
-                    }
-
-                    else {
-                        eresult.status = "E-4425";
-                        eresult.message = "중복된 카테고리 이름입니다.";
-                        eresult.data = null;
-                        errorMap.put("field", "existCategoryName");
-                        errorMap.put("data", urequest.getChangName());
-                        eresult.errors = errorMap;
-
-                        response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
-                    }
+                    result.status = "S-200";
+                    result.message = "카테고리 수정에 성공했습니다.";
+                    result.data = urequest.getChangeName();
+                    response = new ResponseEntity<>(result, HttpStatus.OK);
 
                 } else {
                     eresult.status = "E-4426";

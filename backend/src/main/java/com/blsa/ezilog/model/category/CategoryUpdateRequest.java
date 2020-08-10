@@ -16,7 +16,7 @@ public class CategoryUpdateRequest {
     
     @ApiModelProperty(required = true)
     @NotNull
-    String changName;
+    String changeName;
 
 
     @ApiModelProperty(required = true)
@@ -34,13 +34,13 @@ public class CategoryUpdateRequest {
     }
 
 
-    public String getChangName() {
-        return changName;
+    public String getChangeName() {
+        return changeName;
     }
 
 
-    public void setChangName(String changName) {
-        this.changName = changName;
+    public void setChangeName(String changeName) {
+        this.changeName = changeName;
     }
 
 
