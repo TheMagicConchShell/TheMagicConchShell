@@ -69,15 +69,22 @@
                 <div class="d-flex">
                     <div
                         class="button-like mobile-only margin-right-5"
-                        @click="likeHandler('p', id, iLoveIt)"
+                        @click="likeHandlerWrapper('p', id, iLoveIt)"
                     >
-                        +{{ likeCount }}
+                        <i
+                            class="fa-thumbs-up up inline"
+                            :class="{far: (iLoveIt <= 0), fa: (iLoveIt > 0)}"
+                        />
+                        {{ likeCount }}
                     </div>
                     <div
                         class="button-dislike mobile-only margin-right-5"
-                        @click="likeHandler('m', id, iLoveIt)"
+                        @click="likeHandlerWrapper('m', id, iLoveIt)"
                     >
-                        -{{ unlikeCount }}
+                        <i
+                            class="fa-thumbs-down down inline"
+                            :class="{far: (iLoveIt >= 0), fa: (iLoveIt < 0)}"
+                        /> {{ unlikeCount }}
                     </div>
                     <div class="write-date">
                         {{ writeDate }}
@@ -372,6 +379,9 @@ export default {
     box-sizing: border-box;
     display: block;
 }
+.inline {
+    display: inline;
+}
 
 .wide-only {
     display: none !important;
@@ -612,9 +622,6 @@ export default {
                 top: 90px;
                 color: brown;
                 font-size: 100%;
-            }
-            .inline {
-                display: inline;
             }
         }
     }
