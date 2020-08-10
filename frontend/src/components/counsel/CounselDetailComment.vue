@@ -69,13 +69,13 @@
                 <div class="d-flex">
                     <div
                         class="button-like mobile-only margin-right-5"
-                        @click="likeHandler('p', id)"
+                        @click="likeHandler('p', id, iLoveIt)"
                     >
                         +{{ likeCount }}
                     </div>
                     <div
                         class="button-dislike mobile-only margin-right-5"
-                        @click="likeHandler('m', id)"
+                        @click="likeHandler('m', id, iLoveIt)"
                     >
                         -{{ unlikeCount }}
                     </div>
@@ -137,16 +137,84 @@
                     <div class="comment-body-sidebar">
                         <div
                             class="button-like wide-only"
-                            @click="likeHandler('p', id)"
+                            @click="likeHandlerWrapper('p', id, iLoveIt)"
                         >
-                            +{{ likeCount }}
+                            <i
+                                class="fa-thumbs-up up inline"
+                                :class="{far: (iLoveIt <= 0), fa: (iLoveIt > 0)}"
+                            /> {{ likeCount }}
                         </div>
                         <div
                             class="button-dislike wide-only"
-                            @click="likeHandler('m', id)"
+                            @click="likeHandlerWrapper('m', id, iLoveIt)"
                         >
-                            -{{ unlikeCount }}
+                            <i
+                                class="fa-thumbs-down down inline"
+                                :class="{far: (iLoveIt >= 0), fa: (iLoveIt < 0)}"
+                            /> {{ unlikeCount }}
                         </div>
+                        <b-modal
+                            :id="`additional-like-modal-${isPost}-${id}`"
+                            ref="modal"
+                            title="더 좋아요를 누르시겠습니까?"
+                        >
+                            <span>
+                                포인트 N을 소모해서 좋아요 한개를 더 추가하실 수 있습니다.
+                            </span>
+                            <template v-slot:modal-footer>
+                                <b-button
+                                    variant="outline-secondary"
+                                    size="sm"
+                                    class="float-right"
+                                    @click="show=false"
+                                >
+                                    취소
+                                </b-button>
+                                <b-button
+                                    variant="danger"
+                                    size="sm"
+                                    class="float-right"
+                                    @click="show=false; likeHandler('p', id, iLoveIt, true)"
+                                >
+                                    좋아요 삭제
+                                </b-button>
+                                <b-button
+                                    variant="primary"
+                                    size="sm"
+                                    class="float-right"
+                                    @click="likeHandler('pp', id, iLoveIt, false)"
+                                >
+                                    더 좋아요
+                                </b-button>
+                            </template>
+                        </b-modal>
+                        <b-modal
+                            :id="`additional-like-cancel-modal-${isPost}-${id}`"
+                            ref="modal"
+                            title="더 좋아요를 취소하시겠습니까?"
+                        >
+                            <span>
+                                더 좋아요를 취소하시더라도 포인트는 반환되지 않습니다.
+                            </span>
+                            <template v-slot:modal-footer>
+                                <b-button
+                                    variant="outline-secondary"
+                                    size="sm"
+                                    class="float-right"
+                                    @click="show=false"
+                                >
+                                    취소
+                                </b-button>
+                                <b-button
+                                    variant="danger"
+                                    size="sm"
+                                    class="float-right"
+                                    @click="show=false; likeHandler('pp', id, iLoveIt, true)"
+                                >
+                                    좋아요 삭제
+                                </b-button>
+                            </template>
+                        </b-modal>
                     </div>
                 </template>
             </div>
@@ -170,6 +238,10 @@ export default {
         SvgExclamation,
     },
     props: {
+        iLoveIt: {
+            type: Number,
+            required: true,
+        },
         id: {
             type: Number,
             default: 0,
@@ -257,7 +329,36 @@ export default {
         modifyComment(){
             const htmlText = this.$refs.commentUpdateEditor.invoke("getHtml");
             this.modifyHandler(htmlText,this.id,this.commentSecret);
-        }
+        },
+        likeHandlerWrapper(type, id, iLoveIt) {
+            if (type === 'p') {
+                switch(iLoveIt) {
+                case 2:
+                    this.$bvModal.show(`additional-like-cancel-modal-${this.isPost}-${id}`);
+                    break;
+                case 1:
+                    this.$bvModal.show(`additional-like-modal-${this.isPost}-${id}`);
+                    break;
+                case 0:
+                case -1:
+                    this.likeHandler('p', id, iLoveIt, false);
+                    break;
+                }
+            } else {
+                switch(iLoveIt) {
+                case -1:
+                    this.likeHandler('m', id, iLoveIt, true);
+                    break;
+                case 0:
+                case 1:
+                case 2:
+                    this.likeHandler('m', id, iLoveIt, false);
+                    break;
+                }
+            }
+        },
+        handleOK() {},
+        handleCancel() {},
     },
 };
 </script>
@@ -495,17 +596,21 @@ export default {
                 position: absolute;
                 right: 16px;
                 top: 60px;
-                border-bottom: 1px solid gray;
+                padding-bottom: 2px;
+                border-bottom: 1px solid lightgray;
                 color: green;
-                font-size: 140%;
+                font-size: 100%;
             }
             .button-dislike {
                 float: right;
                 position: absolute;
                 right: 16px;
-                top: 100px;
+                top: 90px;
                 color: brown;
-                font-size: 140%;
+                font-size: 100%;
+            }
+            .inline {
+                display: inline;
             }
         }
     }
