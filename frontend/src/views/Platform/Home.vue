@@ -306,12 +306,18 @@ export default {
     border: 1px solid #cacaca;
     box-shadow: 10px 10px 10px #9e9e9e;
     height: 80px;
-    -webkit-transition: all 0.45s ease-in-out;
-    transition: all 0.45s ease-in-out;
+    -webkit-transition: all 0.5s ease-in-out;
+    transition: all 0.5s ease-in-out;
     z-index: 0;
 }
 #detail:hover {
     height: 100%;
     z-index: 1;
+}
+#detail:hover #history_detail p {
+    border-bottom: 1px solid;
+}
+#history_detail {
+    color: black;
 }
 </style>

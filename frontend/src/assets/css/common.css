@@ -130,3 +130,22 @@ button {
 .open { transition: all 0.5s;}
 .open-enter-active { transition: all 0.5s ease; } 
 .open-enter, .open-leave-active { opacity: 0; transform: translateY(100%); } */
+/*nav바 밑줄*/
+.nav-item{
+    display:inline;
+    transition: 0.5s ease;
+}
+.nav-item:before, .nav-item:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    border-bottom: solid 2px #6B799E;
+    bottom: 0;
+    -webkit-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+.nav-item:before { left:50%; }
+.nav-item:after { right: 50%; }
+.nav-item:hover:before, .nav-item:hover:after {
+    width: 50%;
+}

@@ -282,13 +282,6 @@ export default {
 a {
     color: white;
 }
-.nav-link a:hover {
-    text-decoration: none;
-    color: white;
-    -webkit-transition: 0.5s ease;
-    transition: 0.5s ease;
-    border-bottom: 2px solid #6B799E;
-}
 .show.nav-item {
     color: black!important;
     z-index:2;
