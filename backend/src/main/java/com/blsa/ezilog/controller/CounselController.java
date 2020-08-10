@@ -45,10 +45,12 @@ import com.blsa.ezilog.model.point.PointHistory;
 import com.blsa.ezilog.model.post.Post;
 import com.blsa.ezilog.model.post.PostCreateRequest;
 import com.blsa.ezilog.model.post.PostUpdateRequest;
+import com.blsa.ezilog.model.post.RecommendPost;
 import com.blsa.ezilog.model.reply.Reply;
 import com.blsa.ezilog.model.reply.ReplyCreateRequest;
 import com.blsa.ezilog.model.reply.ReplyUpdateRequest;
 import com.blsa.ezilog.model.user.User;
+import com.blsa.ezilog.service.RecommendService;
 import com.blsa.ezilog.service.UserService;
 import com.blsa.ezilog.service.point.PointService;
 
@@ -82,6 +84,9 @@ public class CounselController {
 
     @Autowired
     UserService userservice;
+
+    @Autowired
+    private RecommendService recommendService;
 
     @ApiOperation(value = "고민 전체 목록 반환", notes = "Input : page, Output: 성공 : [status = true, data = 고민 리스트(Post)] 실패 : status = false, data = 에러메세지", response = List.class)
     @GetMapping("/post")
@@ -691,6 +696,14 @@ public class CounselController {
                 if (nickname.equals("admin") || ptemp.getWriter().equals(nickname)) {
 
                     postDao.delete(ptemp);
+
+                    List<RecommendPost> recommendPosts = recommendService.getRecommendPosts();
+                    for (RecommendPost p : recommendPosts) {
+                        if (p.getNo() == no) {
+                            recommendService.calculate();
+                            break;
+                        }
+                    }
 
                     result.status = "S-200";
                     result.message = "고민 글 삭제 완료";
@@ -2083,7 +2096,6 @@ public class CounselController {
 
     }
 
-    
     @ApiOperation(value = "작성자가 쓴 모든 고민 반환 (익명 포함)", response = List.class)
     @GetMapping("/post/all/writer")
     public Object searchAllPostByWriter(@RequestParam String writer, @RequestParam int page,
