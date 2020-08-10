@@ -161,12 +161,12 @@
                             <span>
                                 포인트 N을 소모해서 좋아요 한개를 더 추가하실 수 있습니다.
                             </span>
-                            <template v-slot:modal-footer>
+                            <template v-slot:modal-footer="{ hide }">
                                 <b-button
                                     variant="outline-secondary"
                                     size="sm"
                                     class="float-right"
-                                    @click="show=false"
+                                    @click="hide"
                                 >
                                     취소
                                 </b-button>
@@ -174,7 +174,7 @@
                                     variant="danger"
                                     size="sm"
                                     class="float-right"
-                                    @click="show=false; likeHandler('p', id, iLoveIt, true)"
+                                    @click="likeHandler('p', id, iLoveIt, true)"
                                 >
                                     좋아요 삭제
                                 </b-button>
@@ -196,12 +196,12 @@
                             <span>
                                 더 좋아요를 취소하시더라도 포인트는 반환되지 않습니다.
                             </span>
-                            <template v-slot:modal-footer>
+                            <template v-slot:modal-footer="{ hide }">
                                 <b-button
                                     variant="outline-secondary"
                                     size="sm"
                                     class="float-right"
-                                    @click="show=false"
+                                    @click="hide"
                                 >
                                     취소
                                 </b-button>
@@ -209,7 +209,7 @@
                                     variant="danger"
                                     size="sm"
                                     class="float-right"
-                                    @click="show=false; likeHandler('pp', id, iLoveIt, true)"
+                                    @click="likeHandler('pp', id, iLoveIt, true)"
                                 >
                                     좋아요 삭제
                                 </b-button>
@@ -331,6 +331,10 @@ export default {
             this.modifyHandler(htmlText,this.id,this.commentSecret);
         },
         likeHandlerWrapper(type, id, iLoveIt) {
+            if (!this.nickname) {
+                this.$toast('ERROR', '좋아요/싫어요를 누르시려면 로그인해주세요.');
+                return;
+            }
             if (type === 'p') {
                 switch(iLoveIt) {
                 case 2:
