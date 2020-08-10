@@ -5,7 +5,7 @@
                 <div class="buttons">
                     <div
                         v-if="isAuthor"
-                        class="button-author wide-only"
+                        class="button-author wide-only cursor-default"
                     >
                         <span>AUTHOR</span>
                     </div>
@@ -16,24 +16,18 @@
                         <svg-author />
                     </div>
 
-                    <template v-if="isMine">
+                    <template v-if="nickname && isMine">
                         <div 
-                            v-if="nickname && !isPost"
-                            class="button-item"
+                            v-if="nickname"
+                            class="button-item cursor-pointer"
                             @click="changeUpdate"
                         >
                             <svg-pencil />
                         </div>
                         <div
-                            v-if="nickname && isPost"
-                            class="button-item"
-                            @click="modifyHandler"
-                        >
-                            <svg-pencil />
-                        </div>
-                        <div
                             v-if="nickname"
-                            class="button-item"
+                            class="button-item cursor-pointer"
+                            :disabled="$wait.is('counsel-chunk')"
                             @click="deleteHandler(id)"
                         >
                             <svg-delete />
@@ -41,7 +35,8 @@
                     </template>
                     <template v-else>
                         <div
-                            class="button-item"
+                            class="button-item cursor-pointer"
+                            :disabled="$wait.is('counsel-chunk')"
                             @click="reportHandler"
                         >
                             <svg-exclamation />
@@ -63,12 +58,16 @@
                     onerrer="https://img.kbs.co.kr/kbs/620/nsimg.kbs.co.kr/data/news/2010/01/08/2024781_BeB.jpg"
                     alt="Avatar image"
                 >
-                <div class="writer">
+                <div
+                    v-tooltip="likeHandlerWrapper"
+                    class="writer"
+                >
                     {{ writer }}
                 </div>
                 <div class="d-flex">
                     <div
-                        class="button-like mobile-only margin-right-5"
+                        class="button-like mobile-only margin-right-5 cursor-pointer"
+                        :disabled="$wait.is('counsel-chunk')"
                         @click="likeHandlerWrapper('p', id, iLoveIt)"
                     >
                         <i
@@ -78,7 +77,8 @@
                         {{ likeCount }}
                     </div>
                     <div
-                        class="button-dislike mobile-only margin-right-5"
+                        class="button-dislike mobile-only margin-right-5 cursor-pointer"
+                        :disabled="$wait.is('counsel-chunk')"
                         @click="likeHandlerWrapper('m', id, iLoveIt)"
                     >
                         <i
@@ -109,7 +109,8 @@
                     <div class="comment-body-sidebar">
                         <div 
                             class="btn btn-info comment-update-btn"
-                            @click="modifyComment"
+                            :disabled="$wait.is('counsel-chunk')"
+                            @click="modifyHandlerWrapper"
                         >
                             수정
                         </div>
@@ -143,7 +144,8 @@
                     </div>
                     <div class="comment-body-sidebar">
                         <div
-                            class="button-like wide-only"
+                            class="button-like wide-only cursor-pointer"
+                            :disabled="$wait.is('counsel-chunk')"
                             @click="likeHandlerWrapper('p', id, iLoveIt)"
                         >
                             <i
@@ -152,7 +154,8 @@
                             /> {{ likeCount }}
                         </div>
                         <div
-                            class="button-dislike wide-only"
+                            class="button-dislike wide-only cursor-pointer"
+                            :disabled="$wait.is('counsel-chunk')"
                             @click="likeHandlerWrapper('m', id, iLoveIt)"
                         >
                             <i
@@ -181,6 +184,7 @@
                                     variant="danger"
                                     size="sm"
                                     class="float-right"
+                                    :disabled="$wait.is('counsel-chunk')"
                                     @click="likeHandler('p', id, iLoveIt, true)"
                                 >
                                     좋아요 삭제
@@ -189,6 +193,7 @@
                                     variant="primary"
                                     size="sm"
                                     class="float-right"
+                                    :disabled="$wait.is('counsel-chunk')"
                                     @click="likeHandler('pp', id, iLoveIt, false)"
                                 >
                                     더 좋아요
@@ -208,6 +213,7 @@
                                     variant="outline-secondary"
                                     size="sm"
                                     class="float-right"
+                                    :disabled="$wait.is('counsel-chunk')"
                                     @click="hide"
                                 >
                                     취소
@@ -216,6 +222,7 @@
                                     variant="danger"
                                     size="sm"
                                     class="float-right"
+                                    :disabled="$wait.is('counsel-chunk')"
                                     @click="likeHandler('pp', id, iLoveIt, true)"
                                 >
                                     좋아요 삭제
@@ -333,7 +340,7 @@ export default {
         changeUpdate(){
             this.isUpdate = !this.isUpdate;
         },
-        modifyComment(){
+        modifyHandlerWrapper(){
             const htmlText = this.$refs.commentUpdateEditor.invoke("getHtml");
             this.modifyHandler(htmlText,this.id,this.commentSecret);
         },
@@ -368,19 +375,26 @@ export default {
                 }
             }
         },
-        handleOK() {},
-        handleCancel() {},
     },
 };
 </script>
 
 <style lang="scss" scoped>
+*[disabled] {
+    opacity: 0.4;
+}
 * {
     box-sizing: border-box;
     display: block;
 }
 .inline {
     display: inline;
+}
+.cursor-default:hover {
+    cursor: default;
+}
+.cursor-pointer:hover {
+    cursor: pointer;
 }
 
 .wide-only {
@@ -433,9 +447,6 @@ export default {
     .button-item {
         margin-left: 4px;
         display: inline-block;
-    }
-    .button-item:hover {
-        cursor: pointer;
     }
 }
 
