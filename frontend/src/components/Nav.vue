@@ -175,6 +175,11 @@
                             <b-dropdown-item @click.prevent="logout">
                                 Log out
                             </b-dropdown-item>
+                            <div v-if="nickname=='admin'">
+                                <b-dropdown-item @click.prevent="moveManagerPage">
+                                    Manage Page
+                                </b-dropdown-item>
+                            </div>
                         </div>
 
                         <div v-else>
@@ -233,7 +238,12 @@ export default {
         },
         seteng() {
             this.$store.commit('eng');            
-        }
+        },
+        moveManagerPage() {
+            this.$router.push({
+                'name': 'managepage'
+            });
+        },
     },
 };
 </script>
