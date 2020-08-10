@@ -6,6 +6,7 @@ import Open from '@/views/Platform/Open.vue';
 import List from '@/views/Board/List.vue';
 import Rank from '@/views/Board/Rank.vue';
 
+import UserDetail from '@/views/account/UserDetail.vue';
 import EmailAuthentication from '@/views/account/EmailAuthentication.vue';
 
 import CounselView from '@/views/counsel/CounselView.vue';
@@ -45,6 +46,11 @@ const routes = [
         path: '/rank',
         name: 'Rank',
         component: Rank,
+    },
+    {
+        path: '/user/detail',
+        name: 'userdetail',
+        component: UserDetail,
     },
     {
         path: '/user/authentication',

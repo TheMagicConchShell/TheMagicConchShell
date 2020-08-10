@@ -81,11 +81,6 @@ export default {
                 return this.$store.getters.nickname;
             },
         },
-        jwtAuthToken: {
-            get() {
-                return this.$store.getters.jwtAuthToken;
-            },
-        },
     },
     created() {
         this.editorOpts = this.$store.getters.EDITOROPTIONS.options;
@@ -97,10 +92,6 @@ export default {
             const response = await this.$axios({
                 url: this.submitUrl,
                 method: this.submitMethod,
-                headers: {
-                    'jwt-auth-token': this.jwtAuthToken,
-                    'nickname': this.nickname,
-                },
                 data: {
                     content: this.content,
                     postNo: this.defaultPostNo,

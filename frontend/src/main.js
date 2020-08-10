@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import axios from 'axios';
 import App from '@/App.vue';
 import router from '@/router';
 import store from '@/store';
@@ -34,35 +33,8 @@ import 'bootstrap-vue/dist/bootstrap-vue.css';
 import './assets/css/common.css';
 
 Vue.config.productionTip = false;
-
-Vue.prototype.$axios = axios.create({
-    // baseURL: 'http://localhost:8399'
-    baseURL: 'http://i3a403.p.ssafy.io:8399',
-});
-
-Vue.prototype.$axios.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        if (!error.response) {
-            // Server do not response
-            // vm.$router.push({
-            //     name: 'ERROR',
-            //     params: { error: 'error' },
-            // });
-        }
-
-        const message = error.response.data.message;
-        const vm = new Vue();
-        vm.$bvToast.toast(`${message}`, {
-            title: `Error ${error.response.status} (${error.response.data.status})`,
-            toaster: 'b-toaster-top-center',
-            autoHideDelay: 5000,
-        });
-
-        return Promise.reject(error);
-    },
-);
-
+import axios from '@/axios';
+Vue.prototype.$axios = axios;
 
 const vm = new Vue({
     router,

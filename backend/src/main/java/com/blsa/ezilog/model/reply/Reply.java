@@ -60,7 +60,9 @@ public class Reply {
 
     @Transient
     private String SHA256Name;
-    
+
+    @Transient
+    private String postTitle;
     
     public Reply(String writer, Long postNo, String content, LocalDateTime writeDate, boolean secret) {
         super();
@@ -93,7 +95,4 @@ public class Reply {
         
         return result;
     }
-
-
-   
 }

@@ -41,14 +41,10 @@ public class User {
 
     @Column
     private int point;
-    
-//    @Column
-//    private Integer point;
 
     @Column
     private int level;
-    
-//    @Column
-//    private Integer level;
 
+    @Column
+    private boolean socialAccount;
 }

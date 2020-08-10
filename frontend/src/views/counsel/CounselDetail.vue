@@ -7,15 +7,17 @@
             <CounselDetailComment
                 name="question"
                 :is-post="true"
+                :is-author="true"
+
                 :title="post.title"
                 :writer="post.writer"
                 :content="post.content"
                 :write-date="post.writeDate"
                 :is-mine="post.mine"
-                :is-author="true"
                 :like-count="post.likeCount"
                 :unlike-count="post.unlikeCount"
                 :secret="post.secret"
+
 
                 :like-handler="nickname ? likePost : dummy"
                 :delete-handler="deletePost"
@@ -26,9 +28,10 @@
             <template v-if="replies && replies.length != 0">
                 <template v-for="reply in replies">
                     <CounselDetailComment
+                        :id="reply.id"
                         :key="reply.id"
                         name="reply"
-                        :reply-id="reply.id"
+                        
                         :content="reply.content"
                         :writer="reply.writer"
                         :write-date="reply.writeDate"
@@ -86,21 +89,12 @@ export default {
                 return this.$store.getters.nickname;
             },
         },
-        jwtAuthToken: {
-            get() {
-                return this.$store.getters.jwtAuthToken;
-            },
-        },
     },
     async created() {
         this.$wait.start('counsel loading');
         await this.$axios({
             url: '/counsel/post/post-no',
             method: 'get',
-            headers: {
-                'jwt-auth-token': this.jwtAuthToken,
-                'nickname': this.nickname,
-            },
             params: {
                 no: this.no,
             },
@@ -142,10 +136,6 @@ export default {
             this.$axios({
                 url: '/counsel/reply',
                 method: 'post',
-                headers: {
-                    'jwt-auth-token': this.jwtAuthToken,
-                    'nickname': this.nickname,
-                },
                 data: {
                     'content': content,
                     'postNo': this.no,
@@ -161,14 +151,10 @@ export default {
                     console.log(e.response);
                 });
         },
-        likePost(type) {
+        likePost(type, id) {
             this.$axios({
                 url: '/counsel/post/like',
                 method: 'post',
-                headers: {
-                    'jwt-auth-token': this.jwtAuthToken,
-                    'nickname': this.nickname,
-                },
                 data: {
                     'postNo': this.no,
                     'type': type,
@@ -177,16 +163,12 @@ export default {
                 this.$router.go();
             });
         },
-        likeReply(type) {
+        likeReply(type, id) {
             this.$axios({
                 url: '/counsel/reply/like',
                 method: 'post',
-                headers: {
-                    'jwt-auth-token': this.jwtAuthToken,
-                    'nickname': this.nickname,
-                },
                 data: {
-                    'replyId': this.no,
+                    'replyId': id,
                     'type': type,
                 },
             }).then(() => {
@@ -205,10 +187,6 @@ export default {
             this.$axios({
                 url: '/counsel/reply',
                 method: 'put',
-                headers: {
-                    'jwt-auth-token': this.jwtAuthToken,
-                    'nickname': this.nickname,
-                },
                 data: {
                     'content': content,
                     "id": id,
@@ -229,10 +207,6 @@ export default {
             this.$axios({
                 url: '/counsel/post',
                 method: 'delete',
-                headers: {
-                    'jwt-auth-token': this.jwtAuthToken,
-                    'nickname': this.nickname,
-                },
                 params: {
                     'no': this.no,
                 },
