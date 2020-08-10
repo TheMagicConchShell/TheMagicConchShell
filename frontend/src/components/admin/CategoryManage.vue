@@ -80,21 +80,6 @@
             </td>
         </template>
         
-        <template v-if="categoryList && categoryList.length">
-            <div class="overflow-auto">
-                <b-pagination
-                    v-model="page"
-                    :total-rows="rows"
-                    :per-page="perPage"
-                    first-text="First"
-                    prev-text="Prev"
-                    next-text="Next"
-                    last-text="Last"
-                    align="center"
-                    aria-controls="category-list"
-                />
-            </div>
-        </template>
 
         <b-modal
             id="modal-update-category"
@@ -189,14 +174,11 @@ import moment from 'moment';
 export default {
     data:()=>({
         categoryList:[],
-        page:1,
-        rows:1,
         name: '',
         changename:'',
         description: '',
         nameState: null,
         descriptionState: null,
-        perPage:10,
     }),
     computed: {
         ...mapState({
@@ -209,25 +191,20 @@ export default {
         },
     },
     created() {
-        this.fetchCategoryList(this.page);
+        this.fetchCategoryList();
     },
     methods: {
-        async fetchCategoryList(page){
+        async fetchCategoryList(){
             const response = await this.$axios({
                 method: 'get',
                 url: '/counsel/category',
                 headers:{
                     nickname : this.nickname,
                 },
-                params:{
-                    page:page || 1,
-                },
             }).then((res)=>{
-                //console.dir(res);
+                console.dir(res);
                 if(res.status >= 200 && res.status < 300 ){
-                    this.categoryList = res.data.data.content;
-                    this.rows = res.data.data.content.totalElements;
-                    this.page = res.data.data.content.size;
+                    this.categoryList = res.data.data;
                 }
             }).catch((error) =>{
                 console.log(error.response);
