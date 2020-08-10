@@ -369,8 +369,8 @@ public class CounselController {
                 } else {
                     User user = optUser.get();
                     Optional<ReplyLikeCount> checkP = replylikecountDao.checkExistLikeCount(user.getUid(), "p", allList.get(i).getId());
-                    Optional<ReplyLikeCount> checkM = replylikecountDao.checkExistLikeCount(user.getUid(), "p", allList.get(i).getId());
-                    Optional<ReplyLikeCount> checkPP = replylikecountDao.checkExistLikeCount(user.getUid(), "p", allList.get(i).getId());
+                    Optional<ReplyLikeCount> checkM = replylikecountDao.checkExistLikeCount(user.getUid(), "m", allList.get(i).getId());
+                    Optional<ReplyLikeCount> checkPP = replylikecountDao.checkExistLikeCount(user.getUid(), "pp", allList.get(i).getId());
                     if (checkPP.isPresent()) {
                         allList.get(i).setILoveIt(2);
                     } else {
@@ -1240,15 +1240,15 @@ public class CounselController {
 
     @ApiOperation(value = "카테고리 목록 가져오기", notes = "output: 전체 가테고리 리스트")
     @GetMapping("/category")
-    public Object retrieveCategory(@RequestParam int page) {
+    public Object retrieveCategory() {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.ASC, "id");
+        
 
-        Page<Category> cList = categoryDao.categoryList(pageable);
+        List<Category> cList = categoryDao.findAll();
 
         if (!cList.isEmpty()) {
             result.status = "S-200";
