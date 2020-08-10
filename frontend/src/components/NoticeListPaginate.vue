@@ -9,6 +9,11 @@
         :first-last-button="true"
         :container-class="'pagination'"
         :page-class="'page-item'"
+        :page-link-class="'page-link'"
+        :prev-class="'page-item'"
+        :prev-link-class="'page-link'"
+        :next-class="'page-item'"
+        :next-link-class="'page-link'"
         :active-class="'active'"
         :disabled-class="'disabled'"
     />
@@ -49,20 +54,23 @@ export default {
 </script>
 
 <style>
-.page-item {
+.page-link {
+    position: relative;
+    display: block;
+    padding: .5rem .75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: #007bff;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
 }
-.page-link-item {
-}
-.prev-item {
-}
-.prev-link-item {
-}
-.next-item {
-}
-.next-link-item {
-}
-.break-view {
-}
-.break-view-item {
+.pagination{
+    display: flex;
+    padding-left: 0;
+    list-style: none;
+    list-style-position: initial;
+    list-style-image: initial;
+    list-style-type: none;
+    border-radius: .25rem;
 }
 </style>

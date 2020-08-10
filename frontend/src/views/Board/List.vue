@@ -4,14 +4,13 @@
         <div class="d-flex">
             <div id="category">
                 고민 카테고리
-                <ul>
-                    <li>연애</li>
-                    <li>일상</li>
-                    <li>직장</li>
-                    <li>결혼</li>
-                    <li>문화</li>
-                    <li>주식</li>
-                    <li>치정</li>
+                <ul
+                    v-for="item in categories"
+                    :key="item.id"
+                >
+                    <li>
+                        {{ item.name }}
+                    </li>
                 </ul>
                 <div class="border h-25">
                     광고 배너
@@ -22,13 +21,11 @@
                     <li style="background-color:#6B799E">
                         실시간 인기
                     </li>
-                    <li>연애</li>
-                    <li>일상</li>
-                    <li>직장</li>
-                    <li>결혼</li>
-                    <li>문화</li>
-                    <li>주식</li>
-                    <li>치정</li>
+                    <template v-for="item in categories">
+                        <li :key="item.id">
+                            {{ item.name }}
+                        </li>
+                    </template>
                 </ul>
                 <div>
                     <counsel-board
@@ -50,6 +47,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import CounselBoard from '@/views/counsel/CounselBoard.vue';
 
 export default {
@@ -61,6 +59,15 @@ export default {
         page: 0,
         pageCount: 1,
     }),
+    computed: {
+        categories() {
+            return this.$store.getters.categories;
+        },
+
+    },
+    created() {
+        this.$store.dispatch('fetchCategories');
+    },
     methods: {
         write() {
             this.$router.push({

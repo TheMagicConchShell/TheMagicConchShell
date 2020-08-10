@@ -2,13 +2,18 @@
     <paginate
         v-model="page"
         :page-count="last"
-        :click-handler="pageHandle"
+        :click-handler="pageHandler(page)"
         :prev-text="'<'"
         :next-text="'>'"
         :hide-prev-next="true"
         :first-last-button="true"
         :container-class="'pagination'"
         :page-class="'page-item'"
+        :page-link-class="'page-link'"
+        :prev-class="'page-item'"
+        :prev-link-class="'page-link'"
+        :next-class="'page-item'"
+        :next-link-class="'page-link'"
         :active-class="'active'"
         :disabled-class="'disabled'"
     />
@@ -26,6 +31,10 @@ export default {
             type: [Number],
             required: true,
         },
+        pageHandler:{
+            type: Function,
+            required: true,
+        }
     },
     data: () => ({
         page: 1,
@@ -33,15 +42,26 @@ export default {
     mounted() {
         this.page = this.current;
     },
-    methods: {
-        pageHandle(nextPage) {
-            this.$router.push({
-                name: 'CounselSelect',
-                query: {
-                    page: nextPage,
-                },
-            }).catch(() => {});
-        },
-    },
 };
 </script>
+<style>
+.page-link {
+    position: relative;
+    display: block;
+    padding: .5rem .75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: #007bff;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+}
+.pagination{
+    display: flex;
+    padding-left: 0;
+    list-style: none;
+    list-style-position: initial;
+    list-style-image: initial;
+    list-style-type: none;
+    border-radius: .25rem;
+}
+</style>

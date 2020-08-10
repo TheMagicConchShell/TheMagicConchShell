@@ -110,13 +110,13 @@
                                 </td>
                                 <td
                                     class="comment-side-up"
-                                    @click="likeHandler('p')"
+                                    @click="likeHandler('p', id)"
                                 >
                                     +{{ likeCount }}
                                 </td>
                                 <td
                                     class="comment-side-down"
-                                    @click="likeHandler('m')"
+                                    @click="likeHandler('m', id)"
                                 >
                                     -{{ unlikeCount }}
                                 </td>
@@ -143,7 +143,7 @@ export default {
         SvgExclamation,
     },
     props: {
-        replyId: {
+        id: {
             type: Number,
             default: 0,
         },
