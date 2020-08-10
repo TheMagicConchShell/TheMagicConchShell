@@ -16,4 +16,8 @@ public interface ReplyLikeCountDao extends JpaRepository<ReplyLikeCount, Long> {
  // 현재 이 댓글에 내가 좋아요, 싫어요를 눌렀는지 체크
     @Query(value = "SELECT * FROM reply_like_count WHERE uid=:uid AND type=:type AND reply_id=:replyid", nativeQuery = true)
     Optional<ReplyLikeCount> checkExistLikeCount(Long uid, String type, Long replyid);
+    
+ // 현재 이 댓글에 내가 좋아요, 싫어요를 눌렀는지 체크
+    @Query(value = "SELECT * FROM reply_like_count WHERE uid=:uid AND reply_id=:replyid", nativeQuery = true)
+    Optional<ReplyLikeCount> checkExistLikeCountNoType(Long uid, Long replyid);
 }

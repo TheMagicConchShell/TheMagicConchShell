@@ -185,6 +185,12 @@
                                     <b-dropdown-item @click.prevent="logout">
                                         Log out
                                     </b-dropdown-item>
+                                    <template v-if="nickname=='admin'">
+                                        <b-dropdown-item @click.prevent="moveManagerPage">
+                                            Manage Page
+                                        </b-dropdown-item>
+                                    </template>
+
                                 </div>
                                 <div v-else>
                                     <b-dropdown-item v-b-modal.signup>
@@ -240,6 +246,11 @@ export default {
         ...mapActions(['setkor', 'seteng']),
         logout() {
             this.$store.dispatch('logout');
+            if(Kakao.Auth.getAccessToken()!=null){
+                Kakao.Auth.logout(function(){
+                    
+                });
+            }
 
             this.$toast('안내', '로그아웃 되었습니다.');
         },
@@ -253,7 +264,12 @@ export default {
         },
         seteng() {
             this.$store.commit('eng');            
-        }
+        },
+        moveManagerPage() {
+            this.$router.push({
+                'name': 'managepage'
+            });
+        },
     },
 };
 </script>

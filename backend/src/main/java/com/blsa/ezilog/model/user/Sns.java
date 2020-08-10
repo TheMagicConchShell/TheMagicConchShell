@@ -1,4 +1,6 @@
-package com.blsa.ezilog.model.category;
+package com.blsa.ezilog.model.user;
+
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,21 +16,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Category {
+public class Sns {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long sid;
 
     @Column
-    private String name;
+    private String snsId;
 
     @Column
-    private String description;
-
-    public Category(String name, String description) {
-        super();
-        this.name = name;
-        this.description = description;
-    }
-
+    private Long uid;
 }
