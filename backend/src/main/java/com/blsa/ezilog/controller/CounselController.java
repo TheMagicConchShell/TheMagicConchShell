@@ -341,17 +341,19 @@ public class CounselController {
                 post.setILoveIt(0);
             } else {
                 User user = optUser.get();
-                Optional<LikeCount> check = likecountDao.checkExistLikeCountNoType(user.getUid(), post.getNo());
-                if (!check.isPresent()) {
-                    post.setILoveIt(0);
+                Optional<LikeCount> checkP = likecountDao.checkExistLikeCount(user.getUid(), "p", post.getNo());
+                Optional<LikeCount> checkM = likecountDao.checkExistLikeCount(user.getUid(), "m", post.getNo());
+                Optional<LikeCount> checkPP = likecountDao.checkExistLikeCount(user.getUid(), "pp", post.getNo());
+
+                if (checkPP.isPresent()) {
+                    post.setILoveIt(2);
                 } else {
-                    LikeCount lc = check.get();
-                    if (lc.getType().equals("p")) {
+                    if (checkP.isPresent()) {
                         post.setILoveIt(1);
-                    } else if (lc.getType().equals("m")) {
+                    } else if (checkM.isPresent()) {
                         post.setILoveIt(-1);
                     } else {
-                        post.setILoveIt(2);
+                        post.setILoveIt(0);
                     }
                 }
 
@@ -366,18 +368,18 @@ public class CounselController {
                     allList.get(i).setILoveIt(0);
                 } else {
                     User user = optUser.get();
-                    Optional<ReplyLikeCount> check = replylikecountDao.checkExistLikeCountNoType(user.getUid(),
-                            allList.get(i).getId());
-                    if (!check.isPresent()) {
-                        post.setILoveIt(0);
+                    Optional<ReplyLikeCount> checkP = replylikecountDao.checkExistLikeCount(user.getUid(), "p", allList.get(i).getId());
+                    Optional<ReplyLikeCount> checkM = replylikecountDao.checkExistLikeCount(user.getUid(), "p", allList.get(i).getId());
+                    Optional<ReplyLikeCount> checkPP = replylikecountDao.checkExistLikeCount(user.getUid(), "p", allList.get(i).getId());
+                    if (checkPP.isPresent()) {
+                        allList.get(i).setILoveIt(2);
                     } else {
-                        ReplyLikeCount rlc = check.get();
-                        if (rlc.getType().equals("p")) {
-                            post.setILoveIt(1);
-                        } else if (rlc.getType().equals("m")) {
-                            post.setILoveIt(-1);
+                        if (checkP.isPresent()) {
+                            allList.get(i).setILoveIt(1);
+                        } else if (checkM.isPresent()) {
+                            allList.get(i).setILoveIt(-1);
                         } else {
-                            post.setILoveIt(2);
+                            allList.get(i).setILoveIt(0);
                         }
                     }
                 }
