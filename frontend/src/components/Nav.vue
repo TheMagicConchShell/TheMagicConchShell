@@ -31,7 +31,9 @@
                 </router-link>
             </b-navbar-brand>
 
-            <b-navbar-toggle target="nav-collapse" />
+            <b-navbar-toggle
+                target="nav-collapse"
+            />
 
             <b-collapse
                 id="nav-collapse"
@@ -124,7 +126,7 @@
                 </b-navbar-nav>
 
                 <!-- Right aligned nav items -->
-                <b-navbar-nav class="ml-auto d-flexalign-items-baseline">
+                <b-navbar-nav class="ml-auto d-flex align-items-baseline">
                     <div id="rightnav">
                         <b-nav-form>
                             <b-form-input
@@ -142,22 +144,30 @@
                             </b-button>
                         </b-nav-form>
 
-                        <b-nav-item-dropdown right>
+                        <b-nav-item-dropdown
+                            id="rightmenu"
+                            right
+                        >
                             <template v-slot:button-content>
                                 <i
                                     class="fas fa-language"
                                     style="color: #6B799E;"
                                 />
                             </template>
-                            <b-dropdown-item @click="setkor">
-                                EN
-                            </b-dropdown-item>
-                            <b-dropdown-item @click="seteng">
-                                한국어
-                            </b-dropdown-item>
+                            <div id="menudiv">
+                                <b-dropdown-item @click="setkor">
+                                    EN
+                                </b-dropdown-item>
+                                <b-dropdown-item @click="seteng">
+                                    한국어
+                                </b-dropdown-item>
+                            </div>
                         </b-nav-item-dropdown>
 
-                        <b-nav-item-dropdown right>
+                        <b-nav-item-dropdown
+                            id="rightmenu"
+                            right
+                        >
                             <!-- Using 'button-content' slot -->
                             <template v-slot:button-content>
                                 <i
@@ -165,24 +175,25 @@
                                     style="color: #6B799E;"
                                 />
                             </template>
-                            <div v-if="nickname">
-                                <b-dropdown-item 
-                                    @click.prevent="moveToUserDetail"
-                                >
-                                    Profile
-                                </b-dropdown-item>
-                                <b-dropdown-item @click.prevent="logout">
-                                    Log out
-                                </b-dropdown-item>
-                            </div>
-
-                            <div v-else>
-                                <b-dropdown-item v-b-modal.signup>
-                                    <Signup />
-                                </b-dropdown-item>
-                                <b-dropdown-item v-b-modal.login>
-                                    <Login />
-                                </b-dropdown-item>
+                            <div id="menudiv">
+                                <div v-if="nickname">
+                                    <b-dropdown-item 
+                                        @click.prevent="moveToUserDetail"
+                                    >
+                                        Profile
+                                    </b-dropdown-item>
+                                    <b-dropdown-item @click.prevent="logout">
+                                        Log out
+                                    </b-dropdown-item>
+                                </div>
+                                <div v-else>
+                                    <b-dropdown-item v-b-modal.signup>
+                                        <Signup />
+                                    </b-dropdown-item>
+                                    <b-dropdown-item v-b-modal.login>
+                                        <Login />
+                                    </b-dropdown-item>
+                                </div>
                             </div>
                         </b-nav-item-dropdown>
                     </div>
@@ -215,6 +226,15 @@ export default {
         ...mapState({
             nickname: state => state.auth.nickname,
         })
+    },
+    watch: {
+        '$route' () {
+            const element = document.querySelector("#nav-collapse");
+            let isShown = element.classList.contains("show");
+            if(isShown){
+                this.$root.$emit('bv::toggle::collapse', 'nav-collapse');
+            }
+        }
     },
     methods: {
         ...mapActions(['setkor', 'seteng']),
@@ -267,6 +287,32 @@ export default {
     #photo {
         height: 48px;
     }
+    #rightnav {
+        flex-direction: column;
+        float:left;
+    }
+    #rightmenu {
+        height: 60px;
+    }
+    #rightmenu ul {
+        position: relative;
+        width: 0;
+        height: 0;
+    }
+    #menudiv{
+        position: absolute;
+        padding: 0;
+        top: 25%;
+        left: 20%;
+        display: flex;
+        justify-content: space-between;
+    }
+    #menudiv div {
+        display:flex;
+    }
+    #menudiv {
+        padding: 0!important;
+    }
 }
 #spot_area {
     position: fixed;
@@ -289,12 +335,5 @@ a {
 #rightnav {
     display: flex;
     justify-content: end;
-}
-.nav-item.b-nav-dropdown.dropdown {
-    height:48px;
-}
-.dropdown-menu.dropdown-menu-right.show {
-    position: fixed;
-    z-index:5;
 }
 </style>
