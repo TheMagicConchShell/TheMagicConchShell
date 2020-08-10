@@ -1939,6 +1939,9 @@ public class CounselController {
                             rtemp.setLikeCount(rtemp.getLikeCount() + 1);
                             replyDao.save(rtemp);
 
+                            user.setPoint(user.getPoint() - 100);
+                            userDao.save(user);
+                            
                             result.status = "S-200";
                             result.message = "또 좋아요 추가  성공";
                             result.data = null;
