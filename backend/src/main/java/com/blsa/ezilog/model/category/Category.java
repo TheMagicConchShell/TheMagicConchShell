@@ -22,7 +22,7 @@ public class Category {
     @Column
     private String name;
 
-    @Column(name = "desc")
+    @Column
     private String description;
 
     public Category(String name, String description) {
