@@ -17,6 +17,7 @@
                 :like-count="post.likeCount"
                 :unlike-count="post.unlikeCount"
                 :secret="post.secret"
+                :i-love-it="post.iloveIt"
 
 
                 :like-handler="nickname ? likePost : dummy"
@@ -40,6 +41,7 @@
                         :unlike-count="reply.unlikeCount"
                         :is-mine="reply.mine"
                         :secret="reply.secret"
+                        :i-love-it="reply.iloveIt"
 
                         :like-handler="nickname ? likeReply : dummy"
                         :delete-handler="deleteReply"
@@ -91,46 +93,49 @@ export default {
         },
     },
     async created() {
-        this.$wait.start('counsel loading');
-        await this.$axios({
-            url: '/counsel/post/post-no',
-            method: 'get',
-            params: {
-                no: this.no,
-            },
-        })
-            .then((response) => {
-                console.log(response);
-                if (200 <= response.status && response.status < 300) {
-                    let formatDate = (date) => {
-                        let d = new Date(date),
-                            month = '' + (d.getMonth() + 1),
-                            day = '' + d.getDate(),
-                            year = d.getFullYear();
-
-                        if (month.length < 2) 
-                            month = '0' + month;
-                        if (day.length < 2) 
-                            day = '0' + day;
-
-                        return [month, day].join('-');
-                    };
-
-                    this.post = response.data.data.post;
-                    this.post.writeDate = formatDate(this.post.writeDate);
-                    this.replies = response.data.data.replies.map((e) => {
-                        let n = e;
-                        n.writeDate = formatDate(e.writeDate);
-                        return n;
-                    });
-                }
-            })
-            .catch((e) => {
-                console.log(e);
-            });
-        this.$wait.end('counsel loading');
+        await this.fetchPost();
     },
     methods: {
+        async fetchPost() {
+            this.$wait.start('counsel loading');
+            await this.$axios({
+                url: '/counsel/post/post-no',
+                method: 'get',
+                params: {
+                    no: this.no,
+                },
+            })
+                .then((response) => {
+                    console.log(response);
+                    if (200 <= response.status && response.status < 300) {
+                        let formatDate = (date) => {
+                            let d = new Date(date),
+                                month = '' + (d.getMonth() + 1),
+                                day = '' + d.getDate(),
+                                year = d.getFullYear();
+
+                            if (month.length < 2) 
+                                month = '0' + month;
+                            if (day.length < 2) 
+                                day = '0' + day;
+
+                            return [month, day].join('-');
+                        };
+
+                        this.post = response.data.data.post;
+                        this.post.writeDate = formatDate(this.post.writeDate);
+                        this.replies = response.data.data.replies.map((e) => {
+                            let n = e;
+                            n.writeDate = formatDate(e.writeDate);
+                            return n;
+                        });
+                    }
+                })
+                .catch((e) => {
+                    console.log(e);
+                });
+            this.$wait.end('counsel loading');
+        },
         replyHandler() {
             const content = this.$refs.editorText.invoke("getHtml");
             this.$axios({
@@ -145,34 +150,31 @@ export default {
                 },
             })
                 .then(() => {
-                    this.$router.go();
-                })
-                .catch((e) => {
-                    console.log(e.response);
+                    this.fetchPost();
                 });
         },
-        likePost(type, id) {
+        likePost(type, id, iLoveIt, isDelete) {
             this.$axios({
                 url: '/counsel/post/like',
-                method: 'post',
+                method: isDelete ? 'delete' : 'post',
                 data: {
                     'postNo': this.no,
                     'type': type,
                 },
             }).then(() => {
-                this.$router.go();
+                this.fetchPost();
             });
         },
-        likeReply(type, id) {
+        likeReply(type, id, iLoveIt, isDelete) {
             this.$axios({
                 url: '/counsel/reply/like',
-                method: 'post',
+                method: isDelete ? 'delete' : 'post',
                 data: {
                     'replyId': id,
                     'type': type,
                 },
             }).then(() => {
-                this.$router.go();
+                this.fetchPost();
             });
         },
         modifyPost() {
@@ -197,7 +199,7 @@ export default {
                 },
             }).then((res) => {
                 if(res.data.status==="S-200"){
-                    this.$router.go();
+                    this.fetchPost();
                 }
             }).catch((error) => {
                 console.log(error);
@@ -222,7 +224,7 @@ export default {
                     'id': id,
                 },
             }).then(() => {
-                this.$router.go();
+                this.fetchPost();
             });
         },
         dummy() {
