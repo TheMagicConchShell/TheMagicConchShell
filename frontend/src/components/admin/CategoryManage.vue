@@ -169,7 +169,7 @@
 </template>
 
 <script>
-import {mapState} from 'vuex';
+import {mapGetters} from 'vuex';
 import moment from 'moment';
 export default {
     data:()=>({
@@ -181,9 +181,7 @@ export default {
         descriptionState: null,
     }),
     computed: {
-        ...mapState({
-            nickname: state =>state.auth.nickname,
-        })
+        ...mapGetters(['nickname'])
     },
     watch:{
         page(){
