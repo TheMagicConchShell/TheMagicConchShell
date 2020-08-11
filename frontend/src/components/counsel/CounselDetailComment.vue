@@ -552,7 +552,7 @@ export default {
     }
     .avatar-container {
         top: 0px;
-        max-width: 76px;
+        max-width: 86px;
         left: -92px;
         position: absolute;
         z-index: 1;
