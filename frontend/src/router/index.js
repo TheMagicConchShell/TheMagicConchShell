@@ -9,10 +9,12 @@ import Rank from '@/views/Board/Rank.vue';
 import UserDetail from '@/views/account/UserDetail.vue';
 import EmailAuthentication from '@/views/account/EmailAuthentication.vue';
 
+import ManagePage from '@/views/admin/ManagePage.vue';
+
 import CounselView from '@/views/counsel/CounselView.vue';
 import CounselDetail from '@/views/counsel/CounselDetail.vue';
 import CounselRegist from '@/views/counsel/CounselRegist.vue';
-import CounselSelect from '@/views/counsel/CounselSelect.vue';
+// import CounselSelect from '@/views/counsel/CounselSelect.vue';
 import CounselUpdate from '@/views/counsel/CounselUpdate.vue';
 
 import Support from '@/views/support/Support.vue';
@@ -73,14 +75,14 @@ const routes = [
                 name:"counselregist",
                 component: CounselRegist
             },
-            {
-                path: 'select',
-                name: 'CounselSelect',
-                component: CounselSelect,
-                query: {
-                    page: 1,
-                },
-            },
+            // {
+            //     path: 'select',
+            //     name: 'CounselSelect',
+            //     component: CounselSelect,
+            //     query: {
+            //         page: 1,
+            //     },
+            // },
             {
                 path: 'update/:no',
                 name: 'CounselUpdate',
@@ -136,6 +138,11 @@ const routes = [
         path: "/error",
         name: "Error",
         component: Error,
+    },
+    {
+        path: '/manager',
+        name: 'managepage',
+        component: ManagePage,
     },
 ];
 

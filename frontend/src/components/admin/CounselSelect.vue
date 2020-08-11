@@ -118,6 +118,7 @@
         </h2>
         <template v-if="list && list.length">
             <table
+                id="allowed-counsel-list"
                 class="table"
             >
                 <colgroup>
@@ -207,11 +208,19 @@
         </template>
         
         <template v-if="list && list.length">
-            <CounselSelectPaginate
-                :current="page"
-                :last="pageCount"
-                :page-handler="pageHandle"
-            />
+            <div class="overflow-auto">
+                <b-pagination
+                    v-model="page"
+                    :total-rows="rows"
+                    :per-page="perPage"
+                    first-text="First"
+                    prev-text="Prev"
+                    next-text="Next"
+                    last-text="Last"
+                    align="center"
+                    aria-controls="allowed-counsel-list"
+                />
+            </div>
         </template>
 
         <b-modal
@@ -253,42 +262,37 @@
     </div>
 </template>
 <script>
-import CounselSelectPaginate from "@/components/CounselSelectPaginate";
 import moment from 'moment';
 
 export default {
     name: 'CounselSelect',
-    components: {
-        CounselSelectPaginate,
-    },
     data () {
         return {
             no: '',
             description: '',
             descriptionState: null,
-            page: 0,
-            pageCount: 1,
+            page:1,
+            rows: '',
+            perPage: '',
             list: [],
             recommendList:[],
         };
     },
     watch: {
-        '$route'() {
-            this.page = this.$route.query.page;
-        },
         page() {
             this.fetchAllowedCounsels(this.page);
         },
     },
     created() {
-        this.page = Number.parseInt(this.$route.query.page);
+        this.fetchAllowedCounsels(this.page);
+
         this.$axios({
             url:'/post/recommend/auto',
             method:"get",
         }).then((res)=>{
             if(res.status >= 200 && res.status < 300){
                 this.recommendList = res.data.data;
-                console.log(res.data);
+                //console.log(res.data);
             }
         }).catch((error) => {
             console.log(error.response);
@@ -304,16 +308,13 @@ export default {
                 params: {
                     page: page || 1,
                 }
+            }).then((response) => {
+                this.rows = response.data.data.totalElements;
+                this.perPage = response.data.data.size;
+                this.list = response.data.data.content;
             }).catch((error) => {
                 console.log(error.response);
             });
-
-            if (response) {
-                if (response.status >= 200 && response.status < 300) {
-                    this.pageCount = response.data.data.totalPages;
-                    this.list = response.data.data.content;
-                }
-            }
         },
         checkFormValidity() {
             const valid = this.$refs.form.checkValidity();
@@ -367,14 +368,6 @@ export default {
             }).catch((error) => {
                 console.log(error.response);
             });
-        },
-        pageHandle(nextPage) {
-            this.$router.push({
-                name: 'CounselSelect',
-                query: {
-                    page: nextPage,
-                },
-            }).catch(() => {});
         },
     },
 };

@@ -7,17 +7,27 @@
         <div class="d-flex">
             <div id="article">
                 <ul id="tab">
-                    <li>전체</li>
+                    <li
+                        class="cursor-pointer-hover"
+                        :class="{active: (currentCategory === '전체')}"
+                        @click="fetchCounsel"
+                    >
+                        <span>전체</span>
+                    </li>
                     <li
                         v-for="category in categories"
-                        :key="category.id"
+                        :key="category.name"
+                        class="cursor-pointer-hover"
+                        :class="{active: (currentCategory === category.name)}"
+                        @click="fetchCounsel"
                     >
-                        {{ category.name }}
+                        <span>{{ category.name }}</span>
                     </li>
                 </ul>
                 <div>
                     <counsel-board
                         :page="page"
+                        :category="currentCategory"
                     />
                 </div>
                 <div />
@@ -39,10 +49,10 @@
                             전체
                         </li>
                         <li
-                            v-for="cg in categories"
-                            :key="cg.no"
+                            v-for="category in categories"
+                            :key="category.id"
                         >
-                            {{ cg.name }}
+                            {{ category.name }}
                         </li>
                     </ul>
                 </div>
@@ -52,7 +62,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import CounselBoard from '@/views/counsel/CounselBoard.vue';
 
 export default {
@@ -64,13 +74,16 @@ export default {
         page: 1,
         pageCount: 1,
         Y: false,
-        nowcategory: null,
+        currentCategory: '전체',
     }),
     computed: {
-        categories() {
-            return this.$store.getters.categories;
-        },
+        ...mapGetters(['categories']),
         ...mapState(['language'])
+    },
+    watch: {
+        $route() {
+            this.page = this.$route.query.page;
+        },
     },
     created() {
         this.$store.dispatch('fetchCategories');
@@ -80,6 +93,11 @@ export default {
         // window.addEventListener('scroll', this.detectbottom);
     },
     methods: {
+        fetchCounsel(e) {
+            console.log(e.target.innerText);
+            this.currentCategory = e.target.innerText;
+            this.page = 1;
+        },
         write() {
             this.$router.push({
                 name: 'counselregist'
@@ -88,29 +106,14 @@ export default {
         detectWindowScrollY() {
             this.Y = window.scrollY > 100;
         },
-        // async detectbottom() {
-        //     if (window.scrollTop === document.height) {
-        //         this.page += 1;
-        //     };
-        // },
-        async fetchCategories() {
-            const response = await this.$axios({
-                url: `counsel/category`,
-                method: "get",
-            }).catch(() => {
-                console.log("catch notices");
-            });
-            if (response) {
-                if (response.status >= 200 && response.status < 300) {
-                    this.categories = response.data.data.content;
-                }
-            }
-        },
     }
 };
 </script>
 
 <style scoped>
+.active {
+    background: #A6C2CE;
+}
 #home {
   display: flex;
   margin: 30px 0;
@@ -142,10 +145,13 @@ export default {
 }
 #article {
     margin-left: 20px;
-    width: 85%;
+    width: 100%;
 }
 
 .button-write {
     float: right;
+}
+.cursor-pointer-hover:hover {
+    cursor: pointer;
 }
 </style>

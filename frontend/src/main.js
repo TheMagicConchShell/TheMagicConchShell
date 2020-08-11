@@ -22,6 +22,8 @@ import VueAwesomeSwiper from 'vue-awesome-swiper';
 import { Swiper as SwiperClass, Pagination, Mousewheel, Autoplay } from 'swiper/js/swiper.esm';
 import getAwesomeSwiper from 'vue-awesome-swiper/dist/exporter';
 import 'swiper/css/swiper.css';
+import Kakao from '@/initKakao.js';
+Kakao.init();
 
 Vue.component('editor',Editor);
 Vue.component('viewer',Viewer);
@@ -39,8 +41,6 @@ Vue.component('paginate', Paginate);
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import './assets/css/common.css';
-
-
 
 Vue.config.productionTip = false;
 import axios from '@/axios';
@@ -61,4 +61,3 @@ Vue.prototype.$toast = (title, message, append = false, hideDelay = 5000) => {
         appendToast: append,
     });
 };
-

@@ -37,6 +37,9 @@ export default new Vuex.Store({
         },
         eng(state) {
             state.language='ko';
+        },
+        ch(state) {
+            state.language='ch';
         }
     },
 });

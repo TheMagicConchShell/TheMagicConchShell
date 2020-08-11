@@ -38,7 +38,8 @@
 </template>
 
 <script>
-const storage = window.sessionStorage;
+import { mapGetters } from 'vuex';
+
 export default {
     props: {
         submitUrl: {
@@ -78,11 +79,7 @@ export default {
         editorOpts:null
     }),
     computed: {
-        nickname: {
-            get() {
-                return this.$store.getters.nickname;
-            },
-        }
+        ...mapGetters(['nickname']),
     },
     watch: {
         defaultTitle() {

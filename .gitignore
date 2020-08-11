@@ -8,6 +8,7 @@ target/
 !**/src/test/**
 test/
 
+initKakao.js
 application.properties
 
 ### STS ###

@@ -15,14 +15,14 @@
                     style="max-height: 200px;"
                 >
                     <div class="d-flex w-100 justify-content-between">
-                        <div>
+                        <div class="item">
                             <span id="title">
                                 {{ item.title }}
                             </span>
                             <span id="divider">|</span>
                             <span>{{ getCategory(item.categoryId) }}</span>
                         </div>
-                        <div>
+                        <div class="item">
                             <span>{{ getFormatDate(item.writeDate) }} </span> 
                             <span id="divider">|</span>
                             <span>{{ item.views }}</span>
@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 import moment from 'moment';
 
 export default {
@@ -87,9 +87,7 @@ export default {
         perPage: 10,
     }),
     computed: {
-        ...mapState({
-            nickname: state => state.auth.nickname,
-        })
+        ...mapGetters(['nickname']),
     },
     watch: {
         page() {
@@ -117,6 +115,7 @@ export default {
             });
         },
         getCategory(categoryId){
+            this.$store.dispatch('fetchCategories');
             return this.$store.getters.categoryNameById(categoryId);
         },
         getFormatDate(date) {
@@ -144,7 +143,13 @@ export default {
     color: lightgray;
 }
 #title {
+    max-width: 70%;
     font-size: x-large;
+}
+.item {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; 
 }
 .content {
     width: 100%;
