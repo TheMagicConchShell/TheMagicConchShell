@@ -16,7 +16,7 @@ instance.interceptors.request.use(
     (config) => {
         if (store.getters.nickname) {
             config.headers['jwt-auth-token'] = store.getters.jwtAuthToken;
-            config.headers['nickname'] = store.getters.nickname;
+            config.headers['nickname'] = store.getters.encodedNickname;
         }
         
         return config;

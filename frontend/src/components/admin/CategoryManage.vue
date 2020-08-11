@@ -169,7 +169,7 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex';
+import { mapGetters } from 'vuex';
 import moment from 'moment';
 export default {
     data:()=>({

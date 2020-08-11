@@ -42,8 +42,6 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 import './assets/css/common.css';
 
-
-
 Vue.config.productionTip = false;
 import axios from '@/axios';
 Vue.prototype.$axios = axios;
@@ -63,4 +61,3 @@ Vue.prototype.$toast = (title, message, append = false, hideDelay = 5000) => {
         appendToast: append,
     });
 };
-

@@ -1,25 +1,20 @@
 <template>
     <div>
-        <h1> 고민 수정 </h1>
+        <h1>고민 투고</h1>
         <div 
-            class="container" 
+            class="container d-flex-column text-left"
         >
-            <div>
-                <h2>
-                    <label for="counseltitle"> 제목: </label>
-                    <input 
-                        id="counseltitle"
-                        v-model="title"
-                        type="text"
-                        name="counseltitle"
-                        placeholder="제목을 입력해주세요."
-                        style="width:90%"
-                    >
-                </h2>
+            <div class="d-flex-row">
+                <span class="header">제목: </span>
+                <input
+                    v-model="title"
+                    type="text"
+                    placeholder="제목을 입력해주세요."
+                >
             </div>
-            <div>
-                <h2>
-                    카테고리:
+            <div class="d-flex-row">
+                <span class="header">카테고리: </span>
+                <div class="d-flex-row full">
                     <template v-for="item in categories">
                         <input
                             :id="`radio${item.id}`"
@@ -36,73 +31,84 @@
                             {{ item.name }}
                         </label>
                     </template>
-                </h2>
+                </div>
             </div>
-            <div>
-                <h3> 
-                    메인 화면에 게시 허용시 체크:
-                    <input 
-                        id="allow" 
-                        v-model="allow"
-                        style="width:5%" 
-                        type="checkbox" 
-                        name="allow" 
-                    >
+            <div class="d-flex-row">
+                <span class="header">메인 노출 허용: </span>
+                <div class="d-flex-row full">
+                    <label class="el-switch el-switch-sm">
+                        <input
+                            v-model="allow"
+                            type="checkbox"
+                            name="allow"
+                            checked=""
+                        >
+                        <span
+                            class="el-switch-style"
+                        />
+                    </label>
                     <label 
                         v-if="allow==true" 
                         for="allow"
-                    >허용
+                    >
+                        허용
                     </label>
                     <label 
                         v-else 
                         for="allow"
-                    >허용하지 않음
-                    </label>
-                </h3>
-            </div>
-            <div>
-                <h3>
-                    익명으로 등록하기:
-                    <input 
-                        id="secret" 
-                        v-model="secret"
-                        style="width:5%" 
-                        type="checkbox" 
-                        name="secret" 
                     >
-                    <label 
-                        v-if="secret==true" 
-                        for="secret"
-                    >익명
+                        허용하지 않음
                     </label>
-                    <label 
-                        v-else 
-                        for="secret"
-                    >닉네임 공개
+                </div>
+            </div>
+            <div class="d-flex-row">
+                <span class="header">익명으로 등록하기: </span>
+                <div class="d-flex-row full">
+                    <label class="el-switch el-switch-sm">
+                        <input
+                            v-model="secret"
+                            type="checkbox"
+                            name="secret"
+                            checked=""
+                        >
+                        <span
+                            class="el-switch-style"
+                        />
                     </label>
-                </h3>
+                    <label
+                        for="secret"
+                    >
+                        <span v-if="secret">
+                            익명
+                        </span>
+                        <span v-else>
+                            닉네임 공개
+                        </span>
+                    </label>
+                </div>
             </div>
             <div>
                 <editor 
-                    v-if="editorText!=null"
+                    v-if="editorText"
                     ref="editorText" 
-                    :initial-value="editorText"
+                    :initial-value="editorText" 
+                    class="text-left"
                     :options="editorOpts" 
                     initial-edit-type="wysiwyg" 
                     height="500px" 
                 />
                 <button 
-                    id="updatebtn" 
-                    @click="updatecounsel"
+                    id="registbtn" 
+                    @click="updateCounsel"
                 >
-                    수정하기
+                    등록하기
                 </button>
             </div>
         </div>
     </div>
 </template>
 <script>
-
+import { mapGetters } from 'vuex';
 import 'tui-color-picker/dist/tui-color-picker.css';
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
 
@@ -126,11 +132,7 @@ export default {
         };
     },
     computed: {
-        categories: {
-            get() {
-                return this.$store.getters.categories;
-            },
-        },
+        ...mapGetters(['categories']),
     },
     mounted() {
         this.editorOpts = this.$store.getters.EDITOROPTIONS.options;
@@ -138,8 +140,8 @@ export default {
         this.$axios({
             method:"get",
             url:`/counsel/post/post-no?no=${this.no}`,
-        }).then((res)=>{
-            if(res.data.status==="S-200"){
+        }).then((res) => {
+            if(res.data.status === "S-200"){
                 console.log(res.data.data);
                 this.allow = res.data.data.post.allow;
                 this.category = res.data.data.post.categoryId;
@@ -150,7 +152,7 @@ export default {
         });
     },
     methods: {
-        updatecounsel(){
+        updateCounsel(){
             var contentHtml = this.$refs.editorText.invoke("getHtml");
             this.$axios({
                 method:"put",
@@ -181,38 +183,59 @@ export default {
 
 </script>
 
-<style>
-input[type=radio]{
+<style scoped>
+.el-switch {
+    margin-right: 6px;
+}
+label {
+    margin-top: .5rem;
+    margin-bottom: .5rem;
+}
+.header {
+    width: 160px;
+}
+.full {
+    width: 100%;
+}
+.d-flex-column {
+    display: flex;
+    flex-direction: column;
+}
+.d-flex-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+input[type=text] {
+    width: 100%;
+}
+
+input[type=radio] {
     display: none;
     margin:10px;
 }
 
-input[type=radio] + label{
-    display:inline-block; 
-    margin:-2px; 
-    padding: 8px 19px; 
-    background-color: white; 
-    border: 1px solid #ccc; 
-    font-size: 13px !important; 
-    width: 110px; 
+input[type=radio] + label {
+    flex: 1;
+    margin:-2px;
+    padding: 8px 19px;
+    background-color: white;
+    border: 1px solid #ccc;
     text-align: center; 
 }
 
 input[type=radio]:checked + label {  
-    background-image: none; 
-    background-color:black; 
-    color:white; 
+    background-image: none;
+    background-color:black;
+    color:white;
 } 
 
-h2{
-    text-align: left;
-}
-
-h3{
-    text-align: left;
-}
-
-#updatebtn{
+#registbtn {
     margin: 20px;
+}
+
+.text-left {
+    text-align: left;
 }
 </style>
