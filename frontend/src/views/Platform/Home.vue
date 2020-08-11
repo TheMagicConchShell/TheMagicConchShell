@@ -29,7 +29,6 @@
                 <swiper-slide
                     v-for="post in list"
                     :key="post.no"
-                    style="overflow: auto"
                 >
                     <router-link
                         :to="{name: 'CounselDetail', params: {no: post.no}}"
@@ -47,14 +46,6 @@
                 <div
                     slot="pagination"
                     class="swiper-pagination"
-                />
-                <div
-                    slot="button-prev"
-                    class="swiper-button-prev"
-                />
-                <div
-                    slot="button-next"
-                    class="swiper-button-next"
                 />
             </swiper>          
         </div>
@@ -132,21 +123,13 @@ export default {
             p_img: '',
             /* swiper */
             swiperOption: {
-                effect: 'coverflow',
                 grabCursor: true,
                 loop: true,
-                slidesPerView: 1,
+                slidesPerView: 3,
                 centeredSlides: true,
-                coverflowEffect: {
-                    rotate: 50,
-                    stretch: 0,
-                    depth: 100,
-                    modifier: 1,
-                    slideShadows : true
-                },
                 breakpoints: {
                     992: {
-                        slidesPerView: 3,
+                        slidesPerView: 5,
                     }
                 },
                 mousewheel: true,
@@ -263,11 +246,12 @@ export default {
   margin: 30px 0;
   padding-top: 30px;
   justify-content: space-between;
-  font-size: 30px;
+  font-family: sb;
 }
 #thisweek {
     width: 100%;
-    height: 80vh;
+    height: 30vh;
+    margin-bottom: 50px;
 }
 #history {
     display: grid;
@@ -277,23 +261,23 @@ export default {
 .swiper {
     height: 100%;
     width: 100%;
+    border: 1px solid;
 }
 .swiper-slide {
       padding:20px;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      align-items: center;
+      align-items: start;
       width: 300px;
       height: 100%;
-      text-align: center;
       background-color: white;
-      border: 5px solid #6B799E;
       box-shadow: 10px 10px 10px #9e9e9e;
 }
 .swiper-slide a {
     color: black;
 }
+
 @media (max-width: 992px) {
     #home {
         font-size: 22.5px;
@@ -319,5 +303,8 @@ export default {
 }
 #history_detail {
     color: black;
+}
+#history_content {
+    position: absolute;
 }
 </style>

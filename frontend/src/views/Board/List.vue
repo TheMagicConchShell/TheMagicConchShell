@@ -142,7 +142,7 @@ export default {
 }
 #article {
     margin-left: 20px;
-    width: 85%;
+    width: 100%;
 }
 
 .button-write {
