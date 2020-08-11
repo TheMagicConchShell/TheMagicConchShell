@@ -1,5 +1,9 @@
 package com.blsa.ezilog.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -104,7 +109,7 @@ public class UserController {
 
     @PostMapping("/user/login")
     @ApiOperation(value = "로그인")
-    public Object login(@Valid @RequestBody LoginRequestDTO request, HttpServletResponse res) {
+    public Object login(@Valid @RequestBody LoginRequestDTO request, HttpServletResponse res) throws UnsupportedEncodingException {
         ResponseEntity<BasicResponse> response = null;
         Map<String, Object> errors = new HashMap<>();
         Object u = userService.login(request);
@@ -120,8 +125,9 @@ public class UserController {
             response = new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
         } else {
             String token = jwtService.create((User) u);
+            String encoded = URLEncoder.encode(((User) u).getNickname(),"UTF-8");
             res.setHeader("jwt-auth-token", token);
-            res.setHeader("nickname", ((User) u).getNickname());
+            res.setHeader("nickname",encoded);
             final BasicResponse result = new BasicResponse();
             result.status = "S-200";
             result.message = "로그인에 성공했습니다.";
@@ -134,7 +140,7 @@ public class UserController {
     @PutMapping("/user/update")
     @ApiOperation(value = "회원 정보 수정")
     public Object update(@Valid @RequestBody UpdateRequestDTO request, HttpServletRequest req,
-            HttpServletResponse res) {
+            HttpServletResponse res) throws UnsupportedEncodingException {
         ResponseEntity<BasicResponse> response = null;
         Map<String, Object> errors = new HashMap<>();
 
@@ -259,7 +265,7 @@ public class UserController {
 
     @GetMapping("/user/extendJWT")
     @ApiOperation(value = "jwt 재발급")
-    public Object extendJWT(HttpServletRequest req, HttpServletResponse res) {
+    public Object extendJWT(HttpServletRequest req, HttpServletResponse res) throws UnsupportedEncodingException {
         ResponseEntity<BasicResponse> response = null;
         final BasicResponse result = new BasicResponse();
         User user = userService.select(req.getHeader("nickname"));
