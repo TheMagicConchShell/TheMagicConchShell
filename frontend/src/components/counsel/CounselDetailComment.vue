@@ -17,13 +17,24 @@
                     </div>
 
                     <template v-if="nickname && isMine">
-                        <div 
-                            v-if="nickname"
-                            class="button-item cursor-pointer"
-                            @click="changeUpdate"
-                        >
-                            <svg-pencil />
-                        </div>
+                        <template v-if="isPost">
+                            <div 
+                                v-if="nickname"
+                                class="button-item cursor-pointer"
+                                @click="modifyHandler"
+                            >
+                                <svg-pencil />
+                            </div>
+                        </template>
+                        <template v-else>
+                            <div 
+                                v-if="nickname"
+                                class="button-item cursor-pointer"
+                                @click="changeUpdate"
+                            >
+                                <svg-pencil />
+                            </div>
+                        </template>
                         <div
                             v-if="nickname"
                             class="button-item cursor-pointer"
@@ -59,7 +70,6 @@
                     alt="Avatar image"
                 >
                 <div
-                    v-tooltip="likeHandlerWrapper"
                     class="writer"
                 >
                     {{ writer }}
@@ -542,7 +552,7 @@ export default {
     }
     .avatar-container {
         top: 0px;
-        max-width: 76px;
+        max-width: 86px;
         left: -92px;
         position: absolute;
         z-index: 1;
