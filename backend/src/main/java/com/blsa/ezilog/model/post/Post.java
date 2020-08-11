@@ -54,6 +54,9 @@ public class Post {
     @Column (name ="secret")
     private boolean secret;
     
+    @Column
+    private boolean choose;
+    
     @Transient
     private boolean isMine;
     

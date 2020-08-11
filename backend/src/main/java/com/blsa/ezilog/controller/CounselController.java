@@ -297,7 +297,7 @@ public class CounselController {
                     result.data = pList;
                     response = new ResponseEntity<>(result, HttpStatus.OK);
                 } else {
-                    eresult.status = "E-4404";
+                    eresult.status = "E-4405";
                     eresult.message = "작성자에 해당되는 고민이  없습니다.";
                     eresult.data = null;
                     errorMap.put("field", "noPostByWriter");
@@ -368,9 +368,12 @@ public class CounselController {
                     allList.get(i).setILoveIt(0);
                 } else {
                     User user = optUser.get();
-                    Optional<ReplyLikeCount> checkP = replylikecountDao.checkExistLikeCount(user.getUid(), "p", allList.get(i).getId());
-                    Optional<ReplyLikeCount> checkM = replylikecountDao.checkExistLikeCount(user.getUid(), "m", allList.get(i).getId());
-                    Optional<ReplyLikeCount> checkPP = replylikecountDao.checkExistLikeCount(user.getUid(), "pp", allList.get(i).getId());
+                    Optional<ReplyLikeCount> checkP = replylikecountDao.checkExistLikeCount(user.getUid(), "p",
+                            allList.get(i).getId());
+                    Optional<ReplyLikeCount> checkM = replylikecountDao.checkExistLikeCount(user.getUid(), "m",
+                            allList.get(i).getId());
+                    Optional<ReplyLikeCount> checkPP = replylikecountDao.checkExistLikeCount(user.getUid(), "pp",
+                            allList.get(i).getId());
                     if (checkPP.isPresent()) {
                         allList.get(i).setILoveIt(2);
                     } else {
@@ -393,7 +396,7 @@ public class CounselController {
                 }
 
                 if (allList.get(i).isSecret() == true) {
-                    allList.get(i).saveWriterSHA256(allList.get(i).getWriter());
+                    allList.get(i).saveWriterSHA256(allList.get(i).getWriter(), allList.get(i).getPostNo());
                     allList.get(i).setWriter("익명의 작성자");
                 }
 
@@ -415,7 +418,7 @@ public class CounselController {
             result.data = PostMap;
             response = new ResponseEntity<>(result, HttpStatus.OK);
         } else {
-            eresult.status = "S-4405";
+            eresult.status = "S-4406";
             eresult.message = "공지 번호에 해당되는 고민 글이  없습니다.";
             eresult.data = null;
             errorMap.put("field", "noPostByNo");
@@ -472,7 +475,7 @@ public class CounselController {
                 result.data = pList;
                 response = new ResponseEntity<>(result, HttpStatus.OK);
             } else {
-                eresult.status = "S-4406";
+                eresult.status = "S-4407";
                 eresult.message = "제목에 해당 되는고민 글들이  없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "noPostByTitle");
@@ -539,7 +542,7 @@ public class CounselController {
                     result.data = pList;
                     response = new ResponseEntity<>(result, HttpStatus.OK);
                 } else {
-                    eresult.status = "E-4407";
+                    eresult.status = "E-4408";
                     eresult.message = "제목 또는 작성자에 해당 되는고민 글들이  없습니다..";
                     eresult.data = null;
                     errorMap.put("field", "noPostByWriterORTitle");
@@ -568,7 +571,7 @@ public class CounselController {
                     result.data = aList;
                     response = new ResponseEntity<>(result, HttpStatus.OK);
                 } else if (aList.isEmpty() || aList.equals(null)) {
-                    eresult.status = "E-4407";
+                    eresult.status = "E-4408";
                     eresult.message = "제목 또는 작성자에 해당 되는고민 글들이  없습니다..";
                     eresult.data = null;
                     errorMap.put("field", "noPostByWriterORTitle");
@@ -607,7 +610,7 @@ public class CounselController {
                     result.data = pList;
                     response = new ResponseEntity<>(result, HttpStatus.OK);
                 } else if (pList.isEmpty() || pList.equals(null)) {
-                    eresult.status = "S-4407";
+                    eresult.status = "S-4408";
                     eresult.message = "제목 또는 작성자에 해당 되는고민 글들이  없습니다.";
                     eresult.data = null;
                     errorMap.put("field", "noPostByWriterORTitle");
@@ -634,7 +637,7 @@ public class CounselController {
         Optional<User> optUser = userDao.findByNickname(post.getWriter());
 
         if (!optUser.isPresent()) {
-            eresult.status = "E-4408";
+            eresult.status = "E-4409";
             eresult.message = "알 수 없는 회원 입니다. 고민 글을 작성 할 수 없습니다.";
             eresult.data = null;
             errorMap.put("field", "unKnownUser");
@@ -663,7 +666,7 @@ public class CounselController {
                 result.data = null;
                 response = new ResponseEntity<>(result, HttpStatus.OK);
             } else {
-                eresult.status = "E-4443";
+                eresult.status = "E-4410";
                 eresult.message = "포인트를 얻을 수 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "addPoint");
@@ -712,7 +715,7 @@ public class CounselController {
                     result.data = null;
                     response = new ResponseEntity<>(result, HttpStatus.OK);
                 } else {
-                    eresult.status = "E-4409";
+                    eresult.status = "E-4411";
                     eresult.message = "허가 된 계정이 아닙니다. 글을 삭제 할 수 없습니다.";
                     eresult.data = null;
                     errorMap.put("field", "deletePost");
@@ -722,7 +725,7 @@ public class CounselController {
                     response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
                 }
             } else {
-                eresult.status = "E-4410";
+                eresult.status = "E-4412";
                 eresult.message = "존재하지 않는 고민입니다. 고민을 삭제 할 수 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "deletePost");
@@ -732,7 +735,7 @@ public class CounselController {
                 response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
             }
         } else {
-            eresult.status = "E-4408";
+            eresult.status = "E-4409";
             eresult.message = "알 수 없는 회원 입니다. 고민 글을 삭제 할 수 없습니다.";
             eresult.data = null;
             errorMap.put("field", "unKnownUser");
@@ -776,7 +779,7 @@ public class CounselController {
                     response = new ResponseEntity<>(result, HttpStatus.OK);
 
                 } else {
-                    eresult.status = "E-4411";
+                    eresult.status = "E-4413";
                     eresult.message = "허가 된 계정이 아닙니다. 고민 글을 수정 할 수 없습니다.";
                     eresult.data = null;
                     errorMap.put("field", "updatePost");
@@ -786,7 +789,7 @@ public class CounselController {
                     response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
                 }
             } else {
-                eresult.status = "E-4412";
+                eresult.status = "E-4414";
                 eresult.message = "존재하지 않는 질문입니다. 질문을 수정 할 수 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "updatePost");
@@ -796,7 +799,7 @@ public class CounselController {
                 response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
             }
         } else {
-            eresult.status = "E-4408";
+            eresult.status = "E-4409";
             eresult.message = "알수 없는 유저입니다. 질문을 수정 할 수 없습니다.";
             eresult.data = null;
             errorMap.put("field", "unKnownUser");
@@ -824,7 +827,7 @@ public class CounselController {
 
         if (optUser.isPresent()) {
             if (!optPost.isPresent()) {
-                eresult.status = "E-4440";
+                eresult.status = "E-4415";
                 eresult.message = "답변 선정에 해당 되는 고민이 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "noPost");
@@ -833,7 +836,7 @@ public class CounselController {
 
                 response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
             } else if (!optReply.isPresent()) {
-                eresult.status = "E-4441";
+                eresult.status = "E-4416";
                 eresult.message = "답변 선정에 해당 되는 답변이 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "noReply");
@@ -844,36 +847,51 @@ public class CounselController {
             } else {
                 Reply rtemp = optReply.get();
                 Post ptemp = optPost.get();
+                // 현재 접속한 유저가 Post 작성자와 같을 때
                 if (nickname.equals(ptemp.getWriter())) {
-                    rtemp.setSelected(true);
-
-                    replyDao.save(rtemp);
 
                     LocalDateTime currentTime = LocalDateTime.now();
 
                     User rutemp = userservice.select(rtemp.getWriter());
 
-                    PointHistory p = new PointHistory(rutemp.getUid(), currentTime, 200, "답글 선정");
-                    if (pointservice.addPoint(p)) {
-                        rutemp.setPoint(rutemp.getPoint() + 200);
-                        userDao.save(rutemp);
-                        result.status = "S-200";
-                        result.message = "고민  선정에 성공했습니다.";
-                        result.data = null;
-                        response = new ResponseEntity<>(result, HttpStatus.OK);
+                    if (!ptemp.isChoose()) {
+                        PointHistory p = new PointHistory(rutemp.getUid(), currentTime, 200, "답글 선정");
+                        // 포인트를 적립 할 수 있을 때
+                        if (pointservice.addPoint(p)) {
+                            rtemp.setSelected(true);
+                            replyDao.save(rtemp);
+                            ptemp.setChoose(true);
+                            postDao.save(ptemp);
+
+                            rutemp.setPoint(rutemp.getPoint() + 200);
+                            userDao.save(rutemp);
+                            result.status = "S-200";
+                            result.message = "고민  선정에 성공했습니다.";
+                            result.data = null;
+                            response = new ResponseEntity<>(result, HttpStatus.OK);
+                        } else {
+                            eresult.status = "E-4417";
+                            eresult.message = "포인트를 얻을 수 없습니다.";
+                            eresult.data = null;
+                            errorMap.put("field", "addPoint");
+                            errorMap.put("data", "fail");
+                            eresult.errors = errorMap;
+
+                            response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                        }
                     } else {
-                        eresult.status = "E-4443";
-                        eresult.message = "포인트를 얻을 수 없습니다.";
+                        eresult.status = "E-4418";
+                        eresult.message = "이미 답변을 선택한 고민입니다.";
                         eresult.data = null;
-                        errorMap.put("field", "addPoint");
-                        errorMap.put("data", "fail");
+                        errorMap.put("field", "chooseAlready");
+                        errorMap.put("data", ptemp.getNo());
                         eresult.errors = errorMap;
 
-                        response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
+                        response = new ResponseEntity<>(eresult, HttpStatus.BAD_REQUEST);
                     }
 
                 } else {
-                    eresult.status = "E-4409";
+                    eresult.status = "E-4419";
                     eresult.message = "허가 된 계정이 아닙니다. 답변을 선정  할 수 없습니다.";
                     eresult.data = null;
                     errorMap.put("field", "selectReply");
@@ -884,7 +902,7 @@ public class CounselController {
                 }
             }
         } else {
-            eresult.status = "E-4408";
+            eresult.status = "E-4409";
             eresult.message = "알수 없는 유저입니다. 답변을 수정 할 수 없습니다.";
             eresult.data = null;
             errorMap.put("field", "unknownUser");
@@ -943,7 +961,7 @@ public class CounselController {
                     result.data = rList;
                     response = new ResponseEntity<>(result, HttpStatus.OK);
                 } else {
-                    eresult.status = "E-4413";
+                    eresult.status = "E-4420";
                     eresult.message = "불러 올 답변이  없습니다.";
                     eresult.data = null;
                     errorMap.put("field", "noReply");
@@ -954,7 +972,7 @@ public class CounselController {
                 }
 
             } else {
-                eresult.status = "E-4414";
+                eresult.status = "E-4401";
                 eresult.message = "불러 올 고민이  없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "noPost");
@@ -998,7 +1016,7 @@ public class CounselController {
                 result.data = rList;
                 response = new ResponseEntity<>(result, HttpStatus.OK);
             } else {
-                eresult.status = "E-4413";
+                eresult.status = "E-4420";
                 eresult.message = "불러 올 답변이  없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "noReply");
@@ -1026,7 +1044,7 @@ public class CounselController {
         Optional<User> optUser = userDao.findByNickname(nickname);
 
         if (!optUser.isPresent()) {
-            eresult.status = "E-4408";
+            eresult.status = "E-4409";
             eresult.message = "알수 없는 유저입니다. 답변을  작성 할 수 없습니다.";
             eresult.data = null;
             errorMap.put("field", "unKnownUser");
@@ -1054,7 +1072,7 @@ public class CounselController {
                     result.data = null;
                     response = new ResponseEntity<>(result, HttpStatus.OK);
                 } else {
-                    eresult.status = "E-4443";
+                    eresult.status = "E-4417";
                     eresult.message = "포인트를 얻을 수 없습니다.";
                     eresult.data = null;
                     errorMap.put("field", "addPoint");
@@ -1070,7 +1088,7 @@ public class CounselController {
                 response = new ResponseEntity<>(result, HttpStatus.OK);
 
             } else {
-                eresult.status = "E-4415";
+                eresult.status = "E-4421";
                 eresult.message = "존재하지 않는 고민글입니다. 답변 글을 작성 할 수  없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "createReply");
@@ -1100,7 +1118,7 @@ public class CounselController {
             Optional<Reply> rtemp = replyDao.findReplyById(id);
 
             if (!rtemp.isPresent()) {
-                eresult.status = "E-4416";
+                eresult.status = "E-4422";
                 eresult.message = "존재하지 않는 답변입니다. 답변을 삭제 할 수 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "deleteReply");
@@ -1122,7 +1140,7 @@ public class CounselController {
                     result.data = null;
                     response = new ResponseEntity<>(result, HttpStatus.OK);
                 } else {
-                    eresult.status = "E-4417";
+                    eresult.status = "E-4423";
                     eresult.message = "허가 된 계정이 아닙니다. 답변을 삭제 할 수 없습니다.";
                     eresult.data = null;
                     errorMap.put("field", "deleteReply");
@@ -1133,7 +1151,7 @@ public class CounselController {
                 }
             }
         } else {
-            eresult.status = "E-4408";
+            eresult.status = "E-4409";
             eresult.message = "알수 없는 유저입니다. 답변을 삭제 할 수 없습니다.";
             eresult.data = null;
             errorMap.put("field", "unknownUser");
@@ -1175,7 +1193,7 @@ public class CounselController {
                     response = new ResponseEntity<>(result, HttpStatus.OK);
 
                 } else {
-                    eresult.status = "E-448";
+                    eresult.status = "E-4424";
                     eresult.message = "허가 된 계정이 아닙니다. 답변 글을 수정 할 수 없습니다.";
                     eresult.data = null;
                     errorMap.put("field", "updateReply");
@@ -1185,7 +1203,7 @@ public class CounselController {
                     response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
                 }
             } else {
-                eresult.status = "E-4419";
+                eresult.status = "E-4425";
                 eresult.message = "존재하지 않는 답변입니다. 답변을 수정 할 수 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "updateReply");
@@ -1195,7 +1213,7 @@ public class CounselController {
                 response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
             }
         } else {
-            eresult.status = "E-4408";
+            eresult.status = "E-4409";
             eresult.message = "알수 없는 유저입니다. 답변을 수정 할 수 없습니다.";
             eresult.data = null;
             errorMap.put("field", "unknownUser");
@@ -1246,8 +1264,6 @@ public class CounselController {
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        
-
         List<Category> cList = categoryDao.findAll();
 
         if (!cList.isEmpty()) {
@@ -1256,7 +1272,7 @@ public class CounselController {
             result.data = cList;
             response = new ResponseEntity<>(result, HttpStatus.OK);
         } else {
-            eresult.status = "E-4420";
+            eresult.status = "E-4426";
             eresult.message = "카테고리가 없습니다.";
             eresult.data = null;
             errorMap.put("field", "noCategory");
@@ -1294,7 +1310,7 @@ public class CounselController {
                     result.data = crequest.getName();
                     response = new ResponseEntity<>(result, HttpStatus.OK);
                 } else {
-                    eresult.status = "E-4421";
+                    eresult.status = "E-4427";
                     eresult.message = "이미 카테고리가 있습니다.";
                     eresult.data = null;
                     errorMap.put("field", "existCategory");
@@ -1304,7 +1320,7 @@ public class CounselController {
                     response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
                 }
             } else {
-                eresult.status = "E-4422";
+                eresult.status = "E-4428";
                 eresult.message = "카테고리를 만들 수 있는 권한이 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "createCategory");
@@ -1314,7 +1330,7 @@ public class CounselController {
                 response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
             }
         } else {
-            eresult.status = "E-4408";
+            eresult.status = "E-4409";
             eresult.message = "알수 없는 유저입니다. 답변을 수정 할 수 없습니다.";
             eresult.data = null;
             errorMap.put("field", "unknownUser");
@@ -1350,7 +1366,7 @@ public class CounselController {
                     result.data = categoryName;
                     response = new ResponseEntity<>(result, HttpStatus.OK);
                 } else {
-                    eresult.status = "E-4423";
+                    eresult.status = "E-4429";
                     eresult.message = "지우려는 카테고리가 존재하지 않습니다.";
                     eresult.data = null;
                     errorMap.put("field", "noCategory");
@@ -1361,7 +1377,7 @@ public class CounselController {
                 }
 
             } else {
-                eresult.status = "E-4424";
+                eresult.status = "E-4430";
                 eresult.message = "카테고리를 지울 수 있는 권한이 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "deleteCategory");
@@ -1371,7 +1387,7 @@ public class CounselController {
                 response = new ResponseEntity<>(eresult, HttpStatus.FORBIDDEN);
             }
         } else {
-            eresult.status = "E-4408";
+            eresult.status = "E-4409";
             eresult.message = "알수 없는 유저입니다. 카테고리를 삭제 할 수 없습니다.";
             eresult.data = null;
             errorMap.put("field", "unknownUser");
@@ -1395,7 +1411,7 @@ public class CounselController {
         Optional<User> userOpt = userDao.findByNickname(nickname);
 
         if (!userOpt.isPresent()) {
-            eresult.status = "E-4408";
+            eresult.status = "E-4409";
             eresult.message = "알수 없는 유저입니다. 카테고리를 수정 할 수 없습니다.";
             eresult.data = null;
             errorMap.put("field", "unkownUser");
@@ -1420,7 +1436,7 @@ public class CounselController {
                     response = new ResponseEntity<>(result, HttpStatus.OK);
 
                 } else {
-                    eresult.status = "E-4426";
+                    eresult.status = "E-4431";
                     eresult.message = "수정하려는 카테고리가 존재하지 않습니다.";
                     eresult.data = null;
                     errorMap.put("field", "noCategory");
@@ -1431,7 +1447,7 @@ public class CounselController {
                 }
 
             } else {
-                eresult.status = "E-4427";
+                eresult.status = "E-4432";
                 eresult.message = "카테고리를 수정 할 수 있는 권한이 없습니다.";
                 eresult.data = null;
                 errorMap.put("field", "updateCategory");
@@ -1473,7 +1489,7 @@ public class CounselController {
             response = new ResponseEntity<>(result, HttpStatus.OK);
 
         } else {
-            eresult.status = "E-4428";
+            eresult.status = "E-4433";
             eresult.message = "해당 번호의 게시글이 없습니다";
             eresult.data = null;
             errorMap.put("field", "noPost");
@@ -1527,7 +1543,7 @@ public class CounselController {
 
                         response = new ResponseEntity<>(result, HttpStatus.OK);
                     } else {
-                        eresult.status = "E-4429";
+                        eresult.status = "E-4434";
                         eresult.message = "이미 좋아요를 눌렀습니다.";
                         eresult.data = null;
                         errorMap.put("field", "existLike");
@@ -1537,7 +1553,7 @@ public class CounselController {
                         response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
                     }
                 } else {
-                    eresult.status = "E-4430";
+                    eresult.status = "E-4435";
                     eresult.message = "이미 싫어요를 눌렀습니다. 해제하고 다시 시도하세요";
                     eresult.data = null;
                     errorMap.put("field", "existUnLike");
@@ -1570,7 +1586,7 @@ public class CounselController {
 
                         response = new ResponseEntity<>(result, HttpStatus.OK);
                     } else {
-                        eresult.status = "E-4431";
+                        eresult.status = "E-4436";
                         eresult.message = "이미 싫어요를 눌렀습니다.";
                         eresult.data = null;
                         errorMap.put("field", "existUnLike");
@@ -1580,7 +1596,7 @@ public class CounselController {
                         response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
                     }
                 } else {
-                    eresult.status = "E-4432";
+                    eresult.status = "E-4437";
                     eresult.message = "이미 좋아요를 눌렀습니다. 해제하고 다시 시도하세요";
                     eresult.data = null;
                     errorMap.put("field", "existLike");
@@ -1619,7 +1635,7 @@ public class CounselController {
 
                             response = new ResponseEntity<>(result, HttpStatus.OK);
                         } else {
-                            eresult.status = "E-4445";
+                            eresult.status = "E-4438";
                             eresult.message = "포인트가 부족하여 추가 추천을 할 수 없습니다.";
                             eresult.data = null;
                             errorMap.put("field", "addPoint");
@@ -1630,7 +1646,7 @@ public class CounselController {
                         }
 
                     } else {
-                        eresult.status = "E-4433";
+                        eresult.status = "E-4439";
                         eresult.message = "이미 또 좋아요를 눌렀습니다.";
                         eresult.data = null;
                         errorMap.put("field", "existLike");
@@ -1640,7 +1656,7 @@ public class CounselController {
                         response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
                     }
                 } else {
-                    eresult.status = "E-4434";
+                    eresult.status = "E-4440";
                     eresult.message = "좋아요를 누르지 않았습니다. 먼저 좋아요를 눌러주세요.";
                     eresult.data = null;
                     errorMap.put("field", "needPreLike");
@@ -1650,7 +1666,7 @@ public class CounselController {
                     response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
                 }
             } else {
-                eresult.status = "E-4435";
+                eresult.status = "E-4441";
                 eresult.message = "잘못 된 좋아요 타입 입니다";
                 eresult.data = null;
                 errorMap.put("field", "noExistType");
@@ -1661,7 +1677,7 @@ public class CounselController {
             }
 
         } else if (!userOpt.isPresent()) {
-            eresult.status = "E-4408";
+            eresult.status = "E-4409";
             eresult.message = "존재하지 않는 유저 입니다";
             eresult.data = null;
             errorMap.put("field", "unKnownUser");
@@ -1725,7 +1741,7 @@ public class CounselController {
                     response = new ResponseEntity<>(result, HttpStatus.OK);
 
                 } else {
-                    eresult.status = "E-4436";
+                    eresult.status = "E-4443";
                     eresult.message = "해당 글에 좋아요, 싫어요를 표시한 적이 없습니다";
                     eresult.data = null;
                     errorMap.put("field", "noLikeCount");
@@ -1736,7 +1752,7 @@ public class CounselController {
                     response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
                 }
             } else {
-                eresult.status = "E-4435";
+                eresult.status = "E-4444";
                 eresult.message = "잘못 된 좋아요 타입 입니다";
                 eresult.data = null;
                 errorMap.put("field", "noExistType");
@@ -1747,7 +1763,7 @@ public class CounselController {
             }
 
         } else if (!userOpt.isPresent()) {
-            eresult.status = "E-4408";
+            eresult.status = "E-4400";
             eresult.message = "존재하지 않는 유저 입니다";
             eresult.data = null;
             errorMap.put("field", "unknownUser");
@@ -1756,7 +1772,7 @@ public class CounselController {
 
             response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
         } else if (!postOpt.isPresent()) {
-            eresult.status = "E-4442";
+            eresult.status = "E-4445";
             eresult.message = "해당 되는 고민이 없습니다.";
             eresult.data = null;
             errorMap.put("field", "noPost");
@@ -1798,7 +1814,7 @@ public class CounselController {
             response = new ResponseEntity<>(result, HttpStatus.OK);
 
         } else {
-            eresult.status = "E-4437";
+            eresult.status = "E-4446";
             eresult.message = "해당 번호의 게시글이 없습니다";
             eresult.data = null;
             errorMap.put("field", "noPost");
@@ -1853,7 +1869,7 @@ public class CounselController {
                         response = new ResponseEntity<>(result, HttpStatus.OK);
                         // 이미 좋아요를 눌렀다면
                     } else {
-                        eresult.status = "E-4431";
+                        eresult.status = "E-4434";
                         eresult.message = "이미 좋아요를 눌렀습니다.";
                         eresult.data = null;
                         errorMap.put("field", "existLike");
@@ -1863,7 +1879,7 @@ public class CounselController {
                         response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
                     }
                 } else {
-                    eresult.status = "E-4447";
+                    eresult.status = "E-4435";
                     eresult.message = "이미 싫어요를 눌렀습니다. 해제하고 다시 시도하세요";
                     eresult.data = null;
                     errorMap.put("field", "existUnLike");
@@ -1900,7 +1916,7 @@ public class CounselController {
                         response = new ResponseEntity<>(result, HttpStatus.OK);
                         // 이미 싫어요를 눌렀다면
                     } else {
-                        eresult.status = "E-4432";
+                        eresult.status = "E-4436";
                         eresult.message = "이미 싫어요를 눌렀습니다.";
                         eresult.data = null;
                         errorMap.put("field", "existUnLike");
@@ -1910,7 +1926,7 @@ public class CounselController {
                         response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
                     }
                 } else {
-                    eresult.status = "E-44348";
+                    eresult.status = "E-4437";
                     eresult.message = "이미 좋아요를 눌렀습니다. 해제하고 다시 시도하세요";
                     eresult.data = null;
                     errorMap.put("field", "existLike");
@@ -1941,7 +1957,7 @@ public class CounselController {
 
                             user.setPoint(user.getPoint() - 100);
                             userDao.save(user);
-                            
+
                             result.status = "S-200";
                             result.message = "또 좋아요 추가  성공";
                             result.data = null;
@@ -1949,7 +1965,7 @@ public class CounselController {
                             response = new ResponseEntity<>(result, HttpStatus.OK);
                             response = new ResponseEntity<>(result, HttpStatus.OK);
                         } else {
-                            eresult.status = "E-4445";
+                            eresult.status = "E-4438";
                             eresult.message = "포인트가 부족하여 추가 추천을 할 수 없습니다.";
                             eresult.data = null;
                             errorMap.put("field", "addPoint");
@@ -1960,7 +1976,7 @@ public class CounselController {
                         }
 
                     } else {
-                        eresult.status = "E-4433";
+                        eresult.status = "E-4439";
                         eresult.message = "이미 또 좋아요를 눌렀습니다.";
                         eresult.data = null;
                         errorMap.put("field", "existUnLike");
@@ -1970,7 +1986,7 @@ public class CounselController {
                         response = new ResponseEntity<>(eresult, HttpStatus.CONFLICT);
                     }
                 } else {
-                    eresult.status = "E-4434";
+                    eresult.status = "E-4440";
                     eresult.message = "좋아요를 누르지 않았습니다. 먼저 좋아요를 눌러주세요.";
                     eresult.data = null;
                     errorMap.put("field", "needPreLike");
@@ -1980,7 +1996,7 @@ public class CounselController {
                     response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
                 }
             } else {
-                eresult.status = "E-4438";
+                eresult.status = "E-4441";
                 eresult.message = "잘못 된 좋아요 타입 입니다";
                 eresult.data = null;
                 errorMap.put("field", "noExistType");
@@ -1991,7 +2007,7 @@ public class CounselController {
             }
 
         } else if (!userOpt.isPresent()) {
-            eresult.status = "E-4408";
+            eresult.status = "E-4409";
             eresult.message = "존재하지 않는 유저 입니다";
             eresult.data = null;
             errorMap.put("field", "unknowUser");
@@ -2000,7 +2016,7 @@ public class CounselController {
 
             response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
         } else if (!replyOpt.isPresent()) {
-            eresult.status = "E-4443";
+            eresult.status = "E-4447";
             eresult.message = "존재하지 않는 댓글 입니다";
             eresult.data = null;
             errorMap.put("field", "noReply");
@@ -2052,7 +2068,7 @@ public class CounselController {
                 response = new ResponseEntity<>(result, HttpStatus.OK);
 
             } else {
-                eresult.status = "E-4439";
+                eresult.status = "E-4448";
                 eresult.message = "해당 글에 좋아요, 싫어요를 표시한 적이 없습니다";
                 eresult.data = null;
                 errorMap.put("field", "noLikeCount");
@@ -2064,7 +2080,7 @@ public class CounselController {
             }
 
         } else if (!userOpt.isPresent()) {
-            eresult.status = "E-4408";
+            eresult.status = "E-4409";
             eresult.message = "존재하지 않는 유저 입니다";
             eresult.data = null;
             errorMap.put("field", "unknownUser");
@@ -2073,7 +2089,7 @@ public class CounselController {
 
             response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
         } else if (!replyOpt.isPresent()) {
-            eresult.status = "E-4443";
+            eresult.status = "E-4450";
             eresult.message = "존재하지 않는 댓글 입니다";
             eresult.data = null;
             errorMap.put("field", "noReply");
