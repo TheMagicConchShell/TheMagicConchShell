@@ -16,6 +16,15 @@
                         <svg-author />
                     </div>
 
+                    
+                    <div
+                        v-if="isSelected"
+                        class="button-item cursor-default"
+                    >
+                        <svg-check-box
+                            :class="{selected: isSelected}"
+                        />
+                    </div>
                     <template v-if="nickname && isMine">
                         <template v-if="isPost">
                             <div 
@@ -46,6 +55,13 @@
                     </template>
                     <template v-else>
                         <div
+                            v-if="isPostOwner && !isSelected"
+                            class="button-item cursor-pointer"
+                            @click="selectHandler(id)"
+                        >
+                            <svg-check-box />
+                        </div>
+                        <div
                             class="button-item cursor-pointer"
                             :disabled="$wait.is('counsel-chunk')"
                             @click="reportHandler"
@@ -55,10 +71,22 @@
                     </template>
                 </div>
                 <div
+                    v-if="isSelected"
+                    class="title-text"
+                >
+                    [채택된 답변]
+                </div>
+                <div
                     v-if="isPost"
                     class="title-text"
                 >
                     {{ title }}
+                </div>
+                <div
+                    v-else
+                    class="title-text hash cursor-default"
+                >
+                    {{ hash }}
                 </div>
             </div>
 
@@ -247,11 +275,12 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import SvgExclamation from '@/components/general/SvgMaterialReportProblem.vue';
 import SvgPencil from '@/components/general/SvgMaterialRateReview.vue';
 import SvgAuthor from '@/components/general/SvgMaterialVerifiedUser.vue';
 import SvgDelete from '@/components/general/SvgMaterialBackspace.vue';
-
+import SvgCheckBox from '@/components/general/SvgMaterialCheckBox.vue';
 
 export default {
     name: "CounselDetailComment",
@@ -260,8 +289,21 @@ export default {
         SvgDelete,
         SvgPencil,
         SvgExclamation,
+        SvgCheckBox,
     },
     props: {
+        hash: {
+            type: String,
+            default: '',
+        },
+        isSelected: {
+            type: Boolean,
+            default: false,
+        },
+        isPostOwner: {
+            type: Boolean,
+            required: true,
+        },
         iLoveIt: {
             type: Number,
             required: true,
@@ -327,6 +369,10 @@ export default {
             type: Function,
             required: true,
         },
+        selectHandler: {
+            type: Function,
+            default: () => {},
+        },
     },
     data(){
         return {
@@ -336,11 +382,7 @@ export default {
         };
     },
     computed: {
-        nickname: {
-            get() {
-                return this.$store.getters.nickname;
-            },
-        },
+        ...mapGetters(['nickname']),
     },
     mounted() {
         this.editorOpts = this.$store.getters.EDITOROPTIONS.options;
@@ -390,12 +432,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.hash {
+    color: dimgray
+}
 *[disabled] {
     opacity: 0.4;
 }
 * {
     box-sizing: border-box;
     display: block;
+}
+.selected {
+    color: green;
 }
 .inline {
     display: inline;
