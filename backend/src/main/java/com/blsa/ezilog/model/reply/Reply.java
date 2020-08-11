@@ -71,11 +71,12 @@ public class Reply {
         this.secret = secret;
     }
     
-    public String saveWriterSHA256(String writer) {
+    public String saveWriterSHA256(String writer, Long postNo) {
         String result = "";
         try { 
             MessageDigest sh = MessageDigest.getInstance("SHA-256");
-            sh.update(writer.getBytes());
+            String input = writer+postNo;
+            sh.update(input.getBytes());
             byte byteData[] = sh.digest();
             StringBuffer sb = new StringBuffer();
             for(int i = 0;i < byteData.length; i++) {
