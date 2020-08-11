@@ -159,8 +159,9 @@ public class UserController {
             final BasicResponse result = new BasicResponse();
             User user = userService.update(request, req.getHeader("nickname"));
             String token = jwtService.create(user);
+            String encoded = URLEncoder.encode(user.getNickname(),"UTF-8");
             res.setHeader("jwt-auth-token", token);
-            res.setHeader("nickname", user.getNickname());
+            res.setHeader("nickname",encoded);
             result.status = "S-200";
             result.message = "회원 정보 수정이 완료되었습니다.";
             response = new ResponseEntity<>(result, HttpStatus.CREATED);
@@ -270,8 +271,9 @@ public class UserController {
         final BasicResponse result = new BasicResponse();
         User user = userService.select(req.getHeader("nickname"));
         String token = jwtService.create(user);
+        String encoded = URLEncoder.encode(user.getNickname(),"UTF-8");
         res.setHeader("jwt-auth-token", token);
-        res.setHeader("nickname", user.getNickname());
+        res.setHeader("nickname",encoded);
         result.status = "S-200";
         result.message = "토큰이 재발급 되었습니다.";
         response = new ResponseEntity<>(result, HttpStatus.CREATED);
