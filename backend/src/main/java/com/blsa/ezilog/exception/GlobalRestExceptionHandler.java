@@ -1,5 +1,6 @@
 package com.blsa.ezilog.exception;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +52,18 @@ public class GlobalRestExceptionHandler {
             errors.add(error);
         }
         result.errors = errors;
+        response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        return response;
+    }
+    @ExceptionHandler(UnsupportedEncodingException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Object encodingError(UnsupportedEncodingException e) {
+
+        ResponseEntity<ErrorResponse> response = null;
+        ErrorResponse result = new ErrorResponse();
+        result.status = "E-4600";
+        result.message = "인코딩 실패";
+
         response = new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         return response;
     }

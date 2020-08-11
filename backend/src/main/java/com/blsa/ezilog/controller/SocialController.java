@@ -1,5 +1,7 @@
 package com.blsa.ezilog.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -47,7 +49,7 @@ public class SocialController {
     private JwtService jwtService;
 
     @PostMapping("/login")
-    public Object login(@RequestParam String id, HttpServletResponse res) {
+    public Object login(@RequestParam String id, HttpServletResponse res) throws UnsupportedEncodingException {
         ResponseEntity<BasicResponse> response = null;
         Map<String, Object> errors = new HashMap<>();
 
@@ -57,8 +59,9 @@ public class SocialController {
             Long uid = sns.get().getUid();
             User user = userDao.findByUid(uid).get();
             String token = jwtService.create(user);
+            String encoded = URLEncoder.encode(user.getNickname(),"UTF-8");
             res.setHeader("jwt-auth-token", token);
-            res.setHeader("nickname", user.getNickname());
+            res.setHeader("nickname",encoded);
             result.status = "S-200";
             result.message = "소셜 로그인에 성공했습니다.";
             response = new ResponseEntity<>(result, HttpStatus.OK);
