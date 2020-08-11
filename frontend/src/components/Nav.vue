@@ -190,7 +190,6 @@
                                             Manage Page
                                         </b-dropdown-item>
                                     </template>
-
                                 </div>
                                 <div v-else>
                                     <b-dropdown-item v-b-modal.signup>
@@ -350,6 +349,6 @@ a {
 }
 #rightnav {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
 }
 </style>
