@@ -397,7 +397,7 @@
 </template>
 
 <script>
-import {mapState, mapActions} from 'vuex';
+import {mapGetters, mapState, mapActions} from 'vuex';
 import Signup from '@/components/account/Signup.vue';
 import Login from '@/components/account/Login.vue';
 
@@ -415,9 +415,7 @@ export default {
     },
     computed: {
         ...mapState(['language']),
-        ...mapState({
-            nickname: state => state.auth.nickname,
-        })
+        ...mapGetters(['nickname']),
     },
     watch: {
         $route () { 

@@ -18,7 +18,7 @@
                 :unlike-count="post.unlikeCount"
                 :secret="post.secret"
                 :i-love-it="post.iloveIt"
-
+                :is-post-owner="post.mine"
 
                 :like-handler="nickname ? likePost : dummy"
                 :delete-handler="deletePost"
@@ -26,6 +26,31 @@
                 :report-handler="dummy"
             />
 
+            <template v-if="selectedReply && selectedReply.id">
+                <CounselDetailComment
+                    :id="selectedReply.id"
+                    :key="selectedReply.id"
+                    name="selectedReply"
+                    
+                    :is-selected="true"
+                    :content="selectedReply.content"
+                    :writer="selectedReply.writer"
+                    :write-date="selectedReply.writeDate"
+                    :is-author="selectedReply.author"
+                    :like-count="selectedReply.likeCount"
+                    :unlike-count="selectedReply.unlikeCount"
+                    :is-mine="selectedReply.mine"
+                    :secret="selectedReply.secret"
+                    :i-love-it="selectedReply.iloveIt"
+                    :is-post-owner="post.mine"
+                    :select-handler="selectHandler"
+
+                    :like-handler="nickname ? likeReply : dummy"
+                    :delete-handler="deleteReply"
+                    :modify-handler="modifyReply"
+                    :report-handler="dummy"
+                />
+            </template>
             <template v-if="replies && replies.length != 0">
                 <template v-for="reply in replies">
                     <CounselDetailComment
@@ -33,6 +58,8 @@
                         :key="reply.id"
                         name="reply"
                         
+                        :hash="reply.sha256Name"
+                        :is-selected="reply.selected"
                         :content="reply.content"
                         :writer="reply.writer"
                         :write-date="reply.writeDate"
@@ -42,6 +69,8 @@
                         :is-mine="reply.mine"
                         :secret="reply.secret"
                         :i-love-it="reply.iloveIt"
+                        :is-post-owner="post.mine"
+                        :select-handler="selectHandler"
 
                         :like-handler="nickname ? likeReply : dummy"
                         :delete-handler="deleteReply"
@@ -63,6 +92,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 import CounselDetailComment from '@/components/counsel/CounselDetailComment.vue';
 import CounselCommentEditor from '@/components/counsel/CounselCommentEditor.vue';
 
@@ -80,18 +111,15 @@ export default {
     },
     data: () => ({
         post: {},
+        selectedReply: {},
         replies: [],
-        editorText: "",
+        editorText: '',
         editorOpts: {
             hideModeSwitch: true,
         },
     }),
     computed: {
-        nickname: {
-            get() {
-                return this.$store.getters.nickname;
-            },
-        },
+        ...mapGetters(['nickname']),
     },
     async created() {
         await this.fetchPost();
@@ -134,6 +162,9 @@ export default {
                             n.writeDate = formatDate(e.writeDate);
                             return n;
                         });
+
+                        // this.selectedReply = this.replies.find((e) => e.selected === true);
+                        // this.replies = this.replies.filter((e) => e.selected !== true);
                     }
                 })
                 .catch((e) => {
@@ -224,6 +255,24 @@ export default {
                 },
             }).then(() => {
                 this.fetchPost();
+            }).finally(() => {
+                this.$wait.end('counsel-chunk');
+            });
+        },
+        selectHandler(replyId) {
+            this.$wait.start('counsel-chunk');
+            this.$axios({
+                url: '/counsel/reply/select',
+                method: 'put',
+                params: {
+                    'post_no': this.post.no,
+                    'reply_id': replyId,
+                },
+            }).then((res) => {
+                console.log(res);
+                this.fetchPost();
+            }).catch((err) => {
+                console.log(err);
             }).finally(() => {
                 this.$wait.end('counsel-chunk');
             });

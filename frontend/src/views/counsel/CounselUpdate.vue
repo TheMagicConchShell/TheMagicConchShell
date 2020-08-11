@@ -108,6 +108,7 @@
     </div>
 </template>
 <script>
+import { mapGetters } from 'vuex';
 import 'tui-color-picker/dist/tui-color-picker.css';
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
 
@@ -131,11 +132,7 @@ export default {
         };
     },
     computed: {
-        categories: {
-            get() {
-                return this.$store.getters.categories;
-            },
-        },
+        ...mapGetters(['categories']),
     },
     mounted() {
         this.editorOpts = this.$store.getters.EDITOROPTIONS.options;
