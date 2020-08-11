@@ -20,14 +20,18 @@ public class JwtService {
     private Long expireMin;
 
     public String create(final User user) {
+        String issure = "마싸고";
+        String subject ="로그인토큰";
+        Date exDate = new Date(System.currentTimeMillis()+(1000*60*5));
         final JwtBuilder builder = Jwts.builder();
-
-        builder.setHeaderParam("typ", "JWT");
-
-        builder.setSubject("로그인 토큰").setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * expireMin))
-                .claim("User", user);
-
+        builder.setIssuer(issure)
+                .setExpiration(exDate)
+                .setSubject(subject)
+                .setAudience(user.getNickname())
+                .setIssuedAt(new Date());
+       
         builder.signWith(SignatureAlgorithm.HS256, user.getNickname().getBytes());
+        
 
         final String jwt = builder.compact();
 
