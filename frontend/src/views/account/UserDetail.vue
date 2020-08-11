@@ -264,7 +264,7 @@ extend('passwordRegex', {
     message: '알파벳과 숫자를 각각 1개 이상 포함해야합니다.',
 });
 
-const storage = window.sessionStorage;
+import { mapGetters } from 'vuex';
 
 export default {
     components: {
@@ -287,11 +287,7 @@ export default {
         msg: '',
     }),
     computed: {
-        nickname: {
-            get() {
-                return this.$store.getters.nickname;
-            },
-        },
+        ...mapGetters(['nickname']),
     },
     created() {
         this.nicknameInput = this.nickname;

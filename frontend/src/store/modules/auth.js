@@ -12,11 +12,11 @@ export const state = {
 export const mutations = {
     LOGIN_SUCCESS(state, { jwtAuthToken, nickname }){
         state.jwtAuthToken = jwtAuthToken;
-        state.nickname = nickname;
+        state.nickname = decodeURI(nickname);
     },
     TOKEN_UPDATE_SUCCESS(state, { jwtAuthToken, nickname }){
         state.jwtAuthToken = jwtAuthToken;
-        state.nickname = nickname;
+        state.nickname = decodeURI(nickname);
     },
     LOGOUT(state){
         state.nickname = null;
@@ -25,6 +25,9 @@ export const mutations = {
 };
 
 export const getters = {
+    encodedNickname: (state) => {
+        return encodeURI(state.nickname);
+    },
     nickname: (state) => {
         return state.nickname;
     },
