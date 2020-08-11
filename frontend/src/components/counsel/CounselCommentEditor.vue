@@ -63,6 +63,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import 'tui-color-picker/dist/tui-color-picker.css';
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
 import { integer } from 'vee-validate/dist/rules';
@@ -89,11 +90,7 @@ export default {
         editorOpts: null,
     }),
     computed: {
-        nickname: {
-            get() {
-                return this.$store.getters.nickname;
-            },
-        },
+        ...mapGetters(['nickname']),
     },
     created() {
         this.editorOpts = this.$store.getters.EDITOROPTIONS.options;
