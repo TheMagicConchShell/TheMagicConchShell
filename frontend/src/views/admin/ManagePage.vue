@@ -10,13 +10,13 @@
                     active
                 >
                     <b-card-text>현재 유저 목록</b-card-text>
-                    <UserList />
+                    <ManageUserList />
                 </b-tab>
                 <b-tab title="카테고리 관리">
-                    <CategoryManage />
+                    <ManageCategory />
                 </b-tab>
                 <b-tab title="선정 글 관리">
-                    <CounselSelect />
+                    <ManageCounselSelect />
                 </b-tab>
             </b-tabs>
         </b-card>
@@ -24,15 +24,15 @@
 </template>
 
 <script>
-import UserList from '@/components/admin/UserList';
-import CounselSelect from '@/components/admin/CounselSelect';
-import CategoryManage from '@/components/admin/CategoryManage';
+import ManageUserList from '@/components/admin/ManageUserList';
+import ManageCounselSelect from '@/components/admin/ManageCounselSelect';
+import ManageCategory from '@/components/admin/ManageCategory';
 
 export default {
     components:{
-        UserList,
-        CounselSelect,
-        CategoryManage,
+        ManageUserList,
+        ManageCounselSelect,
+        ManageCategory,
     }
 };
 </script>
