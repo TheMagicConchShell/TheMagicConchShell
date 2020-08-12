@@ -3,8 +3,9 @@
         <ValidationObserver ref="observer">
             <div>
                 <b-avatar
+                    class="profile-avatar"
                     variant="info"
-                    :src="imageUrl"
+                    :src="profileImgUrl"
                     size="9em"
                     badge-variant="info" 
                 />
@@ -19,7 +20,7 @@
                     />
                 </b-button>
                 <input
-                    id="profileImg"
+                    id="profileImgFile"
                     ref="imageInput"
                     type="file"
                     accept="image/*"
@@ -279,11 +280,11 @@ export default {
         email: '',
         password: '',
         passwordConfirm: '',
-        profileImg: '',
+        profileImgFile: '',
+        profileImgUrl: '',
         point: '',
         level: '',
         passwordType: 'password',
-        imageUrl: '',
         msg: '',
     }),
     computed: {
@@ -297,7 +298,7 @@ export default {
             .then((res) => {
                 if (res.data.status === 'S-200') {
                     this.email = res.data.data.email;
-                    this.profileImg = res.data.data.profileImg;
+                    this.profileImgUrl = res.data.data.profileImg;
                     this.point = res.data.data.point;
                     this.level = res.data.data.level;
                 }
@@ -315,12 +316,17 @@ export default {
                 this.$toast('안내', this.msg);
                 return;
             }
-            
-            this.$store.dispatch('updateUser', { 
-                email: this.email,
-                nickname: this.nicknameInput,
-                password: this.password,
-                profileImg: 'wt',
+
+            const formData = new FormData();
+            formData.append('profileImg', this.profileImgFile)
+                .append('email', this.email)
+                .append('nickname', this.nicknameInput)
+                .append('password', this.password);
+
+            this.$store.dispatch('updateUser', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
             })
                 .then((res) => {
                     if (res.data.status === 'S-200') {
@@ -360,20 +366,37 @@ export default {
             this.$refs.imageInput.click();
         },
         onChangeImages(e) {
-            console.log(e.target.files);
-            if(e.target.files){
-                const file = e.target.files[0];
-                this.imageUrl = URL.createObjectURL(file);
+            if(e.target.files && e.target.files[0]){
+                let isValidSize = this.checkImageSize(e.target);
+                if(!isValidSize) {
+                    this.msg = '프로필 이미지는 5mb 이하로 등록 가능합니다.';
+                    this.$toast('안내', this.msg);
+                    return;
+                }
+
+                this.profileImgFile = e.target.files[0];
+                this.profileImgUrl = URL.createObjectURL(this.profileImgFile);
             }
         },
-        handleDeleteOk() {
-            this.$router.go();
+        checkImageSize(file) {
+            var maxSize  = 5 * 1024 * 1024;
+            var fileSize = 0;
+
+            var browser=navigator.appName;
+        
+            if (browser=="Microsoft Internet Explorer") {
+                var oas = new ActiveXObject("Scripting.FileSystemObject");
+                fileSize = oas.getFile( file.value ).size;
+            }
+            else {
+                fileSize = file.files[0].size;
+            }
+            if(fileSize > maxSize) return false;
+            else return true;
         },
-        movePointHistory() {
-            this.$router.push({
-                name: 'pointhistory'
-            });
-        }
+        handleDeleteOk() {
+            this.$router.push('/');
+        },
     },
 };
 </script>
@@ -392,7 +415,7 @@ export default {
 }
 #profileBtn{
     position: relative;
-    right: 30px;
+    right: 10px;
     top: 50px;
 }
 #showPointHistoryBtn {
@@ -403,5 +426,8 @@ export default {
 }
 .detail-button {
     text-align: right;
+}
+.profile-avatar {
+    left: 24px;
 }
 </style>
