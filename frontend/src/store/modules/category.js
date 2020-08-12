@@ -36,7 +36,7 @@ export const actions = {
         return new Promise((resolve, reject) => {
             console.log('fetchStart');
             axios({
-                url: '/counsel/category',
+                url: '/category',
                 method: 'get',
             })
                 .then((response) => {
@@ -62,7 +62,7 @@ export const actions = {
     createCategory({ dispatch }, { name, description }) {
         return new Promise((resolve, reject) => {
             axios({
-                url: '/counsel/category',
+                url: '/category',
                 method: "post",
                 data: {
                     name : name,
@@ -84,7 +84,7 @@ export const actions = {
     updateCategory({ dispatch }, { source, destination, description }) {
         return new Promise((resolve, reject) => {
             axios({
-                url: '/counsel/category',
+                url: '/category',
                 method: "put",
                 data: {
                     curName : source,
@@ -107,7 +107,7 @@ export const actions = {
     deleteCategory({ dispatch }, { categoryName }) {
         return new Promise((resolve, reject) => {
             axios({
-                url: '/counsel/category',
+                url: '/category',
                 method: "delete",
                 params:{
                     categoryName : categoryName,
