@@ -23,6 +23,13 @@ import NoticeList from '@/views/support/notice/NoticeList.vue';
 import NoticeRead from '@/views/support/notice/NoticeRead.vue';
 import NoticeEditor from '@/views/support/notice/NoticeEditor.vue';
 import NoticeUpdate from '@/views/support/notice/NoticeUpdate.vue';
+
+import QnaView from '@/views/support/qna/QnaView.vue';
+import QnaBoard from '@/views/support/qna/QnaBoard.vue';
+import QnaDetail from '@/views/support/qna/QnaDetail.vue';
+import QnaRegist from '@/views/support/qna/QnaRegist.vue';
+import QnaUpdate from '@/views/support/qna/QnaUpdate.vue';
+
 import Error from '@/views/Error.vue';
 
 Vue.use(VueRouter);
@@ -131,6 +138,35 @@ const routes = [
                     },
                 ],
             },
+            {
+                path:'/qna',
+                name:'QnaView',
+                component:QnaView,
+                children:[
+                    {
+                        path:'board',
+                        name:'QnaBoard',
+                        component:QnaBoard
+                    },
+                    {
+                        path: 'read/:no',
+                        name: 'QnaDetail',
+                        props: ({params}) => ({no: Number.parseInt(params.no, 10) || 0}),
+                        component: QnaDetail,
+                    },
+                    {
+                        path:"regist",
+                        name:"QnaRegist",
+                        component: QnaRegist
+                    },
+                    {
+                        path: 'update/:no',
+                        name: 'QnaUpdate',
+                        props: ({params}) => ({no: Number.parseInt(params.no, 10) || 0}),
+                        component: QnaUpdate,
+                    }
+                ]
+            }
         ],
 
     },
