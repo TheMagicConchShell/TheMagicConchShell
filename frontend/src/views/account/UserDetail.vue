@@ -30,6 +30,7 @@
             <hr>
 
             <b-form-group
+                v-if="!isSocialAccount"
                 label-cols-sm="2"
                 label-cols-lg="2"
                 label="이메일"
@@ -73,6 +74,7 @@
             </b-form-group>
 
             <b-form-group
+                v-if="!isSocialAccount"
                 label-cols-sm="2"
                 label-cols-lg="2"
                 label="비밀번호"
@@ -112,6 +114,7 @@
             </b-form-group>
 
             <b-form-group
+                v-if="!isSocialAccount"
                 label-cols-sm="2"
                 label-cols-lg="2"
                 label="비밀번호 확인"
@@ -285,6 +288,7 @@ export default {
         passwordType: 'password',
         imageUrl: '',
         msg: '',
+        isSocialAccount: false,
     }),
     computed: {
         ...mapGetters(['nickname']),
@@ -295,11 +299,13 @@ export default {
             nickname: this.nicknameInput
         })
             .then((res) => {
+                console.log(res);
                 if (res.data.status === 'S-200') {
                     this.email = res.data.data.email;
                     this.profileImg = res.data.data.profileImg;
                     this.point = res.data.data.point;
                     this.level = res.data.data.level;
+                    this.isSocialAccount = res.data.data.socialAccount;
                 }
             })
             .catch((error) => {
@@ -344,7 +350,7 @@ export default {
                         url: '/v1/user/unlink',
                         success: (response)=>{
                             console.log(response);
-                            //this.$router.push("/");
+                            this.$router.push({ name: 'Home'});
                         },
                         fail: function(error) {
                             console.log(error);
