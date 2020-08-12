@@ -57,7 +57,7 @@ test-clean-up:
     script:
         - sudo rm -rf $CI_DISTRIBUTE_PATH/jar-test
         - sudo rm -rf $CI_TEST_BUILD_PATH
-        - sudo kill `ps -aux | grep 'backend-0.0.1-SNAPSHOT-TEST.jar' | grep -v grep | awk '{print $2}'`
+        - sudo kill `ps -aux | grep 'backend-0.0.1-SNAPSHOT-TEST.jar' | grep -v grep | awk '{print $2}'`; echo STOP_SERVER
     when: always
     allow_failure: true
 
