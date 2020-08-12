@@ -93,8 +93,8 @@
             <div class="avatar-container">
                 <img
                     class="avatar"
-                    src="https://img.kbs.co.kr/kbs/620/nsimg.kbs.co.kr/data/news/2010/01/08/2024781_BeB.jpg"
-                    onerrer="https://img.kbs.co.kr/kbs/620/nsimg.kbs.co.kr/data/news/2010/01/08/2024781_BeB.jpg"
+                    :src="profileImg? profileImg: require(`@/assets/images/default_profile.png`)"
+                    onerror="@/assets/images/default_profile.png"
                     alt="Avatar image"
                 >
                 <div
@@ -351,6 +351,10 @@ export default {
         },
         unlikeCount: {
             type: Number,
+            required: true,
+        },
+        profileImg: {
+            type: String,
             required: true,
         },
         likeHandler: {
