@@ -295,27 +295,35 @@
                     :to="{name: 'Home'}"
                     class="text-dark text-decoration-none"
                 >
-                    <img
-                        id="photo"
-                        src="../assets/images/sora.png"
-                    >
                     <transition name="conversion">
                         <span
                             v-if="language==='ko'"
                             key="1"
                         >
+                            <img
+                                id="photo"
+                                src="../assets/images/sora.png"
+                            >
                             마법의 싸피고둥
                         </span>
                         <span
                             v-else-if="language==='en'"
                             key="2"
                         >
+                            <img
+                                id="photo"
+                                src="../assets/images/sora.png"
+                            >
                             Magic SSAFY conch
                         </span>
                         <span
                             v-else
                             key="3"
-                        >                  
+                        >   
+                            <img
+                                id="photo"
+                                src="../assets/images/sora.png"
+                            >               
                             神奇的 SSAFY 海螺
                         </span>
                     </transition>
@@ -497,6 +505,7 @@ export default {
     height: 0;
     width: 0;
     transition-duration: 0.5s;
+    z-index:10;
 }
 #sidebar {
     font-family: sb;
@@ -508,6 +517,7 @@ export default {
     top: 0;
     background-color: #0363BA;
     height: 100vh;
+    transition-duration: 0.5s;
 }
 #sidebar ul {
     padding-left: 16px;
@@ -546,6 +556,7 @@ export default {
     margin-right: 16px;
     display:flex;
     flex-direction: row;
+    z-index: 10;
 }
 #photo {
     height: 64px; 
@@ -553,26 +564,31 @@ export default {
 }
 #ddmenu {
     padding: 0 16px 0 16px;
+    position:relative;
 }
-#ddmenu:hover {
-    
-}
-#ddmenu:hover #ddopen {
-    opacity: 1;
-    visibility: visible;
-    transition-duration: 1s;
-    transform:translateY(1);
-    width: 100%;
+#navitems #ddmenu:hover #ddopen {
+    display:block;
+    z-index:10;
+    height: auto;
 }
 #ddopen {
     position: absolute;
     margin: 8px 0 0 0;
     padding: 4px;
     justify-content: end;
-    opacity: 0;
-    visibility: hidden;
+    display:none;
+    width: 80px;
+    left: -12px;
     font-size: 75%;
     border: 1px solid #bdbdbd;
+    background-color: #f1f1f1;
+    z-index:10;
+}
+#ddopen li {
+    transition-duration: 0.5s;
+}
+#ddopen li:hover {
+    background-color: #bdbdbd;
 }
 @media (max-width: 992px) {
     .navbar {
@@ -613,7 +629,7 @@ export default {
     position: fixed;
     top: 68px;
     width: 100%;
-    z-index: 1;
+    z-index:0;
 }
 .show {
     background-color: #BEDAE5!important;

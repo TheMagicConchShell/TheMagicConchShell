@@ -7,14 +7,25 @@
                         v-if="language==='ko'"
                         key="1"
                     >
-                        <p>금주의 싸피고둥이들</p>
+                        <p class="d-flex m-0">금주의 싸피고둥이들</p>
+                        <small id="exp">{{ list.length }} 명의 싸피고둥이들이 울림을 기다리는중<span>.</span><span>.</span><span>.</span></small>
+                    </span>
+                    <span
+                        v-else-if="language==='en'"
+                        key="2"
+                    >
+                        <p class="d-flex m-0">SSAFY Conches of the Week</p>
+                        <small id="exp">{{ list.length }} conches waiting for magical answers<span>.</span><span>.</span><span>.</span></small> 
                     </span>
                     <span
                         v-else
-                        key="2"
-                    >Wise Conches of the Week </span>
+                        key="3"
+                    >
+                        <p class="d-flex m-0">本週的 SSAFY 海螺</p>
+                        <small id="exp">{{ list.length }}個海螺等待答案<span>.</span><span>.</span><span>.</span></small> 
+                    </span>
                 </transition>
-            </div>
+            </div>  
         </div>
         <!-- 금주 -->
         <div
@@ -43,10 +54,10 @@
                         />
                     </router-link>
                 </swiper-slide>
-                <div
+                <!-- <div
                     slot="pagination"
                     class="swiper-pagination"
-                />
+                /> -->
             </swiper>          
         </div>
         <div id="home">
@@ -57,9 +68,13 @@
                         key="1"
                     >지난 대나무숲</span>
                     <span
-                        v-else
+                        v-if="language==='en'"
                         key="2"
-                    >Spilled beans</span>
+                    >Past Stories</span>
+                    <span
+                        v-else
+                        key="3"
+                    >過去的故事</span>
                 </transition>
             </div>
         </div>
@@ -82,15 +97,13 @@
                     style="text-decoration: none;"
                 >
                     <b-card-text>
-                        <div id="history_detail">
-                            <p>{{ history.title }}</p>
-                            <transition name="open">
-                                <viewer
-                                    v-if="nowshowing===history"
-                                    id="history_content"
-                                    :initial-value="history.content"
-                                />
-                            </transition>
+                        <p>{{ history.title }}</p>
+                        <div id="history_detail">                           
+                            <viewer
+                                v-if="nowshowing===history"
+                                id="history_content"
+                                :initial-value="history.content"
+                            />
                         </div>
                     </b-card-text>
                 </router-link>
@@ -116,7 +129,7 @@ export default {
         return {
             nowshowing: null,          
             lastNo: 1,
-            size: 5,
+            size: 1000,
             list: [],
             histories: [],
             busy: false,
@@ -125,6 +138,7 @@ export default {
             swiperOption: {
                 grabCursor: true,
                 loop: true,
+                spaceBetween: 10,
                 slidesPerView: 3,
                 centeredSlides: true,
                 breakpoints: {
@@ -243,14 +257,32 @@ export default {
 <style scoped>
 #home {
   display: flex;
-  margin: 30px 0;
+  margin: 30px 0 0 0;
   padding-top: 30px;
   justify-content: space-between;
   font-family: sb;
+  font-size: 120%;
+}
+#exp {
+    font-family: md;
+    display:flex;
+    margin: 0 0 30px 0 ;
+}
+#exp span {
+    animation-name: blink;
+    animation-duration: 1.4s;
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
+}
+#exp span:nth-child(2) {
+    animation-delay: .2s;
+}
+#exp span:nth-child(3) {
+    animation-delay: .4s;
 }
 #thisweek {
     width: 100%;
-    height: 30vh;
+    height: 40vh;
     margin-bottom: 50px;
 }
 #history {
@@ -261,18 +293,23 @@ export default {
 .swiper {
     height: 100%;
     width: 100%;
-    border: 1px solid;
 }
 .swiper-slide {
-      padding:20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: start;
-      width: 300px;
-      height: 100%;
-      background-color: white;
-      box-shadow: 10px 10px 10px #9e9e9e;
+    margin: 5px;
+    padding:20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: start;
+    width: 300px;
+    height: 90%;
+    background-color: white;
+    box-shadow: 5px 5px 5px #9e9e9e;
+    border-top: 1px solid #f1f1f1;
+    border-left: 1px solid #f1f1f1;
+    border-radius: 5px;
+    overflow: hidden;
+    z-index:0;
 }
 .swiper-slide a {
     color: black;
@@ -287,7 +324,7 @@ export default {
     }
 }
 #detail {
-    border: 1px solid #cacaca;
+    border: 1px solid #f1f1f1;
     box-shadow: 10px 10px 10px #9e9e9e;
     height: 80px;
     -webkit-transition: all 0.5s ease-in-out;
@@ -297,14 +334,13 @@ export default {
 #detail:hover {
     height: 100%;
     z-index: 1;
-}
-#detail:hover #history_detail p {
-    border-bottom: 1px solid;
+    overflow:hidden;
 }
 #history_detail {
     color: black;
 }
 #history_content {
     position: absolute;
+    overflow: hidden;
 }
 </style>

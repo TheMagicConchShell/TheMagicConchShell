@@ -33,10 +33,10 @@ export default new Vuex.Store({
     },
     mutations: {
         kor(state) {
-            state.language='en';
+            state.language='ko';
         },
         eng(state) {
-            state.language='ko';
+            state.language='en';
         },
         ch(state) {
             state.language='ch';
