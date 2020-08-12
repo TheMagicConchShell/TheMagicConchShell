@@ -247,7 +247,7 @@ export default {
             this.deleteCategory();
         },
         deleteCategory(){
-            this.$store.dispatch('updateCategory', {
+            this.$store.dispatch('deleteCategory', {
                 categoryName: this.name,
             })
                 .then((response) => {
