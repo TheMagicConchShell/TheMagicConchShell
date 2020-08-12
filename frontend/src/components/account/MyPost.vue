@@ -95,6 +95,7 @@ export default {
         },
     },
     created() {
+        this.$store.dispatch('fetchCategories');
         this.fetchMyPosts(this.page);
     },
     methods: {
@@ -115,7 +116,6 @@ export default {
             });
         },
         getCategory(categoryId){
-            this.$store.dispatch('fetchCategories');
             return this.$store.getters.categoryNameById(categoryId);
         },
         getFormatDate(date) {
