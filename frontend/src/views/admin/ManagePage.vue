@@ -18,6 +18,9 @@
                 <b-tab title="선정 글 관리">
                     <ManageCounselSelect />
                 </b-tab>
+                <b-tab title="Spot 관리">
+                    <SpotManage />
+                </b-tab>
             </b-tabs>
         </b-card>
     </div>
@@ -27,12 +30,14 @@
 import ManageUserList from '@/components/admin/ManageUserList';
 import ManageCounselSelect from '@/components/admin/ManageCounselSelect';
 import ManageCategory from '@/components/admin/ManageCategory';
+import SpotManage from '@/components/admin/SpotManage';
 
 export default {
     components:{
         ManageUserList,
         ManageCounselSelect,
         ManageCategory,
+        SpotManage,
     }
 };
 </script>
