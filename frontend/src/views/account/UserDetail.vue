@@ -323,11 +323,7 @@ export default {
                 .append('nickname', this.nicknameInput)
                 .append('password', this.password);
 
-            this.$store.dispatch('updateUser', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            })
+            this.$store.dispatch('updateUser', formData)
                 .then((res) => {
                     if (res.data.status === 'S-200') {
                         console.log(res);
