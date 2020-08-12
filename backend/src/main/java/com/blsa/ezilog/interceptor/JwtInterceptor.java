@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import com.blsa.ezilog.exception.jwt.JwtException;
+import com.blsa.ezilog.exception.auth.JwtException;
 import com.blsa.ezilog.service.JwtService;
 
 @Component
