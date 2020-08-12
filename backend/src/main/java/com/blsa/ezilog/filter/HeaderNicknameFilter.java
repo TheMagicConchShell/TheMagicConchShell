@@ -32,9 +32,9 @@ public class HeaderNicknameFilter extends GenericFilterBean {
             public String getHeader(String name) {
                 if ("nickname".equals(name)) {
                     try {
-                        if (super.getHeader(name) != null) {
-                            return URLDecoder.decode(super.getHeader(name), "UTF-8");
-                        }
+                        String e = super.getHeader(name);
+                        if (e != null)
+                            return URLDecoder.decode(e, "UTF-8");
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
@@ -46,7 +46,10 @@ public class HeaderNicknameFilter extends GenericFilterBean {
                 if ("nickname".equals(name)) {
                     try {
                         Collection<String> result = new ArrayList<String>();
-                        result.add(URLDecoder.decode(super.getHeaders(name).nextElement(), "UTF-8"));
+                        Enumeration<String> e = super.getHeaders(name);
+                        while (e.hasMoreElements()) {
+                            result.add(URLDecoder.decode(e.nextElement(), "UTF-8"));
+                        }
                        
                         return Collections.enumeration(result);
                     } catch (UnsupportedEncodingException e) {
