@@ -14,7 +14,7 @@
             </div>
         </template>
         <br>
-        <template v-if="categoryList && categoryList.length">
+        <template v-if="categories && categories.length">
             <table
                 id="category-list"
                 class="table"
@@ -49,7 +49,7 @@
                 </thead>
                 <tbody>
                     <tr 
-                        v-for="item in categoryList"
+                        v-for="item in categories"
                         :key="item.id"
                     >
                         <td>{{ item.id }}</td>
@@ -98,8 +98,8 @@
                 >
                     <b-form-input
                         id="name-input"
-                        v-model="changename"
-                        :state="nameState"
+                        v-model="changeName"
+                        :state="changeNameState"
                         required  
                     />
                 </b-form-group>
@@ -173,15 +173,24 @@ import { mapGetters } from 'vuex';
 import moment from 'moment';
 export default {
     data:()=>({
-        categoryList:[],
         name: '',
-        changename:'',
+        changeName:'',
         description: '',
-        nameState: null,
-        descriptionState: null,
     }),
     computed: {
-        ...mapGetters(['nickname'])
+        ...mapGetters([
+            'nickname',
+            'categories'
+        ]),
+        nameState() {
+            return this.name.length > 0;
+        },
+        descriptionState() {
+            return this.description.length > 0;
+        },
+        changeNameState() {
+            return this.changeName.length > 0;
+        }
     },
     watch:{
         page(){
@@ -189,35 +198,19 @@ export default {
         },
     },
     created() {
-        this.fetchCategoryList();
+        this.$store.dispatch('fetchCategories');
     },
     methods: {
-        async fetchCategoryList(){
-            const response = await this.$axios({
-                method: 'get',
-                url: '/counsel/category',
-                headers:{
-                    nickname : this.nickname,
-                },
-            }).then((res)=>{
-                console.dir(res);
-                if(res.status >= 200 && res.status < 300 ){
-                    this.categoryList = res.data.data;
-                }
-            }).catch((error) =>{
-                console.log(error.response);
-            });
-        },
         checkFormValidity() {
             const valid = this.$refs.updateform.checkValidity();           
             return valid;
         },
         openUpdateModal(id, name, desc){
-            this.$bvModal.show('modal-update-category');
             this.id = id;
             this.name = name;
-            this.changename = name;
+            this.changeName = name;
             this.description = desc;
+            this.$bvModal.show('modal-update-category');
         },
         handleOk(bvModalEvt){
             bvModalEvt.preventDefault();
@@ -229,24 +222,17 @@ export default {
                 this.$toast('안내', msg);
                 return;
             }
-            this.$axios({
-                url: '/counsel/category',
-                method: "put",
-                headers:{
-                    nickname : this.nickname,
-                },
-                data:{
-                    curName : this.name,
-                    changeName: this.changename,
-                    description: this.description
-                }
-            }).then(()=>{
-                let msg = "카테고리 내용 수정 완료";
-                this.$toast('안내', msg);
-                this.$router.go();
-            }).catch((error)=>{
-                console.log(error.response);
-            });
+            this.$store.dispatch('updateCategory', {
+                source: this.name,
+                destination: this.changeName,
+                description: this.description,
+            })
+                .then((response) => {
+                    this.$toast('안내', '카테고리 내용 수정 완료');
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
 
             this.$nextTick(() =>{
                 this.$bvModal.hide('modal-update-category');
@@ -261,22 +247,16 @@ export default {
             this.deleteCategory();
         },
         deleteCategory(){
-            this.$axios({
-                url: '/counsel/category',
-                method: "delete",
-                headers:{
-                    nickname : this.nickname,
-                },
-                params:{
-                    categoryName : this.name,
-                }
-            }).then(()=>{
-                let msg = "카테고리 내용 삭제 완료";
-                this.$toast('안내', msg);
-                this.$router.go();
-            }).catch((error)=>{
-                console.log(error.response);
-            });
+            this.$store.dispatch('updateCategory', {
+                categoryName: this.name,
+            })
+                .then((response) => {
+                    this.$toast('안내', '카테고리 내용 삭제 완료');
+                    this.$router.go();
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
 
             this.$nextTick(() =>{
                 this.$bvModal.hide('modal-delete-category');
@@ -287,6 +267,8 @@ export default {
             return valid;
         },
         openCreateModal(){
+            this.name = '';
+            this.description = '';
             this.$bvModal.show('modal-create-category');
         },
         createOk(bvModalEvt){
@@ -299,23 +281,17 @@ export default {
                 this.$toast('안내', msg);
                 return;
             }
-            this.$axios({
-                url: '/counsel/category',
-                method: "post",
-                headers:{
-                    nickname : this.nickname,
-                },
-                data:{
-                    name : this.name,
-                    description: this.description
-                }
-            }).then(()=>{
-                let msg = "카테고리 추가 완료";
-                this.$toast('안내', msg);
-                this.$router.go();
-            }).catch((error)=>{
-                console.log(error.response);
-            });
+            this.$store.dispatch('updateCategory', {
+                name : this.name,
+                description: this.description,
+            })
+                .then((response) => {
+                    this.$toast('안내', '카테고리 추가 완료');
+                    this.$router.go();
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
 
             this.$nextTick(() =>{
                 this.$bvModal.hide('modal-create-category');

@@ -32,31 +32,114 @@ export const getters = {
 };
 
 export const actions = {
-    fetchCategories({state, commit}) {
+    _$fetchCategories({ commit }) {
+        return new Promise((resolve, reject) => {
+            console.log('fetchStart');
+            axios({
+                url: '/counsel/category',
+                method: 'get',
+            })
+                .then((response) => {
+                    if (200 <= response.status && response.status < 300) {
+                        commit('GET_CATEGORIES_SUCCESS', response.data.data);
+                        commit('SET_AVAILABLE', true);
+
+                        console.log('fetchEnd');
+                        resolve(response.data.data);
+                    } else {
+                        commit('SET_AVAILABLE', false);
+
+                        reject(response);
+                    }
+                })
+                .catch((error) => {
+                    commit('SET_AVAILABLE', false);
+                    
+                    reject(error);
+                });
+        });
+    },
+    createCategory({ dispatch }, { name, description }) {
+        return new Promise((resolve, reject) => {
+            axios({
+                url: '/counsel/category',
+                method: "post",
+                data: {
+                    name : name,
+                    description: description
+                }
+            }).then((response)=>{
+                if (200 <= response.status && response.status < 300) {
+                    dispatch('_$fetchCategories');
+                    
+                    resolve(response.data.data);
+                } else {
+                    reject(response);
+                }
+            }).catch((error)=>{
+                reject(error);
+            });
+        });
+    },
+    updateCategory({ dispatch }, { source, destination, description }) {
+        return new Promise((resolve, reject) => {
+            axios({
+                url: '/counsel/category',
+                method: "put",
+                data: {
+                    curName : source,
+                    changeName: destination,
+                    description: description,
+                }
+            }).then((response)=>{
+                if (200 <= response.status && response.status < 300) {
+                    dispatch('_$fetchCategories');
+                    
+                    resolve(response.data.data);
+                } else {
+                    reject(response);
+                }
+            }).catch((error)=>{
+                reject(error);
+            });
+        });
+    },
+    deleteCategory({ dispatch }, { categoryName }) {
+        return new Promise((resolve, reject) => {
+            axios({
+                url: '/counsel/category',
+                method: "delete",
+                params:{
+                    categoryName : categoryName,
+                }
+            }).then((response)=>{
+                if (200 <= response.status && response.status < 300) {
+                    dispatch('_$fetchCategories');
+
+                    resolve(response.data.data);
+                } else {
+                    reject(response);
+                }
+            }).catch((error)=>{
+                reject(error);
+            });
+        });
+    },
+    fetchCategories({ dispatch, state }) {
         if (state.available) {
+            dispatch('_$fetchCategories');
+
             return new Promise((resolve) => {
                 resolve(state.categories);
             });
         } else {
             return new Promise((resolve, reject) => {
-                axios({
-                    method: 'get',
-                    url: '/counsel/category',
-                })
+                dispatch('_$fetchCategories')
                     .then((response) => {
-                        if (200 <= response.status && response.status < 300) {
-                            commit('GET_CATEGORIES_SUCCESS', response.data.data);
-                            commit('SET_AVAILABLE', true);
-                            resolve(response.data.data);
-                        } else {
-                            commit('SET_AVAILABLE', false);
-                            reject(response);
-                        }
+                        resolve(response);
                     })
                     .catch((error) => {
-                        commit('SET_AVAILABLE', false);
                         reject(error);
-                    }).finally(() => {
                     });
             });
         }
