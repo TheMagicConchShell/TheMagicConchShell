@@ -281,7 +281,7 @@ export default {
                 this.$toast('안내', msg);
                 return;
             }
-            this.$store.dispatch('updateCategory', {
+            this.$store.dispatch('createCategory', {
                 name : this.name,
                 description: this.description,
             })
