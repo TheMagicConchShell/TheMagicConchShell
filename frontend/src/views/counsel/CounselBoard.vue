@@ -22,6 +22,13 @@
                         날짜
                     </div>
                 </li>
+                <template v-if="!list">
+                    <div
+                        class=""
+                    >
+                        이런 사이트가 망해서 고민이 없습니다...
+                    </div>
+                </template>
                 <li
                     v-for="item in list"
                     :key="item.no"
@@ -52,7 +59,7 @@
             <CounselSelectPaginate
                 :current="page"
                 :last="pageCount"
-                :page-handler="pageHandle"
+                :page-handle="pageHandle"
             />
         </template>
     </div>
@@ -60,18 +67,28 @@
 
 <script>
 import CounselSelectPaginate from "@/components/CounselSelectPaginate";
+
 export default {
     components: {
         CounselSelectPaginate,
     },
+    props: {
+        category: {
+            type: String,
+            default: '전체',
+        },
+        page: {
+            type: Number,
+            default: 1,
+        }
+    },
     data: () => ({
         list: [],
-        page: 0,
         pageCount: 1,
     }),
     watch: {
-        '$route'() {
-            this.page = this.$route.query.page;
+        category() {
+            this.fetchPost(this.page);
         },
         page() {
             this.fetchPost(this.page);
@@ -84,41 +101,86 @@ export default {
         fetchPost(page) {
             this.$wait.start("board list load");
             this.$store.dispatch('fetchCategories');
-            this.$axios({
-                url: '/counsel/post',
-                method: 'get',
-                params: {
-                    page: page || 1,
-                }
-            })
-                .then((response) => {
-                    if (200 <= response.status && response.status < 300) {
-                        let formatDate = function (date) {
-                            let d = new Date(date),
-                                month = '' + (d.getMonth() + 1),
-                                day = '' + d.getDate(),
-                                year = d.getFullYear();
+            this.list = null;
 
-                            if (month.length < 2) 
-                                month = '0' + month;
-                            if (day.length < 2) 
-                                day = '0' + day;
-
-                            return [month, day].join('-');
-                        };
-                        this.pageCount = response.data.data.totalPages;
-                        this.list = response.data.data.content.map((e) => {
-                            e.writeDate = formatDate(e.writeDate);
-                            e.category = this.$store.getters.categoryNameById(e.categoryId);
-                            return e;
-                        });
+            if (this.category === '전체') {
+                this.$axios({
+                    url: '/counsel/post',
+                    method: 'get',
+                    params: {
+                        page: page || 1,
                     }
-            
-                    this.$wait.end("board list load");
                 })
-                .catch((error) => {
-                    console.log(error.response);
-                });
+                    .then((response) => {
+                        if (200 <= response.status && response.status < 300) {
+                            let formatDate = function (date) {
+                                let d = new Date(date),
+                                    month = '' + (d.getMonth() + 1),
+                                    day = '' + d.getDate(),
+                                    year = d.getFullYear();
+
+                                if (month.length < 2) 
+                                    month = '0' + month;
+                                if (day.length < 2) 
+                                    day = '0' + day;
+
+                                return [month, day].join('-');
+                            };
+                            this.pageCount = response.data.data.totalPages;
+                            this.list = response.data.data.content.map((e) => {
+                                e.writeDate = formatDate(e.writeDate);
+                                e.category = this.$store.getters.categoryNameById(e.categoryId);
+                                return e;
+                            });
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error.response);
+                    })
+                    .finally(() => {
+                        this.$wait.end("board list load");
+                    });
+
+            } else {
+                this.$axios({
+                    url: '/counsel/post/category',
+                    method: 'get',
+                    params: {
+                        page: page || 1,
+                        category: this.category,
+                    }
+                })
+                    .then((response) => {
+                        console.log(response);
+                        if (200 <= response.status && response.status < 300) {
+                            let formatDate = function (date) {
+                                let d = new Date(date),
+                                    month = '' + (d.getMonth() + 1),
+                                    day = '' + d.getDate(),
+                                    year = d.getFullYear();
+
+                                if (month.length < 2) 
+                                    month = '0' + month;
+                                if (day.length < 2) 
+                                    day = '0' + day;
+
+                                return [month, day].join('-');
+                            };
+                            this.pageCount = response.data.data.totalPages;
+                            this.list = response.data.data.content.map((e) => {
+                                e.writeDate = formatDate(e.writeDate);
+                                e.category = this.$store.getters.categoryNameById(e.categoryId);
+                                return e;
+                            });
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error.response);
+                    })
+                    .finally(() => {
+                        this.$wait.end("board list load");
+                    });
+            }
         },
         pageHandle(nextPage) {
             this.$router.push({

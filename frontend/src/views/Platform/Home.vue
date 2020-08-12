@@ -29,7 +29,6 @@
                 <swiper-slide
                     v-for="post in list"
                     :key="post.no"
-                    style="overflow: auto"
                 >
                     <router-link
                         :to="{name: 'CounselDetail', params: {no: post.no}}"
@@ -47,14 +46,6 @@
                 <div
                     slot="pagination"
                     class="swiper-pagination"
-                />
-                <div
-                    slot="button-prev"
-                    class="swiper-button-prev"
-                />
-                <div
-                    slot="button-next"
-                    class="swiper-button-next"
                 />
             </swiper>          
         </div>
@@ -92,7 +83,7 @@
                 >
                     <b-card-text>
                         <div id="history_detail">
-                            <h3>{{ history.title }}</h3>
+                            <p>{{ history.title }}</p>
                             <transition name="open">
                                 <viewer
                                     v-if="nowshowing===history"
@@ -132,18 +123,14 @@ export default {
             p_img: '',
             /* swiper */
             swiperOption: {
-                effect: 'coverflow',
                 grabCursor: true,
-                centeredSlides: true,
+                loop: true,
                 slidesPerView: 3,
-                spaceBetween: 30,
-                loop: true, 
-                coverflowEffect: {
-                    rotate: 50,
-                    stretch: 0,
-                    depth: 100,
-                    modifier: 1,
-                    slideShadows : true
+                centeredSlides: true,
+                breakpoints: {
+                    992: {
+                        slidesPerView: 5,
+                    }
                 },
                 mousewheel: true,
                 keyboard: {
@@ -163,8 +150,8 @@ export default {
     computed: {
         ...mapState(['language']),
         swiper() {
-            return this.$refs.mySwiper.swiper;
-        }
+            return this.$refs.mySwiper;
+        },
     },
     created() {
         this.fetchPosts(this.size);
@@ -257,15 +244,14 @@ export default {
 #home {
   display: flex;
   margin: 30px 0;
+  padding-top: 30px;
   justify-content: space-between;
-  font-size: 30px;
+  font-family: sb;
 }
-
 #thisweek {
     width: 100%;
-    height: 80vh;
-    padding-top: 50px;
-    padding-bottom: 50px;
+    height: 30vh;
+    margin-bottom: 50px;
 }
 #history {
     display: grid;
@@ -275,32 +261,50 @@ export default {
 .swiper {
     height: 100%;
     width: 100%;
+    border: 1px solid;
 }
 .swiper-slide {
       padding:20px;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      align-items: center;
+      align-items: start;
       width: 300px;
       height: 100%;
-      text-align: center;
-      font-weight: bold;
-      background-position: center;
-      background-size: cover;
-      border: 1px solid #cacaca;
+      background-color: white;
       box-shadow: 10px 10px 10px #9e9e9e;
+}
+.swiper-slide a {
+    color: black;
+}
+
+@media (max-width: 992px) {
+    #home {
+        font-size: 22.5px;
+    }
+    #history {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 #detail {
     border: 1px solid #cacaca;
     box-shadow: 10px 10px 10px #9e9e9e;
     height: 80px;
-    -webkit-transition: all 0.45s ease-in-out;
-    transition: all 0.45s ease-in-out;
+    -webkit-transition: all 0.5s ease-in-out;
+    transition: all 0.5s ease-in-out;
     z-index: 0;
 }
 #detail:hover {
     height: 100%;
     z-index: 1;
+}
+#detail:hover #history_detail p {
+    border-bottom: 1px solid;
+}
+#history_detail {
+    color: black;
+}
+#history_content {
+    position: absolute;
 }
 </style>
