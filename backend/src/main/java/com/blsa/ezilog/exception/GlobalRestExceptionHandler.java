@@ -8,19 +8,25 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.blsa.ezilog.exception.jwt.JwtException;
+import com.blsa.ezilog.exception.auth.ForbiddenException;
+import com.blsa.ezilog.exception.auth.FrobiddenResponse;
+import com.blsa.ezilog.exception.auth.JwtException;
 import com.blsa.ezilog.model.ErrorResponse;
 
 @RestControllerAdvice
 public class GlobalRestExceptionHandler {
+    @ExceptionHandler(value = { ForbiddenException.class })
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public FrobiddenResponse forbidden(ForbiddenException e) {
+        return FrobiddenResponse.of(e);
+    }
+    
     @ExceptionHandler(value = { JwtException.class })
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public Object internalServerError(Exception e) {
