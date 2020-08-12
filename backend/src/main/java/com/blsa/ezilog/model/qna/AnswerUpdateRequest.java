@@ -19,12 +19,4 @@ public class AnswerUpdateRequest {
     @ApiModelProperty(required = true)
     @NotNull
     String content;
-    
-    @ApiModelProperty(required = true)
-    @NotNull
-    String writer;
-    
-    @ApiModelProperty(required = true)
-    @NotNull
-    Long qid;
 }
