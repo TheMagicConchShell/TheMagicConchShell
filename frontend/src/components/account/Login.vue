@@ -43,6 +43,9 @@
                     <findPW />
                 </b-button>
             </div>
+            <div class="float-left">
+                <KakaoLogin />
+            </div>
             <div class="float-right">
                 <b-button
                     id="commonbutton"
@@ -63,10 +66,12 @@
 
 <script>
 import FindPW from "@/components/account/FindPassword.vue";
+import KakaoLogin from '@/components/account/KakaoLogin.vue';
 
 export default {
     components: {
         FindPW,
+        KakaoLogin
     },
     data: () => ({
         email: "",

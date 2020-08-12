@@ -264,7 +264,7 @@ extend('passwordRegex', {
     message: '알파벳과 숫자를 각각 1개 이상 포함해야합니다.',
 });
 
-const storage = window.sessionStorage;
+import { mapGetters } from 'vuex';
 
 export default {
     components: {
@@ -287,11 +287,7 @@ export default {
         msg: '',
     }),
     computed: {
-        nickname: {
-            get() {
-                return this.$store.getters.nickname;
-            },
-        },
+        ...mapGetters(['nickname']),
     },
     created() {
         this.nicknameInput = this.nickname;
@@ -344,6 +340,17 @@ export default {
             })
                 .then((res) => {
                     this.$bvModal.show('user-delete-check');
+                    Kakao.API.request({
+                        url: '/v1/user/unlink',
+                        success: (response)=>{
+                            console.log(response);
+                            //this.$router.push("/");
+                        },
+                        fail: function(error) {
+                            console.log(error);
+                        },
+                    });
+
                 })
                 .catch((error) => {
                     console.log(error.response);

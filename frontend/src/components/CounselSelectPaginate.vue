@@ -2,7 +2,7 @@
     <paginate
         v-model="page"
         :page-count="last"
-        :click-handler="pageHandler(page)"
+        :click-handler="pageHandle"
         :prev-text="'<'"
         :next-text="'>'"
         :hide-prev-next="true"
@@ -31,7 +31,7 @@ export default {
             type: [Number],
             required: true,
         },
-        pageHandler:{
+        pageHandle:{
             type: Function,
             required: true,
         }
