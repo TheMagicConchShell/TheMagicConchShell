@@ -392,8 +392,8 @@ public class CounselController {
                     allList.get(i).setAuthor(true);
                 }
 
+                allList.get(i).saveWriterSHA256(allList.get(i).getWriter(), allList.get(i).getPostNo());
                 if (allList.get(i).isSecret() == true) {
-                    allList.get(i).saveWriterSHA256(allList.get(i).getWriter(), allList.get(i).getPostNo());
                     allList.get(i).setWriter("익명의 작성자");
                 }
 
