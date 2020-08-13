@@ -30,6 +30,6 @@ public class ResponseLog {
     @Column
     String status;
     
-    @Column
+    @Column (insertable = false, updatable = false)
     LocalDateTime timestamp;
 }

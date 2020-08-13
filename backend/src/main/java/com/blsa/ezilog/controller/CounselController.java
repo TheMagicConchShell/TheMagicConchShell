@@ -1,6 +1,5 @@
 package com.blsa.ezilog.controller;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +11,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,8 +30,6 @@ import com.blsa.ezilog.dao.UserDao;
 import com.blsa.ezilog.model.BasicResponse;
 import com.blsa.ezilog.model.ErrorResponse;
 import com.blsa.ezilog.model.category.Category;
-import com.blsa.ezilog.model.category.CategoryCreateRequest;
-import com.blsa.ezilog.model.category.CategoryUpdateRequest;
 import com.blsa.ezilog.model.like.LikeCount;
 import com.blsa.ezilog.model.like.LikeCountRequest;
 import com.blsa.ezilog.model.like.ReplyLikeCount;
@@ -83,9 +79,7 @@ public class CounselController {
     @Autowired
     private RecommendService recommendService;
 
-    @ApiOperation(value = "고민 전체 목록 반환", 
-            notes = "Input : page, Output: 성공 : [status = true, data = 고민 리스트(Post)] 실패 : status = false, data = 에러메세지", 
-            response = List.class)
+    @ApiOperation(value = "고민 전체 목록 반환", notes = "Input : page, Output: 성공 : [status = true, data = 고민 리스트(Post)] 실패 : status = false, data = 에러메세지", response = List.class)
     @GetMapping("/post")
     public Object retrievePost(@RequestParam int page,
             @RequestHeader(value = "nickname", required = false) String nickname) {
@@ -396,9 +390,10 @@ public class CounselController {
                 allList.get(i).saveWriterSHA256(allList.get(i).getWriter(), allList.get(i).getPostNo());
                 if (allList.get(i).isSecret() == true) {
                     allList.get(i).setWriter("익명의 작성자");
-                }else {
-                	allList.get(i).setProfileImg(userDao.findByNickname(allList.get(i).getWriter()).get().getProfileImg());
-				}
+                } else {
+                    allList.get(i)
+                            .setProfileImg(userDao.findByNickname(allList.get(i).getWriter()).get().getProfileImg());
+                }
 
             }
 
@@ -406,8 +401,8 @@ public class CounselController {
             if (post.isSecret() == true) {
                 post.setWriter("익명의 작성자");
             } else {
-				post.setProfileImg(userDao.findByNickname(post.getWriter()).get().getProfileImg());
-			}
+                post.setProfileImg(userDao.findByNickname(post.getWriter()).get().getProfileImg());
+            }
 
             Map<String, Object> PostMap = new HashMap<>();
 
@@ -652,13 +647,12 @@ public class CounselController {
 
             User utemp = optUser.get();
 
-            LocalDateTime currentTime = LocalDateTime.now();
             Post ctemp = new Post(post.getWriter(), post.getCategoryId(), post.getTitle(), post.getContent(),
-                    currentTime, post.getAllow(), post.getSecret());
+                    post.getAllow(), post.getSecret());
             postDao.save(ctemp);
 
             // 글 작성 포인트 추가.
-            PointHistory p = new PointHistory(utemp.getUid(), currentTime, 100, "고민글 작성");
+            PointHistory p = new PointHistory(utemp.getUid(), 100, "고민글 작성");
 
             if (pointservice.addPoint(p)) {
                 utemp.setPoint(utemp.getPoint() + 100);
@@ -852,12 +846,10 @@ public class CounselController {
                 // 현재 접속한 유저가 Post 작성자와 같을 때
                 if (nickname.equals(ptemp.getWriter())) {
 
-                    LocalDateTime currentTime = LocalDateTime.now();
-
                     User rutemp = userservice.select(rtemp.getWriter());
 
                     if (!ptemp.isChoose()) {
-                        PointHistory p = new PointHistory(rutemp.getUid(), currentTime, 200, "답글 선정");
+                        PointHistory p = new PointHistory(rutemp.getUid(), 200, "답글 선정");
                         // 포인트를 적립 할 수 있을 때
                         if (pointservice.addPoint(p)) {
                             rtemp.setSelected(true);
@@ -1061,11 +1053,10 @@ public class CounselController {
 
                 User utemp = optUser.get();
 
-                LocalDateTime currentTime = LocalDateTime.now();
-                Reply ptemp = new Reply(nickname, reply.getPostNo(), reply.getContent(), currentTime, reply.isSecret());
+                Reply ptemp = new Reply(nickname, reply.getPostNo(), reply.getContent(), reply.isSecret());
                 replyDao.save(ptemp);
 
-                PointHistory p = new PointHistory(utemp.getUid(), currentTime, 100, "댓글 작성");
+                PointHistory p = new PointHistory(utemp.getUid(), 100, "댓글 작성");
                 if (pointservice.addPoint(p)) {
                     utemp.setPoint(utemp.getPoint() + 100);
                     userDao.save(utemp);
@@ -1324,9 +1315,7 @@ public class CounselController {
                 if (!converseOpt.isPresent()) {
                     if (!tOpt.isPresent()) {
 
-                        LocalDateTime currentTime = LocalDateTime.now();
-                        LikeCount lc = new LikeCount(lcrequest.getPostNo(), user.getUid(), currentTime,
-                                lcrequest.getType());
+                        LikeCount lc = new LikeCount(lcrequest.getPostNo(), user.getUid(), lcrequest.getType());
 
                         likecountDao.save(lc);
                         Post ptemp = optPost.get();
@@ -1367,10 +1356,7 @@ public class CounselController {
 
                 if (!converseOpt.isPresent()) {
                     if (!tOpt.isPresent()) {
-
-                        LocalDateTime currentTime = LocalDateTime.now();
-                        LikeCount lc = new LikeCount(lcrequest.getPostNo(), user.getUid(), currentTime,
-                                lcrequest.getType());
+                        LikeCount lc = new LikeCount(lcrequest.getPostNo(), user.getUid(), lcrequest.getType());
                         likecountDao.save(lc);
 
                         Post ptemp = optPost.get();
@@ -1411,12 +1397,10 @@ public class CounselController {
                 if (pOpt.isPresent()) {
                     // 또 좋아요가 있는지 체크
                     if (!tOpt.isPresent()) {
-                        LocalDateTime currentTime = LocalDateTime.now();
-                        LikeCount lc = new LikeCount(lcrequest.getPostNo(), user.getUid(), currentTime,
-                                lcrequest.getType());
+                        LikeCount lc = new LikeCount(lcrequest.getPostNo(), user.getUid(), lcrequest.getType());
                         likecountDao.save(lc);
 
-                        PointHistory p = new PointHistory(user.getUid(), currentTime, -100, "추가 추천");
+                        PointHistory p = new PointHistory(user.getUid(), -100, "추가 추천");
                         if (pointservice.addPoint(p)) {
                             Post ptemp = optPost.get();
                             // 더 좋아요 추가
@@ -1651,8 +1635,7 @@ public class CounselController {
                 if (!converseOpt.isPresent()) {
                     if (!tOpt.isPresent()) {
 
-                        LocalDateTime currentTime = LocalDateTime.now();
-                        ReplyLikeCount rlc = new ReplyLikeCount(rlcrequest.getReplyId(), user.getUid(), currentTime,
+                        ReplyLikeCount rlc = new ReplyLikeCount(rlcrequest.getReplyId(), user.getUid(),
                                 rlcrequest.getType());
                         replylikecountDao.save(rlc);
 
@@ -1698,8 +1681,7 @@ public class CounselController {
                     // 아직 싫어요를 누르지 않았다면
                     if (!tOpt.isPresent()) {
 
-                        LocalDateTime currentTime = LocalDateTime.now();
-                        ReplyLikeCount rlc = new ReplyLikeCount(rlcrequest.getReplyId(), user.getUid(), currentTime,
+                        ReplyLikeCount rlc = new ReplyLikeCount(rlcrequest.getReplyId(), user.getUid(),
                                 rlcrequest.getType());
                         replylikecountDao.save(rlc);
 
@@ -1742,12 +1724,12 @@ public class CounselController {
                 if (pOpt.isPresent()) {
                     // 또 좋아요가 있는지 체크
                     if (!tOpt.isPresent()) {
-                        LocalDateTime currentTime = LocalDateTime.now();
-                        ReplyLikeCount rlc = new ReplyLikeCount(rlcrequest.getReplyId(), user.getUid(), currentTime,
+
+                        ReplyLikeCount rlc = new ReplyLikeCount(rlcrequest.getReplyId(), user.getUid(),
                                 rlcrequest.getType());
                         replylikecountDao.save(rlc);
 
-                        PointHistory p = new PointHistory(user.getUid(), currentTime, -100, "추가 추천");
+                        PointHistory p = new PointHistory(user.getUid(), -100, "추가 추천");
                         if (pointservice.addPoint(p)) {
                             rtemp.setLikeCount(rtemp.getLikeCount() + 1);
                             replyDao.save(rtemp);
