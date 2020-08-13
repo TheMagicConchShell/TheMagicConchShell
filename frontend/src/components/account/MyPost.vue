@@ -15,14 +15,14 @@
                     style="max-height: 200px;"
                 >
                     <div class="d-flex w-100 justify-content-between">
-                        <div class="item">
-                            <span id="title">
+                        <div class="item title">
+                            <span>
                                 {{ item.title }}
                             </span>
-                            <span id="divider">|</span>
-                            <span>{{ getCategory(item.categoryId) }}</span>
                         </div>
-                        <div class="item">
+                        <div class="item extra-info">
+                            <span>{{ getCategory(item.categoryId) }}</span>
+                            <span id="divider">|</span>
                             <span>{{ getFormatDate(item.writeDate) }} </span> 
                             <span id="divider">|</span>
                             <span>{{ item.views }}</span>
@@ -95,6 +95,7 @@ export default {
         },
     },
     created() {
+        this.$store.dispatch('fetchCategories');
         this.fetchMyPosts(this.page);
     },
     methods: {
@@ -115,7 +116,6 @@ export default {
             });
         },
         getCategory(categoryId){
-            this.$store.dispatch('fetchCategories');
             return this.$store.getters.categoryNameById(categoryId);
         },
         getFormatDate(date) {
@@ -142,14 +142,19 @@ export default {
     margin-right: 1rem;
     color: lightgray;
 }
-#title {
-    max-width: 70%;
+.title {
+    max-width: 50%;
     font-size: x-large;
+    text-align: left;
+}
+.extra-info {
+    text-align: right;
 }
 .item {
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap; 
+    white-space: nowrap;
+    padding: 5px;
 }
 .content {
     width: 100%;
@@ -157,9 +162,11 @@ export default {
     margin: 1rem;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: normal; 
+    white-space: nowrap; 
     text-align: left;
 }
+.item:nth-child(1) { flex: 1 1 100px; }
+.item:nth-child(2) { flex: 1 1 100px; }
 img {
     max-width: 120px;
     max-height: 120px;
@@ -169,5 +176,16 @@ img {
 }
 .down {
     color: tomato;
+}
+.content >>> * {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    display: inline-block;
+    margin-right: 1rem;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: normal;
 }
 </style>

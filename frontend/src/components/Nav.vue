@@ -189,7 +189,7 @@
                 </li>
                 <li>
                     <router-link
-                        :to="{name: ''}"
+                        :to="{name: 'QnaBoard'}"
                         class="text-light text-decoration-none d-flex"
                     >
                         <i class="fas fa-question-circle" />
@@ -295,27 +295,35 @@
                     :to="{name: 'Home'}"
                     class="text-dark text-decoration-none"
                 >
-                    <img
-                        id="photo"
-                        src="../assets/images/sora.png"
-                    >
                     <transition name="conversion">
                         <span
                             v-if="language==='ko'"
                             key="1"
                         >
+                            <img
+                                id="photo"
+                                src="../assets/images/sora.png"
+                            >
                             마법의 싸피고둥
                         </span>
                         <span
                             v-else-if="language==='en'"
                             key="2"
                         >
+                            <img
+                                id="photo"
+                                src="../assets/images/sora.png"
+                            >
                             Magic SSAFY conch
                         </span>
                         <span
                             v-else
                             key="3"
-                        >                  
+                        >   
+                            <img
+                                id="photo"
+                                src="../assets/images/sora.png"
+                            >               
                             神奇的 SSAFY 海螺
                         </span>
                     </transition>
@@ -391,7 +399,32 @@
             id="spot_area"
             class="sticky-top"
         >
-            여기는 spot area 영역
+            <!-- 여기는 spot area 영역 -->
+            <carousel 
+                id="spotCarousel"
+                :per-page="1"
+                :autoplay="true"
+                :autoplay-timeout="3000"
+                :loop="true"
+                :pagination-enabled="false"
+            >
+                <template v-if="spotList && spotList.length">
+                    <slide
+                        v-for="item in spotList"
+                        :key="item.no"
+                    >
+                        <router-link
+                            :to="{name: 'CounselDetail', params: {no: item.no}}"
+                            style="text-decoration: none;"
+                        >
+                            <span>{{ item.title }}</span>
+                        </router-link>
+                    </slide>
+                </template>
+                <template v-else>
+                    등록된 광고가 없습니다.
+                </template>
+            </carousel>
         </div>
     </div>
 </template>
@@ -400,17 +433,22 @@
 import {mapGetters, mapState, mapActions} from 'vuex';
 import Signup from '@/components/account/Signup.vue';
 import Login from '@/components/account/Login.vue';
+import { Carousel, Slide } from 'vue-carousel';
 
 export default {
     name: 'Nav',
     components: {
         Signup,
         Login,
+        Carousel,
+        Slide
     },
     data() {
         return {
             mouseover: false,
-            clicked: false
+            clicked: false,
+            spotList: [],
+            autoplay: "true",
         };
     },
     computed: {
@@ -422,7 +460,12 @@ export default {
             const element = document.getElementById('inp');
             element.checked = false;
             this.clicked = false;
+            this.showCraousel();
+            this.fetchSpotList();
         }
+    },
+    created() {
+        this.fetchSpotList();
     },
     methods: {
         ...mapActions(['setkor', 'seteng']),
@@ -439,7 +482,8 @@ export default {
         moveToUserDetail() {
             this.$router.push({
                 'name': 'userdetail'
-            });
+            })
+                .catch(() => {});
         },
         setkor() {
             this.$store.commit('kor');
@@ -463,12 +507,36 @@ export default {
         },
         clicking() {
             this.clicked = true;
+        }, 
+        async fetchSpotList(){
+            const response = await this.$axios({
+                method: 'get',
+                url: '/spot/banner',
+            }).then((res)=>{
+                //console.dir(res);
+                this.spotList = res.data.data;
+            }).catch((error)=>{
+                console.log(error.response);
+            });
+        },
+        showCraousel(){
+            const showme = document.getElementById('spotCarousel');
+            console.dir(showme);
         }
     },
 };
+
 </script>
 
 <style scoped>
+a{
+    color:unset;
+}
+a:hover {
+    text-decoration: unset;
+    color: #0363BA;
+}
+
 #inp {
     display:none;
 }
@@ -497,6 +565,7 @@ export default {
     height: 0;
     width: 0;
     transition-duration: 0.5s;
+    z-index:10;
 }
 #sidebar {
     font-family: sb;
@@ -508,6 +577,7 @@ export default {
     top: 0;
     background-color: #0363BA;
     height: 100vh;
+    transition-duration: 0.5s;
 }
 #sidebar ul {
     padding-left: 16px;
@@ -546,6 +616,7 @@ export default {
     margin-right: 16px;
     display:flex;
     flex-direction: row;
+    z-index: 10;
 }
 #photo {
     height: 64px; 
@@ -553,26 +624,31 @@ export default {
 }
 #ddmenu {
     padding: 0 16px 0 16px;
+    position:relative;
 }
-#ddmenu:hover {
-    
-}
-#ddmenu:hover #ddopen {
-    opacity: 1;
-    visibility: visible;
-    transition-duration: 1s;
-    transform:translateY(1);
-    width: 100%;
+#navitems #ddmenu:hover #ddopen {
+    display:block;
+    z-index:10;
+    height: auto;
 }
 #ddopen {
     position: absolute;
     margin: 8px 0 0 0;
     padding: 4px;
     justify-content: end;
-    opacity: 0;
-    visibility: hidden;
+    display:none;
+    width: 80px;
+    left: -12px;
     font-size: 75%;
     border: 1px solid #bdbdbd;
+    background-color: #f1f1f1;
+    z-index:10;
+}
+#ddopen li {
+    transition-duration: 0.5s;
+}
+#ddopen li:hover {
+    background-color: #bdbdbd;
 }
 @media (max-width: 992px) {
     .navbar {
@@ -613,11 +689,12 @@ export default {
     position: fixed;
     top: 68px;
     width: 100%;
-    z-index: 1;
+    z-index:0;
 }
 .show {
     background-color: #BEDAE5!important;
     display: flex;
     padding: 10px;
 }
+
 </style>

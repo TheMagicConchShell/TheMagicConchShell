@@ -98,6 +98,18 @@ li {
 button {
     transition-duration: 1s
 }
+/*점점점*/
+@keyframes blink {
+    0% {
+      opacity: .2;
+    }
+    20% {
+      opacity: 1;
+    }
+    100% {
+      opacity: .2;
+    }
+}
 /*오른쪽 사이드모션*/
 .right-side { transition: all 0.25s; } 
 .right-side-enter-active { transition: all 0.25s ease; } 
@@ -110,12 +122,10 @@ button {
 .bottom-side-enter, .bottom-side-leave-active { opacity: 0; transform: translateY(100%); }
 /*한영 변환 모션*/
 .conversion { transition: all 0.5s;}
-.conversion-enter-active { transition: all 0.5s ease; } 
-.conversion-enter, .conversion-leave-active { opacity: 0; transform: translateY(100%); }
-/*회전*/
-.clockwise-leave-active { transition: all 1s;transform: rotate(-90deg)}
-.clockwise-enter {transition-delay: 1s;}
-.counterclockwise-leave-active { transition: all 1s; transform: rotate(90deg)}
+.conversion-leave-active { transition: all 0.5s ease; transform: translateY(-30%); opacity:0; position: absolute;} 
+.conversion-enter-active {transition: all 0.5s ease; transition-delay: 0.5s; }
+.conversion-leave {opacity:1; }
+.conversion-enter {opacity:0; visibility: 0; transform: translateY(30%);}
 
 /*nav바 밑줄*/
 .nav-item{

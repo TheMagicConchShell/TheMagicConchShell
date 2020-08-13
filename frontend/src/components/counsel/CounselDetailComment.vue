@@ -93,8 +93,8 @@
             <div class="avatar-container">
                 <img
                     class="avatar"
-                    src="https://img.kbs.co.kr/kbs/620/nsimg.kbs.co.kr/data/news/2010/01/08/2024781_BeB.jpg"
-                    onerrer="https://img.kbs.co.kr/kbs/620/nsimg.kbs.co.kr/data/news/2010/01/08/2024781_BeB.jpg"
+                    :src="profileImg? profileImg: require(`@/assets/images/default_profile.png`)"
+                    onerror="@/assets/images/default_profile.png"
                     alt="Avatar image"
                 >
                 <div
@@ -153,13 +153,17 @@
                             수정
                         </div>
                         <span class="comment-update-secret">
-                            <input 
-                                id="commentupdatesecret" 
-                                v-model="commentSecret"
-                                type="checkbox"
-                                name="commentupdatesecret"
-                                class="comment-update-secret-checkbox"
-                            >
+                            <label class="el-switch el-switch-sm">
+                                <input
+                                    v-model="commentSecret"
+                                    type="checkbox"
+                                    name="switch"
+                                    checked=""
+                                >
+                                <span
+                                    class="el-switch-style"
+                                />
+                            </label>
                             <label
                                 for="commentupdatesecret"
                                 class="comment-update-secret-label"
@@ -168,7 +172,7 @@
                                     익명
                                 </span>
                                 <span v-else>
-                                    닉네임공개
+                                    공개
                                 </span>
                             </label>
                         </span>
@@ -351,6 +355,10 @@ export default {
         },
         unlikeCount: {
             type: Number,
+            required: true,
+        },
+        profileImg: {
+            type: String,
             required: true,
         },
         likeHandler: {
@@ -657,12 +665,15 @@ export default {
             }
             
             .comment-update-secret{
+                display: flex;
+                flex-direction: column;
+                
                 position: absolute;
-                right: 9px;
+                right: 16px;
                 top: 80px;
                 display: flex;
                 align-items: center;
-                font-size: 100%;
+                font-size: 75%;
                 
                 .comment-update-secret-checkbox {
                     width: auto;

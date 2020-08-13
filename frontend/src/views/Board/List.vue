@@ -32,6 +32,7 @@
                 </div>
                 <div />
                 <button
+                    v-if="nickname"
                     class="button-write"
                     @click="write"
                 >
@@ -77,7 +78,7 @@ export default {
         currentCategory: '전체',
     }),
     computed: {
-        ...mapGetters(['categories']),
+        ...mapGetters(['categories', 'nickname']),
         ...mapState(['language'])
     },
     watch: {
