@@ -20,30 +20,27 @@ import lombok.NoArgsConstructor;
 public class Answer {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name ="no")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "no")
     Long no;
-    
-    @Column(name ="content")
+
+    @Column(name = "content")
     String content;
-    
-    @Column(name ="writer")
+
+    @Column(name = "writer")
     String writer;
-    
-    @Column (name="qid")
+
+    @Column(name = "qid")
     Long qid;
-    
-    @Column (name="write_date")
+
+    @Column(name = "write_date", insertable = false, updatable = false)
     LocalDateTime writeDate;
 
-    public Answer(String content, String writer, Long qid, LocalDateTime writeDate) {
+    public Answer(String content, String writer, Long qid) {
         super();
         this.content = content;
         this.writer = writer;
         this.qid = qid;
-        this.writeDate = writeDate;
     }
 
-    
-    
 }

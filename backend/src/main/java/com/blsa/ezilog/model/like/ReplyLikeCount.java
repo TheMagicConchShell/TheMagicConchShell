@@ -29,17 +29,16 @@ public class ReplyLikeCount {
     @Column
     Long uid;
     
-    @Column
+    @Column (insertable = false, updatable = false)
     LocalDateTime stamp;
     
     @Column
     String type;
 
-    public ReplyLikeCount(Long replyId, Long uid, LocalDateTime stamp, String type) {
+    public ReplyLikeCount(Long replyId, Long uid, String type) {
         super();
         this.replyId = replyId;
         this.uid = uid;
-        this.stamp = stamp;
         this.type = type;
     }
     

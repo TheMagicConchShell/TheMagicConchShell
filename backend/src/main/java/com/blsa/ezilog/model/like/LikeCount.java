@@ -29,17 +29,16 @@ public class LikeCount {
     @Column
     Long uid;
     
-    @Column
+    @Column (insertable = false, updatable = false)
     LocalDateTime stamp;
     
     @Column
     String type;
 
-    public LikeCount(Long postNo, Long uid, LocalDateTime stamp, String type) {
+    public LikeCount(Long postNo, Long uid, String type) {
         super();
         this.postNo = postNo;
         this.uid = uid;
-        this.stamp = stamp;
         this.type = type;
     }
 

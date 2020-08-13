@@ -55,7 +55,7 @@ public class SpotService {
         Optional<List<SpotArea>> optUserList = spotDao.checkValidUserSpot(user.getNickname());
         // 이미 post_no로 등록된 Spot이 있는지 체크
         Optional<SpotArea> optPost = spotDao.checkValidPostSpot(request.getPostNo());
-        PointHistory point = new PointHistory(user.getUid(), currentTime, -500, "고민 광고 등록");
+        PointHistory point = new PointHistory(user.getUid(), -500, "고민 광고 등록");
 
         if (!optPost.isPresent()) {
             

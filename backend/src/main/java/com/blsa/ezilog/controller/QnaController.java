@@ -1,8 +1,5 @@
 package com.blsa.ezilog.controller;
 
-import java.math.BigInteger;
-import java.net.URLDecoder;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,7 +32,6 @@ import com.blsa.ezilog.model.qna.AnswerUpdateRequest;
 import com.blsa.ezilog.model.qna.Question;
 import com.blsa.ezilog.model.qna.QuestionRequest;
 import com.blsa.ezilog.model.qna.QuestionUpdateRequest;
-import com.blsa.ezilog.model.user.User;
 import com.blsa.ezilog.service.UserService;
 
 import io.swagger.annotations.ApiOperation;
@@ -51,7 +46,7 @@ public class QnaController {
 
     @Autowired
     QuestionDao questionDao;
-    
+
     @Autowired
     UserService userservice;
 
@@ -64,9 +59,7 @@ public class QnaController {
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
 
-        
-        LocalDateTime currentTime = LocalDateTime.now();
-        Question qnaQ = new Question(qrequest.getTitle(), qrequest.getContent(), qrequest.getWriter(), currentTime);
+        Question qnaQ = new Question(qrequest.getTitle(), qrequest.getContent(), qrequest.getWriter());
 
         questionDao.save(qnaQ);
         result.status = "S-200";
@@ -91,9 +84,8 @@ public class QnaController {
         Optional<Question> questionOpt = questionDao.getQuestionByNo(qrequest.getQid());
 
         if (questionOpt.isPresent()) {
-            LocalDateTime currentTime = LocalDateTime.now();
 
-            Answer qnaQ = new Answer(qrequest.getContent(), qrequest.getWriter(), qrequest.getQid(), currentTime);
+            Answer qnaQ = new Answer(qrequest.getContent(), qrequest.getWriter(), qrequest.getQid());
 
             answerDao.save(qnaQ);
             result.status = "S-200";
@@ -148,13 +140,12 @@ public class QnaController {
 
         return response;
     }
-    
+
     @GetMapping("/question/no")
     @ApiOperation(value = "질문 정보 불러오기")
     public Object getQuestion(@RequestParam Long no) {
         ResponseEntity response = null;
 
- 
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
@@ -287,7 +278,7 @@ public class QnaController {
 
         if (qtemp.isPresent()) {
             Question temp = qtemp.get();
-            if(nickname==null||!nickname.equals(temp.getWriter())) {
+            if (nickname == null || !nickname.equals(temp.getWriter())) {
                 eresult.status = "E-4309";
                 eresult.message = "작성한 작성자가 아니면 수정할 수 없습니다.";
                 eresult.data = null;
@@ -296,15 +287,15 @@ public class QnaController {
                 eresult.errors = errorMap;
 
                 response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
-            }else {
+            } else {
                 temp.setTitle(uprequest.getTitle());
                 temp.setContent(uprequest.getContent());
                 questionDao.save(temp);
-    
+
                 result.status = "S-200";
                 result.message = "질문 사항 수정 완료";
                 result.data = null;
-    
+
                 response = new ResponseEntity<>(result, HttpStatus.OK);
             }
 
@@ -335,7 +326,7 @@ public class QnaController {
 
         if (atemp.isPresent()) {
             Answer temp = atemp.get();
-            if(nickname==null||!nickname.equals(temp.getWriter())) {
+            if (nickname == null || !nickname.equals(temp.getWriter())) {
                 eresult.status = "E-4309";
                 eresult.message = "작성한 작성자가 아니면 수정할 수 없습니다.";
                 eresult.data = null;
@@ -383,7 +374,7 @@ public class QnaController {
         if (questionOpt.isPresent()) {
 
             Question temp = questionOpt.get();
-            if(nickname==null||!nickname.equals(temp.getWriter())) {
+            if (nickname == null || !nickname.equals(temp.getWriter())) {
                 eresult.status = "E-4309";
                 eresult.message = "작성한 작성자가 아니면 수정할 수 없습니다.";
                 eresult.data = null;
@@ -429,7 +420,7 @@ public class QnaController {
         if (answerOpt.isPresent()) {
 
             Answer temp = answerOpt.get();
-            if(nickname==null||!nickname.equals(temp.getWriter())) {
+            if (nickname == null || !nickname.equals(temp.getWriter())) {
                 eresult.status = "E-4309";
                 eresult.message = "작성한 작성자가 아니면 수정할 수 없습니다.";
                 eresult.data = null;
