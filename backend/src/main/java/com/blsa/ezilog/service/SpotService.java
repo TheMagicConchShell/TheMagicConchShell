@@ -28,7 +28,7 @@ public class SpotService {
 
     public List<SpotArea> AllSpot(){
         
-        return spotDao.findAll();
+        return spotDao.allValidSpotNotPage();
     }
     
     public Page<SpotArea> ValidSpot(Pageable request) {
@@ -50,14 +50,15 @@ public class SpotService {
                 currentTime.getDayOfMonth(), 0, 0, 0);
 
         SpotArea sa = new SpotArea(request.getPostNo(), registDate.plusDays(1), registDate.plusDays(2),
-                request.getOwner());
+                user.getNickname());
         // 이미 유저 이름으로 등록된 Spot이 있는지 체크
-        Optional<List<SpotArea>> optUserList = spotDao.checkValidUserSpot(request.getOwner());
+        Optional<List<SpotArea>> optUserList = spotDao.checkValidUserSpot(user.getNickname());
         // 이미 post_no로 등록된 Spot이 있는지 체크
         Optional<SpotArea> optPost = spotDao.checkValidPostSpot(request.getPostNo());
         PointHistory point = new PointHistory(user.getUid(), currentTime, -500, "고민 광고 등록");
 
         if (!optPost.isPresent()) {
+            
             if (optUserList.isPresent()) {
                 List<SpotArea> sList = optUserList.get();
                 if (sList.size() < 2) { // 나중에 N개로 확장 할 때 필요한 조건문
