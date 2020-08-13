@@ -324,10 +324,10 @@ export default {
             }
 
             const formData = new FormData();
-            formData.append('profileImg', this.profileImgFile)
-                .append('email', this.email)
-                .append('nickname', this.nicknameInput)
-                .append('password', this.password);
+            formData.append('profileImg', this.profileImgFile);
+            formData.append('email', this.email);
+            formData.append('nickname', this.nicknameInput);
+            formData.append('password', this.password);
 
             this.$store.dispatch('updateUser', formData)
                 .then((res) => {

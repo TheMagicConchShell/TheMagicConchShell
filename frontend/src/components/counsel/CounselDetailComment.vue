@@ -94,8 +94,8 @@
                 <img
                     class="avatar"
                     :src="profileImg? profileImg: require(`@/assets/images/default_profile.png`)"
-                    onerror="@/assets/images/default_profile.png"
                     alt="Avatar image"
+                    @error="$event.target.src = require(`@/assets/images/default_profile.png`)"
                 >
                 <div
                     class="writer"
@@ -359,7 +359,8 @@ export default {
         },
         profileImg: {
             type: String,
-            required: true,
+            required: false,
+            default: null,
         },
         likeHandler: {
             type: Function,
