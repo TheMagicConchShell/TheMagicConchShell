@@ -1,6 +1,7 @@
 package com.blsa.ezilog.controller;
 
 import java.util.ArrayList;
+import java.util.Base64.Decoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,7 +116,7 @@ public class SpotController {
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
-
+        
         List<SpotArea> sList = spotService.AllSpot();
         List<Post> pList = new ArrayList<>();
         if (!sList.isEmpty()) {

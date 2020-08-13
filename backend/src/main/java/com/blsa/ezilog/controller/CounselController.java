@@ -121,6 +121,7 @@ public class CounselController {
                     if (e.isSecret() == true) {
                         e.setWriter("익명의 작성자");
                     }
+                    e.setContent("");
                 });
 
                 result.status = "S-200";
