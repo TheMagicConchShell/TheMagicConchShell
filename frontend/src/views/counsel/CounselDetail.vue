@@ -3,6 +3,36 @@
         <template slot="waiting">
             <infinite-loading />
         </template>
+        
+        <b-modal
+            :id="`post-advertise-modal-${no}`"
+            ref="modal"
+            title="고민 광고"
+        >
+            <span>
+                포인트를 소모해서 고민을 광고 하시겠습니까?
+            </span>
+            <template v-slot:modal-footer="{ hide }">
+                <b-button
+                    variant="outline-secondary"
+                    size="sm"
+                    class="float-right"
+                    :disabled="$wait.is('counsel-chunk')"
+                    @click="hide"
+                >
+                    취소
+                </b-button>
+                <b-button
+                    variant="danger"
+                    size="sm"
+                    class="float-right"
+                    :disabled="$wait.is('counsel-chunk')"
+                    @click="advertiseHanlder"
+                >
+                    광고
+                </b-button>
+            </template>
+        </b-modal>
         <div class="timeline">
             <CounselDetailComment
                 name="question"
@@ -25,6 +55,7 @@
                 :delete-handler="deletePost"
                 :modify-handler="modifyPost"
                 :report-handler="dummy"
+                :advertise-caller="advertiseCaller"
             />
 
             <template v-if="selectedReply && selectedReply.id">
@@ -281,6 +312,25 @@ export default {
             }).finally(() => {
                 this.$wait.end('counsel-chunk');
             });
+        },
+        advertiseCaller() {
+            console.log("called");
+            this.$bvModal.show(`post-advertise-modal-${this.no}`);
+        },
+        advertiseHanlder(id) {
+            this.$axios({
+                url: '/spot',
+                method: 'post',
+                data: {
+                    'owner': this.nickname,
+                    'postNo': this.post.no,
+                },
+            })
+                .then((response) => {
+                    console.log(response);
+                })
+                .catch((error) => {
+                });
         },
         dummy() {
 
