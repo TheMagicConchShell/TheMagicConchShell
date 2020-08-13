@@ -14,6 +14,7 @@ public interface QuestionDao extends JpaRepository<Question, Long> {
     Optional<Question> getQuestionByWriter(String writer);
     Optional<Question> getQuestionByTitle(String title);
     
+    Optional<Question> findByNo(Long no);
     Page<Question> findQuestionByWriter(String writer, Pageable request);
     Page<Question> findQuestionByTitleLike(String title, Pageable request);
     
