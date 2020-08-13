@@ -39,8 +39,8 @@ public interface PostDao extends JpaRepository<Post, Long>{
             nativeQuery = true)
     Page<Post> findPostByTitleORWriter(String keyword, Pageable request);
     
-    @Query(value = "SELECT * FROM post WHERE allow = true AND no not in (SELECT no FROM selection_history)",
-            countQuery = "SELECT count(*) FROM post WHERE allow = true AND no not in (SELECT no FROM selection_history)",
+    @Query(value = "SELECT * FROM post WHERE allow = true AND no not in (SELECT no FROM selection_history UNION SELECT no FROM selection_post)",
+            countQuery = "SELECT count(*) FROM post WHERE allow = true AND no not in (SELECT no FROM selection_history UNION SELECT no FROM selection_post)",
             nativeQuery = true)
     Page<Post> findPostByAllowIsTrueAndNotInHistory(Pageable request);
     
