@@ -243,6 +243,8 @@ export default {
                 },
             }).then(() => {
                 this.$router.push({name: 'List'});
+            }).finally(() => {
+                this.$wait.end('counsel-chunk');
             });
         },
         deleteReply(id) {

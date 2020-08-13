@@ -439,7 +439,8 @@ export default {
         moveToUserDetail() {
             this.$router.push({
                 'name': 'userdetail'
-            });
+            })
+                .catch(() => {});
         },
         setkor() {
             this.$store.commit('kor');
