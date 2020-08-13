@@ -26,9 +26,9 @@ public class SpotService {
     @Autowired
     PointService pointService;
 
-    public List<SpotArea> AllSpot(){
+    public List<SpotArea> BannerSpot(){
         
-        return spotDao.allValidSpotNotPage();
+        return spotDao.BannerSpot();
     }
     
     public Page<SpotArea> ValidSpot(Pageable request) {

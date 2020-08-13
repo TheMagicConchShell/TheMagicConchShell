@@ -12,11 +12,11 @@ import com.blsa.ezilog.model.spot.SpotArea;
 
 public interface SpotDao extends JpaRepository<SpotArea, Long> {
 
-    @Query(value = "SELECT * FROM spot_area where now() between upload_date and expire_date", countQuery = "SELECT count(*) FROM spot_area where now() between upload_date and expire_date", nativeQuery = true)
+    @Query(value = "SELECT * FROM spot_area where now() < expire_date", countQuery = "SELECT count(*) FROM spot_area where now() < expire_date", nativeQuery = true)
     Page<SpotArea> allValidSpot(Pageable request);
     
     @Query(value = "SELECT * FROM spot_area where now() between upload_date and expire_date", nativeQuery = true)
-    List<SpotArea> allValidSpotNotPage();
+    List<SpotArea> BannerSpot();
     
     @Query(value = "SELECT * FROM spot_area where expire_date < now()", nativeQuery = true)
     Optional<List<SpotArea>> allNotValidSpot();

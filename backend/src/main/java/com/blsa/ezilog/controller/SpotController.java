@@ -117,7 +117,7 @@ public class SpotController {
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
         
-        List<SpotArea> sList = spotService.AllSpot();
+        List<SpotArea> sList = spotService.BannerSpot();
         List<SpotBanner> bList = new ArrayList<>();
         List<Post> pList = new ArrayList<>();
         if (!sList.isEmpty()) {
