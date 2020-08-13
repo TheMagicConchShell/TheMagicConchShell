@@ -15,7 +15,6 @@
                     >
                         <svg-author />
                     </div>
-
                     
                     <div
                         v-if="isSelected"
@@ -25,6 +24,15 @@
                             :class="{selected: isSelected}"
                         />
                     </div>
+
+                    <div
+                        v-if="isPost && isMine"
+                        class="button-item cursor-pointer"
+                        @click="advertiseCaller"
+                    >
+                        <svg-advertise />
+                    </div>
+
                     <template v-if="nickname && isMine">
                         <template v-if="isPost">
                             <div 
@@ -285,6 +293,7 @@ import SvgPencil from '@/components/general/SvgMaterialRateReview.vue';
 import SvgAuthor from '@/components/general/SvgMaterialVerifiedUser.vue';
 import SvgDelete from '@/components/general/SvgMaterialBackspace.vue';
 import SvgCheckBox from '@/components/general/SvgMaterialCheckBox.vue';
+import SvgAdvertise from '@/components/general/SvgMaterialCampaign.vue';
 
 export default {
     name: "CounselDetailComment",
@@ -294,6 +303,7 @@ export default {
         SvgPencil,
         SvgExclamation,
         SvgCheckBox,
+        SvgAdvertise,
     },
     props: {
         hash: {
@@ -382,6 +392,10 @@ export default {
             type: Function,
             default: () => {},
         },
+        advertiseCaller: {
+            type: Function,
+            default: () => {},
+        }
     },
     data(){
         return {
