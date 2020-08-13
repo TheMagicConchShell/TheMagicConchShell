@@ -156,8 +156,7 @@ public class NoticeController {
 
         if (optUser.isPresent()) {
             if (nickname.equals("admin")) {
-                LocalDateTime currentTime = LocalDateTime.now();
-                Notice temp = new Notice(notice.getTitle(), notice.getContent(), nickname, currentTime);
+                Notice temp = new Notice(notice.getTitle(), notice.getContent(), nickname);
                 noticeDao.save(temp);
                 result.status = "S-200";
                 result.message = "공지사항 작성에 성공했습니다.";

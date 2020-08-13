@@ -33,15 +33,14 @@ public class Question {
     @Column(name = "writer")
     String writer;
     
-    @Column(name = "write_date")
+    @Column(name = "write_date", insertable = false, updatable = false)
     LocalDateTime writeDate;
 
-    public Question(String title, String content, String writer, LocalDateTime writeDate) {
+    public Question(String title, String content, String writer) {
         super();
         this.title = title;
         this.content = content;
         this.writer = writer;
-        this.writeDate = writeDate;
     }
 
     

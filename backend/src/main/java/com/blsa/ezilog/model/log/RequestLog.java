@@ -61,6 +61,6 @@ public class RequestLog {
     @Column
     String body;
     
-    @Column
+    @Column (insertable = false, updatable = false)
     LocalDateTime timestamp;
 }
