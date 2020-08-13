@@ -59,7 +59,7 @@ public class PointController {
 
         PageRequest pageable = PageRequest.of(page - 1, 10, Sort.Direction.DESC, "id");
 
-        if (!useropt.equals(null)) {
+        if (useropt!=null) {
             Map<String, Object> resultMap = new HashMap<>();
 
             Page<PointHistory> phList = pointService.selectPointByUser(useropt.getUid(), pageable);

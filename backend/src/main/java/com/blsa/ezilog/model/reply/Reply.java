@@ -64,6 +64,9 @@ public class Reply {
     @Transient
     private String postTitle;
     
+    @Transient
+    private String profileImg;
+    
     public Reply(String writer, Long postNo, String content, LocalDateTime writeDate, boolean secret) {
         super();
         this.writer = writer;

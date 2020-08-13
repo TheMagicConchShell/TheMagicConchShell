@@ -17,10 +17,6 @@ public class QuestionUpdateRequest {
     @ApiModelProperty(required = true)
     @NotNull
     String content;
-    
-    @ApiModelProperty(required = true)
-    @NotNull
-    String writer;
 
     public Long getNo() {
         return no;
@@ -46,13 +42,4 @@ public class QuestionUpdateRequest {
         this.content = content;
     }
 
-    public String getWriter() {
-        return writer;
-    }
-
-    public void setWriter(String writer) {
-        this.writer = writer;
-    }
-    
-    
 }

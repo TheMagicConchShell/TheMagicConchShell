@@ -108,6 +108,14 @@
             <artifactId>jbcrypt</artifactId>
             <version>0.3m</version>
         </dependency>
+        
+        <!-- 파일의 MIME Type 체크하기 -->
+		<!-- https://mvnrepository.com/artifact/org.apache.tika/tika-core -->
+		<dependency>
+		    <groupId>org.apache.tika</groupId>
+		    <artifactId>tika-core</artifactId>
+		    <version>1.23</version>
+		</dependency>
 
     </dependencies>
 
