@@ -47,9 +47,9 @@ public class SpotService {
         LocalDateTime currentTime = LocalDateTime.now();
 
         LocalDateTime registDate = LocalDateTime.of(currentTime.getYear(), currentTime.getMonth(),
-                currentTime.getDayOfMonth(), 0, 0, 0);
+                currentTime.getDayOfMonth(), currentTime.getHour(), currentTime.getMinute(), 0);
 
-        SpotArea sa = new SpotArea(request.getPostNo(), registDate.plusDays(1), registDate.plusDays(2),
+        SpotArea sa = new SpotArea(request.getPostNo(), registDate.plusMinutes(1), registDate.plusMinutes(11),
                 user.getNickname());
         // 이미 유저 이름으로 등록된 Spot이 있는지 체크
         Optional<List<SpotArea>> optUserList = spotDao.checkValidUserSpot(user.getNickname());
@@ -87,7 +87,7 @@ public class SpotService {
     }
 
     // 매일 12시에 실행 되도록 설정
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 * * * * ?")
     public void autoDelete() {
         // 주기적으로 spot_area table에서 만료가 된 내역들을 삭제.
         Optional<List<SpotArea>> optList = spotDao.allNotValidSpot();
