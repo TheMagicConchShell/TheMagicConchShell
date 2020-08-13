@@ -63,6 +63,9 @@ public class Post {
     @Transient
     private int iLoveIt; // -1 싫어요 , 0 아무것도 없음 1 좋아요, 2 더 좋아요
     
+    @Transient
+    private String profileImg;
+    
     public Post(String writer, Long categoryId, String title, String content, LocalDateTime writeDate,
             boolean allow, boolean secret) {
         super();

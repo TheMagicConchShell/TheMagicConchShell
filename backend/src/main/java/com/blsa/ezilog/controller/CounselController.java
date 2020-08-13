@@ -395,14 +395,18 @@ public class CounselController {
                 if (allList.get(i).isSecret() == true) {
                     allList.get(i).saveWriterSHA256(allList.get(i).getWriter(), allList.get(i).getPostNo());
                     allList.get(i).setWriter("익명의 작성자");
-                }
+                }else {
+                	allList.get(i).setProfileImg(userDao.findByNickname(allList.get(i).getWriter()).get().getProfileImg());
+				}
 
             }
 
             // 글이 익명의 작성자인지 확인
             if (post.isSecret() == true) {
                 post.setWriter("익명의 작성자");
-            }
+            } else {
+				post.setProfileImg(userDao.findByNickname(post.getWriter()).get().getProfileImg());
+			}
 
             Map<String, Object> PostMap = new HashMap<>();
 

@@ -1,9 +1,13 @@
 package com.blsa.ezilog.controller;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.util.Base64;
+import java.util.Base64.Encoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +19,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
+import org.apache.tika.Tika;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.blsa.ezilog.model.BasicResponse;
 import com.blsa.ezilog.model.ErrorResponse;
@@ -137,37 +143,67 @@ public class UserController {
         return response;
     }
 
-    @PutMapping("/user/update")
-    @ApiOperation(value = "회원 정보 수정")
-    public Object update(@Valid @RequestBody UpdateRequestDTO request, HttpServletRequest req,
-            HttpServletResponse res) throws UnsupportedEncodingException {
-        ResponseEntity<BasicResponse> response = null;
-        Map<String, Object> errors = new HashMap<>();
+	@PutMapping("/user/update")
+	@ApiOperation(value = "회원 정보 수정")
+	public Object update(@RequestParam(required = false) MultipartFile profileImg, @RequestParam String email,
+			@RequestParam String nickname, @RequestParam String password, HttpServletRequest req,
+			HttpServletResponse res) throws UnsupportedEncodingException {
+		ResponseEntity<BasicResponse> response = null;
+		Map<String, Object> errors = new HashMap<>();
 
-        User checkUser = userService.select(req.getHeader("nickname"));
-        request.setEmail(checkUser.getEmail());
-        String checkname = userService.duplicateCheck("", request.getNickname());
-        String authTableCheckname = userService.authDuplicateCheck("", request.getNickname());
-        if (!checkUser.getNickname().equals(request.getNickname())
-                && (checkname.equals("nickname") || authTableCheckname.equals("nickname"))) {
-            errors.put("field", "nickname");
-            errors.put("data", request.getNickname());
-            final ErrorResponse result = setErrors("E-4001", "이미 존재하는 별명 입니다.", errors);
-            response = new ResponseEntity<>(result, HttpStatus.CONFLICT);
+		User checkUser = userService.select(req.getHeader("nickname"));
+		UpdateRequestDTO request = new UpdateRequestDTO();
+		request.setEmail(checkUser.getEmail());
+		request.setNickname(nickname);
+		request.setPassword(password);
 
-        } else {
-            final BasicResponse result = new BasicResponse();
-            User user = userService.update(request, req.getHeader("nickname"));
-            String token = jwtService.create(user);
-            String encoded = URLEncoder.encode(user.getNickname(),"UTF-8");
-            res.setHeader("jwt-auth-token", token);
-            res.setHeader("nickname",encoded);
-            result.status = "S-200";
-            result.message = "회원 정보 수정이 완료되었습니다.";
-            response = new ResponseEntity<>(result, HttpStatus.CREATED);
-        }
-        return response;
-    }
+		request.setEmail(checkUser.getEmail());
+		String checkname = userService.duplicateCheck("", request.getNickname());
+		String authTableCheckname = userService.authDuplicateCheck("", request.getNickname());
+		if (!checkUser.getNickname().equals(request.getNickname())
+				&& (checkname.equals("nickname") || authTableCheckname.equals("nickname"))) {
+			errors.put("field", "nickname");
+			errors.put("data", request.getNickname());
+			final ErrorResponse result = setErrors("E-4001", "이미 존재하는 별명 입니다.", errors);
+			response = new ResponseEntity<>(result, HttpStatus.CONFLICT);
+
+		} else {
+			if(profileImg != null) {
+				try {
+					if(checkImageMimeType(profileImg.getInputStream())) {
+						String originalFilename = profileImg.getOriginalFilename();
+						Encoder encoder = Base64.getEncoder();
+						
+						String imgBytes = new String(encoder.encodeToString(profileImg.getBytes()));
+						String imgExtension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+						request.setProfileImg("data:image/".concat(imgExtension).concat(";base64,").concat(imgBytes));
+					} else {
+						errors.put("field", "notImageFile");
+						final ErrorResponse result = setErrors("E-4010", "이미지 파일이 아닙니다.", errors);
+						return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+					}
+				} catch (IOException e) {
+					errors.put("field", "cantGetBytes");
+					final ErrorResponse result = setErrors("E-4011", "등록할 수 없는 파일입니다.", errors);
+					return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+				}
+			}else {
+				request.setProfileImg(checkUser.getProfileImg());
+			}
+			
+			final BasicResponse result = new BasicResponse();
+			
+			User user = userService.update(request, req.getHeader("nickname"));
+			String token = jwtService.create(user);
+			String encoded = URLEncoder.encode(user.getNickname(), "UTF-8");
+			res.setHeader("jwt-auth-token", token);
+			res.setHeader("nickname", encoded);
+			result.status = "S-200";
+			result.message = "회원 정보 수정이 완료되었습니다.";
+			response = new ResponseEntity<>(result, HttpStatus.CREATED);
+		}
+		return response;
+	}
 
     @GetMapping("/user/detail")
     @ApiOperation(value = "회원 정보 조회")
@@ -336,5 +372,15 @@ public class UserController {
         res.errors = errors;
         return res;
     }
-
+    
+    private boolean checkImageMimeType(InputStream profileImg) throws IOException {
+        Tika tika = new Tika();
+        String mimeType = tika.detect(profileImg);
+ 
+        if (mimeType.startsWith("image")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
