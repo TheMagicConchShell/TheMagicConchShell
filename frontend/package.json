@@ -38,6 +38,7 @@
         "vee-validate": "^3.3.7",
         "vue": "^2.6.11",
         "vue-awesome-swiper": "^4.1.1",
+        "vue-carousel": "^0.18.0",
         "vue-infinite-loading": "^2.4.5",
         "vue-infinite-scroll": "^2.0.2",
         "vue-router": "^3.2.0",

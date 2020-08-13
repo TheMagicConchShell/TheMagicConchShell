@@ -391,7 +391,32 @@
             id="spot_area"
             class="sticky-top"
         >
-            여기는 spot area 영역
+            <!-- 여기는 spot area 영역 -->
+            <carousel 
+                id="spotCarousel"
+                :per-page="1"
+                :autoplay="true"
+                :autoplay-timeout="3000"
+                :loop="true"
+                :pagination-enabled="false"
+            >
+                <template v-if="spotList && spotList.length">
+                    <slide
+                        v-for="item in spotList"
+                        :key="item.no"
+                    >
+                        <router-link
+                            :to="{name: 'CounselDetail', params: {no: item.no}}"
+                            style="text-decoration: none;"
+                        >
+                            <span>{{ item.title }}</span>
+                        </router-link>
+                    </slide>
+                </template>
+                <template v-else>
+                    등록된 광고가 없습니다.
+                </template>
+            </carousel>
         </div>
     </div>
 </template>
@@ -400,17 +425,22 @@
 import {mapGetters, mapState, mapActions} from 'vuex';
 import Signup from '@/components/account/Signup.vue';
 import Login from '@/components/account/Login.vue';
+import { Carousel, Slide } from 'vue-carousel';
 
 export default {
     name: 'Nav',
     components: {
         Signup,
         Login,
+        Carousel,
+        Slide
     },
     data() {
         return {
             mouseover: false,
-            clicked: false
+            clicked: false,
+            spotList: [],
+            autoplay: "true",
         };
     },
     computed: {
@@ -422,7 +452,12 @@ export default {
             const element = document.getElementById('inp');
             element.checked = false;
             this.clicked = false;
+            this.showCraousel();
+            this.fetchSpotList();
         }
+    },
+    created() {
+        this.fetchSpotList();
     },
     methods: {
         ...mapActions(['setkor', 'seteng']),
@@ -464,12 +499,36 @@ export default {
         },
         clicking() {
             this.clicked = true;
+        }, 
+        async fetchSpotList(){
+            const response = await this.$axios({
+                method: 'get',
+                url: '/spot/banner',
+            }).then((res)=>{
+                //console.dir(res);
+                this.spotList = res.data.data;
+            }).catch((error)=>{
+                console.log(error.response);
+            });
+        },
+        showCraousel(){
+            const showme = document.getElementById('spotCarousel');
+            console.dir(showme);
         }
     },
 };
+
 </script>
 
 <style scoped>
+a{
+    color:unset;
+}
+a:hover {
+    text-decoration: unset;
+    color: #0363BA;
+}
+
 #inp {
     display:none;
 }
@@ -621,4 +680,5 @@ export default {
     display: flex;
     padding: 10px;
 }
+
 </style>
