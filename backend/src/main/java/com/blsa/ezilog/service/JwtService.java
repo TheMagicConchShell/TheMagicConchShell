@@ -22,7 +22,7 @@ public class JwtService {
     public String create(final User user) {
         String issure = "마싸고";
         String subject ="로그인토큰";
-        Date exDate = new Date(System.currentTimeMillis()+(1000*60*5));
+        Date exDate = new Date(System.currentTimeMillis()+(1000*60*60));
         final JwtBuilder builder = Jwts.builder();
         builder.setIssuer(issure)
                 .setExpiration(exDate)
