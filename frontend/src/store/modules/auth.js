@@ -162,7 +162,7 @@ export const actions = {
                 });
         });
     },
-    updateUser({ commit }, { formData }) {
+    updateUser({ commit }, formData) {
         return new Promise((resolve, reject) => {
             axios({
                 method: 'put',
