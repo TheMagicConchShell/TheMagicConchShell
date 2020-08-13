@@ -189,7 +189,7 @@
                 </li>
                 <li>
                     <router-link
-                        :to="{name: ''}"
+                        :to="{name: 'QnaBoard'}"
                         class="text-light text-decoration-none d-flex"
                     >
                         <i class="fas fa-question-circle" />
