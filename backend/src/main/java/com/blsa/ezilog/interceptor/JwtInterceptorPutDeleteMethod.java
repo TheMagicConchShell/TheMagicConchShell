@@ -11,17 +11,15 @@ import com.blsa.ezilog.exception.auth.JwtException;
 import com.blsa.ezilog.service.JwtService;
 
 @Component
-public class JwtInterceptor implements HandlerInterceptor {
+public class JwtInterceptorPutDeleteMethod implements HandlerInterceptor {
     @Autowired
     private JwtService jwtService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-
-        if (request.getMethod().equals("OPTIONS")) {
-            return true;
-        } else {
+        
+        if (request.getMethod().equals("PUT")||request.getMethod().equals("DELETE")) {
             String token = request.getHeader("jwt-auth-token");
             String nickname = request.getHeader("nickname");
             if (token != null && token.length() > 0) {
@@ -34,6 +32,8 @@ public class JwtInterceptor implements HandlerInterceptor {
             } else {
                 throw new JwtException("인증 토큰이 없습니다.");
             }
+        } else {
+            return true;
         }
     }
 
