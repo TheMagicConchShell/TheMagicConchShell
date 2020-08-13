@@ -15,7 +15,7 @@
                     style="max-height: 210px;"
                 >
                     <div class="d-flex w-100 justify-content-between">
-                        <div>
+                        <div class="item">
                             <span 
                                 id="title"
                                 :class="(item.selected)? 'selected' : ''"
@@ -27,7 +27,7 @@
                                 />
                             </span>
                         </div>
-                        <div>
+                        <div class="item">
                             <span>{{ getFormatDate(item.writeDate) }} </span>
                             <span id="divider">|</span>
                             <span style="margin-right: 0.5rem">
@@ -160,13 +160,18 @@ export default {
     color: darkgray;
     margin-left: 1rem;
 }
+.item {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; 
+}
 .content {
     width: 100%;
     height: 60px;
     margin: 1rem;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: normal; 
+    white-space: nowrap; 
     text-align: left;
 }
 img {
@@ -181,5 +186,16 @@ img {
 }
 .selected {
     color: dodgerblue;
+}
+.content >>> * {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    display: inline-block;
+    margin-right: 1rem;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 </style>

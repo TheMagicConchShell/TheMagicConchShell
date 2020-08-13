@@ -19,6 +19,7 @@
                 :secret="post.secret"
                 :i-love-it="post.iloveIt"
                 :is-post-owner="post.mine"
+                :profile-img="post.profileImg"
 
                 :like-handler="nickname ? likePost : dummy"
                 :delete-handler="deletePost"
@@ -44,6 +45,7 @@
                     :i-love-it="selectedReply.iloveIt"
                     :is-post-owner="post.mine"
                     :select-handler="selectHandler"
+                    :profile-img="selectedReply.profileImg"
 
                     :like-handler="nickname ? likeReply : dummy"
                     :delete-handler="deleteReply"
@@ -71,6 +73,7 @@
                         :i-love-it="reply.iloveIt"
                         :is-post-owner="post.mine"
                         :select-handler="selectHandler"
+                        :profile-img="reply.profileImg"
 
                         :like-handler="nickname ? likeReply : dummy"
                         :delete-handler="deleteReply"

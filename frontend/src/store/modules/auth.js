@@ -162,17 +162,15 @@ export const actions = {
                 });
         });
     },
-    updateUser({ commit }, { email, nickname, password, profileImg }) {
+    updateUser({ commit }, { formData }) {
         return new Promise((resolve, reject) => {
             axios({
                 method: 'put',
                 url: '/user/update',
-                data: {
-                    email: email,
-                    nickname: nickname,
-                    password: password,
-                    profileImg: profileImg,
-                },
+                data: formData,
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
             })
                 .then((response) => {
                     if (200 <= response.status && response.status < 300) {
