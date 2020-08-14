@@ -1,9 +1,9 @@
 <template>
     <div>
-        Sign up
+        {{ $t('layout.regist') }}
         <b-modal
             id="signup"
-            title="회원 가입"
+            :title="$t('layout.regist')"
         >
             <div class="row">
                 <div class="col-7">
@@ -126,7 +126,8 @@
             <template
                 v-slot:modal-footer
             >
-                <b-button
+                <KakaoLogin />
+                <!-- <b-button
                     id="button"
                     size="sm"
                     style="background-color: #FFEB3B; color:#3E2723;"
@@ -136,8 +137,8 @@
                         style="max-height:100%;"
                     >
                     카톡으로 가입
-                </b-button>
-                <b-button
+                </b-button> -->
+                <!-- <b-button
                     id="button"
                     size="sm"
                     variant="secondary"
@@ -148,13 +149,14 @@
                         style="max-height:100%;"
                     >
                     깃헙으로 가입
-                </b-button>
+                </b-button> -->
             </template>
         </b-modal>
     </div>
 </template>
 
 <script>
+import KakaoLogin from '@/components/account/KakaoLogin.vue';
 import {
     ValidationObserver,
     ValidationProvider,
@@ -202,10 +204,11 @@ extend('emailRegex', {
 });
 
 export default {
-    name: 'Signin',
+    name: 'SignUp',
     components: {
         ValidationProvider,
         ValidationObserver,
+        KakaoLogin,
     },
     data() {
         return {
