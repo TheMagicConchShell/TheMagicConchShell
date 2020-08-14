@@ -513,7 +513,7 @@ export default {
                 method: 'get',
                 url: '/spot/banner',
             }).then((res)=>{
-                //console.dir(res);
+                console.dir(res);
                 this.spotList = res.data.data;
             }).catch((error)=>{
                 console.log(error.response);
