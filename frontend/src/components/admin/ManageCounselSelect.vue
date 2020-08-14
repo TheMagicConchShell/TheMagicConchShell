@@ -46,9 +46,7 @@
             <div
                 slot="no-more"
                 style="color: rgb(102, 102, 102); font-size: 14px; padding: 10px 0px;"
-            >
-                목록의 끝입니다 :)
-            </div>
+            />
         </infinite-loading>
 
         <h2 id="recommendspace">
