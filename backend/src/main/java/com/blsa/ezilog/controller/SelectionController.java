@@ -132,6 +132,12 @@ public class SelectionController {
             
             response = new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
         }else {
+        	list.forEach((e) -> {
+                if (e.isSecret() == true) {
+                    e.setWriter("익명의 작성자");
+                }
+            });
+            
             final BasicResponse result = new BasicResponse();
             
             result.status = "S-200";
@@ -198,6 +204,12 @@ public class SelectionController {
             
             response = new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
         }else {
+        	list.forEach((e) -> {
+                if (e.isSecret() == true) {
+                    e.setWriter("익명의 작성자");
+                }
+            });
+            
             final BasicResponse result = new BasicResponse();
             
             result.status = "S-200";

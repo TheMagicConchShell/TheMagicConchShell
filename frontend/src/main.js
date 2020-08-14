@@ -25,6 +25,10 @@ import 'swiper/css/swiper.css';
 import Kakao from '@/initKakao.js';
 Kakao.init();
 
+import VueI18n from 'vue-i18n';
+Vue.use(VueI18n);
+import i18n from '@/i18n';
+
 Vue.component('editor',Editor);
 Vue.component('viewer',Viewer);
 Vue.use(BootstrapVue);
@@ -47,6 +51,7 @@ import axios from '@/axios';
 Vue.prototype.$axios = axios;
 
 const vm = new Vue({
+    i18n,
     router,
     store,
     wait: new VueWait(),

@@ -15,24 +15,12 @@ public class SpotCreateRequest {
     @NotNull
     Long postNo;
 
-    @ApiModelProperty(required = true)
-    @NotNull
-    String owner;
-
     public Long getPostNo() {
         return postNo;
     }
 
     public void setPostNo(Long postNo) {
         this.postNo = postNo;
-    }
-
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
     }
 
 }

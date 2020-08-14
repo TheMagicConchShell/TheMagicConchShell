@@ -27,7 +27,7 @@ public class PointSeviceImpl implements PointService {
     @Override
     public boolean addPoint(PointHistory point) {
         boolean result = false;
-        
+
         int total = totalPoint(point.getUid());
         if (!(total + point.getChange() < 0)) {
             pointDao.save(point);
@@ -60,12 +60,9 @@ public class PointSeviceImpl implements PointService {
 
     @Override
     public List<PointHistory> selectRankByTotalPoint() {
-        
-        System.out.println(pointDao.getRankByPoint().get(0).toString());
-        
+
         return pointDao.getRankByPoint();
-        //return null;
+        // return null;
     }
-    
 
 }

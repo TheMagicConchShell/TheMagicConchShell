@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import Nav from './components/Nav.vue';
 
 export default {
@@ -35,12 +36,26 @@ export default {
             windowTop: window.top.scrollY,
         };
     },
+    computed: {
+        ...mapGetters(['language']),
+    },
     watch: {
         $route(to) {
             this.checkUrl(to.name);
         },
+        language: {
+            immediate: true,
+            handler() {
+                document.title = this.$t('title.title');
+            },
+        },
     },
     created() {
+        let locale = navigator.language || navigator.userLanguage;
+        locale = locale.substring(0, 2);
+        if (locale !== 'ko') locale = 'en';
+        this.$i18n.locale = locale;
+
         const url = this.$route.name;
 
         this.checkUrl(url);

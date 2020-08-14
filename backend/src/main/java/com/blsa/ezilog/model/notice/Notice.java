@@ -32,15 +32,14 @@ public class Notice {
     @Column (name = "writer")
     private String writer;
 
-    @Column (name = "write_date")
+    @Column (name = "write_date", insertable = false, updatable = false)
     LocalDateTime writeDate;
 
-    public Notice(String title, String content, String writer, LocalDateTime writeDate) {
+    public Notice(String title, String content, String writer) {
         super();
         this.title = title;
         this.content = content;
         this.writer = writer;
-        this.writeDate = writeDate;
     }
     
 }

@@ -27,19 +27,18 @@ public class PointHistory {
     @Column
     Long uid;
 
-    @Column 
+    @Column(insertable = false, updatable = false)
     LocalDateTime stamp;
 
-    @Column(name="change_val")
+    @Column(name = "change_val")
     int change;
 
-    @Column 
+    @Column
     String reason;
-    
-    public PointHistory(Long uid, LocalDateTime timestamp, int change, String reason) {
+
+    public PointHistory(Long uid, int change, String reason) {
         super();
         this.uid = uid;
-        this.stamp = timestamp;
         this.change = change;
         this.reason = reason;
     }

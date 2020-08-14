@@ -1,6 +1,5 @@
-package com.blsa.ezilog.model.like;
+package com.blsa.ezilog.model.log;
 
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -17,32 +16,20 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReplyLikeCount {
-
+public class ResponseLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    
-    @Column(name="reply_id")
-    Long replyId;
+ 
+    @Column
+    Long request_id;
     
     @Column
-    Long uid;
+    String header;
+    
+    @Column
+    String status;
     
     @Column (insertable = false, updatable = false)
-    LocalDateTime stamp;
-    
-    @Column
-    String type;
-
-    public ReplyLikeCount(Long replyId, Long uid, String type) {
-        super();
-        this.replyId = replyId;
-        this.uid = uid;
-        this.type = type;
-    }
-    
-    
-    
-    
+    LocalDateTime timestamp;
 }

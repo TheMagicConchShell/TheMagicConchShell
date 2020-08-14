@@ -17,19 +17,19 @@ import lombok.NoArgsConstructor;
 public class ReplyRank {
     @Id
     private Long id;
-    
+
     @Column
     private String writer;
-    
+
     @Column(name = "post_no")
     private Long postNo;
 
-    @Column (name = "write_date")
+    @Column(name = "write_date", insertable = false, updatable = false)
     LocalDateTime writeDate;
-    
-    @Column (name = "like_count")
+
+    @Column(name = "like_count")
     private int likeCount;
-    
+
     @Column
     private boolean secret;
 }

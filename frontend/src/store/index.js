@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 
 import * as auth from '@/store/modules/auth';
 import * as category from '@/store/modules/category';
+import * as locale from '@/store/modules/locale';
 import editorOptions from '@/store/editorOptions';
 
 import createPersistedState from "vuex-persistedstate";
@@ -13,33 +14,24 @@ export default new Vuex.Store({
     modules: {
         auth,
         category,
+        locale,
     },
     plugins: [createPersistedState({
         storage: window.sessionStorage,
         paths: [
             'auth',
             'category',
+            'locale',
         ],
     })],
     state: {
         editorOptions : editorOptions,
-        language: 'ko'
     },
     getters:{
         EDITOROPTIONS : (state) => {
             return state.editorOptions;
         },
-        currentlanguage: state => state.language
     },
     mutations: {
-        kor(state) {
-            state.language='ko';
-        },
-        eng(state) {
-            state.language='en';
-        },
-        ch(state) {
-            state.language='ch';
-        }
     },
 });

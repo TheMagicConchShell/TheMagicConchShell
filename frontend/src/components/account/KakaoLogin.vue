@@ -167,6 +167,9 @@ export default {
 </script>
 
 <style scoped>
+#kakao-login-btn {
+    width: 200px;
+}
 #button {
     height: 100%;
     border: 0;

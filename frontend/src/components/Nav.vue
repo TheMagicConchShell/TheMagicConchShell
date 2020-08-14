@@ -29,54 +29,20 @@
                             <transition
                                 name="conversion"
                             >
-                                <span
-                                    v-if="language==='ko'"
-                                    key="1"
-                                >
-                                    공지사항
-                                </span>
-                                <span
-                                    v-else-if="language==='en'"
-                                    key="2"
-                                >
-                                    Notice
-                                </span>
-                                <span
-                                    v-else
-                                    key="3"
-                                >
-                                    注意
-                                </span>
+                                <span :key="language">{{ $t('title.notice') }}</span>
                             </transition>
                         </div>
                     </router-link>
                 </li>
                 <li>
                     <router-link
-                        :to="{name: ''}"
+                        :to="{name: 'QnaBoard'}"
                         class="text-light text-decoration-none d-flex justify-content-between"
                     >
                         <i class="fas fa-question-circle" />
                         <div id="bottombar_menu">
                             <transition name="conversion">
-                                <span
-                                    v-if="language==='ko'"
-                                    key="1"
-                                >
-                                    문의
-                                </span>
-                                <span
-                                    v-else-if="language==='en'"
-                                    key="2"
-                                >
-                                    Q&A
-                                </span>
-                                <span
-                                    v-else
-                                    key="3"
-                                >
-                                    問題
-                                </span>
+                                <span :key="language">{{ $t('title.qna') }}</span>
                             </transition>
                         </div>
                     </router-link>
@@ -91,24 +57,7 @@
                         </div>
                         <div id="bottombar_menu">
                             <transition name="conversion">
-                                <span
-                                    v-if="language==='ko'"
-                                    key="1"
-                                >
-                                    고민게시판
-                                </span>
-                                <span
-                                    v-else-if="language==='en'"
-                                    key="2"
-                                >
-                                    Counsel
-                                </span>
-                                <span
-                                    v-else
-                                    key="3"
-                                >
-                                    擔心 公告欄
-                                </span>
+                                <span :key="language">{{ $t('title.counselBoard') }}</span>
                             </transition>
                         </div>
                     </router-link>
@@ -121,24 +70,7 @@
                         <i class="fas fa-crown" />
                         <div id="bottombar_menu">
                             <transition name="conversion">
-                                <span
-                                    v-if="language==='ko'"
-                                    key="1"
-                                >
-                                    랭킹
-                                </span>
-                                <span
-                                    v-else-if="language==='en'"
-                                    key="2"
-                                >
-                                    Ranking
-                                </span>
-                                <span
-                                    v-else
-                                    key="3"
-                                >
-                                    排行
-                                </span>
+                                <span :key="language">{{ $t('title.ranking') }}</span>
                             </transition>
                         </div>
                     </router-link>
@@ -165,24 +97,7 @@
                             <transition
                                 name="conversion"
                             >
-                                <span
-                                    v-if="language==='ko'"
-                                    key="1"
-                                >
-                                    공지사항
-                                </span>
-                                <span
-                                    v-else-if="language==='en'"
-                                    key="2"
-                                >
-                                    Notice
-                                </span>
-                                <span
-                                    v-else
-                                    key="3"
-                                >
-                                    注意
-                                </span>
+                                <span :key="language">{{ $t('title.notice') }}</span>
                             </transition>
                         </div>
                     </router-link>
@@ -198,24 +113,7 @@
                             id="sidebar-menu"
                         >
                             <transition name="conversion">
-                                <span
-                                    v-if="language==='ko'"
-                                    key="1"
-                                >
-                                    문의
-                                </span>
-                                <span
-                                    v-else-if="language==='en'"
-                                    key="2"
-                                >
-                                    Q&A
-                                </span>
-                                <span
-                                    v-else
-                                    key="3"
-                                >
-                                    問題
-                                </span>
+                                <span :key="language">{{ $t('title.qna') }}</span>
                             </transition>
                         </div>
                     </router-link>
@@ -231,24 +129,7 @@
                             id="sidebar-menu"
                         >
                             <transition name="conversion">
-                                <span
-                                    v-if="language==='ko'"
-                                    key="1"
-                                >
-                                    고민게시판
-                                </span>
-                                <span
-                                    v-else-if="language==='en'"
-                                    key="2"
-                                >
-                                    Counsel
-                                </span>
-                                <span
-                                    v-else
-                                    key="3"
-                                >
-                                    擔心 公告欄
-                                </span>
+                                <span :key="language">{{ $t('title.counselBoard') }}</span>
                             </transition>
                         </div>
                     </router-link>
@@ -264,27 +145,44 @@
                             id="sidebar-menu"
                         >
                             <transition name="conversion">
+                                <span :key="language">{{ $t('title.ranking') }}</span>
+                            </transition>
+                        </div>
+                    </router-link>
+                </li>
+                <li>
+                    <a
+                        class="text-light text-decoration-none d-flex"
+                        href="#"
+                        @click="openChat"
+                    >
+                        <i class="far fa-comments" />
+                        <div
+                            v-if="mouseover"
+                            id="sidebar-menu"
+                        >
+                            <transition name="conversion">
                                 <span
                                     v-if="language==='ko'"
                                     key="1"
                                 >
-                                    랭킹
+                                    채팅
                                 </span>
                                 <span
                                     v-else-if="language==='en'"
                                     key="2"
                                 >
-                                    Ranking
+                                    chating
                                 </span>
                                 <span
                                     v-else
                                     key="3"
                                 >
-                                    排行
+                                    闲聊
                                 </span>
                             </transition>
                         </div>
-                    </router-link>
+                    </a>
                 </li>
             </ul>
         </div>
@@ -296,7 +194,14 @@
                     class="text-dark text-decoration-none"
                 >
                     <transition name="conversion">
-                        <span
+                        <span :key="language">
+                            <img
+                                id="photo"
+                                src="../assets/images/sora.png"
+                            >
+                            {{ $t('title.title') }}
+                        </span>
+                        <!-- <span
                             v-if="language==='ko'"
                             key="1"
                         >
@@ -325,7 +230,7 @@
                                 src="../assets/images/sora.png"
                             >               
                             神奇的 SSAFY 海螺
-                        </span>
+                        </span> -->
                     </transition>
                 </router-link>
             </div>
@@ -345,14 +250,12 @@
                             class="fas fa-language"
                         />
                         <ul id="ddopen">
-                            <li @click.prevent="setkor">
-                                한국어
-                            </li>
-                            <li @click.prevent="seteng">
-                                English
-                            </li>
-                            <li @click.prevent="setch">
-                                中文
+                            <li
+                                v-for="language in languages"
+                                :key="language.name"
+                                @click.prevent="changeLanguage(language.value)"
+                            >
+                                {{ language.name }}
                             </li>
                         </ul>
                     </a>
@@ -371,14 +274,14 @@
                         <ul id="ddopen">
                             <div v-if="nickname">
                                 <li @click.prevent="moveToUserDetail">
-                                    Profile
+                                    {{ $t('layout.profile') }}
                                 </li>
                                 <li @click.prevent="logout">
-                                    Logout
+                                    {{ $t('layout.logout') }}
                                 </li>
                                 <div v-if="nickname=='admin'">
                                     <li @click.prevent="moveManagerPage">
-                                        Manage Page
+                                        {{ $t('layout.manage') }}
                                     </li>
                                 </div>
                             </div>
@@ -432,6 +335,15 @@
             <!-- </transition> -->
             </carousel>
         </div>
+        <div 
+            v-if="chatStatus"
+            id="chat-position"  
+        >
+            <ChatWindow 
+                ref="chatwindow"
+                :close-handler="closeChat"
+            />
+        </div>
     </div>
 </template>
 
@@ -439,6 +351,7 @@
 import {mapGetters, mapState, mapActions} from 'vuex';
 import Signup from '@/components/account/Signup.vue';
 import Login from '@/components/account/Login.vue';
+import ChatWindow from '@/components/chat/ChatWindow.vue';
 import { Carousel, Slide } from 'vue-carousel';
 
 export default {
@@ -447,18 +360,34 @@ export default {
         Signup,
         Login,
         Carousel,
-        Slide
+        Slide,
+        ChatWindow
     },
     data() {
         return {
+            languages: [
+                {
+                    name: '한국어',
+                    value: 'ko',
+                },
+                {
+                    name: 'English',
+                    value: 'en',
+                },
+                {
+                    name: '中文',
+                    value: 'ch',
+                }
+            ],
             mouseover: false,
             clicked: false,
             spotList: [],
             autoplay: "true",
+            chatStatus:false
         };
     },
     computed: {
-        ...mapState(['language']),
+        ...mapGetters(['language']),
         ...mapGetters(['nickname']),
     },
     watch: {
@@ -476,13 +405,15 @@ export default {
     methods: {
         ...mapActions(['setkor', 'seteng']),
         logout() {
+            this.$refs.chatwindow.leaved();
+            this.chatStatus = false;
             this.$store.dispatch('logout');
             if(Kakao.Auth.getAccessToken()!=null){
                 Kakao.Auth.logout(function(){
                     
                 });
             }
-
+            
             this.$toast('안내', '로그아웃 되었습니다.');
         },
         moveToUserDetail() {
@@ -491,14 +422,8 @@ export default {
             })
                 .catch(() => {});
         },
-        setkor() {
-            this.$store.commit('kor');
-        },
-        seteng() {
-            this.$store.commit('eng');            
-        },
-        setch() {
-            this.$store.commit('ch');            
+        changeLanguage(locale) {
+            this.$store.dispatch('setLocale', locale);
         },
         moveManagerPage() {
             this.$router.push({
@@ -529,6 +454,16 @@ export default {
             const showme = document.getElementById('spotCarousel');
             console.dir(showme);
         },
+        openChat(){
+            if(this.nickname){
+                this.chatStatus = true;
+            }else{
+                this.$toast("채팅","채팅은 로그인 후 이용 가능한 서비스입니다");
+            }
+        },
+        closeChat(){
+            this.chatStatus = false;
+        }
     },
 };
 
@@ -702,5 +637,11 @@ a:hover {
     display: flex;
     padding: 10px;
 }
-
+#chat-position{
+    position: fixed;
+    z-index: 11;
+    right: 30px;
+    top: 150px;
+    height: 300px;
+}
 </style>
