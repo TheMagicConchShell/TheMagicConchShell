@@ -89,7 +89,7 @@ export default {
     },
     methods: {
         connect(){
-            const serverURL = "http://localhost:8399/ws";
+            const serverURL = "http://i3a403.p.ssafy.io:8399/ws";
             let socket = new SockJS(serverURL);
             this.stompClient = Stomp.over(socket);
             this.stompClient.connect({},this.onConnected,this.onError);
