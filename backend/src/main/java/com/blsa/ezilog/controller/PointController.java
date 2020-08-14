@@ -213,11 +213,15 @@ public class PointController {
             if (user.getLevel() < 30) {
                 // (현재 유저가 가진 포인트가 래밸업에 필요한 포인트보다 많거나 같다면)
                 if (user.getPoint() >= requireEP.get(user.getLevel() + 1)) {
+                	int nextLv = user.getLevel() + 1;
                     // 레밸업에 필요한 포인트 만큼 감소
-                    user.setPoint(user.getPoint() - requireEP.get(user.getLevel() + 1));
+                    user.setPoint(user.getPoint() - requireEP.get(nextLv));
                     // 유저 레벨 변화 적용
-                    user.setLevel(user.getLevel() + 1);
+                    user.setLevel(nextLv);
                     userDao.save(user);
+                    
+                    PointHistory p = new PointHistory(user.getUid(), -requireEP.get(nextLv), "Lv."+nextLv+" 레벨업");
+                    pointService.addPoint(p);
 
                     result.status = "S-200";
                     result.message = "래벨 업 성공했습니다.";

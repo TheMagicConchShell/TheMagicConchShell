@@ -76,7 +76,7 @@ public class CategoryController {
 
                 if (!optCate.isPresent()) {
 
-                    Category temp = new Category(crequest.getName(), crequest.getDescription());
+                    Category temp = new Category(crequest.getName(), crequest.getDescription(), crequest.getEnName(), crequest.getChName());
                     categoryDao.save(temp);
 
                     result.status = "S-200";
@@ -102,7 +102,7 @@ public class CategoryController {
             }
         } else {
             eresult.status = "E-4409";
-            eresult.message = "알수 없는 유저입니다. 답변을 수정 할 수 없습니다.";
+            eresult.message = "알수 없는 유저입니다. 카테고리를 생성 할 수 없습니다.";
             eresult.data = null;
             errorMap.put("field", "unknownUser");
             errorMap.put("data", null);
@@ -199,7 +199,11 @@ public class CategoryController {
                     Category ctemp = cateOpt.get();
                     ctemp.setName(urequest.getChangeName());
                     ctemp.setDescription(urequest.getDescription());
+                    ctemp.setEnName(urequest.getEnName());
+                    ctemp.setChName(urequest.getChName());
+                    System.out.println(ctemp.toString());
                     categoryDao.save(ctemp);
+                    
 
                     result.status = "S-200";
                     result.message = "카테고리 수정에 성공했습니다.";
