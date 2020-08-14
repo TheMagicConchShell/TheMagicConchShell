@@ -65,7 +65,7 @@ public class PointController {
             Page<PointHistory> phList = pointService.selectPointByUser(useropt.getUid(), pageable);
             if (!phList.isEmpty()) {
 
-                int total = pointService.totalPoint(useropt.getUid());
+                int total = useropt.getPoint();
 
                 resultMap.put("pList", phList);
                 resultMap.put("totalPoint", total);
@@ -102,7 +102,7 @@ public class PointController {
 
     @ApiOperation(value = "특정 유저가 가진 총합 포인트 출력")
     @GetMapping("/rank/total-point")
-    public Object retrieveRankByPoint(@RequestHeader(value = "nickname", required = false) String nickname) {
+    public Object retrieveTotalPoint(@RequestHeader(value = "nickname", required = false) String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
@@ -112,10 +112,10 @@ public class PointController {
 
         if (!useropt.equals(null)) {
 
-            int total = pointService.totalPoint(useropt.getUid());
+            int total = useropt.getPoint();
 
             result.status = "S-200";
-            result.message = "포인트 이력 가져오기에 성공했습니다.";
+            result.message = "총 포인트 가져오기에 성공했습니다.";
             result.data = total;
 
             response = new ResponseEntity<>(result, HttpStatus.OK);
@@ -133,9 +133,9 @@ public class PointController {
         return response;
     }
 
-    @ApiOperation(value = "특정 유저가 가진 Point 이력, 총합 포인트 출력")
+    @ApiOperation(value = "Point 랭킹")
     @GetMapping("/total")
-    public Object retrievePointHistory(@RequestHeader(value = "nickname", required = false) String nickname) {
+    public Object retrieveRankPointHistory(@RequestHeader(value = "nickname", required = false) String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
