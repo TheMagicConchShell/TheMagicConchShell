@@ -25,10 +25,18 @@ public class Category {
     @Column
     private String description;
 
-    public Category(String name, String description) {
+    @Column(name = "en_name")
+    private String enName;
+
+    @Column(name = "ch_name")
+    private String chName;
+
+    public Category(String name, String description, String enName, String chName) {
         super();
         this.name = name;
         this.description = description;
+        this.enName = enName;
+        this.chName = chName;
     }
 
 }
