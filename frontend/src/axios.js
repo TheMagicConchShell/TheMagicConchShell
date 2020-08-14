@@ -36,6 +36,12 @@ instance.interceptors.response.use(
             // });
         }
 
+        switch(error.response.status) {
+        case 401:
+            store.dispatch('logout');
+            break;
+        }
+
         console.log(error);
         // const message = error.response.data.message;
         // const vm = new Vue();
