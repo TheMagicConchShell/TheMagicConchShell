@@ -3,26 +3,13 @@
         <div id="home">
             <div class="d-flex flex-column-reverse">
                 <transition name="conversion">
-                    <span
-                        v-if="language==='ko'"
-                        key="1"
-                    >
-                        <p class="d-flex m-0">금주의 싸피고둥이들</p>
-                        <small id="exp">{{ list.length }} 명의 싸피고둥이들이 울림을 기다리는중<span>.</span><span>.</span><span>.</span></small>
-                    </span>
-                    <span
-                        v-else-if="language==='en'"
-                        key="2"
-                    >
-                        <p class="d-flex m-0">SSAFY Conches of the Week</p>
-                        <small id="exp">{{ list.length }} conches waiting for magical answers<span>.</span><span>.</span><span>.</span></small> 
-                    </span>
-                    <span
-                        v-else
-                        key="3"
-                    >
-                        <p class="d-flex m-0">本週的 SSAFY 海螺</p>
-                        <small id="exp">{{ list.length }}個海螺等待答案<span>.</span><span>.</span><span>.</span></small> 
+                    <span :key="language">
+                        <p class="d-flex m-0">
+                            {{ $t('home.thisWeek') }}
+                        </p>
+                        <small id="exp">
+                            {{ $t('home.message', {count: list.length}) }}<span>.</span><span>.</span><span>.</span>
+                        </small>
                     </span>
                 </transition>
             </div>  
@@ -63,18 +50,7 @@
         <div id="home">
             <div class="d-flex flex-column-reverse">
                 <transition name="conversion">
-                    <span
-                        v-if="language==='ko'"
-                        key="1"
-                    >지난 대나무숲</span>
-                    <span
-                        v-if="language==='en'"
-                        key="2"
-                    >Past Stories</span>
-                    <span
-                        v-else
-                        key="3"
-                    >過去的故事</span>
+                    <span :key="language">{{ $t('home.history') }}</span>
                 </transition>
             </div>
         </div>
@@ -113,7 +89,7 @@
 </template>
 
 <script>
-import {mapState} from 'vuex';
+import { mapGetters } from 'vuex';
 import axios from 'axios';
 import { Swiper, SwiperSlide } from 'vue-awesome-swiper';
 const api = 'http://i3a403.p.ssafy.io:8399';
@@ -162,7 +138,7 @@ export default {
         };
     },
     computed: {
-        ...mapState(['language']),
+        ...mapGetters(['language']),
         swiper() {
             return this.$refs.mySwiper;
         },

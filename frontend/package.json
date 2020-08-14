@@ -1,8 +1,8 @@
 {
-    "name": "ezi",
+    "name": "magic_conch",
     "version": "1.0.0",
     "private": true,
-    "description": "EZI-log for blog service",
+    "description": "magic conch service",
     "author": {
         "name": "phoenix"
     },
@@ -39,6 +39,7 @@
         "vue": "^2.6.11",
         "vue-awesome-swiper": "^4.1.1",
         "vue-carousel": "^0.18.0",
+        "vue-i18n": "^8.21.0",
         "vue-infinite-loading": "^2.4.5",
         "vue-infinite-scroll": "^2.0.2",
         "vue-router": "^3.2.0",
