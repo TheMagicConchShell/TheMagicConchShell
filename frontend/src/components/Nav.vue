@@ -307,10 +307,15 @@
                 id="spotCarousel"
                 :per-page="1"
                 :autoplay="true"
-                :autoplay-timeout="3000"
+                :autoplay-direction="forward"
+                :autoplay-timeout="10000"
                 :loop="true"
                 :pagination-enabled="false"
+                :speed="8000"
             >
+                <!-- <transition
+                name:="conversion"
+            > -->
                 <template v-if="spotList && spotList.length">
                     <slide
                         v-for="item in spotList"
@@ -320,13 +325,14 @@
                             :to="{name: 'CounselDetail', params: {no: item.no}}"
                             style="text-decoration: none;"
                         >
-                            <span>{{ item.title }}</span>
+                            <span> [ 광고 ] {{ item.title }}</span>
                         </router-link>
                     </slide>
                 </template>
                 <template v-else>
                     등록된 광고가 없습니다.
                 </template>
+            <!-- </transition> -->
             </carousel>
         </div>
         <div 
@@ -438,7 +444,7 @@ export default {
                 method: 'get',
                 url: '/spot/banner',
             }).then((res)=>{
-                console.dir(res);
+                //console.dir(res);
                 this.spotList = res.data.data;
             }).catch((error)=>{
                 console.log(error.response);
