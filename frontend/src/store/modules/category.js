@@ -59,13 +59,15 @@ export const actions = {
                 });
         });
     },
-    createCategory({ dispatch }, { name, description }) {
+    createCategory({ dispatch }, { name, enName, chName, description }) {
         return new Promise((resolve, reject) => {
             axios({
                 url: '/category',
                 method: "post",
                 data: {
                     name : name,
+                    enName : enName,
+                    chName : chName,
                     description: description
                 }
             }).then((response)=>{
@@ -81,7 +83,7 @@ export const actions = {
             });
         });
     },
-    updateCategory({ dispatch }, { source, destination, description }) {
+    updateCategory({ dispatch }, { source, destination, enName, chName, description }) {
         return new Promise((resolve, reject) => {
             axios({
                 url: '/category',
@@ -89,6 +91,8 @@ export const actions = {
                 data: {
                     curName : source,
                     changeName: destination,
+                    enName : enName,
+                    chName : chName,
                     description: description,
                 }
             }).then((response)=>{

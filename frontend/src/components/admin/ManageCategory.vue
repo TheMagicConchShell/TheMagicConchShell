@@ -21,8 +21,10 @@
             >
                 <colgroup>
                     <col width="15%">
+                    <col width="15%">
+                    <col width="15%">
+                    <col width="15%">
                     <col width="20%">
-                    <col width="45%">
                     <col width="10%">
                     <col width="10%">
                 </colgroup>
@@ -36,7 +38,17 @@
                         <th
                             scope="col"
                         >
-                            카테고리 명
+                            한국 명
+                        </th>
+                        <th
+                            scope="col"
+                        >
+                            영어 명
+                        </th>
+                        <th
+                            scope="col"
+                        >
+                            중국 명
                         </th>
                         <th scope="col">
                             카테고리 설명
@@ -57,10 +69,16 @@
                             {{ item.name }}
                         </td>
                         <td>
+                            {{ item.enName }}
+                        </td>
+                        <td>
+                            {{ item.chName }}
+                        </td>
+                        <td>
                             {{ item.description }}
                         </td>
                         <td>
-                            <b-button @click.prevent="openUpdateModal(item.id, item.name, item.description)">
+                            <b-button @click.prevent="openUpdateModal(item.id, item.name, item.enName, item.chName ,item.description)">
                                 변경
                             </b-button>
                         </td>
@@ -93,13 +111,37 @@
             >
                 <b-form-group
                     :state="nameState"
-                    label="이름"
+                    label="한국 명"
                     label-for="name-input"
                 >
                     <b-form-input
                         id="name-input"
                         v-model="changeName"
                         :state="changeNameState"
+                        required  
+                    />
+                </b-form-group>
+                <b-form-group
+                    :state="enNameState"
+                    label="영어 명"
+                    label-for="enname-input"
+                >
+                    <b-form-input
+                        id="enname-input"
+                        v-model="enName"
+                        :state="enNameState"
+                        required  
+                    />
+                </b-form-group>
+                <b-form-group
+                    :state="chNameState"
+                    label="중국 명"
+                    label-for="chname-input"
+                >
+                    <b-form-input
+                        id="chname-input"
+                        v-model="chName"
+                        :state="chNameState"
                         required  
                     />
                 </b-form-group>
@@ -140,13 +182,37 @@
             >
                 <b-form-group
                     :state="nameState"
-                    label="이름"
+                    label="한국 명"
                     label-for="name-input"
                 >
                     <b-form-input
                         id="name-input"
                         v-model="name"
                         :state="nameState"
+                        required  
+                    />
+                </b-form-group>
+                <b-form-group
+                    :state="enNameState"
+                    label="영어 명"
+                    label-for="enname-input"
+                >
+                    <b-form-input
+                        id="enname-input"
+                        v-model="enName"
+                        :state="enNameState"
+                        required  
+                    />
+                </b-form-group>
+                <b-form-group
+                    :state="chNameState"
+                    label="중국 명"
+                    label-for="chname-input"
+                >
+                    <b-form-input
+                        id="chname-input"
+                        v-model="chName"
+                        :state="chNameState"
                         required  
                     />
                 </b-form-group>
@@ -175,6 +241,8 @@ export default {
     data:()=>({
         name: '',
         changeName:'',
+        enName:'',
+        chName:'',
         description: '',
     }),
     computed: {
@@ -190,7 +258,13 @@ export default {
         },
         changeNameState() {
             return this.changeName.length > 0;
-        }
+        },
+        enNameState(){
+            return this.enName.length > 0;  
+        },
+        chNameState(){
+            return this.chName.length > 0;  
+        },
     },
     watch:{
         page(){
@@ -205,9 +279,11 @@ export default {
             const valid = this.$refs.updateform.checkValidity();           
             return valid;
         },
-        openUpdateModal(id, name, desc){
+        openUpdateModal(id, name, enName , chName , desc){
             this.id = id;
             this.name = name;
+            this.enName = enName;
+            this.chName = chName;
             this.changeName = name;
             this.description = desc;
             this.$bvModal.show('modal-update-category');
@@ -224,6 +300,8 @@ export default {
             }
             this.$store.dispatch('updateCategory', {
                 source: this.name,
+                enName: this.enName,
+                chName: this.chName,
                 destination: this.changeName,
                 description: this.description,
             })
@@ -268,6 +346,8 @@ export default {
         },
         openCreateModal(){
             this.name = '';
+            this.enName = '';
+            this.chName ='';
             this.description = '';
             this.$bvModal.show('modal-create-category');
         },
@@ -283,6 +363,8 @@ export default {
             }
             this.$store.dispatch('createCategory', {
                 name : this.name,
+                enName: this.enName,
+                chName: this.chName,
                 description: this.description,
             })
                 .then((response) => {
