@@ -1,9 +1,9 @@
 <template>
     <div>
-        Log in
+        {{ $t('layout.login') }}
         <b-modal
             id="login"
-            title="로그인"
+            :title="$t('layout.login')"
             hide-footer
         >
             <div class="d-flex justify-content-center">
