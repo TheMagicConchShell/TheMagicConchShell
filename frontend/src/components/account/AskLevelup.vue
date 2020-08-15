@@ -3,26 +3,33 @@
         <b-modal
             id="ask-level-up"
             ref="modal"
-            title="레벨업 하시겠습니까?"
+            hide-header
             hide-footer
         >
-            포인트 {{ levelupRequirePoint }}을 소모하여 Lv.{{ level+1 }}로 레벨업 합니다.
-            <div>
+            <hr>
+            <div id="level-up-text">
+                <h1>LEVEL UP</h1>
+                포인트 {{ levelupRequirePoint }}을 소모하여 Lv.{{ level+1 }}로 레벨업 합니다.
+            </div>
+            <hr>
+            <b-button
+                id="level-up-ok"
+                block
+                pill
+                variant="outline-primary"
+                class="float-right"
+                @click="dolevelup"
+            >
+                레벨업
+            </b-button>
+            <div id="cancel-btn">
                 <b-button
-                    id="level-up-ok"
-                    variant="outline-primary"
-                    class="float-right"
-                    @click="dolevelup"
-                >
-                    레벨업
-                </b-button>
-                <b-button
-                    variant="outline-secondary"
-                    class="float-right"
+                    pill
+                    variant="link"
                     @click="$bvModal.hide('ask-level-up')"
                 >
-                    취소
-                </b-button>
+                    <i class="fas fa-times" />
+                </b-button>               
             </div>
         </b-modal>
     </div>
@@ -54,5 +61,12 @@ export default {
 <style scoped>
 #level-up-ok {
     margin-left: 0.5rem;
+}
+#cancel-btn {
+    text-align: center;
+}
+#level-up-text {
+    margin: 1rem 0 1rem 0;
+    text-align: center;
 }
 </style>
