@@ -150,6 +150,40 @@
                         </div>
                     </router-link>
                 </li>
+                <li>
+                    <a
+                        class="text-light text-decoration-none d-flex"
+                        href="#"
+                        @click="openChat"
+                    >
+                        <i class="far fa-comments" />
+                        <div
+                            v-if="mouseover"
+                            id="sidebar-menu"
+                        >
+                            <transition name="conversion">
+                                <span
+                                    v-if="language==='ko'"
+                                    key="1"
+                                >
+                                    채팅
+                                </span>
+                                <span
+                                    v-else-if="language==='en'"
+                                    key="2"
+                                >
+                                    chating
+                                </span>
+                                <span
+                                    v-else
+                                    key="3"
+                                >
+                                    闲聊
+                                </span>
+                            </transition>
+                        </div>
+                    </a>
+                </li>
             </ul>
         </div>
 
@@ -273,10 +307,15 @@
                 id="spotCarousel"
                 :per-page="1"
                 :autoplay="true"
-                :autoplay-timeout="3000"
+                :autoplay-direction="forward"
+                :autoplay-timeout="10000"
                 :loop="true"
                 :pagination-enabled="false"
+                :speed="8000"
             >
+                <!-- <transition
+                name:="conversion"
+            > -->
                 <template v-if="spotList && spotList.length">
                     <slide
                         v-for="item in spotList"
@@ -286,14 +325,24 @@
                             :to="{name: 'CounselDetail', params: {no: item.no}}"
                             style="text-decoration: none;"
                         >
-                            <span>{{ item.title }}</span>
+                            <span> [ 광고 ] {{ item.title }}</span>
                         </router-link>
                     </slide>
                 </template>
                 <template v-else>
                     등록된 광고가 없습니다.
                 </template>
+            <!-- </transition> -->
             </carousel>
+        </div>
+        <div 
+            v-if="chatStatus"
+            id="chat-position"  
+        >
+            <ChatWindow 
+                ref="chatwindow"
+                :close-handler="closeChat"
+            />
         </div>
     </div>
 </template>
@@ -302,6 +351,7 @@
 import {mapGetters, mapState, mapActions} from 'vuex';
 import Signup from '@/components/account/Signup.vue';
 import Login from '@/components/account/Login.vue';
+import ChatWindow from '@/components/chat/ChatWindow.vue';
 import { Carousel, Slide } from 'vue-carousel';
 
 export default {
@@ -310,7 +360,8 @@ export default {
         Signup,
         Login,
         Carousel,
-        Slide
+        Slide,
+        ChatWindow
     },
     data() {
         return {
@@ -332,6 +383,7 @@ export default {
             clicked: false,
             spotList: [],
             autoplay: "true",
+            chatStatus:false
         };
     },
     computed: {
@@ -353,14 +405,17 @@ export default {
     methods: {
         ...mapActions(['setkor', 'seteng']),
         logout() {
+            this.$refs.chatwindow.leaved();
+            this.chatStatus = false;
             this.$store.dispatch('logout');
             if(Kakao.Auth.getAccessToken()!=null){
                 Kakao.Auth.logout(function(){
                     
                 });
             }
-
+            
             this.$toast('안내', '로그아웃 되었습니다.');
+            this.$router.push({ name: 'Home'}).catch(() => {});
         },
         moveToUserDetail() {
             this.$router.push({
@@ -390,7 +445,7 @@ export default {
                 method: 'get',
                 url: '/spot/banner',
             }).then((res)=>{
-                console.dir(res);
+                //console.dir(res);
                 this.spotList = res.data.data;
             }).catch((error)=>{
                 console.log(error.response);
@@ -399,6 +454,16 @@ export default {
         showCraousel(){
             const showme = document.getElementById('spotCarousel');
             console.dir(showme);
+        },
+        openChat(){
+            if(this.nickname){
+                this.chatStatus = true;
+            }else{
+                this.$toast("채팅","채팅은 로그인 후 이용 가능한 서비스입니다");
+            }
+        },
+        closeChat(){
+            this.chatStatus = false;
         }
     },
 };
@@ -573,5 +638,11 @@ a:hover {
     display: flex;
     padding: 10px;
 }
-
+#chat-position{
+    position: fixed;
+    z-index: 11;
+    right: 30px;
+    top: 150px;
+    height: 300px;
+}
 </style>
