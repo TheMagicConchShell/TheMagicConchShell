@@ -3,30 +3,53 @@
         {{ $t('layout.login') }}
         <b-modal
             id="login"
-            :title="$t('layout.login')"
+            hide-header
             hide-footer
         >
             <div class="d-flex justify-content-center">
                 <img
                     id="photo"
-                    src="../../assets/images/conch_shell.jpeg"
+                    src="../../assets/images/circle-sora.png"
                 >
             </div>
-            <input
-                id="email"
-                ref="email"
-                v-model="email"
-                type="text"
-                placeholder="아이디"
+            <div
+                class="d-flex"
+                style="align-items:center;"
             >
-            <input
-                id="password"
-                ref="password"
-                v-model="password"
-                type="password"
-                placeholder="비밀번호"
+                <i class="far fa-envelope" />
+                <b-input
+                    id="email"
+                    ref="email"
+                    v-model="email"
+                    type="text"
+                    placeholder="이메일"
+                />
+            </div>
+            <div
+                class="d-flex"
+                style="align-items:center;"
             >
+                <i class="fas fa-lock" />
+                <b-input
+                    id="password"
+                    ref="password"
+                    v-model="password"
+                    type="password"
+                    placeholder="비밀번호"
+                />
+            </div>
             <div>
+                <b-button
+                    block
+                    pill
+                    variant="outline-primary"
+                    class="login-btn"
+                    @click.prevent="login"
+                >
+                    로그인
+                </b-button>
+            </div>
+            <div class="help-btn">
                 <b-button
                     v-b-modal.signup
                     variant="link"
@@ -34,7 +57,7 @@
                     아직 회원이 아니신가요?
                 </b-button>
             </div>
-            <div>
+            <div class="help-btn">
                 <b-button
                     v-b-modal.findpw
                     variant="link"
@@ -43,22 +66,9 @@
                     <findPW />
                 </b-button>
             </div>
-            <div class="float-left">
+            <hr>
+            <div class="help-btn">
                 <KakaoLogin />
-            </div>
-            <div class="float-right">
-                <b-button
-                    id="commonbutton"
-                    @click.prevent="login"
-                >
-                    로그인
-                </b-button>
-                <b-button
-                    ref="loginCloseBtn"
-                    @click="$bvModal.hide('login')"
-                >
-                    닫기
-                </b-button>
             </div>
         </b-modal>
     </div>
@@ -92,8 +102,8 @@ export default {
                 password: this.password
             })
                 .then((res) => {
+                    this.$toast('안내', '로그인 되었습니다.');
                     console.log(res);
-                    this.$router.go();
                 })
                 .catch((err) => {
                     console.log(err);
@@ -104,4 +114,19 @@ export default {
 </script>
 
 <style scoped>
+i {
+    flex: 1 1 30px;
+}
+img {
+    max-width: 100px;
+    max-height: 100px;
+    margin: 1rem;
+}
+.login-btn {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+.help-btn {
+    text-align: center;
+}
 </style>

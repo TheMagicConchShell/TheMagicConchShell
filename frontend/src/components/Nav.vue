@@ -415,6 +415,7 @@ export default {
             }
             
             this.$toast('안내', '로그아웃 되었습니다.');
+            this.$router.push({ name: 'Home'}).catch(() => {});
         },
         moveToUserDetail() {
             this.$router.push({
