@@ -52,13 +52,8 @@ export function makeDraggable(elementId, dragAreaId) {
         const nextLeft = limit(minLeftPosition, element.offsetLeft - deltaX, maxLeftPosition);
         const nextTop = limit(minTopPosition, element.offsetTop - deltaY, maxTopPosition);
 
-        // if (minTopPosition < nextTop && nextTop < maxTopPosition) {
         element.style.top = `${nextTop}px`;
-        // }
-        // console.log(`${minLeftPosition} < ${nextLeft} < ${maxLeftPosition}`);
-        // if (minLeftPosition < nextLeft && nextLeft < maxLeftPosition) {
         element.style.left = `${nextLeft}px`;
-        // }
     }
 
     function releaseDrag() {
