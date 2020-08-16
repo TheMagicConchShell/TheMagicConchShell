@@ -2,33 +2,64 @@
     <div>
         <b-modal
             id="findpw"
-            title="비밀번호 찾기"
+            hide-header
             hide-footer
         >
-            <div>
-                <input
+            <div
+                id="find-pw-header"
+                class="center"
+            >
+                <i 
+                    class="fas fa-unlock-alt"
+                    style="margin-right: 0.5rem;"
+                />
+                비밀번호 찾기
+            </div>
+            <div
+                id="find-pw-text"
+                class="center"
+            >
+                가입한 이메일과 별명을 입력해주세요.
+            </div>
+            <div class="d-flex input">
+                <i class="far fa-envelope" />
+                <b-input
                     id="email"
                     ref="email"
                     v-model="email"
                     type="text"
-                    placeholder="아이디"
-                >
+                    placeholder="이메일"
+                />
             </div>
 
-            <div>
-                <input
+            <div class="d-flex input">
+                <i class="fas fa-user-circle" />
+                <b-input
                     id="nickname"
                     ref="nickname"
                     v-model="nickname"
                     type="text"
-                    placeholder="닉네임"
-                >
+                    placeholder="별명"
+                />
             </div>
 
-            <div>
-                <b-button @click="findPassword">
-                    비밀번호 찾기 (이메일 전송)
-                </b-button>
+            <b-button
+                id="find-pw-btn"
+                block
+                pill
+                variant="outline-primary"
+                @click="findPassword"
+            >
+                비밀번호 찾기
+            </b-button>
+            <div class="center">
+                <b-button
+                    pill
+                    variant="link"
+                    @click="$bvModal.hide('findpw')"
+                >
+                    <i class="fas fa-times" />
+                </b-button>               
             </div>
         </b-modal>
     </div>
@@ -56,7 +87,7 @@ export default {
             })
                 .then((response) => {
                     // 이메일 전송 성공
-                    this.msg = '이메일이 전송되었습니다! 발송된 메일을 통하여 로그인하여 주세요.';
+                    this.msg = '메일로 임시 비밀번호가 발급되었습니다!';
                     this.$toast('안내', this.msg);
                     this.$bvModal.hide('findpw');
                 })
@@ -69,4 +100,24 @@ export default {
 </script>
 
 <style scoped>
+i {
+    flex: 1 1 30px;
+}
+.input {
+    align-items: center;
+}
+#find-pw-btn {
+    margin: 1rem 0 0.5rem 0;
+}
+#find-pw-header {
+    font-size: 1.2rem;
+    margin: 1rem 0 1rem 0;
+}
+#find-pw-text {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+.center {
+    text-align: center;
+}
 </style>
