@@ -1,6 +1,5 @@
 <template>
     <div class="list-area">
-        <div class="temporary-placer" />
         <template v-if="list && list.length">
             <table
                 class="table"
@@ -34,13 +33,13 @@
                         :key="item.nid"
                     >
                         <td>{{ item.nid }}</td>
-                        <td class="text-left">
+                        <td class="title text-left">
                             <router-link :to="{path: '/support/notice/'+ item.nid}">
                                 {{ item.title }}
                             </router-link>
                         </td>
                         <td>{{ item.writer }}</td>
-                        <td>{{ item.write_time }}</td>
+                        <td>{{ item.writeDate }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -60,6 +59,7 @@
         </template>
 
         <write-button
+            v-if="nickname && nickname === 'admin'"
             class="button float-right"
             :handler="write"
             :text="'작성'"
@@ -68,6 +68,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import NoticeListPaginate from "@/components/NoticeListPaginate";
 import WriteButton from "@/components/WriteButton";
 
@@ -82,6 +83,12 @@ export default {
         pageCount: 1,
         list: [],
     }),
+    computed: {
+        ...mapGetters([
+            'language',
+            'nickname',
+        ]),
+    },
     watch: {
         '$route'() {
             this.page = this.$route.query.page;
@@ -106,16 +113,31 @@ export default {
                 params: {
                     page: page || 1,
                 }
-            }).catch((r) => {
-                console.log(r);
-                console.log("catch notices");
-            });
+            })
+                .catch((error) => {
+                });
 
             if (response) {
-                console.log(response);
                 if (response.status >= 200 && response.status < 300) {
+                    let formatDate = function (date) {
+                        let d = new Date(date),
+                            month = '' + (d.getMonth() + 1),
+                            day = '' + d.getDate(),
+                            year = d.getFullYear();
+
+                        if (month.length < 2) 
+                            month = '0' + month;
+                        if (day.length < 2) 
+                            day = '0' + day;
+
+                        return [month, day].join('-');
+                    };
                     this.pageCount = response.data.data.totalPages;
-                    this.list = response.data.data.content;
+                    this.list = response.data.data.content.map((e) => {
+                        e.writer = '관리자';
+                        e.writeDate = formatDate(e.writeDate);
+                        return e;
+                    });
                 }
             }
         }
@@ -124,12 +146,11 @@ export default {
 </script>
 
 <style scoped>
-.temporary-placer {
-    margin-top: 42px;
-}
-
 .list-area {
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 a {
@@ -137,5 +158,15 @@ a {
 }
 a:hover {
     text-decoration: unset;
+}
+
+table {
+    table-layout: fixed;
+}
+
+.title {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden; 
 }
 </style>
