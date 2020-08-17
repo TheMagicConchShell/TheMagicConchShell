@@ -13,15 +13,15 @@
                 <thead class="thead-light">
                     <tr>
                         <th>
-                            순위
+                            {{ $t('ranking.table.rank') }}
                         </th>
                         <th>
-                            닉네임
+                            {{ $t('ranking.table.nickname') }}
                         </th>
                         <th
                             @click="changeSort(2)"
                         >
-                            고민
+                            {{ $t('ranking.table.counsel') }}
                             <i 
                                 v-if="mySort==2" 
                                 class="fas fa-long-arrow-alt-down"
@@ -34,7 +34,7 @@
                         <th
                             @click="changeSort(3)"
                         >
-                            답변
+                            {{ $t('ranking.table.reply') }}
                             <i 
                                 v-if="mySort==3" 
                                 class="fas fa-long-arrow-alt-down"
@@ -47,7 +47,7 @@
                         <th
                             @click="changeSort(4)"
                         >
-                            포인트
+                            {{ $t('ranking.table.point') }}
                             <i 
                                 v-if="mySort==4" 
                                 class="fas fa-long-arrow-alt-down"
@@ -60,7 +60,7 @@
                         <th
                             @click="changeSort(5)"
                         >
-                            레벨
+                            {{ $t('ranking.table.level') }}
                             <i 
                                 v-if="mySort==5" 
                                 class="fas fa-long-arrow-alt-down"

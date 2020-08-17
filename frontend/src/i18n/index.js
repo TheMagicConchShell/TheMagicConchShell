@@ -40,6 +40,28 @@ const messages = {
                 enter: ' 님이 참가했습니다',
                 leave: ' 님이 퇴장했습니다',
             },
+        },
+        ranking: {
+            board: '랭킹 게시판',
+            type:{
+                user:'유저',
+                counsel:'고민',
+                reply:'답변'
+            },
+            table:{
+                rank:'순위',
+                nickname:'닉네임',
+                counsel:'고민',
+                reply:'답변',
+                point:'포인',
+                level:'레벨',
+                title:'제목',
+                writer:'작성자',
+                like:'추천수',
+                views:'조회수',
+                date:'작성날짜',
+                cNumber:'고민 번호'
+            }
         }
     },
     en: {
@@ -79,6 +101,28 @@ const messages = {
                 enter: ' entered',
                 leave: ' leaved',
             },
+        },
+        ranking: {
+            board: 'Ranking Board',
+            type:{
+                user:'USER',
+                counsel:'COUNSEL',
+                reply:'REPLY'
+            },
+            table:{
+                rank:'Rank',
+                nickname:'Nickname',
+                counsel:'Counsel',
+                reply:'Reply',
+                point:'Point',
+                level:'Level',
+                title:'Title',
+                writer:'Writer',
+                like:'Like',
+                views:'Views',
+                date:'Date',
+                cNumber:'Counsel No.'
+            }
         }
     },
     ch: {
@@ -118,6 +162,28 @@ const messages = {
                 enter: ' 进来了',
                 leave: ' 出去了',
             },
+        },
+        ranking: {
+            board: '排行 公告欄',
+            type:{
+                user:'用户',
+                counsel:'擔心',
+                reply:'回复'
+            },
+            table:{
+                rank:'排行',
+                nickname:'昵称',
+                counsel:'擔心',
+                reply:'回复',
+                point:'得分',
+                level:'级别',
+                title:'题目',
+                writer:'制定者',
+                like:'喜欢',
+                views:'点击率',
+                date:'日期',
+                cNumber:'擔心 编号'
+            }
         }
     },
 };

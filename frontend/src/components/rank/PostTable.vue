@@ -14,18 +14,18 @@
                 <thead class="thead-light">
                     <tr>
                         <th>
-                            순위
+                            {{ $t('ranking.table.rank') }}
                         </th>
                         <th>
-                            제목
+                            {{ $t('ranking.table.title') }}
                         </th>
                         <th>
-                            작성자
+                            {{ $t('ranking.table.writer') }}
                         </th>
                         <th
                             @click="changeSort(6)"
                         >
-                            추천수
+                            {{ $t('ranking.table.like') }}
                             <i 
                                 v-if="mySort==6" 
                                 class="fas fa-long-arrow-alt-down"
@@ -38,7 +38,7 @@
                         <th
                             @click="changeSort(7)"
                         >
-                            조회수
+                            {{ $t('ranking.table.views') }}
                             <i 
                                 v-if="mySort==7" 
                                 class="fas fa-long-arrow-alt-down"
@@ -51,7 +51,7 @@
                         <th
                             @click="changeSort(8)"
                         >
-                            답변수
+                            {{ $t('ranking.table.reply') }}
                             <i 
                                 v-if="mySort==8" 
                                 class="fas fa-long-arrow-alt-down"
@@ -62,7 +62,7 @@
                             />
                         </th>
                         <th>
-                            작성날짜
+                            {{ $t('ranking.table.date') }}
                         </th>
                     </tr>
                 </thead>
@@ -92,6 +92,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
     data() {
         return {
@@ -99,8 +100,16 @@ export default {
             mySort:6
         };
     },
+    computed: {
+        ...mapGetters(['language']),
+    },
+    watch: {
+        language() {
+            this.getList(this.mySort);
+        },
+    },
     created() {
-        this.getList(6);
+        this.getList(this.mySort);
     },
     methods: {
         getList(mySort){
@@ -125,7 +134,7 @@ export default {
                     };
                     this.list = res.data.data.map((e)=>{
                         e.writeDate = formatDate(e.writeDate);
-                        e.category = this.$store.getters.categoryNameById(e.categoryId);
+                        e.category = this.$store.getters.categoryNameById(e.categoryId, this.language);
                         return e;
                     });
                 }
