@@ -6,50 +6,35 @@
             </template>
             <ul class="fz_list">
                 <li class="fz_list_th">
-                    <transition name="conversion">
-                        <div 
-                            :key="language"
-                            class="fz_num hidden-xs"
-                        >
-                            {{ $t('board.no') }}
-                        </div>
-                    </transition>
-                    <transition name="conversion">
-                        <div
-                            :key="language"
-                            class="fz_subject"
-                        >
-                            {{ $t('board.title') }}
-                            <!-- 제목 -->
-                        </div>
-                    </transition>
-                    <transition name="conversion">
-                        <div
-                            :key="language"
-                            class="fz_hit hidden-xs"
-                        >
-                            {{ $t('board.views') }}
-                            <!-- 조회 -->
-                        </div>
-                    </transition>
-                    <transition name="conversion">
-                        <div
-                            :key="language"
-                            class="fz_writer hidden-xs"
-                        >
-                            {{ $t('board.writer') }}
-                            <!-- 작성자 -->
-                        </div>
-                    </transition>
-                    <transition name="conversion">
-                        <div
-                            :key="language"
-                            class="fz_date hidden-xs"
-                        >
-                            {{ $t('board.date') }}
-                            <!-- 날짜 -->
-                        </div>
-                    </transition>
+                    <div
+                        class="fz_num hidden-xs"
+                    >
+                        {{ $t('board.no') }}
+                    </div>
+                    <div
+                        class="fz_subject"
+                    >
+                        {{ $t('board.title') }}
+                        <!-- 제목 -->
+                    </div>
+                    <div
+                        class="fz_hit hidden-xs"
+                    >
+                        {{ $t('board.views') }}
+                        <!-- 조회 -->
+                    </div>
+                    <div
+                        class="fz_writer hidden-xs"
+                    >
+                        {{ $t('board.writer') }}
+                        <!-- 작성자 -->
+                    </div>
+                    <div
+                        class="fz_date hidden-xs"
+                    >
+                        {{ $t('board.date') }}
+                        <!-- 날짜 -->
+                    </div>
                 </li>
                 <template v-if="!list">
                     <div
@@ -126,6 +111,9 @@ export default {
         page() {
             this.fetchPost(this.page);
         },
+        language() {
+            this.fetchPost(this.page);
+        },
     },
     async created() {
         await this.fetchPost(this.page);
@@ -162,13 +150,13 @@ export default {
                             this.pageCount = response.data.data.totalPages;
                             this.list = response.data.data.content.map((e) => {
                                 e.writeDate = formatDate(e.writeDate);
-                                e.category = this.$store.getters.categoryNameById(e.categoryId);
+                                e.category = this.$store.getters.categoryNameById(e.categoryId, this.language);
                                 return e;
                             });
                         }
                     })
                     .catch((error) => {
-                        console.log(error.response);
+                        console.log(error);
                     })
                     .finally(() => {
                         this.$wait.end("board list load");
@@ -184,7 +172,6 @@ export default {
                     }
                 })
                     .then((response) => {
-                        console.log(response);
                         if (200 <= response.status && response.status < 300) {
                             let formatDate = function (date) {
                                 let d = new Date(date),
@@ -202,13 +189,13 @@ export default {
                             this.pageCount = response.data.data.totalPages;
                             this.list = response.data.data.content.map((e) => {
                                 e.writeDate = formatDate(e.writeDate);
-                                e.category = this.$store.getters.categoryNameById(e.categoryId);
+                                e.category = this.$store.getters.categoryNameById(e.categoryId, this.language);
                                 return e;
                             });
                         }
                     })
                     .catch((error) => {
-                        console.log(error.response);
+                        console.log(error);
                     })
                     .finally(() => {
                         this.$wait.end("board list load");

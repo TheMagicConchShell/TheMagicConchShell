@@ -141,8 +141,6 @@ export const actions = {
     },
     deleteUser({ commit }, { nickname }) {
         return new Promise((resolve, reject) => {
-            commit('LOGOUT');
-
             axios({
                 method: 'delete',
                 url: '/user/delete',
@@ -153,6 +151,8 @@ export const actions = {
                 .then((response) => {
                     if (200 <= response.status && response.status < 300) {
                         resolve(response);
+
+                        commit('LOGOUT');
                     } else {
                         reject(response);
                     }
