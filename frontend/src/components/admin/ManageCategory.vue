@@ -66,24 +66,24 @@
                     >
                         <td>{{ item.id }}</td>
                         <td>
-                            {{ item.name }}
+                            {{ item.name.ko }}
                         </td>
                         <td>
-                            {{ item.enName }}
+                            {{ item.name.en }}
                         </td>
                         <td>
-                            {{ item.chName }}
+                            {{ item.name.ch }}
                         </td>
                         <td>
                             {{ item.description }}
                         </td>
                         <td>
-                            <b-button @click.prevent="openUpdateModal(item.id, item.name, item.enName, item.chName ,item.description)">
+                            <b-button @click.prevent="openUpdateModal(item)">
                                 변경
                             </b-button>
                         </td>
                         <td>
-                            <b-button @click.prevent="openDeleteModal(item.name)">
+                            <b-button @click.prevent="openDeleteModal(item)">
                                 삭제
                             </b-button>
                         </td>
@@ -279,13 +279,13 @@ export default {
             const valid = this.$refs.updateform.checkValidity();           
             return valid;
         },
-        openUpdateModal(id, name, enName , chName , desc){
-            this.id = id;
-            this.name = name;
-            this.enName = enName;
-            this.chName = chName;
-            this.changeName = name;
-            this.description = desc;
+        openUpdateModal(item){
+            this.id = item.id;
+            this.name = item.name.ko;
+            this.enName = item.name.en;
+            this.chName = item.name.ch;
+            this.changeName = item.name.ko;
+            this.description = item.description;
             this.$bvModal.show('modal-update-category');
         },
         handleOk(bvModalEvt){
@@ -316,9 +316,9 @@ export default {
                 this.$bvModal.hide('modal-update-category');
             });
         },
-        openDeleteModal(name){
+        openDeleteModal(item){
             this.$bvModal.show('modal-delete-category');
-            this.name = name;
+            this.name = item.name.ko;
         },
         deleteOk(bvModalEvt){
             bvModalEvt.preventDefault();

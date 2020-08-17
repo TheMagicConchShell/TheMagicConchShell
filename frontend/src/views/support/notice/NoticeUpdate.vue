@@ -40,7 +40,6 @@ export default {
         }).catch(() => {});
 
         if (response) {
-            console.log(response);
             if (response.status == 200) {
                 this.id = response.data.data.nid;
                 this.writer = response.data.data.writer;

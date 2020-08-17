@@ -90,10 +90,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import axios from 'axios';
 import { Swiper, SwiperSlide } from 'vue-awesome-swiper';
-const api = 'http://i3a403.p.ssafy.io:8399';
-var count = 0;
 
 export default {
     name: 'Home',
@@ -103,6 +100,7 @@ export default {
     },
     data() {
         return {
+            count: 0,
             nowshowing: null,          
             lastNo: 1,
             size: 1000,
@@ -110,14 +108,21 @@ export default {
             histories: [],
             busy: false,
             p_img: '',
+            
             /* swiper */
             swiperOption: {
                 grabCursor: true,
                 loop: true,
                 spaceBetween: 10,
-                slidesPerView: 3,
-                centeredSlides: true,
+                slidesPerView: 2,
+                centeredSlides: false,
                 breakpoints: {
+                    400: {
+                        slidesPerView: 3,
+                    },
+                    768: {
+                        slidesPerView: 4,
+                    },
                     992: {
                         slidesPerView: 5,
                     }
@@ -157,15 +162,23 @@ export default {
         loadMore() {
             this.busy = true;
             setTimeout(() => {
-                while (count < this.pageCount) {
-                    this.fetchPosts(count++);
+                while (this.count < this.pageCount) {
+                    this.fetchPosts(this.count++);
                 }
                 this.busy = false;
             }, 1000);
         },
         async fetchPosts(size) {
-            const response = await this.$axios.get(api + '/selection/post', { params: { size: size }})
-                .catch(() => console.log('catch notices'));
+            const response = await this.$axios({
+                url: '/selection/post',
+                method: 'get',
+                params: {
+                    size: size,
+                },
+            })
+                .catch(() => {
+                });
+
             if (response) {
                 if (response.status >= 200 && response.status < 300) {
                     this.list = response.data.data;
@@ -175,8 +188,16 @@ export default {
             this.nowshowing = this.list[0];
         },
         async fetchHistory(size) {
-            const response = await this.$axios.get(api + '/selection/history', {params: {size: size}})
-                .catch(() => console.log('catch notices'));
+            const response = await this.$axios({
+                url: '/selection/history',
+                method: 'get',
+                params: {
+                    size: size,
+                },
+            })
+                .catch(() => {
+                });
+
             if (response) {
                 if (response.status >= 200 && response.status < 300) {
                     this.histories = response.data.data;
@@ -185,8 +206,16 @@ export default {
             }
         },
         async fetchProfileimage(nickname) {
-            const response = await this.$axios.get(api + '/user/detail', {params: nickname})
-                .catch(() => console.log('catch notices'));
+            const response = await this.$axios({
+                url: '/user/detail',
+                method: 'get',
+                params: {
+                    nickname,
+                },
+            })
+                .catch(() => {
+                });
+
             if (response) {
                 if (response.status >= 200 && response.status < 300) {
                     this.p_img = response.data.data.profile_image;
@@ -200,9 +229,10 @@ export default {
                 params: {
                     no: no
                 }
-            }).catch(() => {
-                console.log("catch notices");
-            });
+            })
+                .catch(() => {
+                });
+
             if (response) {
                 if (response.status >= 200 && response.status < 300) {
                     this.pageCount = response.data.data.totalPages;
@@ -211,12 +241,13 @@ export default {
             };
         },
         infiniteHandler($state) {
-            axios.get((api + '/counsel/post', {
+            this.$axios.get({
+                url: '/counsel/post',
+                method: 'get',
                 params: {
                     page: this.page,
                 },
             }).then(({ response }) => {
-                console.log(response);
                 if (response.data.data.content / 3 === 0) {
                     this.page += 1;
                     fetchPosts(this.page);
@@ -224,8 +255,8 @@ export default {
                 } else {
                     $state.completed();
                 }
-            })
-            );},
+            });
+        },
     },
 };
 </script>

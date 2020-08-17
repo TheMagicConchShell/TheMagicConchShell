@@ -23,6 +23,7 @@ const messages = {
             views: '조회',
             writer: '작성자',
             date: '날짜',
+            all: '전체',
         },
         layout: {
             login: '로그인',
@@ -61,6 +62,7 @@ const messages = {
             views: 'views',
             writer: 'writer',
             date: 'date',
+            all: 'All',
         },
         layout: {
             login: 'Sign In',
@@ -99,6 +101,7 @@ const messages = {
             views: '点击率',
             writer: '制定者',
             date: '日期',
+            all: '全部的',
         },
         layout: {
             login: 'Sign In',

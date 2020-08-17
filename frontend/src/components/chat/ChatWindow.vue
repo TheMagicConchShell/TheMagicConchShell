@@ -59,6 +59,7 @@ import Stomp from 'webstomp-client';
 import SockJS from 'sockjs-client';
 import { mapGetters } from 'vuex';
 import moment from 'moment';
+import constant from '@/constant';
 
 export default {
     props: {
@@ -94,7 +95,7 @@ export default {
     },
     methods: {
         connect() {
-            const serverURL = "http://i3a403.p.ssafy.io:8399/ws";
+            const serverURL = `${constant.baseURL}/ws`;
             let socket = new SockJS(serverURL);
             this.stompClient = Stomp.over(socket);
             this.stompClient.hasDebug = false;
