@@ -141,25 +141,26 @@ public class UserServiceImpl implements UserService {
         Random random = new Random();
         
         for (int i = 0; i < length; i++) {
-            int type = random.nextInt(2);
+            int type = random.nextInt(3);
             int value;
             
             switch(type) {
             case 0:
                 value = random.nextInt(10);
-                sb.append(value + '0');
+                sb.append((char)('0' + value));
                 break;
             case 1:
                 value = random.nextInt(26);
-                sb.append(value + 'a');
+                sb.append((char)('a' + value));
                 break;
             case 2:
                 value = random.nextInt(15);
-                sb.append(value + '!');
+                sb.append((char)('!' + value));
                 break;
             }
         }
         
+        System.out.println(sb);
         return sb.toString();
     }
     
