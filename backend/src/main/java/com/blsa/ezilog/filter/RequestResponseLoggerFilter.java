@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -35,31 +37,40 @@ public class RequestResponseLoggerFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        final HttpServletRequest wrapper = new CustomRequestWrapper(request);
+        Pattern pattern = Pattern.compile("multipart");
+        boolean isMultipart = request.getContentType() == null ? false : pattern.matcher(request.getContentType()).find();
+        
+        if (request.getContentType() != null && isMultipart) {
+            chain.doFilter(request, response);
+            
+        } else {
+            final HttpServletRequest wrapper = new CustomRequestWrapper(request);
 
-        RequestLog rqlog = LoggingUtil.makeLoggingRequestMap(wrapper);
+            RequestLog rqlog = LoggingUtil.makeLoggingRequestMap(wrapper);
 
-        chain.doFilter(wrapper, response);
+            chain.doFilter(wrapper, response);
 
-        final HttpServletResponse res = new CustomResponseWrapper(response);
+            final HttpServletResponse res = new CustomResponseWrapper(response);
 
-        Map<String, Object> rqHeader = new HashMap<>();
-        ResponseLog rplog = new ResponseLog();
+            Map<String, Object> rqHeader = new HashMap<>();
+            ResponseLog rplog = new ResponseLog();
 
-        try {
-            requestLogDao.save(rqlog);
+            try {
+                requestLogDao.save(rqlog);
 
-            Optional<RequestLog> optrequest = requestLogDao.getLastInsert();
+                Optional<RequestLog> optrequest = requestLogDao.getLastInsert();
 
-            if (optrequest.isPresent()) {
-                RequestLog last = optrequest.get();
-                ResponseLog rslog = LoggingUtil.makeLoggingResponseMap(res, last.getId());
-                responseLogDao.save(rslog);
+                if (optrequest.isPresent()) {
+                    RequestLog last = optrequest.get();
+                    ResponseLog rslog = LoggingUtil.makeLoggingResponseMap(res, last.getId());
+                    responseLogDao.save(rslog);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        
 
     }
 
