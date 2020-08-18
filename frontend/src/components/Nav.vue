@@ -408,16 +408,16 @@ export default {
         clicking() {
             this.clicked = true;
         }, 
-        async fetchSpotList(){
-            const response = await this.$axios({
+        fetchSpotList(){
+            this.$axios({
                 method: 'get',
                 url: '/spot/banner',
-            }).then((res)=>{
-                //console.dir(res);
-                this.spotList = res.data.data;
-            }).catch((error)=>{
-                console.log(error.response);
-            });
+            })
+                .then((res)=>{
+                    this.spotList = res.data.data;
+                })
+                .catch((error)=>{
+                });
         },
         showCraousel(){
             const showme = document.getElementById('spotCarousel');
