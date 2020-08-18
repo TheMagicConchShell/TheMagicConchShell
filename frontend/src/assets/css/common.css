@@ -25,6 +25,9 @@
     src: local(※), url('../fonts/Bold.woff') format('woff');
 }
 
+.tui-editor-contents {
+    font-family: md;
+  }
 #app {
     font-family: md
 }
