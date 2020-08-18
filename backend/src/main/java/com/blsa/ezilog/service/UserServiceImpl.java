@@ -32,9 +32,10 @@ public class UserServiceImpl implements UserService {
     public UserAuth signup(SignupRequestDTO request, String token) {
         UserAuth user = new UserAuth();
         user.setEmail(request.getEmail());
+        
         String encrypted = bcryptimpl.encrypt(request.getPassword());
         user.setPassword(encrypted);
-        System.out.println(user.getPassword());
+
         user.setNickname(request.getNickname());
         user.setToken(token);
 
@@ -48,8 +49,6 @@ public class UserServiceImpl implements UserService {
         Optional<User> userOpt = dao.findByEmail(request.getEmail());
         if(userOpt.isPresent()) {
             User user = userOpt.get();
-            System.out.println(user.getPassword());
-            System.out.println(request.getPassword());
             
             if(bcryptimpl.isMatch(request.getPassword(), user.getPassword())) {
                 res = user;
@@ -96,12 +95,14 @@ public class UserServiceImpl implements UserService {
         user.setEmail(request.getEmail());
         user.setUid(dao.findByNickname(nickname).get().getUid());
         user.setNickname(request.getNickname());
+        
         String encrypted = bcryptimpl.encrypt(request.getPassword());
         user.setPassword(encrypted);
         user.setLevel(temp.getLevel());
         user.setPoint(temp.getPoint());
         user.setProfileImg(request.getProfileImg());
         user = dao.save(user);
+        
         return user;
     }
 
@@ -127,6 +128,7 @@ public class UserServiceImpl implements UserService {
             user.setPassword(auth.getPassword());
             authDao.delete(auth);
             user = dao.save(user);
+            
             return user;
         } else {
             return null;
@@ -140,11 +142,11 @@ public class UserServiceImpl implements UserService {
         if (ou.isPresent()) {
             User u = ou.get();
             String temppw = "temp1234";
-            u.setPassword(bcryptimpl.encrypt(temppw));
-            System.out.println(u.getPassword());
+
+            u.setPassword(bcryptimpl.encrypt(bcryptimpl.sha256(temppw)));
+
             dao.save(u);
             
-            //res = u.getPassword();
             res = temppw;
         } else {
             if (dao.findByEmail(email).isPresent()) {
