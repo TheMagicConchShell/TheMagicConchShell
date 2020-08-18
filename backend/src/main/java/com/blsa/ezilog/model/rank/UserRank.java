@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserRank {
     @Id
+    private Long uid;
+    @Column
     private String nickname;
     @Column(name = "reply_count")
     private int replyCount;
