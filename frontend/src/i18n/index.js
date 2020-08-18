@@ -10,6 +10,7 @@ const messages = {
             ranking: '랭킹',
             qna: '문의',
             notice: '공지사항',
+            chatting: '채팅',
         },
         home: {
             thisWeek: '금주의 싸피고둥이들',
@@ -22,6 +23,7 @@ const messages = {
             views: '조회',
             writer: '작성자',
             date: '날짜',
+            all: '전체',
         },
         layout: {
             login: '로그인',
@@ -30,6 +32,15 @@ const messages = {
             logout: '로그아웃',
             manage: '관리',
         },
+        chat: {
+            title: '싸피고둥 채팅방',
+            exit: '나가기',
+            send: '작성',
+            message: {
+                enter: ' 님이 참가했습니다',
+                leave: ' 님이 퇴장했습니다',
+            },
+        }
     },
     en: {
         title: {
@@ -38,6 +49,7 @@ const messages = {
             ranking: 'Ranking',
             qna: 'Q&A',
             notice: 'Notice',
+            chatting: 'Chatting',
         },
         home: {
             thisWeek: 'SSAFY Conches of the Week',
@@ -50,6 +62,7 @@ const messages = {
             views: 'views',
             writer: 'writer',
             date: 'date',
+            all: 'All',
         },
         layout: {
             login: 'Sign In',
@@ -57,6 +70,15 @@ const messages = {
             profile: 'Profile',
             logout: 'Sign Out',
             manage: 'Manage',
+        },
+        chat: {
+            title: 'SSAFY Chat',
+            exit: 'Exit',
+            send: 'Send',
+            message: {
+                enter: ' entered',
+                leave: ' leaved',
+            },
         }
     },
     ch: {
@@ -66,6 +88,7 @@ const messages = {
             ranking: '排行',
             qna: '問題',
             notice: '注意',
+            chatting: '闲聊',
         },
         home: {
             thisWeek: '本週的 SSAFY 海螺',
@@ -78,6 +101,7 @@ const messages = {
             views: '点击率',
             writer: '制定者',
             date: '日期',
+            all: '全部的',
         },
         layout: {
             login: 'Sign In',
@@ -85,6 +109,15 @@ const messages = {
             profile: 'Profile',
             logout: 'Sign Out',
             manage: 'Manage',
+        },
+        chat: {
+            title: 'SSAFY 聊天室',
+            exit: '出去',
+            send: '传送',
+            message: {
+                enter: ' 进来了',
+                leave: ' 出去了',
+            },
         }
     },
 };

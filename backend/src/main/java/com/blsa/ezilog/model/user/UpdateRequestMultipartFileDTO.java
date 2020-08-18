@@ -4,6 +4,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 import org.springframework.lang.Nullable;
+import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class UpdateRequestDTO {
+public class UpdateRequestMultipartFileDTO {
     @ApiModelProperty(required = false)
     String email;
     
@@ -28,5 +29,5 @@ public class UpdateRequestDTO {
 
     @ApiModelProperty(required = false)
     @Nullable
-    String profileImg;
+    MultipartFile profileImg;
 }

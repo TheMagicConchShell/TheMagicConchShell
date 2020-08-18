@@ -3,98 +3,105 @@
         <div
             id="chat-page"
         >
-            <div class="chat-container">
-                <div class="chat-header">
-                    <h2>
-                        싸피고둥 채팅방
-                        <button 
-                            class="dark"
-                            @click="close"
-                        >
-                            나가기
-                        </button>
-                    </h2>
-                </div>
-                <ul id="messageArea">
-                    <li 
-                        v-for="(item,index) in receiveList"
-                        :key="index"
-                    >
-                        <template v-if="item.type==='CHAT'">
-                            <div class="chat-message">
-                                <p><strong>{{ item.sender }}</strong> : {{ item.content }}</p>
-                            </div>
-                        </template>
-                        <template v-else>
-                            <div class="event-message">
-                                <p>{{ item.content }}</p>
-                            </div>
-                        </template>
-                    </li>
-                </ul>
-                <div
-                    id="messageForm"
-                    name="messageForm"
+            <!-- <div class="chat-container"> -->
+            <div id="chat-header">
+                <span class="title">{{ $t('chat.title') }}</span>
+                <button 
+                    class="button-close button"
+                    @click="close"
                 >
-                    <div class="form-group">
-                        <div class="input-group clearfix">
-                            <input 
-                                id="message"
-                                v-model="message" 
-                                type="text" 
-                                name="message"
-                                class="form-control"
-                            >
-                            <button
-                                class="primary"
-                                @click="sendMessage"
-                            >
-                                작성
-                            </button>
+                    {{ $t('chat.exit') }}
+                </button>
+            </div>
+            <ul id="message-area">
+                <li 
+                    v-for="(item,index) in receiveList"
+                    :key="index"
+                >
+                    <template v-if="item.type==='CHAT'">
+                        <div class="chat-message message">
+                            <div>
+                                <span><strong>{{ item.sender }}</strong> : </span>
+                                <span>{{ item.content }} </span>
+                                <span class="time">{{ item.time }}</span>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    </template>
+                    <template v-else>
+                        <div class="event-message message">
+                            <div><strong>{{ item.content }}</strong>{{ $t(item.event) }}</div>
+                        </div>
+                    </template>
+                </li>
+            </ul>
+            <div id="message-form">
+                <input
+                    v-model="message"
+                    class="input-send"
+                    autocomplete="off"
+                    type="text"
+                    @keyup.enter="sendMessage"
+                >
+                <button
+                    class="button-send"
+                    @click="sendMessage"
+                >
+                    {{ $t('chat.send') }}
+                </button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import { makeDraggable } from '@/components/chat/draggable';
 import Stomp from 'webstomp-client';
 import SockJS from 'sockjs-client';
 import { mapGetters } from 'vuex';
+import moment from 'moment';
+import constant from '@/constant';
+
 export default {
-    props:{
-        closeHandler:{
-            type:Function,
-            required:true
+    props: {
+        closeHandler: {
+            type: Function,
+            required: true
         },
-        status:{
-            type:Boolean,
-            required:true
+        status: {
+            type: Boolean,
+            required: false,
+            default: false,
         }
     },
-    data() {
-        return {
-            message:'',
-            stompClient:null,
-            receiveList:[]
-        };
-    },
+    data: () => ({
+        message: '',
+        stompClient: null,
+        receiveList: [],
+    }),
     computed: {
         ...mapGetters(['nickname']),
     },
     created() {
         this.connect();
     },
+    mounted() {
+        makeDraggable('chat-page', 'chat-header');
+        
+        window.onbeforeunload = () => {
+            this.close();
+
+            return undefined;
+        };
+    },
     methods: {
-        connect(){
-            const serverURL = "http://i3a403.p.ssafy.io:8399/ws";
+        connect() {
+            const serverURL = `${constant.baseURL}/ws`;
             let socket = new SockJS(serverURL);
             this.stompClient = Stomp.over(socket);
-            this.stompClient.connect({},this.onConnected,this.onError);
+            this.stompClient.hasDebug = false;
+            this.stompClient.connect({}, this.onConnected, this.onError);
         },
-        onConnected(){
+        onConnected() {
             this.stompClient.subscribe('/topic/public',this.onMessageReceived);
             this.stompClient.send("/chat/addUser",
                 JSON.stringify({
@@ -106,32 +113,58 @@ export default {
                 
             );
         },
-        onError(error){
+        onError(error) {
             console.log(error);
         },
-        sendMessage(){
-            if(this.message.length > 0 && this.stompClient){
-                console.log("메세지 보냄");
+        sendMessage(element) {
+            if(this.message.length > 0 && this.stompClient) {
                 var chatMessage = {
                     sender:this.nickname,
                     content:this.message,
                     type:"CHAT"
                 };
-                this.stompClient.send("/chat/sendMessage",JSON.stringify(chatMessage),{});
+                this.stompClient.send("/chat/sendMessage", JSON.stringify(chatMessage),{});
                 this.message ='';
             }
         },
-        onMessageReceived(payload){
-            var content = JSON.parse(payload.body);
-            if(content.type==="JOIN"){
-                content.content = content.sender+" 님이 참가했습니다.";
-            }else if(content.type==="LEAVE"){
-                content.content = content.sender+" 님이 퇴장했습니다.";
-            }
-            this.receiveList.push(content);
+        getFormatDate(date) {
+            return moment(new Date(date)).format("HH:mm");
         },
-        leaved(){
-            if(this.stompClient){
+        onMessageReceived(payload) {
+            if (!this.stompClient)
+                return;
+            const messageAreaElement = document.getElementById('message-area');
+            const oldPosition = messageAreaElement.scrollTop;
+            const oldHeight = messageAreaElement.scrollHeight - messageAreaElement.clientHeight;
+
+            const isBottom = oldPosition === oldHeight;
+
+            var content = JSON.parse(payload.body);
+
+            switch(content.type) {
+            case 'JOIN':
+                content.content = content.sender;
+                content.event = 'chat.message.enter';
+                break;
+            case 'LEAVE':
+                content.content = content.sender;
+                content.event = 'chat.message.leave';
+                break;
+            case 'CHAT':
+                content.time = `${this.getFormatDate(Date.now())}`;
+            }
+
+            this.receiveList.push(content);
+
+            
+            setTimeout(() => {
+                if (isBottom) { // 최하단에 있을 때 스크롤 동작
+                    messageAreaElement.scrollTop = messageAreaElement.scrollHeight - messageAreaElement.clientHeight;
+                }
+            }, 125); // receiveList에 채팅이 추가된 후 DOM에 반영되는데 걸리는 시간 대기
+        },
+        leaved() {
+            if (this.stompClient) {
                 var chatMessage = {
                     sender:this.nickname,
                     content:'',
@@ -142,7 +175,7 @@ export default {
             }
             this.receiveList = [];
         },
-        close(){
+        close() {
             this.leaved();
             this.closeHandler();
         }
@@ -150,152 +183,140 @@ export default {
 };
 </script>
 
-<style>
-#chat-page{
-    position: relative;
-    width: 350px;
-    height: 300px;
-}
-.clearfix:after {
-    display: block;
-    content: "";
-    clear: both;
-}
-.form-control {
-    width: 100%;
-    min-height: 30px;
-    font-size: 15px;
-    border: 1px solid #c8c8c8;
-}
-input {
-    padding-left: 10px;
-    outline: none;
-}
-h2{
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
+<style lang="scss" scoped>
 button {
     box-shadow: none;
-    border: 1px solid transparent;
-    font-size: 14px;
-    outline: none;
+    border: none;
     line-height: 100%;
-    white-space: nowrap;
-    vertical-align: middle;
-    border-radius: 2px;
+    border-radius: 4px;
     transition: all 0.2s ease-in-out;
     cursor: pointer;
     min-height: 30px;
 }
-button.primary {
-    background-color: #128ff2;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.12);
-    color: #fff;
+button:hover {
+    opacity: 0.9;
+    transition: 0.5s;
 }
-button.dark{
-    margin-left: 20px;
-    font-size: 14px;
-    height: 20px;
-    width: 60px;
-    background-color: black;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.12);
-    color: #fff;
+button:active {
+    -webkit-transform: scale(1.05);
+    transform: scale(1.05);
+    transition: 0.1s;
 }
-.chat-container {
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: #fff;
+
+#chat-page {
+    position: fixed;
+    z-index: 11;
+    left: 68px;
+    top: 180px;
+    border-radius: 2px;
+    width: 350px;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
     box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
-    margin-top: 30px;
-    height: calc(100% - 60px);
-    max-height: 600px;
-    position: relative;
 }
-#chat-page ul {
-    list-style-type: none;
-    background-color: #FFF;
+
+#chat-header {
+    height: 50px;
+    padding: 3px;
+    background-color: #0363BA;
+    color: whitesmoke;
+    cursor: move;
+    display: flex;
+    align-items: center;
+
+    .title {
+        flex: 1;
+        margin: 5px 10px;
+        font-size: 140%;
+        text-align: left;
+    }
+
+    .button-close {
+        width: 60px;
+        background-color: black;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.12);
+        color: #fff;
+        margin-right: 4px;
+    }
+}
+
+#message-area {
+    flex: 1;
+    background-color: white;
+    max-height: calc(400px - 50px - 64px);
     margin: 0;
     text-align: left;
-    overflow-y: scroll;
-    padding: 0 20px 0px 20px;
-    height: calc(100% - 120px);
-}
-#chat-page #messageForm {
-    padding: 20px;
-}
-#chat-page ul li {
-    line-height: 1.5rem;
-    padding: 10px 20px;
-    margin: 0;
-    border-bottom: 1px solid #f4f4f4;
-}
+    padding-top: 4px;
+    padding-left: 12px;
+    padding-right: 12px;
+    overflow: auto;
 
-#chat-page ul li p {
-    margin: 0;
-}
-#chat-page .event-message {
-    width: 100%;
-    clear: both;
-}
+    li {
+        margin: 2px 2px;
+        border-bottom: 1px solid whitesmoke;
+    }
 
-#chat-page .event-message p {
-    color: #777;
-    font-size: 14px;
-    word-wrap: break-word;
-    
-}
-#chat-page .chat-message {
-    position: relative;
-    width: 100%;
-    word-break:break-all;
-}
-
-#chat-page .chat-message span {
-    color: #333;
-    font-weight: 600;
-}
-
-#chat-page .chat-message p {
-    color: #43464b;
-}
-
-.input-group input {
-    float: left;
-    height: 30px;
-    width: calc(100% - 85px);
-}
-.input-group button {
-    float: left;
-    width: 80px;
-    height: 20px;
-    margin-left: 5px;
-    position: relative;
-    bottom: -10px;
-}
-@media screen and (max-width: 730px) {
-    .chat-container {
-        margin-left: 10px;
-        margin-right: 10px;
-        margin-top: 10px;
+    .event-message {
+        background-color: gainsboro;
+        padding: 0px 2px;
+        text-align: center;
+        border-radius: 4px;
+    }
+    .message {
+        .time {
+            color: gray;
+            font-size: 12px;
+        }
     }
 }
 
-@media screen and (max-width: 480px) {
-    .chat-container {
-        height: calc(100% - 30px);
-    }
-    #chat-page ul {
-        height: calc(100% - 120px);
+#message-form {
+    height: 64px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: white;
+
+    padding: 8px 8px 4px 8px;
+
+    .input-send {
+        height: 30px;
     }
 
-    #messageForm .input-group button {
-        width: 65px;
+    .button-send {
+        height: 30px;
+        margin-left: 8px;
+        width: 80px;
+        background-color: #0363BA;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.12);
+        color: #fff;
+    }
+}
+
+@media (max-width: 992px) {
+    #chat-page {
+        z-index: 11;
+        left: 0px;
+        top: 0px;
+        border-radius: 2px;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
     }
 
-    #messageForm .input-group input {
-        width: calc(100% - 70px);
+    #message-area {
+        flex: 1;
+        background-color: white;
+        max-height: 100%;
+        margin: 0;
+        text-align: left;
+        padding-top: 4px;
+        padding-left: 12px;
+        padding-right: 12px;
+        overflow: auto;
     }
 }
 </style>

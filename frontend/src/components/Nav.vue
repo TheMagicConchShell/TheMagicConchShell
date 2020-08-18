@@ -75,6 +75,21 @@
                         </div>
                     </router-link>
                 </li>
+                <li>
+                    <div
+                        class="sidebar-item text-decoration-none d-flex justify-content-between"
+                        @click="openChat"
+                    >
+                        <i class="far fa-comments" />
+                        <div
+                            id="bottombar_menu"
+                        >
+                            <transition name="conversion">
+                                <span :key="language">{{ $t('title.chatting') }}</span>
+                            </transition>
+                        </div>
+                    </div>
+                </li>
             </ul>
         </div>
         <!-- 웹용 사이드바 -->
@@ -151,9 +166,8 @@
                     </router-link>
                 </li>
                 <li>
-                    <a
-                        class="text-light text-decoration-none d-flex"
-                        href="#"
+                    <div
+                        class="sidebar-item text-decoration-none d-flex"
                         @click="openChat"
                     >
                         <i class="far fa-comments" />
@@ -162,27 +176,10 @@
                             id="sidebar-menu"
                         >
                             <transition name="conversion">
-                                <span
-                                    v-if="language==='ko'"
-                                    key="1"
-                                >
-                                    채팅
-                                </span>
-                                <span
-                                    v-else-if="language==='en'"
-                                    key="2"
-                                >
-                                    chating
-                                </span>
-                                <span
-                                    v-else
-                                    key="3"
-                                >
-                                    闲聊
-                                </span>
+                                <span :key="language">{{ $t('title.chatting') }}</span>
                             </transition>
                         </div>
-                    </a>
+                    </div>
                 </li>
             </ul>
         </div>
@@ -201,36 +198,6 @@
                             >
                             {{ $t('title.title') }}
                         </span>
-                        <!-- <span
-                            v-if="language==='ko'"
-                            key="1"
-                        >
-                            <img
-                                id="photo"
-                                src="../assets/images/sora.png"
-                            >
-                            마법의 싸피고둥
-                        </span>
-                        <span
-                            v-else-if="language==='en'"
-                            key="2"
-                        >
-                            <img
-                                id="photo"
-                                src="../assets/images/sora.png"
-                            >
-                            Magic SSAFY conch
-                        </span>
-                        <span
-                            v-else
-                            key="3"
-                        >   
-                            <img
-                                id="photo"
-                                src="../assets/images/sora.png"
-                            >               
-                            神奇的 SSAFY 海螺
-                        </span> -->
                     </transition>
                 </router-link>
             </div>
@@ -307,7 +274,7 @@
                 id="spotCarousel"
                 :per-page="1"
                 :autoplay="true"
-                :autoplay-direction="forward"
+                :autoplay-direction="'forward'"
                 :autoplay-timeout="10000"
                 :loop="true"
                 :pagination-enabled="false"
@@ -336,8 +303,7 @@
             </carousel>
         </div>
         <div 
-            v-if="chatStatus"
-            id="chat-position"  
+            v-if="chatStatus" 
         >
             <ChatWindow 
                 ref="chatwindow"
@@ -405,7 +371,9 @@ export default {
     methods: {
         ...mapActions(['setkor', 'seteng']),
         logout() {
-            this.$refs.chatwindow.leaved();
+            if (this.$refs.chatwindow) {
+                this.$refs.chatwindow.leaved();
+            }
             this.chatStatus = false;
             this.$store.dispatch('logout');
             if(Kakao.Auth.getAccessToken()!=null){
@@ -471,6 +439,13 @@ export default {
 </script>
 
 <style scoped>
+.sidebar-item {
+    color: #f8f9fa !important;
+}
+.sidebar-item:hover {
+    cursor: pointer;
+    color: #cbd3da !important;
+}
 a{
     color:unset;
 }
@@ -504,10 +479,10 @@ a:hover {
     visibility: hidden;
     position: fixed;
     top: 70px;
-    height: 0;
+    /* height: 0; */
     width: 0;
     transition-duration: 0.5s;
-    z-index:10;
+    z-index :10;
 }
 #sidebar {
     font-family: sb;
@@ -623,7 +598,7 @@ a:hover {
         opacity: 1!important;
         visibility: visible!important;
         background-color: #bdbdbd;
-        height: 128px;
+        /* height: 128px; */
         width: 150px;
     }
 }
@@ -637,12 +612,5 @@ a:hover {
     background-color: #BEDAE5!important;
     display: flex;
     padding: 10px;
-}
-#chat-position{
-    position: fixed;
-    z-index: 11;
-    right: 30px;
-    top: 150px;
-    height: 300px;
 }
 </style>
