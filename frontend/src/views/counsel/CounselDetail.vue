@@ -81,7 +81,7 @@
                     :like-handler="nickname ? likeReply : dummy"
                     :delete-handler="deleteReply"
                     :modify-handler="modifyReply"
-                    :report-handler="dummy"
+                    :report-handler="report"
                 />
             </template>
             <template v-if="replies && replies.length != 0">
@@ -109,7 +109,7 @@
                         :like-handler="nickname ? likeReply : dummy"
                         :delete-handler="deleteReply"
                         :modify-handler="modifyReply"
-                        :report-handler="dummy"
+                        :report-handler="report"
                     />
                 </template>
             </template>
@@ -334,6 +334,9 @@ export default {
         },
         dummy() {
 
+        },
+        report() {
+            this.$toast('신고', '해당 게시글에 대한 신고가 접수되었습니다');
         },
     }
 };
