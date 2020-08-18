@@ -2,6 +2,8 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from '@/axios';
 
+import { sha256 } from '@/util/hash.js';
+
 Vue.use(Vuex);
 
 export const state = {
@@ -46,7 +48,7 @@ export const actions = {
                 url: '/user/login',
                 data: {
                     email,
-                    password,
+                    password: sha256(password),
                 },
             })
                 .then((response) => {
@@ -81,7 +83,7 @@ export const actions = {
                 data: {
                     email,
                     nickname,
-                    password,
+                    password: sha256(password),
                 },
             })
                 .then((response) => {
@@ -150,6 +152,8 @@ export const actions = {
             })
                 .then((response) => {
                     if (200 <= response.status && response.status < 300) {
+                        commit('LOGOUT');
+
                         resolve(response);
 
                         commit('LOGOUT');
@@ -163,6 +167,7 @@ export const actions = {
         });
     },
     updateUser({ commit }, formData) {
+        formData.set('password', sha256(formData.get('password')));
         return new Promise((resolve, reject) => {
             axios({
                 method: 'put',

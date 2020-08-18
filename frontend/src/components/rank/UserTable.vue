@@ -2,40 +2,72 @@
     <div>
         <template v-if="list && list.length">
             <table class="table">
+                <colgroup>
+                    <col width="10%">
+                    <col width="30%">
+                    <col width="15%">
+                    <col width="15%">
+                    <col width="15%">
+                    <col width="15%">
+                </colgroup>
                 <thead class="thead-light">
                     <tr>
                         <th>
-                            순위
+                            {{ $t('ranking.table.rank') }}
                         </th>
                         <th>
-                            닉네임
+                            {{ $t('ranking.table.nickname') }}
                         </th>
-                        <th>
-                            고민
+                        <th
+                            @click="changeSort(2)"
+                        >
+                            {{ $t('ranking.table.counsel') }}
                             <i 
                                 v-if="mySort==2" 
                                 class="fas fa-long-arrow-alt-down"
                             />
+                            <i
+                                v-else
+                                class="fas fa-sort"
+                            />
                         </th>
-                        <th>
-                            답변
+                        <th
+                            @click="changeSort(3)"
+                        >
+                            {{ $t('ranking.table.reply') }}
                             <i 
                                 v-if="mySort==3" 
                                 class="fas fa-long-arrow-alt-down"
                             />
+                            <i
+                                v-else
+                                class="fas fa-sort"
+                            />
                         </th>
-                        <th>
-                            포인트
+                        <th
+                            @click="changeSort(4)"
+                        >
+                            {{ $t('ranking.table.point') }}
                             <i 
                                 v-if="mySort==4" 
                                 class="fas fa-long-arrow-alt-down"
                             />
+                            <i
+                                v-else
+                                class="fas fa-sort"
+                            />
                         </th>
-                        <th>
-                            레벨
+                        <th
+                            @click="changeSort(5)"
+                        >
+                            {{ $t('ranking.table.level') }}
                             <i 
                                 v-if="mySort==5" 
                                 class="fas fa-long-arrow-alt-down"
+                            />
+                            <i
+                                v-else
+                                class="fas fa-sort"
                             />
                         </th>
                     </tr>
@@ -60,15 +92,10 @@
 
 <script>
 export default {
-    props:{
-        mySort:{
-            type:Number,
-            required:true
-        }
-    },
     data() {
         return {
-            list:[]
+            list:[],
+            mySort:2
         };
     },
     created() {
@@ -76,7 +103,7 @@ export default {
             url:"/rank/user",
             method:"GET",
             params:{
-                sort:this.mySort
+                sort:2
             }
         }).then((res)=>{
             if(res.data.status==="S-200"){
@@ -86,7 +113,25 @@ export default {
             console.log(e);
         });
     },
-
+    methods: {
+        changeSort(val){
+            this.mySort = val;
+            this.$axios({
+                url:"/rank/user",
+                method:"GET",
+                params:{
+                    sort:val
+                }
+            }).then((res)=>{
+                if(res.data.status==="S-200"){
+                    this.list = res.data.data;
+                }
+            }).catch(e=>{
+                console.log(e);
+            });
+        },
+        
+    },
 };
 </script>
 
