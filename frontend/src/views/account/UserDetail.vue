@@ -181,7 +181,7 @@
                             variant="outline-primary"
                             class="level-up-button"
                         >
-                            레벨업
+                            LEVEL <i class="fas fa-level-up-alt" />
                             <AskLevelup 
                                 :level="level"
                                 :levelup-require-point="levelupRequirePoint"

@@ -16,14 +16,12 @@
                 >
                     <div class="d-flex w-100 justify-content-between">
                         <div class="item title">
-                            <span>
-                                {{ item.title }}
-                            </span>
+                            <span>{{ item.title }}</span>
                         </div>
                         <div class="item extra-info">
                             <span>{{ getCategory(item.categoryId) }}</span>
                             <span id="divider">|</span>
-                            <span>{{ getFormatDate(item.writeDate) }} </span> 
+                            <span>{{ getFormatDate(item.writeDate) }}</span>
                             <span id="divider">|</span>
                             <span>{{ item.views }}</span>
                             <span id="divider">|</span>

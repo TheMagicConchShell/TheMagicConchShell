@@ -28,7 +28,7 @@
                             :key="`${item.id}-label`"
                             :for="`radio${item.id}`"
                         >
-                            {{ item.name }}
+                            {{ item.name[language] }}
                         </label>
                     </template>
                 </div>
@@ -132,7 +132,11 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(['categories']),
+        ...mapGetters([
+            'categories', 
+            'language', 
+            'nickname'
+        ]),
     },
     mounted() {
         this.editorOpts = this.$store.getters.EDITOROPTIONS.options;

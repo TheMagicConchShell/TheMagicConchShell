@@ -116,7 +116,13 @@
 		    <artifactId>tika-core</artifactId>
 		    <version>1.23</version>
 		</dependency>
-
+		<!-- 웹소켓 -->
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-websocket -->
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-websocket</artifactId>
+		</dependency>
+		
     </dependencies>
 
     <build>

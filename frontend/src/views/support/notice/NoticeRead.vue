@@ -3,6 +3,7 @@
         <router-link
             :to="{name: 'NoticeList'}"
             tag="button"
+            class="button"
         >
             목록
         </router-link>
@@ -29,6 +30,7 @@
         </div>
         
         <write-button
+            v-if="nickname && nickname === 'admin'"
             class="button float-right"
             :handler="moveUpdate"
             :text="'수정'"
@@ -37,6 +39,8 @@
 </template>
 
 <script>
+import moment from 'moment';
+import { mapGetters } from 'vuex';
 import WriteButton from "@/components/WriteButton";
 
 export default {
@@ -55,6 +59,12 @@ export default {
         title:  "",
         content: null,
     }),
+    computed: {
+        ...mapGetters([
+            'language',
+            'nickname',
+        ]),
+    },
     async created() {
         const response = await this.$axios({
             url: 'support/notice/noticeId',
@@ -69,14 +79,17 @@ export default {
         if (response) {
             console.log(response);
             if (response.status == 200) {
-                this.writer = response.data.data.writer;
-                this.writeDate = response.data.data.writeDate;
+                this.writer = '관리자'; //response.data.data.writer;
+                this.writeDate = this.formatDate(response.data.data.writeDate);
                 this.title = response.data.data.title;
                 this.content = response.data.data.content;
             }
         }
     },
     methods: {
+        formatDate(date) {
+            return moment(new Date(date)).format("YYYY.MM.DD HH:mm:ss");
+        },
         moveUpdate() {
             this.$router.push({
                 name: 'NoticeUpdate',
@@ -93,6 +106,16 @@ export default {
 div, button {
     margin: 8px;
     text-align: left;
+}
+.button {
+    background-color: #0363BA;
+    color: whitesmoke;
+    border: unset;
+    border-radius: 4px;
+    padding: 3px 12px;
+}
+.button:hover {
+    color: gray;
 }
 
 .title {

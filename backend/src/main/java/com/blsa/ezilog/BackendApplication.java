@@ -2,6 +2,9 @@ package com.blsa.ezilog;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.TimeZone;
+
+import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -20,6 +23,11 @@ import com.blsa.ezilog.interceptor.JwtInterceptorPutDeleteMethod;
 @SpringBootApplication
 public class BackendApplication implements WebMvcConfigurer {
 
+	@PostConstruct
+	public void setTimeZone() {
+		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+	}
+	
     public static void main(String[] args) {
         System.setProperty(AbstractEnvironment.ACTIVE_PROFILES_PROPERTY_NAME, "email");
         SpringApplication.run(BackendApplication.class, args);

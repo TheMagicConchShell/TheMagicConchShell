@@ -65,7 +65,7 @@ public class PointController {
             Page<PointHistory> phList = pointService.selectPointByUser(useropt.getUid(), pageable);
             if (!phList.isEmpty()) {
 
-                int total = pointService.totalPoint(useropt.getUid());
+                int total = useropt.getPoint();
 
                 resultMap.put("pList", phList);
                 resultMap.put("totalPoint", total);
@@ -102,7 +102,7 @@ public class PointController {
 
     @ApiOperation(value = "특정 유저가 가진 총합 포인트 출력")
     @GetMapping("/rank/total-point")
-    public Object retrieveRankByPoint(@RequestHeader(value = "nickname", required = false) String nickname) {
+    public Object retrieveTotalPoint(@RequestHeader(value = "nickname", required = false) String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
@@ -112,10 +112,10 @@ public class PointController {
 
         if (!useropt.equals(null)) {
 
-            int total = pointService.totalPoint(useropt.getUid());
+            int total = useropt.getPoint();
 
             result.status = "S-200";
-            result.message = "포인트 이력 가져오기에 성공했습니다.";
+            result.message = "총 포인트 가져오기에 성공했습니다.";
             result.data = total;
 
             response = new ResponseEntity<>(result, HttpStatus.OK);
@@ -133,9 +133,9 @@ public class PointController {
         return response;
     }
 
-    @ApiOperation(value = "특정 유저가 가진 Point 이력, 총합 포인트 출력")
+    @ApiOperation(value = "Point 랭킹")
     @GetMapping("/total")
-    public Object retrievePointHistory(@RequestHeader(value = "nickname", required = false) String nickname) {
+    public Object retrieveRankPointHistory(@RequestHeader(value = "nickname", required = false) String nickname) {
         ResponseEntity response = null;
         final BasicResponse result = new BasicResponse();
         final ErrorResponse eresult = new ErrorResponse();
@@ -213,11 +213,15 @@ public class PointController {
             if (user.getLevel() < 30) {
                 // (현재 유저가 가진 포인트가 래밸업에 필요한 포인트보다 많거나 같다면)
                 if (user.getPoint() >= requireEP.get(user.getLevel() + 1)) {
+                	int nextLv = user.getLevel() + 1;
                     // 레밸업에 필요한 포인트 만큼 감소
-                    user.setPoint(user.getPoint() - requireEP.get(user.getLevel() + 1));
+                    user.setPoint(user.getPoint() - requireEP.get(nextLv));
                     // 유저 레벨 변화 적용
-                    user.setLevel(user.getLevel() + 1);
+                    user.setLevel(nextLv);
                     userDao.save(user);
+                    
+                    PointHistory p = new PointHistory(user.getUid(), -requireEP.get(nextLv), "Lv."+nextLv+" 레벨업");
+                    pointService.addPoint(p);
 
                     result.status = "S-200";
                     result.message = "래벨 업 성공했습니다.";

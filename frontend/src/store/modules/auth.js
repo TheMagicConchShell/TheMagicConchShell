@@ -155,6 +155,8 @@ export const actions = {
                         commit('LOGOUT');
 
                         resolve(response);
+
+                        commit('LOGOUT');
                     } else {
                         reject(response);
                     }
