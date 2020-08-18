@@ -1,6 +1,5 @@
 <template>
     <base-editor
-        v-if="content"
         :submit-url="'/support/notice'"
         :submit-method="'put'"
         :default-nid="id"
@@ -37,7 +36,10 @@ export default {
             params: {
                 id: this.no
             }
-        }).catch(() => {});
+        })
+            .catch((error) => {
+                this.$toast('공지사항을 불러오지 못했습니다.', error.response.data.data.message);
+            });
 
         if (response) {
             console.log(response);
