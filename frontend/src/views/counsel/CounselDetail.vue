@@ -81,7 +81,7 @@
                     :like-handler="nickname ? likeReply : dummy"
                     :delete-handler="deleteReply"
                     :modify-handler="modifyReply"
-                    :report-handler="dummy"
+                    :report-handler="report"
                 />
             </template>
             <template v-if="replies && replies.length != 0">
@@ -109,7 +109,7 @@
                         :like-handler="nickname ? likeReply : dummy"
                         :delete-handler="deleteReply"
                         :modify-handler="modifyReply"
-                        :report-handler="dummy"
+                        :report-handler="report"
                     />
                 </template>
             </template>
@@ -119,7 +119,7 @@
                 :submit-url="'/counsel/reply'"
                 :submit-method="'post'"
                 :default-post-no="no"
-                @submit="tempo"
+                @submit="fetchPost"
             />
         </div>
     </v-wait>
@@ -159,51 +159,51 @@ export default {
         await this.fetchPost();
     },
     methods: {
-        tempo() {
-            console.log("fetching...");
-            this.fetchPost();
-        },
         async fetchPost() {
             this.$wait.start('counsel loading');
-            await this.$axios({
+            // const currentPosition = window.scrollY || document.documentElement.scrollTop;
+
+            const response = await this.$axios({
                 url: '/counsel/post/post-no',
                 method: 'get',
                 params: {
                     no: this.no,
                 },
             })
-                .then((response) => {
-                    console.log(response);
-                    if (200 <= response.status && response.status < 300) {
-                        let formatDate = (date) => {
-                            let d = new Date(date),
-                                month = '' + (d.getMonth() + 1),
-                                day = '' + d.getDate(),
-                                year = d.getFullYear();
-
-                            if (month.length < 2) 
-                                month = '0' + month;
-                            if (day.length < 2) 
-                                day = '0' + day;
-
-                            return [month, day].join('-');
-                        };
-
-                        this.post = response.data.data.post;
-                        this.post.writeDate = formatDate(this.post.writeDate);
-                        this.replies = response.data.data.replies.map((e) => {
-                            let n = e;
-                            n.writeDate = formatDate(e.writeDate);
-                            return n;
-                        });
-
-                        // this.selectedReply = this.replies.find((e) => e.selected === true);
-                        // this.replies = this.replies.filter((e) => e.selected !== true);
-                    }
-                })
-                .catch((e) => {
-                    console.log(e);
+                .catch((error) => {
+                    console.log(error);
                 });
+
+            if (response) {
+                if (200 <= response.status && response.status < 300) {
+                    // let formatDate = (date) => {
+                    //     let d = new Date(date),
+                    //         month = '' + (d.getMonth() + 1),
+                    //         day = '' + d.getDate(),
+                    //         year = d.getFullYear();
+
+                    //     if (month.length < 2) 
+                    //         month = '0' + month;
+                    //     if (day.length < 2) 
+                    //         day = '0' + day;
+
+                    //     return [month, day].join('-');
+                    // };
+
+                    this.post = response.data.data.post;
+                    // this.post.writeDate = formatDate(this.post.writeDate);
+                    this.replies = response.data.data.replies;
+                    // .map((e) => {
+                    //     let n = e;
+                    //     n.writeDate = formatDate(e.writeDate);
+                    //     return n;
+                    // });
+
+                    // this.selectedReply = this.replies.find((e) => e.selected === true);
+                    // this.replies = this.replies.filter((e) => e.selected !== true);
+                }
+            }
+
             this.$wait.end('counsel loading');
         },
         likePost(type, id, iLoveIt, isDelete) {
@@ -215,11 +215,18 @@ export default {
                     'postNo': this.no,
                     'type': type,
                 },
-            }).then(() => {
-                this.fetchPost();
-            }).finally(() => {
-                this.$wait.end('counsel-chunk');
-            });
+            })
+                .then(() => {
+                    this.fetchPost();
+                })
+                .catch((error) => {
+                    const message = error.response.data.message;
+
+                    this.$toast('좋아요를 누를 수 없습니다', message);
+                })
+                .finally(() => {
+                    this.$wait.end('counsel-chunk');
+                });
         },
         likeReply(type, id, iLoveIt, isDelete) {
             this.$wait.start('counsel-chunk');
@@ -230,11 +237,18 @@ export default {
                     'replyId': id,
                     'type': type,
                 },
-            }).then(() => {
-                this.fetchPost();
-            }).finally(() => {
-                this.$wait.end('counsel-chunk');
-            });
+            })
+                .then(() => {
+                    this.fetchPost();
+                })
+                .catch((error) => {
+                    const message = error.response.data.message;
+
+                    this.$toast('좋아요를 누를 수 없습니다', message);
+                })
+                .finally(() => {
+                    this.$wait.end('counsel-chunk');
+                });
         },
         modifyPost() {
             this.$router.push({
@@ -257,15 +271,18 @@ export default {
                     "selected": true,
                     'writer': this.nickname,
                 },
-            }).then((res) => {
-                if(res.data.status==="S-200"){
+            })
+                .then(() => {
                     this.fetchPost();
-                }
-            }).catch((error) => {
-                console.log(error);
-            }).finally(() => {
-                this.$wait.end('counsel-chunk');
-            });
+                })
+                .catch((error) => {
+                    const message = error.response.data.message;
+
+                    this.$toast('답글 수정 실패', message);
+                })
+                .finally(() => {
+                    this.$wait.end('counsel-chunk');
+                });
         },
         deletePost() {
             this.$wait.start('counsel-chunk');
@@ -275,11 +292,18 @@ export default {
                 params: {
                     'no': this.no,
                 },
-            }).then(() => {
-                this.$router.push({name: 'List'});
-            }).finally(() => {
-                this.$wait.end('counsel-chunk');
-            });
+            })
+                .then(() => {
+                    this.$router.push({ name: 'List' });
+                })
+                .catch((error) => {
+                    const message = error.response.data.message;
+
+                    this.$toast('고민 삭제 실패', message);
+                })
+                .finally(() => {
+                    this.$wait.end('counsel-chunk');
+                });
         },
         deleteReply(id) {
             this.$wait.start('counsel-chunk');
@@ -289,11 +313,20 @@ export default {
                 params: {
                     'id': id,
                 },
-            }).then(() => {
-                this.fetchPost();
-            }).finally(() => {
-                this.$wait.end('counsel-chunk');
-            });
+            })
+                .then(() => {
+                    this.fetchPost();
+
+                    this.$toast('답글 삭제 성공', '답글이 삭제되었습니다.');
+                })
+                .catch((error) => {
+                    const message = error.response.data.message;
+
+                    this.$toast('답글 삭제 실패', message);
+                })
+                .finally(() => {
+                    this.$wait.end('counsel-chunk');
+                });
         },
         selectHandler(replyId) {
             this.$wait.start('counsel-chunk');
@@ -304,14 +337,43 @@ export default {
                     'post_no': this.post.no,
                     'reply_id': replyId,
                 },
-            }).then((res) => {
-                console.log(res);
-                this.fetchPost();
-            }).catch((err) => {
-                console.log(err);
-            }).finally(() => {
-                this.$wait.end('counsel-chunk');
-            });
+            })
+                .then((response) => {
+                    this.fetchPost();
+                    
+                    this.$toast('답변 채택', '답변 채택에 성공했습니다.');
+                })
+                .catch((error) => {
+                    const message = error.response.data.message;
+                    this.$toast('답변 채택', message);
+                })
+                .finally(() => {
+                    this.$wait.end('counsel-chunk');
+                });
+        },
+        advertiseCaller() {
+            this.$bvModal.show(`post-advertise-modal-${this.no}`);
+        },
+        advertiseHanlder(id) {
+            this.$axios({
+                url: '/spot',
+                method: 'post',
+                data: {
+                    'owner': this.nickname,
+                    'postNo': this.post.no,
+                },
+            })
+                .then((response) => {
+                    this.$toast('광고 등록에 성공했습니다.', '등록된 광고는 일정시간동안 상단영역에 노출됩니다.');
+                })
+                .catch((error) => {
+                    const message = error.response.data.message;
+                    this.$toast('광고 등록에 실패했습니다.', message);
+                })
+                .finally(() => {
+                    this.$bvModal.hide(`post-advertise-modal-${this.no}`);
+                    this.$wait.end('counsel-chunk');
+                });
         },
         advertiseCaller() {
             console.log("called");
@@ -334,6 +396,9 @@ export default {
         },
         dummy() {
 
+        },
+        report() {
+            this.$toast('신고', '해당 게시글에 대한 신고가 접수되었습니다');
         },
     }
 };

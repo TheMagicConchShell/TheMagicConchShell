@@ -14,6 +14,11 @@ export const mutations = {
     GET_CATEGORIES_SUCCESS(state, categories) {
         state.categories = categories;
         categories.forEach((e) => {
+            const ko = e.name;
+            e.name = {};
+            e.name.ko = ko;
+            e.name.en = e.enName || ko;
+            e.name.ch = e.chName || ko;
             state.categoryMap[e.id] = e;
         });
     },
@@ -26,15 +31,14 @@ export const getters = {
     categories: (state) => {
         return state.categories;
     },
-    categoryNameById: (state) => (id) => {
-        return state.categoryMap[id].name;
+    categoryNameById: (state) => (id, language = 'ko') => {
+        return state.categoryMap[id].name[language];
     },
 };
 
 export const actions = {
     _$fetchCategories({ commit }) {
         return new Promise((resolve, reject) => {
-            console.log('fetchStart');
             axios({
                 url: '/category',
                 method: 'get',
@@ -44,7 +48,6 @@ export const actions = {
                         commit('GET_CATEGORIES_SUCCESS', response.data.data);
                         commit('SET_AVAILABLE', true);
 
-                        console.log('fetchEnd');
                         resolve(response.data.data);
                     } else {
                         commit('SET_AVAILABLE', false);
@@ -59,13 +62,15 @@ export const actions = {
                 });
         });
     },
-    createCategory({ dispatch }, { name, description }) {
+    createCategory({ dispatch }, { name, enName, chName, description }) {
         return new Promise((resolve, reject) => {
             axios({
                 url: '/category',
                 method: "post",
                 data: {
                     name : name,
+                    enName : enName,
+                    chName : chName,
                     description: description
                 }
             }).then((response)=>{
@@ -81,7 +86,7 @@ export const actions = {
             });
         });
     },
-    updateCategory({ dispatch }, { source, destination, description }) {
+    updateCategory({ dispatch }, { source, destination, enName, chName, description }) {
         return new Promise((resolve, reject) => {
             axios({
                 url: '/category',
@@ -89,6 +94,8 @@ export const actions = {
                 data: {
                     curName : source,
                     changeName: destination,
+                    enName : enName,
+                    chName : chName,
                     description: description,
                 }
             }).then((response)=>{

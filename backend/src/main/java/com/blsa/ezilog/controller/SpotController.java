@@ -1,7 +1,6 @@
 package com.blsa.ezilog.controller;
 
 import java.util.ArrayList;
-import java.util.Base64.Decoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +28,7 @@ import com.blsa.ezilog.model.BasicResponse;
 import com.blsa.ezilog.model.ErrorResponse;
 import com.blsa.ezilog.model.post.Post;
 import com.blsa.ezilog.model.spot.SpotArea;
+import com.blsa.ezilog.model.spot.SpotBanner;
 import com.blsa.ezilog.model.spot.SpotCreateRequest;
 import com.blsa.ezilog.model.user.User;
 import com.blsa.ezilog.service.SpotService;
@@ -117,11 +117,14 @@ public class SpotController {
         final ErrorResponse eresult = new ErrorResponse();
         Map<String, Object> errorMap = new HashMap<>();
         
-        List<SpotArea> sList = spotService.AllSpot();
+        List<SpotArea> sList = spotService.BannerSpot();
+        List<SpotBanner> bList = new ArrayList<>();
         List<Post> pList = new ArrayList<>();
         if (!sList.isEmpty()) {
             sList.forEach((e) -> {
                 pList.add(postDao.findById(e.getPostNo()).get());
+//               Post temp = postDao.findById(e.getPostNo()).get();
+//               bList.add(new SpotBanner(temp.getNo(), temp.getTitle()));
             });
             result.status = "S-200";
             result.message = "Spot table에 있는 post 목록 불러오기에 성공했습니다.";

@@ -1,160 +1,152 @@
 <template>
     <div>
-        Sign up
+        {{ $t('layout.regist') }}
         <b-modal
             id="signup"
-            title="회원 가입"
+            hide-header
+            hide-footer
         >
-            <div class="row">
-                <div class="col-7">
-                    <ValidationObserver ref="observer">
-                        <!-- 이메일 -->
-                        <div>
-                            <ValidationProvider
-                                v-slot="{ errors }"
-                                class="input-wrap"
-                                :rules="{required: true, emailRegex: true}"
-                            >
-                                <input
-                                    id="email"
-                                    ref="email"
-                                    v-model="email"
-                                    type="text"
-                                    placeholder="아이디(이메일)"
-                                >
-                                <div
-                                    v-if="errors[0]"
-                                    class="validation-fail-message"
-                                >
-                                    {{ errors[0] }}
-                                </div>
-                            </validationprovider>
+            <div class="d-flex justify-content-center">
+                <img
+                    src="../../assets/images/welcome-sora.png"
+                >
+            </div>
+            <ValidationObserver ref="observer">
+                <!-- 이메일 -->
+                <div>
+                    <ValidationProvider
+                        v-slot="{ errors }"
+                        class="input-wrap"
+                        :rules="{required: true, emailRegex: true}"
+                    >
+                        <div class="d-flex input">
+                            <i class="far fa-envelope" />
+                            <b-input
+                                id="email"
+                                ref="email"
+                                v-model="email"
+                                type="text"
+                                placeholder="이메일"
+                            />
                         </div>
-
-                        <!-- 닉네임 -->
-                        <div>
-                            <ValidationProvider
-                                v-slot="{ errors }"
-                                class="input-wrap"
-                                :rules="{required: true, max: 25}"
-                            >
-                                <input
-                                    id="nickname"
-                                    ref="nickname"
-                                    v-model="nickname"
-                                    type="text"
-                                    placeholder="별명"
-                                >
-                                <div
-                                    v-if="errors[0]"
-                                    class="validation-fail-message"
-                                >
-                                    {{ errors[0] }}
-                                </div>
-                            </validationprovider>
+                        <div
+                            v-if="errors[0]"
+                            class="validation-fail-message"
+                        >
+                            {{ errors[0] }}
                         </div>
-
-                        <!-- 비밀번호 -->
-                        <div>
-                            <ValidationProvider
-                                v-slot="{ errors }"
-                                class="input-wrap password-wrap"
-                                :rules="{
-                                    required: true,
-                                    min: 8,
-                                    passwordRegex: true,
-                                    passwordConfirm: passwordConfirm }"
-                            >
-                                <div id="passwordInput">
-                                    <input
-                                        id="password"
-                                        ref="password"
-                                        v-model="password"
-                                        :type="passwordType"
-                                        placeholder="비밀번호"
-                                    >
-                                    <i
-                                        :class="{ 'fa fa-eye fa-lg' : passwordType === 'password' ,
-                                                  'fa fa-eye-slash fa-lg' : passwordType === 'text' }"
-                                        @click="passwordType === 'text'?
-                                            passwordType = 'password': passwordType = 'text'"
-                                    />
-                                </div>
-                                <div
-                                    v-if="errors[0]"
-                                    class="validation-fail-message"
-                                >
-                                    {{ errors[0] }}
-                                </div>
-                            </validationprovider>
-                        </div>
-
-                        <!-- 비밀번호 확인 -->
-                        <div>
-                            <ValidationProvider
-                                v-slot="{ errors }"
-                                class="input-wrap password-wrap"
-                                vid="password-confirm"
-                                rules="required"
-                            >
-                                <input
-                                    id="passwordConfirm"
-                                    ref="passwordConfirm"
-                                    v-model="passwordConfirm"
-                                    :type="passwordType"
-                                    placeholder="비밀번호 확인"
-                                >
-                                <div
-                                    v-if="errors[0]"
-                                    class="validation-fail-message"
-                                >
-                                    {{ errors[0] }}
-                                </div>
-                            </validationprovider>
-                        </div>
-                    </ValidationObserver>
+                    </validationprovider>
                 </div>
-            </div>
-            <div class="float-right">
-                <b-button
-                    id="commonbutton"
-                    @click.prevent="signup"
-                >
-                    회원 가입
-                </b-button>
-            </div>
-            <template
-                v-slot:modal-footer
+
+                <!-- 닉네임 -->
+                <div>
+                    <ValidationProvider
+                        v-slot="{ errors }"
+                        class="input-wrap"
+                        :rules="{required: true, max: 25}"
+                    >
+                        <div class="d-flex input">
+                            <i class="fas fa-user-circle" />
+                            <b-input
+                                id="nickname"
+                                ref="nickname"
+                                v-model="nickname"
+                                type="text"
+                                placeholder="별명"
+                            />
+                        </div>
+                        <div
+                            v-if="errors[0]"
+                            class="validation-fail-message"
+                        >
+                            {{ errors[0] }}
+                        </div>
+                    </validationprovider>
+                </div>
+
+                <!-- 비밀번호 -->
+                <div>
+                    <ValidationProvider
+                        v-slot="{ errors }"
+                        class="input-wrap password-wrap"
+                        :rules="{
+                            required: true,
+                            min: 8,
+                            passwordRegex: true,
+                            passwordConfirm: passwordConfirm }"
+                    >
+                        <div class="d-flex input">
+                            <i class="fas fa-unlock" />
+                            <b-input
+                                id="password"
+                                ref="password"
+                                v-model="password"
+                                :type="passwordType"
+                                placeholder="비밀번호"
+                            />
+                            <i
+                                id="password-show-eye"
+                                :class="{ 'fa fa-eye fa-lg' : passwordType === 'password' ,
+                                          'fa fa-eye-slash fa-lg' : passwordType === 'text' }"
+                                @click="passwordType === 'text'?
+                                    passwordType = 'password': passwordType = 'text'"
+                            />
+                        </div>
+                        <div
+                            v-if="errors[0]"
+                            class="validation-fail-message"
+                        >
+                            {{ errors[0] }}
+                        </div>
+                    </validationprovider>
+                </div>
+
+                <!-- 비밀번호 확인 -->
+                <div>
+                    <ValidationProvider
+                        v-slot="{ errors }"
+                        class="input-wrap password-wrap"
+                        vid="password-confirm"
+                        rules="required"
+                    >
+                        <div class="d-flex input">
+                            <i class="fas fa-lock" />
+                            <b-input
+                                id="passwordConfirm"
+                                ref="passwordConfirm"
+                                v-model="passwordConfirm"
+                                :type="passwordType"
+                                placeholder="비밀번호 확인"
+                            />
+                        </div>
+                        <div
+                            v-if="errors[0]"
+                            class="validation-fail-message"
+                        >
+                            {{ errors[0] }}
+                        </div>
+                    </validationprovider>
+                </div>
+            </ValidationObserver>
+            <b-button
+                block
+                pill
+                variant="outline-primary"
+                class="center"
+                @click.prevent="signup"
             >
-                <b-button
-                    id="button"
-                    size="sm"
-                    style="background-color: #FFEB3B; color:#3E2723;"
-                >
-                    <img
-                        src="../../assets/images/kakaotalk.png"
-                        style="max-height:100%;"
-                    >
-                    카톡으로 가입
-                </b-button>
-                <b-button
-                    id="button"
-                    size="sm"
-                    variant="secondary"
-                    style="background-color: #6B799E;"
-                >
-                    <img
-                        src="../../assets/images/github.png"
-                        style="max-height:100%;"
-                    >
-                    깃헙으로 가입
-                </b-button>
-            </template>
+                회원 가입
+            </b-button>
+            <hr>
+            <div class="center">
+                <KakaoLogin />
+            </div>
         </b-modal>
     </div>
 </template>
 
 <script>
+import KakaoLogin from '@/components/account/KakaoLogin.vue';
 import {
     ValidationObserver,
     ValidationProvider,
@@ -202,10 +194,11 @@ extend('emailRegex', {
 });
 
 export default {
-    name: 'Signin',
+    name: 'SignUp',
     components: {
         ValidationProvider,
         ValidationObserver,
+        KakaoLogin,
     },
     data() {
         return {
@@ -244,19 +237,26 @@ export default {
 </script>
 
 <style scoped>
-#button {
-    height: 100%;
-    border: 0;
-}
 .validation-fail-message {
   color: red;
+  padding-left: 2rem;
 }
-#passwordInput {
-    display: flex;
-    align-items: center;
-}
-#passwordInput i{
+#password-show-eye{
     position:absolute;
     right:20px;
+}
+i {
+    flex: 1 1 30px;
+}
+img {
+    max-width: 170px;
+    height: auto;
+}
+.input {
+    align-items: center;
+}
+.center {
+    text-align: center;
+    margin: 5px 0 5px 0;
 }
 </style>

@@ -7,9 +7,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 Vue.use(BootstrapVue);
 
+import constant from '@/constant';
+
 const instance = axios.create({
     // baseURL: 'http://localhost:8399'
-    baseURL: 'http://i3a403.p.ssafy.io:8399',
+    baseURL: constant.baseURL,
 });
 
 instance.interceptors.request.use(
@@ -36,13 +38,20 @@ instance.interceptors.response.use(
             // });
         }
 
-        const message = error.response.data.message;
-        const vm = new Vue();
-        vm.$bvToast.toast(`${message}`, {
-            title: `Error ${error.response.status} (${error.response.data.status})`,
-            toaster: 'b-toaster-top-center',
-            autoHideDelay: 5000,
-        });
+        switch(error.response.status) {
+        case 401:
+            store.dispatch('logout');
+            break;
+        }
+
+        console.log(error);
+        // const message = error.response.data.message;
+        // const vm = new Vue();
+        // vm.$bvToast.toast(`${message}`, {
+        //     title: `Error ${error.response.status} (${error.response.data.status})`,
+        //     toaster: 'b-toaster-top-center',
+        //     autoHideDelay: 5000,
+        // });
 
         return Promise.reject(error);
     },

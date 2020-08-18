@@ -1,75 +1,125 @@
 <template>
     <div>
         <h2 id="recommendspace">
+            현재 메인 글 목록
+        </h2>
+        <div id="main">
+            <b-card 
+                v-for="(item, index) in mainlist" 
+                :key="index"
+                no-body
+                class="overflow-hidden mb-3 d-inline"
+                footer="Card Footer"
+            >
+                <template v-slot:header>
+                    <div
+                        class="ellipsis"
+                    > 
+                        {{ item.title }}
+                    </div>
+                </template>
+                <b-card-body 
+                    class="b-card-body"
+                    style="height: 150px;"
+                >
+                    <b-card-text>
+                        <viewer
+                            :initial-value="item.content"
+                        />
+                    </b-card-text>
+                </b-card-body>
+                <template v-slot:footer>
+                    <b-button 
+                        variant="link"
+                        class="ellipsis"
+                        @click.prevent="openDeleteModal(item.no, index)"
+                    >
+                        메인에서 내리기
+                    </b-button>
+                </template>
+            </b-card>
+        </div>
+        <infinite-loading
+            spinner="waveDots"
+            @infinite="infiniteHandler"
+        >
+            <div
+                slot="no-more"
+                style="color: rgb(102, 102, 102); font-size: 14px; padding: 10px 0px;"
+            />
+        </infinite-loading>
+
+        <hr>
+        <h2 id="recommendspace">
             추천 영역
         </h2>
-        <template v-if="recommendList && recommendList.length">
-            <table
-                class="table"
-            >
-                <colgroup>
-                    <col>
-                    <col>
-                    <col>
-                    <col>
-                    <col>
-                    <col>
-                    <col>
-                    <col>
-                    <col>
-                    <col>
-                </colgroup>
-                <thead class="table-info">
-                    <tr>
-                        <th
-                            scope="col"
+        <table
+            class="table"
+        >
+            <colgroup>
+                <col>
+                <col>
+                <col>
+                <col>
+                <col>
+                <col>
+                <col>
+                <col>
+                <col>
+                <col>
+            </colgroup>
+            <thead class="table-info">
+                <tr>
+                    <th
+                        scope="col"
+                    >
+                        글 번호
+                    </th>
+                    <th
+                        class="text-left"
+                        scope="col"
+                    >
+                        제목
+                    </th>
+                    <th scope="col">
+                        작성자
+                    </th>
+                    <th scope="col">
+                        조회수
+                    </th>
+                    <th scope="col">
+                        추천수
+                    </th>
+                    <th scope="col">
+                        비추천수
+                    </th>
+                    <th scope="col">
+                        답변수
+                    </th>
+                    <th scope="col">
+                        총합
+                    </th>
+                    <th 
+                        scope="col"
+                        class="text-left"
+                    >
+                        작성시간
+                    </th>
+                    <th>
+                        <b-button
+                            class="btn-danger"
+                            @click.prevent="recommendUpdate"
                         >
-                            글 번호
-                        </th>
-                        <th
-                            class="text-left"
-                            scope="col"
-                        >
-                            제목
-                        </th>
-                        <th scope="col">
-                            작성자
-                        </th>
-                        <th scope="col">
-                            조회수
-                        </th>
-                        <th scope="col">
-                            추천수
-                        </th>
-                        <th scope="col">
-                            비추천수
-                        </th>
-                        <th scope="col">
-                            답변수
-                        </th>
-                        <th scope="col">
-                            총합
-                        </th>
-                        <th 
-                            scope="col"
-                            class="text-left"
-                        >
-                            작성시간
-                        </th>
-                        <th>
-                            <b-button
-                                class="btn-danger"
-                                @click.prevent="recommendUpdate"
-                            >
-                                갱신
-                            </b-button>
-                        </th>
-                    </tr>
-                </thead>
+                            갱신
+                        </b-button>
+                    </th>
+                </tr>
+            </thead>
+            <template v-if="recommendList && recommendList.length">
                 <tbody>
                     <tr 
-                        v-for="recommend in recommendList"
-                        :key="recommend.no"
+                        v-for="(recommend, index) in recommendList"
+                        :key="index"
                     >
                         <td>{{ recommend.no }}</td>
                         <td class="text-left">
@@ -99,76 +149,75 @@
                             {{ getFormatDate(recommend.writeDate) }}
                         </td>
                         <td>
-                            <b-button @click.prevent="openSelectModal(recommend.no)">
+                            <b-button @click.prevent="openSelectModalFromRecommend(recommend.no, index)">
                                 메인 선정
                             </b-button>
                         </td>
                     </tr>
                 </tbody>
-            </table>
-        </template>
+            </template>
+        </table>
+        <div v-if="!(recommendList && recommendList.length)">
+            추천 가능한 글이 없습니다.
+        </div>
+        <hr>
 
-        <template v-else>
-            <td>
-                로딩중입니다..
-            </td>
-        </template>
         <h2 id="recommendspace">
             고민 목록
         </h2>
-        <template v-if="list && list.length">
-            <table
-                id="allowed-counsel-list"
-                class="table"
-            >
-                <colgroup>
-                    <col width="10%">
-                    <col width="30%">
-                    <col width="10%">
-                    <col width="8%">
-                    <col width="8%">
-                    <col width="8%">
-                    <col width="10%">
-                    <col width="12%">
-                </colgroup>
-                <thead class="thead-dark">
-                    <tr>
-                        <th
-                            scope="col"
-                        >
-                            글 번호
-                        </th>
-                        <th
-                            class="text-left"
-                            scope="col"
-                        >
-                            제목
-                        </th>
-                        <th scope="col">
-                            작성자
-                        </th>
-                        <th scope="col">
-                            조회수
-                        </th>
-                        <th scope="col">
-                            추천수
-                        </th>
-                        <th scope="col">
-                            비추천수
-                        </th>
-                        <th 
-                            scope="col"
-                            colspan="2"
-                            class="text-left"
-                        >
-                            작성시간
-                        </th>
-                    </tr>
-                </thead>
+        <table
+            id="allowed-counsel-list"
+            class="table"
+        >
+            <colgroup>
+                <col width="10%">
+                <col width="30%">
+                <col width="10%">
+                <col width="8%">
+                <col width="8%">
+                <col width="8%">
+                <col width="10%">
+                <col width="12%">
+            </colgroup>
+            <thead class="thead-dark">
+                <tr>
+                    <th
+                        scope="col"
+                    >
+                        글 번호
+                    </th>
+                    <th
+                        class="text-left"
+                        scope="col"
+                    >
+                        제목
+                    </th>
+                    <th scope="col">
+                        작성자
+                    </th>
+                    <th scope="col">
+                        조회수
+                    </th>
+                    <th scope="col">
+                        추천수
+                    </th>
+                    <th scope="col">
+                        비추천수
+                    </th>
+                    <th 
+                        scope="col"
+                        colspan="2"
+                        class="text-left"
+                    >
+                        작성시간
+                    </th>
+                </tr>
+            </thead>
+            <template v-if="list && list.length">
                 <tbody>
                     <tr 
-                        v-for="item in list"
-                        :key="item.no"
+                        v-for="(item, index) in list"
+                        :key="index"
                     >
                         <td>{{ item.no }}</td>
                         <td class="text-left">
@@ -192,20 +241,17 @@
                             {{ getFormatDate(item.writeDate) }}
                         </td>
                         <td>
-                            <b-button @click.prevent="openSelectModal(item.no)">
+                            <b-button @click.prevent="openSelectModalFromList(item.no, index)">
                                 메인 선정
                             </b-button>
                         </td>
                     </tr>
                 </tbody>
-            </table>
-        </template>
-
-        <template v-else>
-            <td>
-                로딩중입니다..
-            </td>
-        </template>
+            </template>
+        </table>
+        <div v-if="!(list && list.length)">
+            메인에 노출 가능한 글이 없습니다.
+        </div>
         
         <template v-if="list && list.length">
             <div class="overflow-auto">
@@ -227,7 +273,7 @@
             id="modal-select-main"
             ref="modal"
             title="메인에 선정하시겠습니까?"
-            @ok="handleOk"
+            @ok="handleSelectOk"
         >
             <form 
                 ref="form" 
@@ -239,7 +285,7 @@
                 >
                     <b-form-input
                         id="no-input"
-                        v-model="no"
+                        v-model="selectNo"
                         required
                         readonly
                     />
@@ -252,7 +298,44 @@
                 >
                     <b-form-input
                         id="description-input"
-                        v-model="description"
+                        v-model="descriptionSelect"
+                        :state="descriptionState"
+                        required
+                    />
+                </b-form-group>
+            </form>
+        </b-modal>
+
+        <b-modal
+            id="modal-delete-main"
+            ref="modal"
+            title="해당 글을 메인에서 내리고 히스토리로 이동합니다."
+            @ok="handleDeleteOk"
+        >
+            <form 
+                ref="form" 
+                @submit.stop.prevent="setSelectionPost"
+            >
+                <b-form-group
+                    label="선택 글 번호"
+                    label-for="no-input"
+                >
+                    <b-form-input
+                        id="no-input"
+                        v-model="deleteNo"
+                        required
+                        readonly
+                    />
+                </b-form-group>
+                <b-form-group
+                    :state="descriptionState"
+                    label="설명"
+                    label-for="description-input"
+                    invalid-feedback="설명을 입력해주세요."
+                >
+                    <b-form-input
+                        id="description-input"
+                        v-model="descriptionDelete"
                         :state="descriptionState"
                         required
                     />
@@ -263,19 +346,31 @@
 </template>
 <script>
 import moment from 'moment';
+import InfiniteLoading from 'vue-infinite-loading';
 
 export default {
     name: 'CounselSelect',
+    components: {
+        InfiniteLoading
+    },
     data () {
         return {
-            no: '',
-            description: '',
+            selectNo: '',
+            descriptionSelect: '',
             descriptionState: null,
             page:1,
             rows: '',
             perPage: '',
             list: [],
             recommendList:[],
+            mainlist: [],
+            lastNo: 1,
+            size: 3,
+            deleteNo: '',
+            descriptionDelete: '',
+            indexDel: '',
+            indexSel: '',
+            isInList: '',
         };
     },
     watch: {
@@ -285,6 +380,7 @@ export default {
     },
     created() {
         this.fetchAllowedCounsels(this.page);
+        this.fetchMainPosts(this.size);
 
         this.$axios({
             url:'/post/recommend/auto',
@@ -297,8 +393,6 @@ export default {
         }).catch((error) => {
             console.log(error.response);
         });
-    },
-    mounted() {
     },
     methods: {
         async fetchAllowedCounsels(page) {
@@ -321,14 +415,20 @@ export default {
             this.descriptionState = valid;
             return valid;
         },
-        openSelectModal(no) {
+        openSelectModalFromRecommend(no, index) {
             this.$bvModal.show('modal-select-main');
-            this.no = no;
+            this.selectNo = no;
+            this.isInList = false;
+            this.indexSel = index;
         },
-        handleOk(bvModalEvt) {
-            // Prevent modal from closing
+        openSelectModalFromList(no, index) {
+            this.$bvModal.show('modal-select-main');
+            this.selectNo = no;
+            this.isInList = true;
+            this.indexSel = index;
+        },
+        handleSelectOk(bvModalEvt) {
             bvModalEvt.preventDefault();
-            // Trigger submit handler
             this.setSelectionPost();
         },
         setSelectionPost() {
@@ -339,11 +439,18 @@ export default {
                 url: `/selection/post`,
                 method: "post",
                 data: {
-                    no: this.no,
-                    description: this.description,
+                    no: this.selectNo,
+                    description: this.descriptionSelect,
                 }
             }).then(() => {
                 let msg = '메인 글로 선정되었습니다.';
+                if(this.isInList) {
+                    this.mainlist.push(this.list[this.indexSel]);
+                    this.list.splice(this.indexSel, 1);
+                } else {
+                    this.mainlist.push(this.recommendList[this.indexSel]);
+                    this.recommendList.splice(this.indexSel, 1);
+                }
                 this.$toast('안내', msg);
             }).catch((error) => {
                 console.log(error.response);
@@ -369,6 +476,80 @@ export default {
                 console.log(error.response);
             });
         },
+        async fetchMainPosts(size) {
+            const response = await this.$axios({
+                method: 'get',
+                url: `/selection/post`,
+                params: {
+                    size: size,
+                },
+            }).then((res) => {
+                this.mainlist = res.data.data;
+                this.lastNo = this.mainlist[this.mainlist.length-1].no;
+            }).catch((error) => {
+                console.log(error.response);
+            });
+        },
+        infiniteHandler($state) {
+            this.$axios({
+                method: 'get',
+                url: `/selection/post`,
+                params: {
+                    lastPostNo: this.lastNo,
+                    size: this.size,
+                },
+            }).then((res) => {
+                setTimeout(() => {
+                    if(res.data.data.length) {
+                        this.mainlist = this.mainlist.concat(res.data.data);
+                        $state.loaded();
+                        this.lastNo = this.mainlist[this.mainlist.length-1].no;
+                        // 끝 지정(No more data) - 데이터가 size개 미만이면 
+                        if(res.data.data.length / this.size < 1) {
+                            $state.complete();
+                        }
+                        console.log(res);
+                    }
+                }, 1000);
+            }).catch((error) => {
+                // 끝 지정(No more data)
+                $state.complete();
+                console.log(error.response);
+            });
+        },
+        openDeleteModal(no, index) {
+            this.$bvModal.show('modal-delete-main');
+            this.deleteNo = no;
+            this.indexDel = index;
+        },
+        handleDeleteOk(bvModalEvt) {
+            bvModalEvt.preventDefault();
+            this.removeSelectionPost();
+        },
+        removeSelectionPost() {
+            if (!this.checkFormValidity()) {
+                return;
+            }
+
+            this.$axios({
+                url: `/selection/post`,
+                method: "delete",
+                data: {
+                    no: this.deleteNo,
+                    description: this.descriptionDelete,
+                }
+            }).then(() => {
+                let msg = '메인 글에서 내렸습니다.';
+                this.$toast('안내', msg);
+                this.mainlist.splice(this.indexDel, 1);
+            }).catch((error) => {
+                console.log(error.response);
+            });
+
+            this.$nextTick(() => {
+                this.$bvModal.hide('modal-delete-main');
+            });
+        },
     },
 };
 
@@ -386,5 +567,20 @@ td {
 }
 #recommendspace{
     text-align: center;
+}
+#main {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px 20px;
+}
+.ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; 
+}
+.card-text {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 </style>

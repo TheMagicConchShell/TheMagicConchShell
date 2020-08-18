@@ -5,31 +5,56 @@
                 id="user-list"
                 :per-page="perPage"
                 :current-page="page"
-            >  
+            >
+                <b-list-group-item
+                    class="flex-column algin-items-start"
+                    variant="dark"
+                >
+                    <div class="d-flex w-100 justify-content-between">
+                        <span class="head">
+                            UID
+                        </span>
+                        <span class="head">
+                            EMAIL
+                        </span>
+                        <span class="head">
+                            NICKNAME
+                        </span>
+                        <span class="head">
+                            AUTHDATE
+                        </span>
+                        <span class="head">
+                            POINT
+                        </span>
+                        <span class="head">
+                            LEVEL
+                        </span>
+                    </div>
+                </b-list-group-item>
                 <b-list-group-item
                     v-for="item in userList"
                     :key="item.id"
                     class="flex-column algin-items-start"
                 >
                     <div class="d-flex w-100 justify-content-between">
-                        <h5 class="item">
+                        <span class="item">
                             {{ item.uid }}
-                        </h5>
-                        <h5 class="item">
+                        </span>
+                        <span class="item">
                             {{ item.email }}
-                        </h5>
-                        <h5 class="item">
+                        </span>
+                        <span class="item">
                             {{ item.nickname }}
-                        </h5>
-                        <h5 class="item">
-                            {{ item.authDate }}
-                        </h5>
-                        <h5 class="item">
+                        </span>
+                        <span class="item">
+                            {{ getFormatDate(item.authDate) }}
+                        </span>
+                        <span class="item">
                             {{ item.point }}
-                        </h5>
-                        <h5 class="item">
+                        </span>
+                        <span class="item">
                             {{ item.level }}
-                        </h5>
+                        </span>
                     </div>
                 </b-list-group-item>
             </b-list-group> 
@@ -38,7 +63,6 @@
                 <b-pagination
                     id="userPaginate"
                     v-model="page"
-                    pills
                     :total-rows="rows"
                     :per-page="perPage"
                     first-text="First"
@@ -71,8 +95,8 @@ export default {
         ...mapGetters(['nickname']),
     },
     watch:{
-        page(){
-            
+        page() {
+            this.fetchUserList(this.page);
         },
     },
     created() {
@@ -87,25 +111,40 @@ export default {
                     nickname : this.nickname,
                 },
                 params:{
-                    page:page || 1,
+                    page: page || 1,
                 },
             }).then((res)=>{
-                //console.dir(res);
+                console.dir(res);
                 this.userList = res.data.data.content;
-                this.rows = res.data.data.content.totalElements;
-                this.page = res.data.data.content.size;
+                this.rows = res.data.data.totalElements;
+                this.perPage = res.data.data.size;
 
             }).catch((error) =>{
                 console.log(error.response);
             });
         },
         getFormatDate(date) {
-            return moment(new Date(date)).format("YYYY.MM.DD hh:mm:ss");
+            return moment(new Date(date)).format("YYYY.MM.DD HH:mm:ss");
         },
     },
 };
 </script>
 
-<style>
-
+<style scoped>
+.item {
+    flex: 1 1 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; 
+}
+.head {
+    flex: 1 1 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: bold;
+}
+#userPaginate {
+    margin-top: 1rem;
+}
 </style>

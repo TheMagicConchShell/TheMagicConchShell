@@ -8,20 +8,22 @@
             <div id="article">
                 <ul id="tab">
                     <li
+                        id="0"
                         class="cursor-pointer-hover"
                         :class="{active: (currentCategory === '전체')}"
                         @click="fetchCounsel"
                     >
-                        <span>전체</span>
+                        <span id="0">{{ $t('board.all') }}</span>
                     </li>
                     <li
                         v-for="category in categories"
-                        :key="category.name"
+                        :id="category.id"
+                        :key="category.id"
                         class="cursor-pointer-hover"
-                        :class="{active: (currentCategory === category.name)}"
-                        @click="fetchCounsel"
+                        :class="{active: (currentCategory === category.name.ko)}"
+                        @click.stop="fetchCounsel"
                     >
-                        <span>{{ category.name }}</span>
+                        <span :id="category.id">{{ category.name[language] }}</span>
                     </li>
                 </ul>
                 <div>
@@ -47,13 +49,13 @@
                     고민 카테고리
                     <ul>
                         <li>
-                            전체
+                            {{ $t('board.all') }}
                         </li>
                         <li
                             v-for="category in categories"
                             :key="category.id"
                         >
-                            {{ category.name }}
+                            {{ category.name[language] }}
                         </li>
                     </ul>
                 </div>
@@ -79,7 +81,7 @@ export default {
     }),
     computed: {
         ...mapGetters(['categories', 'nickname']),
-        ...mapState(['language'])
+        ...mapGetters(['language'])
     },
     watch: {
         $route() {
@@ -95,8 +97,11 @@ export default {
     },
     methods: {
         fetchCounsel(e) {
-            console.log(e.target.innerText);
-            this.currentCategory = e.target.innerText;
+            if (e.target.id === '0') {
+                this.currentCategory = '전체';
+            } else {
+                this.currentCategory = this.$store.getters.categoryNameById(e.target.id);
+            }
             this.page = 1;
         },
         write() {

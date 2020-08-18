@@ -64,6 +64,7 @@
                         v-model="nicknameInput"
                         type="text"
                         placeholder="별명"
+                        :disabled="!editable"
                     />
                     <div
                         v-if="errors[0]"
@@ -74,76 +75,78 @@
                 </validationprovider>
             </b-form-group>
 
-            <b-form-group
-                v-if="!isSocialAccount"
-                label-cols-sm="2"
-                label-cols-lg="2"
-                label="비밀번호"
-                label-for="password"
-            >
-                <ValidationProvider
-                    v-slot="{ errors }"
-                    class="input-wrap password-wrap"
-                    :rules="{
-                        required: true,
-                        min: 8,
-                        passwordRegex: true,
-                        passwordConfirm: passwordConfirm }"
+            <div v-show="editable">
+                <b-form-group
+                    v-if="!isSocialAccount"
+                    label-cols-sm="2"
+                    label-cols-lg="2"
+                    label="비밀번호"
+                    label-for="password"
                 >
-                    <div id="passwordInput">
+                    <ValidationProvider
+                        v-slot="{ errors }"
+                        class="input-wrap password-wrap"
+                        :rules="{
+                            required: true,
+                            min: 8,
+                            passwordRegex: true,
+                            passwordConfirm: passwordConfirm }"
+                    >
+                        <div id="passwordInput">
+                            <b-input
+                                id="password"
+                                ref="password"
+                                v-model="password"
+                                :type="passwordType"
+                                placeholder="영문/숫자 포함 8자 이상"
+                            />
+                            <i
+                                :class="{ 'fa fa-eye fa-lg' : passwordType === 'password' ,
+                                          'fa fa-eye-slash fa-lg' : passwordType === 'text' }"
+                                @click="passwordType === 'text'?
+                                    passwordType = 'password': passwordType = 'text'"
+                            />
+                        </div>
+                        <div
+                            v-if="errors[0]"
+                            class="validation-fail-message"
+                        >
+                            {{ errors[0] }}
+                        </div>
+                    </validationprovider>
+                </b-form-group>
+
+                <b-form-group
+                    v-if="!isSocialAccount"
+                    label-cols-sm="2"
+                    label-cols-lg="2"
+                    label="비밀번호 확인"
+                    label-for="passwordConfirm"
+                >
+                    <ValidationProvider
+                        v-slot="{ errors }"
+                        class="input-wrap password-wrap"
+                        vid="password-confirm"
+                        rules="required"
+                    >
                         <b-input
-                            id="password"
-                            ref="password"
-                            v-model="password"
+                            id="passwordConfirm"
+                            ref="passwordConfirm"
+                            v-model="passwordConfirm"
                             :type="passwordType"
-                            placeholder="영문/숫자 포함 8자 이상"
+                            placeholder="비밀번호 확인"
                         />
-                        <i
-                            :class="{ 'fa fa-eye fa-lg' : passwordType === 'password' ,
-                                      'fa fa-eye-slash fa-lg' : passwordType === 'text' }"
-                            @click="passwordType === 'text'?
-                                passwordType = 'password': passwordType = 'text'"
-                        />
-                    </div>
-                    <div
-                        v-if="errors[0]"
-                        class="validation-fail-message"
-                    >
-                        {{ errors[0] }}
-                    </div>
-                </validationprovider>
-            </b-form-group>
+                        <div
+                            v-if="errors[0]"
+                            class="validation-fail-message"
+                        >
+                            {{ errors[0] }}
+                        </div>
+                    </validationprovider>
+                </b-form-group>
+            </div>
 
-            <b-form-group
-                v-if="!isSocialAccount"
-                label-cols-sm="2"
-                label-cols-lg="2"
-                label="비밀번호 확인"
-                label-for="passwordConfirm"
-            >
-                <ValidationProvider
-                    v-slot="{ errors }"
-                    class="input-wrap password-wrap"
-                    vid="password-confirm"
-                    rules="required"
-                >
-                    <b-input
-                        id="passwordConfirm"
-                        ref="passwordConfirm"
-                        v-model="passwordConfirm"
-                        :type="passwordType"
-                        placeholder="비밀번호 확인"
-                    />
-                    <div
-                        v-if="errors[0]"
-                        class="validation-fail-message"
-                    >
-                        {{ errors[0] }}
-                    </div>
-                </validationprovider>
-            </b-form-group>
-
-            <div id="profileArea">
+            <div>
                 <b-form-group
                     label-cols-sm="2"
                     label-cols-lg="2"
@@ -165,16 +168,35 @@
                     label="레벨"
                     label-for="level"
                 >
-                    <b-input
-                        id="level"
-                        ref="level"
-                        v-model="level"
-                        type="text"
-                        readonly
-                    />
+                    <div class="d-flex">
+                        <b-input
+                            id="level"
+                            ref="level"
+                            v-model="level"
+                            type="text"
+                            readonly
+                        />
+                        <b-button             
+                            v-b-modal.ask-level-up
+                            variant="outline-primary"
+                            class="level-up-button"
+                        >
+                            LEVEL <i class="fas fa-level-up-alt" />
+                            <AskLevelup 
+                                :level="level"
+                                :levelup-require-point="levelupRequirePoint"
+                                @levelup="levelup"
+                            />
+                            <LevelupCelebrate />
+                        </b-button>
+                    </div>
                 </b-form-group>
             </div>
-            <div class="detail-button">
+
+            <div
+                v-show="editable"
+                class="detail-button"
+            >
                 <b-button @click="userUpdate">
                     정보 수정
                 </b-button>
@@ -186,8 +208,18 @@
                     회원 탈퇴
                 </b-button>
             </div>
+            <b-button
+                pill
+                variant="outline-primary"
+                type="button"
+                @click="editable = !editable"
+            >
+                <i
+                    class="fas fa-pencil-alt"
+                />
+            </b-button>
         </ValidationObserver>
-        
+
         <hr>
         <div>
             <b-card no-body>
@@ -228,6 +260,8 @@
 import PointHistory from '@/components/account/PointHistory.vue';
 import MyPost from '@/components/account/MyPost.vue';
 import MyReply from '@/components/account/MyReply.vue';
+import AskLevelup from '@/components/account/AskLevelup.vue';
+import LevelupCelebrate from '@/components/account/LevelupCelebrate.vue';
 
 import {
     ValidationObserver,
@@ -276,7 +310,9 @@ export default {
         ValidationObserver,
         PointHistory,
         MyPost,
-        MyReply
+        MyReply,
+        AskLevelup,
+        LevelupCelebrate,
     },
     data: () => ({
         nicknameInput: '',
@@ -286,34 +322,40 @@ export default {
         profileImgFile: '',
         profileImgUrl: '',
         point: '',
-        level: '',
+        level: 0,
         passwordType: 'password',
         msg: '',
         isSocialAccount: false,
+        editable: false,
+        levelupRequirePoint: 0,
     }),
     computed: {
         ...mapGetters(['nickname']),
     },
     created() {
         this.nicknameInput = this.nickname;
-        this.$store.dispatch('fetchUser', {
-            nickname: this.nicknameInput
-        })
-            .then((res) => {
-                console.log(res);
-                if (res.data.status === 'S-200') {
-                    this.email = res.data.data.email;
-                    this.profileImgUrl = res.data.data.profileImg;
-                    this.point = res.data.data.point;
-                    this.level = res.data.data.level;
-                    this.isSocialAccount = res.data.data.socialAccount;
-                }
-            })
-            .catch((error) => {
-                console.log(error.response);
-            });
+        this.userFetch();
     },
     methods: {
+        async userFetch() {
+            await this.$store.dispatch('fetchUser', {
+                nickname: this.nicknameInput
+            })
+                .then((res) => {
+                    console.log(res);
+                    if (res.data.status === 'S-200') {
+                        this.email = res.data.data.email;
+                        this.profileImgUrl = res.data.data.profileImg;
+                        this.point = res.data.data.point;
+                        this.level = res.data.data.level;
+                        this.isSocialAccount = res.data.data.socialAccount;
+                        this.levelupRequirePoint = (this.level + 1) * 100;
+                    }
+                })
+                .catch((error) => {
+                    console.log(error.response);
+                });
+        },
         async userUpdate() {
             const isValid = await this.$refs.observer.validate();
 
@@ -324,10 +366,10 @@ export default {
             }
 
             const formData = new FormData();
-            formData.append('profileImg', this.profileImgFile)
-                .append('email', this.email)
-                .append('nickname', this.nicknameInput)
-                .append('password', this.password);
+            formData.append('profileImg', this.profileImgFile);
+            formData.append('email', this.email);
+            formData.append('nickname', this.nicknameInput);
+            formData.append('password', this.password);
 
             this.$store.dispatch('updateUser', formData)
                 .then((res) => {
@@ -399,6 +441,18 @@ export default {
         handleDeleteOk() {
             this.$router.push('/');
         },
+        levelup() {
+            this.$axios({
+                url: `/point/level-up`,
+                method: "put",
+            }).then(() => {
+                this.$bvModal.hide('ask-level-up');
+                this.$bvModal.show('level-up-celebrate');
+                this.userFetch();
+            }).catch((error) => {
+                console.log(error.response);
+            });
+        }
     },
 };
 </script>
@@ -427,9 +481,18 @@ export default {
     margin-bottom: 10px;
 }
 .detail-button {
-    text-align: right;
+    text-align: center;
+    margin-bottom: 1rem;
 }
 .profile-avatar {
     left: 24px;
+}
+.level-up-button {
+    flex: 1 1 100px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 </style>

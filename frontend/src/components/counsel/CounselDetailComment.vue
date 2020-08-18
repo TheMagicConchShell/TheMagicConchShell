@@ -90,27 +90,32 @@
                 >
                     {{ title }}
                 </div>
-                <div
+                <!-- <div
                     v-else
                     class="title-text hash cursor-default"
                 >
                     {{ hash }}
-                </div>
+                </div> -->
             </div>
 
             <div class="avatar-container">
                 <img
                     class="avatar"
                     :src="profileImg? profileImg: require(`@/assets/images/default_profile.png`)"
-                    onerror="@/assets/images/default_profile.png"
                     alt="Avatar image"
+                    @error="$event.target.src = require(`@/assets/images/default_profile.png`)"
                 >
-                <div
-                    class="writer"
-                >
-                    {{ writer }}
+                <div class="writer-container">
+                    <div
+                        class="writer"
+                    >
+                        {{ writer }}
+                    </div>
+                    <div class="hash">
+                        {{ hash }}
+                    </div>
                 </div>
-                <div class="d-flex">
+                <div class="d-flex flex-1">
                     <div
                         class="button-like mobile-only margin-right-5 cursor-pointer"
                         :disabled="$wait.is('counsel-chunk')"
@@ -132,9 +137,9 @@
                             :class="{far: (iLoveIt >= 0), fa: (iLoveIt < 0)}"
                         /> {{ unlikeCount }}
                     </div>
-                    <div class="write-date">
+                    <!-- <div class="write-date">
                         {{ writeDate }}
-                    </div>
+                    </div> -->
                 </div>
             </div>
 
@@ -187,6 +192,9 @@
                     </div>
                 </template>
                 <template v-else>
+                    <div class="write-date">
+                        {{ formatDate }}
+                    </div>
                     <div class="comment-body comment-body-view padding-right-view">
                         <viewer
                             :initial-value="content"
@@ -287,6 +295,7 @@
 </template>
 
 <script>
+import moment from 'moment';
 import { mapGetters } from 'vuex';
 import SvgExclamation from '@/components/general/SvgMaterialReportProblem.vue';
 import SvgPencil from '@/components/general/SvgMaterialRateReview.vue';
@@ -369,7 +378,8 @@ export default {
         },
         profileImg: {
             type: String,
-            required: true,
+            required: false,
+            default: null,
         },
         likeHandler: {
             type: Function,
@@ -405,6 +415,9 @@ export default {
     },
     computed: {
         ...mapGetters(['nickname']),
+        formatDate() {
+            return moment(new Date(this.writeDate)).format("YYYY.MM.DD HH:mm:ss");
+        },
     },
     mounted() {
         this.editorOpts = this.$store.getters.EDITOROPTIONS.options;
@@ -420,7 +433,7 @@ export default {
         },
         likeHandlerWrapper(type, id, iLoveIt) {
             if (!this.nickname) {
-                this.$toast('ERROR', '좋아요/싫어요를 누르시려면 로그인해주세요.');
+                this.$toast('좋아요', '좋아요/싫어요를 누르시려면 로그인해주세요.');
                 return;
             }
             if (type === 'p') {
@@ -543,14 +556,15 @@ export default {
         height: 24px;
         width: 24px;
     }
-    .writer {
+    .writer-container {
         flex: 1;
-        word-break: break-all;
-    }
-    .write-date {
-        text-align: right;
-        flex: 1;
-        color: gray;
+        display: flex;
+        flex-direction: row;
+
+        .writer {
+            word-break: break-all;
+            margin-right: 2px;
+        }
     }
     
     .button-like {
@@ -566,6 +580,15 @@ export default {
     flex-wrap: wrap;
     flex-direction: column;
     align-items: center;
+
+    .write-date {
+        float: right;
+        flex: 1;
+        color: gray;
+        width: 100%;
+        text-align: right;
+        padding-right: 12px;
+    }
 
     .comment-body {
         text-align: justify;
@@ -622,11 +645,12 @@ export default {
     }
     .avatar-container {
         top: 0px;
-        max-width: 86px;
-        left: -92px;
+        width: 126px;
+        left: -126px;
         position: absolute;
         z-index: 1;
-        display: block;
+        display: flex;
+        flex-direction: column;
         box-sizing: border-box;
         text-align: center;
         border-bottom: unset;
@@ -637,14 +661,16 @@ export default {
             width: 60px;
             margin-bottom: 12px;
         }
-        .writer {
-            width: 100%;
-            word-break: break-all;
-        }
-        .write-date {
-            text-align: unset;
-            color: gray;
-            font-weight: 100;
+
+        .writer-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+
+            .writer {
+                width: 100%;
+                word-break: break-all;
+            }
         }
     }
 
@@ -662,6 +688,16 @@ export default {
     }
 
     .comment-body-container {
+        display: block;
+
+        .write-date {
+            text-align: unset;
+            color: gray;
+            font-weight: 100;
+            width: auto;
+            padding-right: 12px;
+        }
+        
         .padding-right-view {
             padding-right: 60px;
         }

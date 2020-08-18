@@ -1,13 +1,12 @@
 <template>
-    <div class="container">
-        고객센터 VIEW
+    <div class="support-center">
         <router-view />
     </div>
 </template>
 
 <script>
 export default {
-
+    name: 'Support',
 };
 </script>
 

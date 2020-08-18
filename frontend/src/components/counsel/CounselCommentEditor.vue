@@ -121,7 +121,6 @@ export default {
             if (response) {
                 if (response.status >= 200 && response.status < 300) {
                     this.$emit('submit');
-                    this.$toast('답변', '답변이 작성되었습니다.');
                 } else {
                     console.log('글 작성이 실패하였습니다');
                 }
@@ -229,8 +228,8 @@ label {
 
         align-items: center;
         top: 0px;
-        max-width: 76px;
-        left: -92px;
+        max-width: 126px;
+        left: -112px;
         position: absolute;
         z-index: 1;
         box-sizing: border-box;

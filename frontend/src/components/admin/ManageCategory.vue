@@ -21,8 +21,10 @@
             >
                 <colgroup>
                     <col width="15%">
+                    <col width="15%">
+                    <col width="15%">
+                    <col width="15%">
                     <col width="20%">
-                    <col width="45%">
                     <col width="10%">
                     <col width="10%">
                 </colgroup>
@@ -36,7 +38,17 @@
                         <th
                             scope="col"
                         >
-                            카테고리 명
+                            한국 명
+                        </th>
+                        <th
+                            scope="col"
+                        >
+                            영어 명
+                        </th>
+                        <th
+                            scope="col"
+                        >
+                            중국 명
                         </th>
                         <th scope="col">
                             카테고리 설명
@@ -54,18 +66,24 @@
                     >
                         <td>{{ item.id }}</td>
                         <td>
-                            {{ item.name }}
+                            {{ item.name.ko }}
+                        </td>
+                        <td>
+                            {{ item.name.en }}
+                        </td>
+                        <td>
+                            {{ item.name.ch }}
                         </td>
                         <td>
                             {{ item.description }}
                         </td>
                         <td>
-                            <b-button @click.prevent="openUpdateModal(item.id, item.name, item.description)">
+                            <b-button @click.prevent="openUpdateModal(item)">
                                 변경
                             </b-button>
                         </td>
                         <td>
-                            <b-button @click.prevent="openDeleteModal(item.name)">
+                            <b-button @click.prevent="openDeleteModal(item)">
                                 삭제
                             </b-button>
                         </td>
@@ -93,13 +111,37 @@
             >
                 <b-form-group
                     :state="nameState"
-                    label="이름"
+                    label="한국 명"
                     label-for="name-input"
                 >
                     <b-form-input
                         id="name-input"
                         v-model="changeName"
                         :state="changeNameState"
+                        required  
+                    />
+                </b-form-group>
+                <b-form-group
+                    :state="enNameState"
+                    label="영어 명"
+                    label-for="enname-input"
+                >
+                    <b-form-input
+                        id="enname-input"
+                        v-model="enName"
+                        :state="enNameState"
+                        required  
+                    />
+                </b-form-group>
+                <b-form-group
+                    :state="chNameState"
+                    label="중국 명"
+                    label-for="chname-input"
+                >
+                    <b-form-input
+                        id="chname-input"
+                        v-model="chName"
+                        :state="chNameState"
                         required  
                     />
                 </b-form-group>
@@ -140,13 +182,37 @@
             >
                 <b-form-group
                     :state="nameState"
-                    label="이름"
+                    label="한국 명"
                     label-for="name-input"
                 >
                     <b-form-input
                         id="name-input"
                         v-model="name"
                         :state="nameState"
+                        required  
+                    />
+                </b-form-group>
+                <b-form-group
+                    :state="enNameState"
+                    label="영어 명"
+                    label-for="enname-input"
+                >
+                    <b-form-input
+                        id="enname-input"
+                        v-model="enName"
+                        :state="enNameState"
+                        required  
+                    />
+                </b-form-group>
+                <b-form-group
+                    :state="chNameState"
+                    label="중국 명"
+                    label-for="chname-input"
+                >
+                    <b-form-input
+                        id="chname-input"
+                        v-model="chName"
+                        :state="chNameState"
                         required  
                     />
                 </b-form-group>
@@ -175,6 +241,8 @@ export default {
     data:()=>({
         name: '',
         changeName:'',
+        enName:'',
+        chName:'',
         description: '',
     }),
     computed: {
@@ -190,7 +258,13 @@ export default {
         },
         changeNameState() {
             return this.changeName.length > 0;
-        }
+        },
+        enNameState(){
+            return this.enName.length > 0;  
+        },
+        chNameState(){
+            return this.chName.length > 0;  
+        },
     },
     watch:{
         page(){
@@ -205,11 +279,13 @@ export default {
             const valid = this.$refs.updateform.checkValidity();           
             return valid;
         },
-        openUpdateModal(id, name, desc){
-            this.id = id;
-            this.name = name;
-            this.changeName = name;
-            this.description = desc;
+        openUpdateModal(item){
+            this.id = item.id;
+            this.name = item.name.ko;
+            this.enName = item.name.en;
+            this.chName = item.name.ch;
+            this.changeName = item.name.ko;
+            this.description = item.description;
             this.$bvModal.show('modal-update-category');
         },
         handleOk(bvModalEvt){
@@ -224,6 +300,8 @@ export default {
             }
             this.$store.dispatch('updateCategory', {
                 source: this.name,
+                enName: this.enName,
+                chName: this.chName,
                 destination: this.changeName,
                 description: this.description,
             })
@@ -238,9 +316,9 @@ export default {
                 this.$bvModal.hide('modal-update-category');
             });
         },
-        openDeleteModal(name){
+        openDeleteModal(item){
             this.$bvModal.show('modal-delete-category');
-            this.name = name;
+            this.name = item.name.ko;
         },
         deleteOk(bvModalEvt){
             bvModalEvt.preventDefault();
@@ -268,6 +346,8 @@ export default {
         },
         openCreateModal(){
             this.name = '';
+            this.enName = '';
+            this.chName ='';
             this.description = '';
             this.$bvModal.show('modal-create-category');
         },
@@ -283,6 +363,8 @@ export default {
             }
             this.$store.dispatch('createCategory', {
                 name : this.name,
+                enName: this.enName,
+                chName: this.chName,
                 description: this.description,
             })
                 .then((response) => {

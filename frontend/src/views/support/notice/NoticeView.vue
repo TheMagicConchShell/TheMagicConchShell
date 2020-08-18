@@ -1,14 +1,12 @@
 <template>
-    <div>
-        <span>공지사항 VIEW</span>
+    <div class="support-notice">
         <router-view />
     </div>
 </template>
 
 <script>
 export default {
-    name: 'NoticeView'
-
+    name: 'NoticeView',
 };
 </script>
 

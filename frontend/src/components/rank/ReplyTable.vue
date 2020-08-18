@@ -5,22 +5,22 @@
                 <thead class="thead-light">
                     <tr>
                         <th>
-                            순위
+                            {{ $t('ranking.table.rank') }}
                         </th>
                         <th>
-                            고민 번호
+                            {{ $t('ranking.table.cNumber') }}
                         </th>
                         <th>
-                            작성자
+                            {{ $t('ranking.table.writer') }}
                         </th>
                         <th>
-                            추천수
+                            {{ $t('ranking.table.like') }}
                             <i
                                 class="fas fa-long-arrow-alt-down"
                             />
                         </th>
                         <th>
-                            작성날짜
+                            {{ $t('ranking.table.date') }}
                         </th>
                     </tr>
                 </thead>
