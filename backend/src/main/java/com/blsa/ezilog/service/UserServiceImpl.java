@@ -1,6 +1,7 @@
 package com.blsa.ezilog.service;
 
 import java.util.Optional;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -135,13 +136,40 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    private static String generateRandomPassword(int length) {
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+        
+        for (int i = 0; i < length; i++) {
+            int type = random.nextInt(2);
+            int value;
+            
+            switch(type) {
+            case 0:
+                value = random.nextInt(10);
+                sb.append(value + '0');
+                break;
+            case 1:
+                value = random.nextInt(26);
+                sb.append(value + 'a');
+                break;
+            case 2:
+                value = random.nextInt(15);
+                sb.append(value + '!');
+                break;
+            }
+        }
+        
+        return sb.toString();
+    }
+    
     @Override
     public String findPw(String email, String nickname) {
         Optional<User> ou = dao.findByEmailAndNickname(email, nickname);
         String res = null;
         if (ou.isPresent()) {
             User u = ou.get();
-            String temppw = "temp1234";
+            String temppw = UserServiceImpl.generateRandomPassword(8);
 
             u.setPassword(bcryptimpl.encrypt(bcryptimpl.sha256(temppw)));
 
