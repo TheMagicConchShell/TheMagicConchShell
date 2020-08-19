@@ -588,6 +588,11 @@ export default {
         padding-right: 12px;
     }
 
+    .comment-body-container {
+        display: flex;
+        width: 100%;
+    }
+
     .comment-body {
         text-align: justify;
         overflow: visible;
