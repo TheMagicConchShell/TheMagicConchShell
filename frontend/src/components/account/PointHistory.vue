@@ -3,7 +3,7 @@
         <template v-if="pointList && pointList.length">
             <div>
                 <h3>
-                    현재 보유 포인트: {{ totalPoint }}
+                    {{ $t('account.info.point.current') }}: {{ totalPoint }}
                 </h3>
             </div>
             <b-list-group
@@ -50,7 +50,7 @@
         </template>
 
         <template v-else>
-            포인트 사용 내역이 없습니다.
+            {{ $t('account.nocontent.point') }}
         </template>
     </div>
 </template>
