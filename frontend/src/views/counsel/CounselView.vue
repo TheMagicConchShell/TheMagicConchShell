@@ -1,6 +1,5 @@
 <template>
     <div align="center">
-        Counsel View
         <router-view />
     </div>
 </template>
