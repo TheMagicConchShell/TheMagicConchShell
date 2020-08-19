@@ -573,6 +573,9 @@ a:hover {
     cursor: pointer;
 }
 @media (max-width: 992px) {
+    #ddopen {
+        font-size: 85%;
+    }
     .navbar {
         height: 52px;
         font-size: 100%;
@@ -605,6 +608,11 @@ a:hover {
         background-color: #bdbdbd;
         /* height: 128px; */
         width: 150px;
+    }
+}
+@media (max-width: 600px) {
+    #ddopen {
+        font-size: 100%;
     }
 }
 </style>
