@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,7 +37,6 @@ import com.blsa.ezilog.service.UserService;
 
 import io.swagger.annotations.ApiOperation;
 
-@CrossOrigin(origins = { "*" }, maxAge = 6000)
 @RestController
 @RequestMapping("/qna")
 public class QnaController {
@@ -359,8 +359,8 @@ public class QnaController {
         return response;
     }
 
-    @DeleteMapping("/qeuestion")
-    @ApiOperation(value = "질문 삭제 삭제", notes = "Input : 해당 질문 no를 받아서 삭제")
+    @DeleteMapping("/question")
+    @ApiOperation(value = "질문 삭제", notes = "Input : 해당 질문 no를 받아서 삭제")
     public Object deleteQuestion(@RequestParam Long no,
             @RequestHeader(value = "nickname", required = false) String nickname) {
 
