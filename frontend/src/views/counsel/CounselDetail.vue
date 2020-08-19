@@ -375,25 +375,6 @@ export default {
                     this.$wait.end('counsel-chunk');
                 });
         },
-        advertiseCaller() {
-            console.log("called");
-            this.$bvModal.show(`post-advertise-modal-${this.no}`);
-        },
-        advertiseHanlder(id) {
-            this.$axios({
-                url: '/spot',
-                method: 'post',
-                data: {
-                    'owner': this.nickname,
-                    'postNo': this.post.no,
-                },
-            })
-                .then((response) => {
-                    console.log(response);
-                })
-                .catch((error) => {
-                });
-        },
         dummy() {
 
         },
