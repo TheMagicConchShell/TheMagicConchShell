@@ -53,7 +53,7 @@ const messages = {
                 nickname:'닉네임',
                 counsel:'고민',
                 reply:'답변',
-                point:'포인',
+                point:'포인트',
                 level:'레벨',
                 title:'제목',
                 writer:'작성자',

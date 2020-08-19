@@ -148,10 +148,23 @@ export default {
 #go-up :hover {
   cursor: pointer;
 }
+
+#content {
+    margin: 70px 120px;
+    padding: 0 10px;
+}
+
 @media (max-width: 992px) {
     #content {
-        margin: 70px 0px!important;
+        margin: 70px 40px!important;
         padding: 0 10px;
     }
-}   
+}
+
+@media (max-width: 768px) {
+    #content {
+        margin: 70px 12px!important;
+        padding: 0 0px;
+    }
+}
 </style>
