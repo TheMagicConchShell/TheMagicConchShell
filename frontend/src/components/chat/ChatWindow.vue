@@ -5,7 +5,7 @@
         >
             <!-- <div class="chat-container"> -->
             <div id="chat-header">
-                <span class="title">{{ $t('chat.title') }}</span>
+                <span class="title">{{ $t('chat.title') }} ({{ userCount }}명 참여)</span>
                 <button 
                     class="button-close button"
                     @click="close"
@@ -77,6 +77,7 @@ export default {
         message: '',
         stompClient: null,
         receiveList: [],
+        userCount: 0
     }),
     computed: {
         ...mapGetters(['nickname']),
@@ -153,7 +154,7 @@ export default {
             case 'CHAT':
                 content.time = `${this.getFormatDate(Date.now())}`;
             }
-
+            this.userCount = content.count;
             this.receiveList.push(content);
 
             
@@ -170,7 +171,7 @@ export default {
                     content:'',
                     type:"LEAVE"
                 };
-                this.stompClient.send("/chat/sendMessage",JSON.stringify(chatMessage),{});
+                this.stompClient.send("/chat/leaveUser",JSON.stringify(chatMessage),{});
                 this.stompClient.disconnect();
             }
             this.receiveList = [];
