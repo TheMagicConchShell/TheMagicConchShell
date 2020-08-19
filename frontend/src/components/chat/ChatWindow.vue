@@ -2,18 +2,41 @@
     <div>
         <div
             id="chat-page"
+            :class="{shadow: !minified}"
         >
             <!-- <div class="chat-container"> -->
-            <div id="chat-header">
-                <span class="title">{{ $t('chat.title') }} ({{ userCount }}명 참여)</span>
+            <div
+                id="chat-header"
+                @mousedown.self="drag"
+            >
+                <span
+                    class="title"
+                    @mousedown="drag"
+                >
+                    {{ $t('chat.title') }}<span class="count">({{ userCount }}명 참여)</span>
+                </span>
+                <button 
+                    class="button-minify button"
+                    @click="minify"
+                >
+                    <template v-if="minified">
+                        +
+                    </template>
+                    <template v-else>
+                        -
+                    </template>
+                </button>
                 <button 
                     class="button-close button"
                     @click="close"
                 >
-                    {{ $t('chat.exit') }}
+                    X
                 </button>
             </div>
-            <ul id="message-area">
+            <ul
+                v-show="!minified"
+                id="message-area"
+            >
                 <li 
                     v-for="(item,index) in receiveList"
                     :key="index"
@@ -34,8 +57,12 @@
                     </template>
                 </li>
             </ul>
-            <div id="message-form">
+            <div
+                v-show="!minified"
+                id="message-form"
+            >
                 <input
+                    ref="MessageInputArea"
                     v-model="message"
                     class="input-send"
                     autocomplete="off"
@@ -77,7 +104,11 @@ export default {
         message: '',
         stompClient: null,
         receiveList: [],
-        userCount: 0
+        userCount: 0,
+        minified: false,
+        minifiedTop: 0,
+        minifiedLeft: 0,
+        minifyInterval: null,
     }),
     computed: {
         ...mapGetters(['nickname']),
@@ -85,8 +116,17 @@ export default {
     created() {
         this.connect();
     },
+    beforeDestroyed() {
+        if (this.minifyInterval) {
+            clearInterval(this.minifyInterval);
+        }
+    },
     mounted() {
         makeDraggable('chat-page', 'chat-header');
+
+        if (this.$refs.MessageInputArea) {
+            this.$refs.MessageInputArea.focus();
+        }
         
         window.onbeforeunload = () => {
             this.close();
@@ -119,13 +159,22 @@ export default {
         },
         sendMessage(element) {
             if(this.message.length > 0 && this.stompClient) {
-                var chatMessage = {
+                if (!this.stompClient)
+                    return;
+
+                const chatMessage = {
                     sender:this.nickname,
                     content:this.message,
                     type:"CHAT"
                 };
+
                 this.stompClient.send("/chat/sendMessage", JSON.stringify(chatMessage),{});
                 this.message ='';
+
+                const messageAreaElement = document.getElementById('message-area');
+                setTimeout(() => {
+                    messageAreaElement.scrollTop = messageAreaElement.scrollHeight - messageAreaElement.clientHeight;
+                }, 125); // receiveList에 채팅이 추가된 후 DOM에 반영되는데 걸리는 시간 대기
             }
         },
         getFormatDate(date) {
@@ -134,11 +183,6 @@ export default {
         onMessageReceived(payload) {
             if (!this.stompClient)
                 return;
-            const messageAreaElement = document.getElementById('message-area');
-            const oldPosition = messageAreaElement.scrollTop;
-            const oldHeight = messageAreaElement.scrollHeight - messageAreaElement.clientHeight;
-
-            const isBottom = oldPosition === oldHeight;
 
             var content = JSON.parse(payload.body);
 
@@ -158,11 +202,20 @@ export default {
             this.receiveList.push(content);
 
             
-            setTimeout(() => {
-                if (isBottom) { // 최하단에 있을 때 스크롤 동작
-                    messageAreaElement.scrollTop = messageAreaElement.scrollHeight - messageAreaElement.clientHeight;
-                }
-            }, 125); // receiveList에 채팅이 추가된 후 DOM에 반영되는데 걸리는 시간 대기
+            const messageAreaElement = document.getElementById('message-area');
+            
+            if (messageAreaElement) {
+                const oldPosition = messageAreaElement.scrollTop;
+                const oldHeight = messageAreaElement.scrollHeight - messageAreaElement.clientHeight;
+
+                const isBottom = oldPosition === oldHeight;
+
+                setTimeout(() => {
+                    if (isBottom) { // 최하단에 있을 때 스크롤 동작
+                        messageAreaElement.scrollTop = messageAreaElement.scrollHeight - messageAreaElement.clientHeight;
+                    }
+                }, 125); // receiveList에 채팅이 추가된 후 DOM에 반영되는데 걸리는 시간 대기
+            }
         },
         leaved() {
             if (this.stompClient) {
@@ -179,26 +232,84 @@ export default {
         close() {
             this.leaved();
             this.closeHandler();
-        }
+        },
+        drag() {
+            this.minified = false;
+            clearInterval(this.minifyInterval);
+        },
+        minify() {
+            const chatElement = document.getElementById('chat-page');
+
+            if (this.minified) {
+                this.minified = false;
+
+                chatElement.style.top = this.minifiedTop;
+                chatElement.style.left = this.minifiedLeft;
+
+                clearInterval(this.minifyInterval);
+            } else {
+                this.minified = true;
+
+                this.minifiedTop = chatElement.style.top;
+                this.minifiedLeft = chatElement.style.left;
+
+                const headerElement = document.getElementById('chat-header');
+
+                const minifyTop = document.documentElement.clientHeight - headerElement.clientHeight;
+                const minifyLeft = 0;
+                
+                const same = function(a, b) {
+                    return (a <= b + 1) && (a >= b - 1);
+                };
+
+                this.minifyInterval = setInterval(() => {
+                    const nextTop = `${(chatElement.offsetTop + minifyTop) / 2}px`;
+                    const nextLeft = `${(chatElement.offsetLeft + minifyLeft) / 2}px`;
+
+                    chatElement.style.top = nextTop;
+                    chatElement.style.left = nextLeft;
+
+                    if (same(chatElement.offsetTop, minifyTop) && same(chatElement.offsetLeft, minifyLeft)) {
+                        chatElement.style.top = `${minifyTop}px`;
+                        chatElement.style.left = `${minifyLeft}px`;
+
+                        clearInterval(this.minifyInterval);
+                    }
+                }, 17);
+            }
+        },
     },
 };
 </script>
 
 <style lang="scss" scoped>
-button {
+.button {
+    min-height: 30px;
+    width: 40px;
+    
+    background-color: transparent;
+
     box-shadow: none;
     border: none;
     line-height: 100%;
     border-radius: 4px;
     transition: all 0.2s ease-in-out;
     cursor: pointer;
-    min-height: 30px;
+    color: #fff;
+    margin-right: 4px;
 }
-button:hover {
-    opacity: 0.9;
+
+.button-minify {
+    font-size: 140%;
+}
+
+.button:hover {
+    background-color: black;
+    background-color: rgba(0, 0, 0, 0.33);
+    // opacity: 0.2;
     transition: 0.5s;
 }
-button:active {
+.button:active {
     -webkit-transform: scale(1.05);
     transform: scale(1.05);
     transition: 0.1s;
@@ -210,10 +321,12 @@ button:active {
     left: 68px;
     top: 180px;
     border-radius: 2px;
-    width: 350px;
+    width: 450px;
     height: 400px;
     display: flex;
     flex-direction: column;
+}
+.shadow {
     box-shadow: 0 1px 11px rgba(0, 0, 0, 0.27);
 }
 
@@ -231,14 +344,6 @@ button:active {
         margin: 5px 10px;
         font-size: 140%;
         text-align: left;
-    }
-
-    .button-close {
-        width: 60px;
-        background-color: black;
-        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.12);
-        color: #fff;
-        margin-right: 4px;
     }
 }
 
@@ -286,6 +391,9 @@ button:active {
     }
 
     .button-send {
+        box-shadow: none;
+        border: none;
+        border-radius: 4px;
         height: 30px;
         margin-left: 8px;
         width: 80px;
@@ -294,8 +402,10 @@ button:active {
         color: #fff;
     }
 }
-
-@media (max-width: 992px) {
+.count {
+    font-size: 100%;
+}
+@media (max-width: 768px) {
     #chat-page {
         z-index: 11;
         left: 0px;
@@ -318,6 +428,10 @@ button:active {
         padding-left: 12px;
         padding-right: 12px;
         overflow: auto;
+    }
+
+    .count {
+        font-size: 80%;
     }
 }
 </style>
