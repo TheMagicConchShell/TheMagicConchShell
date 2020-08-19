@@ -26,14 +26,14 @@
                     </div>
 
                     <div
-                        v-if="isPost && isMine"
+                        v-if="(isPost && isMine) || nickname == 'admin'"
                         class="button-item cursor-pointer"
                         @click="advertiseCaller"
                     >
                         <svg-advertise />
                     </div>
 
-                    <template v-if="nickname && isMine">
+                    <template v-if="(nickname && isMine) || nickname == 'admin'">
                         <template v-if="isPost">
                             <div 
                                 v-if="nickname"
@@ -90,12 +90,6 @@
                 >
                     {{ title }}
                 </div>
-                <!-- <div
-                    v-else
-                    class="title-text hash cursor-default"
-                >
-                    {{ hash }}
-                </div> -->
             </div>
 
             <div class="avatar-container">
@@ -143,150 +137,154 @@
                 </div>
             </div>
 
-            <div class="comment-body-container">
+            <div class="comment-body-wrapper">
                 <template
                     v-if="isUpdate"
                 >
-                    <div
-                        class="comment-body padding-right-view"
-                    >
-                        <editor
-                            ref="commentUpdateEditor"
-                            :options="editorOpts"
-                            :initial-value="content"
-                            initial-edit-type="wysiwyg"
-                        />
-                    </div>
-                    <div class="comment-body-sidebar">
-                        <div 
-                            class="btn btn-info comment-update-btn"
-                            :disabled="$wait.is('counsel-chunk')"
-                            @click="modifyHandlerWrapper"
+                    <div class="comment-body-container">
+                        <div
+                            class="comment-body padding-right-view"
                         >
-                            수정
+                            <editor
+                                ref="commentUpdateEditor"
+                                :options="editorOpts"
+                                :initial-value="content"
+                                initial-edit-type="wysiwyg"
+                            />
                         </div>
-                        <span class="comment-update-secret">
-                            <label class="el-switch el-switch-sm">
-                                <input
-                                    v-model="commentSecret"
-                                    type="checkbox"
-                                    name="switch"
-                                    checked=""
-                                >
-                                <span
-                                    class="el-switch-style"
-                                />
-                            </label>
-                            <label
-                                for="commentupdatesecret"
-                                class="comment-update-secret-label"
+                        <div class="comment-body-sidebar">
+                            <div 
+                                class="btn btn-info comment-update-btn"
+                                :disabled="$wait.is('counsel-chunk')"
+                                @click="modifyHandlerWrapper"
                             >
-                                <span v-if="commentSecret">
-                                    익명
-                                </span>
-                                <span v-else>
-                                    공개
-                                </span>
-                            </label>
-                        </span>
+                                수정
+                            </div>
+                            <span class="comment-update-secret">
+                                <label class="el-switch el-switch-sm">
+                                    <input
+                                        v-model="commentSecret"
+                                        type="checkbox"
+                                        name="switch"
+                                        checked=""
+                                    >
+                                    <span
+                                        class="el-switch-style"
+                                    />
+                                </label>
+                                <label
+                                    for="commentupdatesecret"
+                                    class="comment-update-secret-label"
+                                >
+                                    <span v-if="commentSecret">
+                                        익명
+                                    </span>
+                                    <span v-else>
+                                        공개
+                                    </span>
+                                </label>
+                            </span>
+                        </div>
                     </div>
                 </template>
                 <template v-else>
                     <div class="write-date">
                         {{ formatDate }}
                     </div>
-                    <div class="comment-body comment-body-view padding-right-view">
-                        <viewer
-                            :initial-value="content"
-                        />
-                    </div>
-                    <div class="comment-body-sidebar">
-                        <div
-                            class="button-like wide-only cursor-pointer"
-                            :disabled="$wait.is('counsel-chunk')"
-                            @click="likeHandlerWrapper('p', id, iLoveIt)"
-                        >
-                            <i
-                                class="fa-thumbs-up up inline"
-                                :class="{far: (iLoveIt <= 0), fa: (iLoveIt > 0)}"
-                            /> {{ likeCount }}
+                    <div class="comment-body-container">
+                        <div class="comment-body comment-body-view padding-right-view">
+                            <viewer
+                                :initial-value="content"
+                            />
                         </div>
-                        <div
-                            class="button-dislike wide-only cursor-pointer"
-                            :disabled="$wait.is('counsel-chunk')"
-                            @click="likeHandlerWrapper('m', id, iLoveIt)"
-                        >
-                            <i
-                                class="fa-thumbs-down down inline"
-                                :class="{far: (iLoveIt >= 0), fa: (iLoveIt < 0)}"
-                            /> {{ unlikeCount }}
+                        <div class="comment-body-sidebar">
+                            <div
+                                class="button-like wide-only cursor-pointer"
+                                :disabled="$wait.is('counsel-chunk')"
+                                @click="likeHandlerWrapper('p', id, iLoveIt)"
+                            >
+                                <i
+                                    class="fa-thumbs-up up inline"
+                                    :class="{far: (iLoveIt <= 0), fa: (iLoveIt > 0)}"
+                                /> {{ likeCount }}
+                            </div>
+                            <div
+                                class="button-dislike wide-only cursor-pointer"
+                                :disabled="$wait.is('counsel-chunk')"
+                                @click="likeHandlerWrapper('m', id, iLoveIt)"
+                            >
+                                <i
+                                    class="fa-thumbs-down down inline"
+                                    :class="{far: (iLoveIt >= 0), fa: (iLoveIt < 0)}"
+                                /> {{ unlikeCount }}
+                            </div>
+                            <b-modal
+                                :id="`additional-like-modal-${isPost}-${id}`"
+                                ref="modal"
+                                title="더 좋아요를 누르시겠습니까?"
+                            >
+                                <span>
+                                    포인트 N을 소모해서 좋아요 한개를 더 추가하실 수 있습니다.
+                                </span>
+                                <template v-slot:modal-footer="{ hide }">
+                                    <b-button
+                                        variant="outline-secondary"
+                                        size="sm"
+                                        class="float-right"
+                                        @click="hide"
+                                    >
+                                        취소
+                                    </b-button>
+                                    <b-button
+                                        variant="danger"
+                                        size="sm"
+                                        class="float-right"
+                                        :disabled="$wait.is('counsel-chunk')"
+                                        @click="likeHandler('p', id, iLoveIt, true)"
+                                    >
+                                        좋아요 삭제
+                                    </b-button>
+                                    <b-button
+                                        variant="primary"
+                                        size="sm"
+                                        class="float-right"
+                                        :disabled="$wait.is('counsel-chunk')"
+                                        @click="likeHandler('pp', id, iLoveIt, false)"
+                                    >
+                                        더 좋아요
+                                    </b-button>
+                                </template>
+                            </b-modal>
+                            <b-modal
+                                :id="`additional-like-cancel-modal-${isPost}-${id}`"
+                                ref="modal"
+                                title="더 좋아요를 취소하시겠습니까?"
+                            >
+                                <span>
+                                    더 좋아요를 취소하시더라도 포인트는 반환되지 않습니다.
+                                </span>
+                                <template v-slot:modal-footer="{ hide }">
+                                    <b-button
+                                        variant="outline-secondary"
+                                        size="sm"
+                                        class="float-right"
+                                        :disabled="$wait.is('counsel-chunk')"
+                                        @click="hide"
+                                    >
+                                        취소
+                                    </b-button>
+                                    <b-button
+                                        variant="danger"
+                                        size="sm"
+                                        class="float-right"
+                                        :disabled="$wait.is('counsel-chunk')"
+                                        @click="likeHandler('pp', id, iLoveIt, true)"
+                                    >
+                                        좋아요 삭제
+                                    </b-button>
+                                </template>
+                            </b-modal>
                         </div>
-                        <b-modal
-                            :id="`additional-like-modal-${isPost}-${id}`"
-                            ref="modal"
-                            title="더 좋아요를 누르시겠습니까?"
-                        >
-                            <span>
-                                포인트 N을 소모해서 좋아요 한개를 더 추가하실 수 있습니다.
-                            </span>
-                            <template v-slot:modal-footer="{ hide }">
-                                <b-button
-                                    variant="outline-secondary"
-                                    size="sm"
-                                    class="float-right"
-                                    @click="hide"
-                                >
-                                    취소
-                                </b-button>
-                                <b-button
-                                    variant="danger"
-                                    size="sm"
-                                    class="float-right"
-                                    :disabled="$wait.is('counsel-chunk')"
-                                    @click="likeHandler('p', id, iLoveIt, true)"
-                                >
-                                    좋아요 삭제
-                                </b-button>
-                                <b-button
-                                    variant="primary"
-                                    size="sm"
-                                    class="float-right"
-                                    :disabled="$wait.is('counsel-chunk')"
-                                    @click="likeHandler('pp', id, iLoveIt, false)"
-                                >
-                                    더 좋아요
-                                </b-button>
-                            </template>
-                        </b-modal>
-                        <b-modal
-                            :id="`additional-like-cancel-modal-${isPost}-${id}`"
-                            ref="modal"
-                            title="더 좋아요를 취소하시겠습니까?"
-                        >
-                            <span>
-                                더 좋아요를 취소하시더라도 포인트는 반환되지 않습니다.
-                            </span>
-                            <template v-slot:modal-footer="{ hide }">
-                                <b-button
-                                    variant="outline-secondary"
-                                    size="sm"
-                                    class="float-right"
-                                    :disabled="$wait.is('counsel-chunk')"
-                                    @click="hide"
-                                >
-                                    취소
-                                </b-button>
-                                <b-button
-                                    variant="danger"
-                                    size="sm"
-                                    class="float-right"
-                                    :disabled="$wait.is('counsel-chunk')"
-                                    @click="likeHandler('pp', id, iLoveIt, true)"
-                                >
-                                    좋아요 삭제
-                                </b-button>
-                            </template>
-                        </b-modal>
                     </div>
                 </template>
             </div>
@@ -575,7 +573,7 @@ export default {
     }
 }
 
-.comment-body-container {
+.comment-body-wrapper {
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
@@ -590,6 +588,11 @@ export default {
         padding-right: 12px;
     }
 
+    .comment-body-container {
+        display: flex;
+        width: 100%;
+    }
+
     .comment-body {
         text-align: justify;
         overflow: visible;
@@ -598,7 +601,7 @@ export default {
     }
     .comment-body-view {
         margin-right: 0px !important;
-        padding: 15px;
+        padding: 0px 15px 15px 15px;
     }
 }
 
@@ -687,24 +690,43 @@ export default {
         }
     }
 
-    .comment-body-container {
-        display: block;
+    .comment-body-wrapper {
+        display: flex;
 
         .write-date {
-            text-align: unset;
+            text-align: right;
             color: gray;
             font-weight: 100;
-            width: auto;
-            padding-right: 12px;
+            width: 100%;
+            padding-right: 6px;
         }
-        
-        .padding-right-view {
-            padding-right: 60px;
+
+        .comment-body-container {
+            display: flex;
+            width: 100%;
+
+            .comment-body {
+                flex: 1;
+            }
+            .comment-body-sidebar {
+                width: 60px;
+
+                .button-like {
+                    padding-bottom: 2px;
+                    border-bottom: 1px solid lightgray;
+                    color: green;
+                    font-size: 100%;
+                }
+                .button-dislike {
+                    color: brown;
+                    font-size: 100%;
+                }
+            }
         }
         
         .comment-body-sidebar {
             display: flex;
-            flex-direction: column-reverse;
+            flex-direction: column;
 
             .comment-update-btn{
                 position: absolute;
@@ -733,25 +755,6 @@ export default {
                     margin-bottom: 0.1rem;
                     margin-left: 2px;
                 }
-            }
-
-            .button-like {
-                float: right;
-                position: absolute;
-                right: 16px;
-                top: 60px;
-                padding-bottom: 2px;
-                border-bottom: 1px solid lightgray;
-                color: green;
-                font-size: 100%;
-            }
-            .button-dislike {
-                float: right;
-                position: absolute;
-                right: 16px;
-                top: 90px;
-                color: brown;
-                font-size: 100%;
             }
         }
     }

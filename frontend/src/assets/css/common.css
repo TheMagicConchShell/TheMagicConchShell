@@ -25,6 +25,9 @@
     src: local(※), url('../fonts/Bold.woff') format('woff');
 }
 
+.tui-editor-contents {
+    font-family: md;
+  }
 #app {
     font-family: md
 }
@@ -40,15 +43,7 @@ background-color: #bdbdbd;
 border-radius: 10px;
 box-shadow: inset 0px 0px 5px white;
 }
-#content {
-    margin: 70px 200px;
-}
 
-@media (max-width:992px) {
-    #content {
-        margin: 70px 88px!important;
-    }
-}
 #photo {
     height: 100px;
 }

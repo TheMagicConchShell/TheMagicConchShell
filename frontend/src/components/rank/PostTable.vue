@@ -109,6 +109,7 @@ export default {
         },
     },
     created() {
+        this.$store.dispatch('fetchCategories');
         this.getList(this.mySort);
     },
     methods: {

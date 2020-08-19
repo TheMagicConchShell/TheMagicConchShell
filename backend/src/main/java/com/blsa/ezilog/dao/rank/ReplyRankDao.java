@@ -10,7 +10,7 @@ import com.blsa.ezilog.model.rank.ReplyRank;
 public interface ReplyRankDao extends JpaRepository<ReplyRank, Long>{
     @Query (value = "select id,writer,post_no,write_date,like_count,secret\r\n" + 
             "from reply\r\n" + 
-            "order by like_count desc\r\n" +
+            "order by like_count desc, id desc\r\n" +
             "limit 10;",nativeQuery = true)
     List<ReplyRank> selectReplyRankData();
 }

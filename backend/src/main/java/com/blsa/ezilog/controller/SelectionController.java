@@ -1,6 +1,5 @@
 package com.blsa.ezilog.controller;
 
-import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -25,11 +24,12 @@ import com.blsa.ezilog.dao.PostDao;
 import com.blsa.ezilog.dao.SelectionPostDao;
 import com.blsa.ezilog.model.BasicResponse;
 import com.blsa.ezilog.model.ErrorResponse;
-import com.blsa.ezilog.model.post.SelectionPostRequestDTO;
 import com.blsa.ezilog.model.post.Post;
 import com.blsa.ezilog.model.post.SelectionHistory;
 import com.blsa.ezilog.model.post.SelectionPost;
+import com.blsa.ezilog.model.post.SelectionPostRequestDTO;
 import com.blsa.ezilog.service.SelectionService;
+import com.blsa.ezilog.service.UserService;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -39,6 +39,9 @@ public class SelectionController {
 
     @Autowired
     private PostDao postDao;
+    
+    @Autowired
+    private UserService userService;
     
     @Autowired
     private SelectionPostDao selectionPostDao;
@@ -135,6 +138,8 @@ public class SelectionController {
         	list.forEach((e) -> {
                 if (e.isSecret() == true) {
                     e.setWriter("익명의 작성자");
+                } else {
+                	e.setProfileImg(userService.select(e.getWriter()).getProfileImg());                	
                 }
             });
             
@@ -207,7 +212,9 @@ public class SelectionController {
         	list.forEach((e) -> {
                 if (e.isSecret() == true) {
                     e.setWriter("익명의 작성자");
-                }
+                } else {
+                	e.setProfileImg(userService.select(e.getWriter()).getProfileImg());					
+				}
             });
             
             final BasicResponse result = new BasicResponse();
