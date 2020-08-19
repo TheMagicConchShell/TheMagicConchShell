@@ -209,9 +209,8 @@
                     id="ddmenu"
                     class="nav-item dropdown"
                 >
-                    <a
+                    <div
                         class="nav-link"
-                        href="#"
                     >
                         <i
                             class="fas fa-language"
@@ -225,15 +224,14 @@
                                 {{ language.name }}
                             </li>
                         </ul>
-                    </a>
+                    </div>
                 </li>
                 <li 
                     id="ddmenu"
                     class="nav-item dropdown"
                 >
-                    <a
+                    <div
                         class="nav-link"
-                        href="#"
                     >
                         <i
                             class="fas fa-users"
@@ -261,7 +259,7 @@
                                 </li>
                             </div>
                         </ul>
-                    </a>
+                    </div>
                 </li>
             </ul>
         </nav>
@@ -280,9 +278,6 @@
                 :pagination-enabled="false"
                 :speed="8000"
             >
-                <!-- <transition
-                name:="conversion"
-            > -->
                 <template v-if="spotList && spotList.length">
                     <slide
                         v-for="item in spotList"
@@ -295,11 +290,7 @@
                             <span> [ 광고 ] {{ item.title }}</span>
                         </router-link>
                     </slide>
-                </template>
-                <template v-else>
-                    등록된 광고가 없습니다.
-                </template>
-            <!-- </transition> -->
+                </template>   
             </carousel>
         </div>
         <div 
@@ -567,7 +558,24 @@ a:hover {
 #ddopen li:hover {
     background-color: #bdbdbd;
 }
+#spot_area {
+    position: fixed;
+    top: 68px;
+    width: 100%;
+    z-index:0;
+}
+.show {
+    background-color: #BEDAE5!important;
+    display: flex;
+    padding: 10px;
+}
+.nav-link:hover {
+    cursor: pointer;
+}
 @media (max-width: 992px) {
+    #ddopen {
+        font-size: 85%;
+    }
     .navbar {
         height: 52px;
         font-size: 100%;
@@ -602,15 +610,9 @@ a:hover {
         width: 150px;
     }
 }
-#spot_area {
-    position: fixed;
-    top: 68px;
-    width: 100%;
-    z-index:0;
-}
-.show {
-    background-color: #BEDAE5!important;
-    display: flex;
-    padding: 10px;
+@media (max-width: 600px) {
+    #ddopen {
+        font-size: 100%;
+    }
 }
 </style>
