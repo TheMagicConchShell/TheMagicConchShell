@@ -153,5 +153,11 @@ export default {
         margin: 70px 0px!important;
         padding: 0 10px;
     }
-}   
+}
+@media (max-width: 768px) {
+    #content {
+        margin: 70px 0px!important;
+        padding: 0 0px;
+    }
+}
 </style>

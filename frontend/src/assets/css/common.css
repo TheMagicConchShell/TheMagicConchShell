@@ -44,7 +44,7 @@ border-radius: 10px;
 box-shadow: inset 0px 0px 5px white;
 }
 #content {
-    margin: 70px 200px;
+    margin: 70px 170px;
 }
 
 @media (max-width:992px) {
@@ -52,6 +52,12 @@ box-shadow: inset 0px 0px 5px white;
         margin: 70px 88px!important;
     }
 }
+@media (max-width:768px) {
+    #content {
+        margin: 70px 8px!important;
+    }
+}
+
 #photo {
     height: 100px;
 }
