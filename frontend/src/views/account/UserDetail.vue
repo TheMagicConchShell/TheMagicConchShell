@@ -3,11 +3,13 @@
         <ValidationObserver ref="observer">
             <div>
                 <b-avatar
+                    button
                     class="profile-avatar"
                     variant="info"
                     :src="profileImgUrl"
                     size="9em"
-                    badge-variant="info" 
+                    badge-variant="info"
+                    @click="onClickImageUpload"
                 />
                 <b-button
                     id="profileBtn"
@@ -237,7 +239,9 @@
                         <MyReply />
                     </b-tab>
                     <b-tab title="포인트 내역">
-                        <PointHistory />
+                        <PointHistory
+                            ref="pointHistory"
+                        />
                     </b-tab>
                 </b-tabs>
             </b-card>
@@ -449,6 +453,7 @@ export default {
                 this.$bvModal.hide('ask-level-up');
                 this.$bvModal.show('level-up-celebrate');
                 this.userFetch();
+                this.$refs.pointHistory.fetchPointHistory(1);
             }).catch((error) => {
                 console.log(error.response);
             });
