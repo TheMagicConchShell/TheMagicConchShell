@@ -9,7 +9,7 @@
             <hr>
             <div id="level-up-text">
                 <h1>LEVEL UP</h1>
-                포인트 {{ levelupRequirePoint }}을 소모하여 Lv.{{ level+1 }}로 레벨업 합니다.
+                {{ $t('account.level.message', {point: levelupRequirePoint, dest: level+1}) }}
             </div>
             <hr>
             <b-button
@@ -20,7 +20,7 @@
                 class="float-right"
                 @click="dolevelup"
             >
-                레벨업
+                {{ $t('account.level.up') }}
             </b-button>
             <div id="cancel-btn">
                 <b-button
@@ -47,9 +47,6 @@ export default {
             required: true,
         },
     },
-    data: () => ({
-
-    }),
     methods: {
         dolevelup() {
             this.$emit("levelup");
