@@ -127,7 +127,6 @@ export default {
                     page:page || 1,
                 }
             }).then((res)=>{
-                console.dir(res);
                 if(res.status >= 200 && res.status < 300 ){
                     this.spotList = res.data.data.content;
                     this.rows = res.data.data.content.totalElements;

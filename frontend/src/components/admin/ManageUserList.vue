@@ -114,7 +114,6 @@ export default {
                     page: page || 1,
                 },
             }).then((res)=>{
-                console.dir(res);
                 this.userList = res.data.data.content;
                 this.rows = res.data.data.totalElements;
                 this.perPage = res.data.data.size;
