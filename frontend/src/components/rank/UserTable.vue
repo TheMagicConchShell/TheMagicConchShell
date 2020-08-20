@@ -189,7 +189,6 @@ export default {
                 this.getMyRank(2);
             }
         }).catch(e=>{
-            console.log(e);
         });
     },
     methods: {
@@ -214,7 +213,6 @@ export default {
                     this.getMyRank(val);
                 }
             }).catch(e=>{
-                console.log(e);
             });
         },
         getMyRank(val){
@@ -227,11 +225,9 @@ export default {
                     }
                 }).then((res)=>{
                     if(res.data.status==="S-200"){
-                        console.log(res.data.data);
                         this.myRank = res.data.data;
                     }
                 }).catch(e=>{
-                    console.log(e);
                 });
             }
         }
