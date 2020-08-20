@@ -180,6 +180,8 @@ public class CounselController {
                         }
                         if (e.isSecret() == true) {
                             e.setWriter("익명의 작성자");
+                        }else if(e.isSecret() != true) {
+                            e.setProfileImg(userservice.select(e.getWriter()).getProfileImg());
                         }
                     });
 
