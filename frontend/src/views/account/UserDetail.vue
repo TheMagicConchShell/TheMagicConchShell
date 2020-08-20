@@ -413,7 +413,7 @@ export default {
 
                 })
                 .catch((error) => {
-                    console.log(error.response);
+                    this.$toast('안내','작성한 고민과 답변을 모두 삭제 후 회원탈퇴가 가능합니다.');
                 });
         },
         onClickImageUpload() {
