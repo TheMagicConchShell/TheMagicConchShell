@@ -1,5 +1,6 @@
 package com.blsa.ezilog.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,10 +52,41 @@ public class RankController {
             final ErrorResponse result = setErrors("E-4510", "회원 정보가 존재하지 않습니다.", errors);
             response = new ResponseEntity<>(result, HttpStatus.FORBIDDEN);
         } else {
+            List<UserRank> ret = new ArrayList<UserRank>();
+            for(int i=0;i<10&&i<list.size();i++) {
+                ret.add(list.get(i));
+            }
             final BasicResponse result = new BasicResponse();
             result.status = "S-200";
             result.message = "회원 랭킹 조회에 성공했습니다.";
-            result.data = list;
+            result.data = ret;
+            response = new ResponseEntity<>(result, HttpStatus.OK);
+        }
+        return response;
+    }
+    
+    @GetMapping("/user/mine")
+    @ApiOperation(value = "회원 본인의 랭킹 조회")
+    public Object myRank(@RequestParam Integer sort,@RequestHeader(value = "nickname", required = true) String nickname) {
+        ResponseEntity<BasicResponse> response = null;
+        Map<String, Object> errors = new HashMap<>();
+        List<UserRank> list = urDao.selectUserRankData(sort);
+        if (list.size() == 0 || list == null) {
+            errors.put("field", "User");
+            errors.put("data", null);
+            final ErrorResponse result = setErrors("E-4510", "회원 정보가 존재하지 않습니다.", errors);
+            response = new ResponseEntity<>(result, HttpStatus.FORBIDDEN);
+        } else {
+            UserRank ret = new UserRank();
+            for(int i=0;i<list.size();i++) {
+                if(list.get(i).getNickname().equals(nickname)) {
+                    ret = list.get(i);
+                }
+            }
+            final BasicResponse result = new BasicResponse();
+            result.status = "S-200";
+            result.message = "회원 랭킹 조회에 성공했습니다.";
+            result.data = ret;
             response = new ResponseEntity<>(result, HttpStatus.OK);
         }
         return response;
