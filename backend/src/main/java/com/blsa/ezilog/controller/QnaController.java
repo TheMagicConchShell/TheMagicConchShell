@@ -123,6 +123,10 @@ public class QnaController {
 
         Page<Question> qList = questionDao.findAll(pageable);
         if (!qList.isEmpty()) {
+            qList.forEach((e) -> {
+                e.setProfileImg(userservice.select(e.getWriter()).getProfileImg());
+            });
+ 
             result.status = "S-200";
             result.message = "질문 목록 불러오기에 성공했습니다.";
             result.data = qList;
