@@ -1,14 +1,16 @@
 <template>
     <div class="container">
-        <h1>{{ $t('ranking.board') }}</h1>
-        <b-tabs 
-            active-nav-item-class="h3 font-weight-bold text-uppercase text-dark"
-            content-class="mt-3"
-            fill
+        <div id="home">
+            <transition name="conversion">
+                <span :key="language">{{ $t('ranking.board') }}</span>
+            </transition>
+        </div>
+        <b-tabs
+            pills
         >
             <b-tab 
                 :title="$t('ranking.type.user')" 
-                title-link-class="h3"
+                title-link-class=""
                 active
             >
                 <RankingTable
@@ -17,7 +19,7 @@
             </b-tab>
             <b-tab 
                 :title="$t('ranking.type.counsel')"
-                title-link-class="h3"
+                title-link-class=""
             >
                 <RankingTable
                     :table-type="'post'"
@@ -25,7 +27,7 @@
             </b-tab>
             <b-tab 
                 :title="$t('ranking.type.reply')"
-                title-link-class="h3"
+                title-link-class=""
             >
                 <RankingTable
                     :table-type="'reply'"
@@ -37,14 +39,28 @@
 
 <script>
 import RankingTable from '@/components/rank/RankingTable.vue';
+import { mapState, mapGetters } from 'vuex';
+
 export default {
     name: 'Rank',
     components:{
         RankingTable
+    },
+    data() {
+        return {
+            isActive: 'false'
+        };
+    },
+    computed: {
+        ...mapGetters(['language']) 
+    },
+    methods: {
+        click1() {
+
+        }
     }
 };
 </script>
 
-<style>
-
+<style scoped>
 </style>

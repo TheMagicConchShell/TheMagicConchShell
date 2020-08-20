@@ -50,7 +50,7 @@
                                 </router-link>
                             </td>
                             <td id="tb_writer">
-                                <div class="d-flex w-100">
+                                <div class="d-flex align-self-center">
                                     <img
                                         :src="item.profileImg? item.profileImg: require(`@/assets/images/default_profile.png`)"
                                         style="width: 20px;height: 20px; border-radius: 20px; margin-right: 5px"
@@ -213,11 +213,13 @@ th{
     width: 60px;
 }
 #t_header :nth-child(2) {
-	text-align: left;
+    text-align: left;
 	/* width: 455px; */
 }
 #t_header :nth-child(3) {
     width: 150px;
+    text-align: left;
+    padding-left: 40px;
 }
 #t_header :nth-child(4) {
     width: 80px;
@@ -237,7 +239,6 @@ th{
 }
 #tb_writer {
     width: 150px;
-    text-align:left;
     overflow: hidden;
     word-break: break-all;
 }
@@ -252,12 +253,9 @@ th{
         width: 60%;
     }
     #t_header :nth-child(3) {
-        display:none
-    }
-    #t_header :nth-child(4) {
         width: 40%;
     }
-    #t_header :nth-child(5) {
+    #t_header :nth-child(4) {
         display:none
     }
     #tb_no {
@@ -265,9 +263,6 @@ th{
     }
     #tb_title {
         width: 60%;
-    }
-    #tb_views {
-        display:none
     }
     #tb_writer {
         width: 40%;
