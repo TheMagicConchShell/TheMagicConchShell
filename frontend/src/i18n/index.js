@@ -64,6 +64,10 @@ const messages = {
             }
         },
         account: {
+            delete: {
+                done: '안내',
+                message: '탈퇴하시겠습니까?',
+            },
             level: {
                 message: '포인트 {point}를 소모하여 Lv.{dest}로 레벨업 합니다.',
                 up: '레벨업',
@@ -163,6 +167,10 @@ const messages = {
             },
         },
         account: {
+            delete: {
+                done: 'Message',
+                message: 'Are you sure you want to delete the account?',
+            },
             post: {
                 nocontent: 'There is no history of writing your concerns.',
                 origin: 'Origin',
@@ -262,6 +270,10 @@ const messages = {
             }
         },
         account: {
+            delete: {
+                done: '起源',
+                message: '确定要删除账户吗?',
+            },
             post: {
                 nocontent: '没有写你的担忧的历史。',
                 origin: '起源',

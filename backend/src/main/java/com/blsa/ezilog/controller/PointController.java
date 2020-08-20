@@ -237,7 +237,7 @@ public class PointController {
                     errorMap.put("needPoint", requireEP.get(user.getLevel() + 1) - user.getPoint());
                     eresult.errors = errorMap;
 
-                    response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
+                    response = new ResponseEntity<>(eresult, HttpStatus.BAD_REQUEST);
                 }
             } else {
                 eresult.status = "E-4503";
@@ -247,7 +247,7 @@ public class PointController {
                 errorMap.put("user-level", user.getLevel());
                 eresult.errors = errorMap;
 
-                response = new ResponseEntity<>(eresult, HttpStatus.UNAUTHORIZED);
+                response = new ResponseEntity<>(eresult, HttpStatus.BAD_REQUEST);
             }
 
         } else {
