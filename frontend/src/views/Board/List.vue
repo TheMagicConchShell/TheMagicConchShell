@@ -71,8 +71,12 @@
                     v-show="Y"
                     id="category"
                 >
-                    <ul id="tab-column">
+                    <ul
+                        v-if="categories && categories.length"
+                        id="tab-column"
+                    >
                         <li
+                            id="0"
                             class="cursor-pointer-hover"
                             :class="{active: (currentCategory === '전체')}"
                             @click="fetchCounsel"
@@ -81,9 +85,10 @@
                         </li>
                         <li
                             v-for="category in categories"
+                            :id="category.id"
                             :key="category.id"
                             class="cursor-pointer-hover"
-                            :class="{active: (currentCategory === category.name)}"
+                            :class="{active: (currentCategory === category.name.ko)}"
                             @click="fetchCounsel"
                         >
                             {{ category.name[language] }}
@@ -124,14 +129,13 @@ export default {
     },
     mounted() {
         this.$nextTick(window.addEventListener('scroll', this.detectWindowScrollY));
-        // window.addEventListener('scroll', this.detectbottom);
     },
     methods: {
         fetchCounsel(e) {
             if (e.target.id === '0') {
                 this.currentCategory = '전체';
             } else {
-                this.currentCategory = this.$store.getters.categoryNameById(e.target.id,this.language);
+                this.currentCategory = this.$store.getters.categoryNameById(e.target.id);
             }
             this.page = 1;
         },

@@ -477,7 +477,7 @@ a:hover {
 }
 #sidebar {
     font-family: sb;
-    z-index: 2;
+    z-index: 5;
     display:flex;
     flex-direction: column;
     position:fixed;
@@ -502,7 +502,7 @@ a:hover {
     transition-duration: 0.5s;
 }
 .navbar {
-    z-index:1;
+    z-index: 4;
     background-color:  white;
     opacity: 0.8;
     position: fixed;
