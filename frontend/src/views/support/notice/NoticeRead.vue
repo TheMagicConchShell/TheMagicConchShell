@@ -73,11 +73,10 @@ export default {
                 id: this.no
             }
         }).catch(() => {
-            this.$router.push('Error');
+            this.$router.push({name: 'Error'});
         });
 
         if (response) {
-            console.log(response);
             if (response.status == 200) {
                 this.writer = '관리자'; //response.data.data.writer;
                 this.writeDate = this.formatDate(response.data.data.writeDate);

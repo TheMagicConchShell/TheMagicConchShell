@@ -352,7 +352,6 @@ export default {
                 nickname: this.nicknameInput
             })
                 .then((res) => {
-                    console.log(res);
                     if (res.data.status === 'S-200') {
                         this.email = res.data.data.email;
                         this.profileImgUrl = res.data.data.profileImg;
@@ -363,7 +362,8 @@ export default {
                     }
                 })
                 .catch((error) => {
-                    console.log(error.response);
+                    this.$toast('안내', '해당 유저의 정보를 볼 수 없습니다.');
+                    this.$router.push({name: 'Home'});
                 });
         },
         async userUpdate() {
