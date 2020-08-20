@@ -27,6 +27,7 @@
                                 v-model="email"
                                 type="text"
                                 placeholder="이메일"
+                                :disabled="$wait.is('sign-up')"
                             />
                         </div>
                         <div
@@ -53,6 +54,7 @@
                                 v-model="nickname"
                                 type="text"
                                 placeholder="별명"
+                                :disabled="$wait.is('sign-up')"
                             />
                         </div>
                         <div
@@ -83,6 +85,7 @@
                                 v-model="password"
                                 :type="passwordType"
                                 placeholder="비밀번호"
+                                :disabled="$wait.is('sign-up')"
                             />
                             <i
                                 id="password-show-eye"
@@ -117,6 +120,7 @@
                                 v-model="passwordConfirm"
                                 :type="passwordType"
                                 placeholder="비밀번호 확인"
+                                :disabled="$wait.is('sign-up')"
                             />
                         </div>
                         <div
@@ -133,13 +137,16 @@
                 pill
                 variant="outline-primary"
                 class="center"
+                :disabled="$wait.is('sign-up')"
                 @click.prevent="signup"
             >
                 회원 가입
             </b-button>
             <hr>
             <div class="center">
-                <KakaoLogin />
+                <KakaoLogin
+                    :disabled="$wait.is('sign-up')"
+                />
             </div>
         </b-modal>
     </div>
@@ -219,6 +226,7 @@ export default {
                 return;
             }
 
+            this.$wait.start('sign-up');
             this.$store.dispatch('register', {
                 email: this.email,
                 nickname: this.nickname,
@@ -229,6 +237,9 @@ export default {
                     this.$toast('안내', this.msg);
                     this.$bvModal.hide('signup');
                 }).catch((error) => {
+                    this.$toast('안내', error.response.data.message);
+                }).finally(() => {
+                    this.$wait.end('sign-up');
                 });
         },
     },

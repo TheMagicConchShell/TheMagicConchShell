@@ -362,6 +362,8 @@ export default {
                     }
                 })
                 .catch((error) => {
+                    this.$toast('안내', '해당 유저의 정보를 볼 수 없습니다.');
+                    this.$router.push({name: 'Home'});
                 });
         },
         async userUpdate() {

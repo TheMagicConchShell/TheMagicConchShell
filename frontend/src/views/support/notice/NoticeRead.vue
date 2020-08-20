@@ -73,7 +73,7 @@ export default {
                 id: this.no
             }
         }).catch(() => {
-            this.$router.push('Error');
+            this.$router.push({name: 'Error'});
         });
 
         if (response) {

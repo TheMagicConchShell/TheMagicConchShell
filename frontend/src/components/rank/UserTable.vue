@@ -74,29 +74,102 @@
                 </thead>
                 <tbody>
                     <tr 
-                        v-for="(item,index) in list"
+                        v-for="item in list"
                         :key="item.nickname"
                     >
-                        <td>{{ index+1 }}</td>
-                        <td>{{ item.nickname }}</td>
-                        <td>{{ item.postCount }}</td>
-                        <td>{{ item.replyCount }}</td>
-                        <td>{{ item.point }}</td>
-                        <td>{{ item.level }}</td>
+                        <template v-if="item.rnum!=isMine">
+                            <td>{{ item.rnum }}</td>
+                            <td>{{ item.nickname }}</td>
+                            <td>{{ item.postCount }}</td>
+                            <td>{{ item.replyCount }}</td>
+                            <td>{{ item.point }}</td>
+                            <td>{{ item.level }}</td>
+                        </template>
+                        <template v-else>
+                            <td 
+                                class="my-rank"
+                            >
+                                {{ item.rnum }}
+                            </td>
+                            <td 
+                                class="my-rank"
+                            >
+                                {{ item.nickname }}
+                            </td>
+                            <td 
+                                class="my-rank"
+                            >
+                                {{ item.postCount }}
+                            </td>
+                            <td 
+                                class="my-rank"
+                            >
+                                {{ item.replyCount }}
+                            </td>
+                            <td 
+                                class="my-rank"
+                            >
+                                {{ item.point }}
+                            </td>
+                            <td 
+                                class="my-rank"
+                            >
+                                {{ item.level }}
+                            </td>
+                        </template>
                     </tr>
                 </tbody>
             </table>
+        </template>
+        <template v-if="myRank">
+            <b-card
+                title="내 순위"
+            >
+                <table class="table">
+                    <colgroup>
+                        <col width="10%">
+                        <col width="30%">
+                        <col width="15%">
+                        <col width="15%">
+                        <col width="15%">
+                        <col width="15%">
+                    </colgroup>
+                    <tbody>
+                        <tr
+                            class="my-rank"
+                        >
+                            <td>{{ myRank.rnum }}</td>
+                            <td>{{ myRank.nickname }}</td>
+                            <td>{{ myRank.postCount }}</td>
+                            <td>{{ myRank.replyCount }}</td>
+                            <td>{{ myRank.point }}</td>
+                            <td>{{ myRank.level }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </b-card>
         </template>
     </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
     data() {
         return {
             list:[],
-            mySort:2
+            mySort:2,
+            isMine:0,
+            myRank:null
         };
+    },
+    computed: {
+        ...mapGetters(['nickname']),
+    },
+    watch: {
+        nickname(){
+            this.$router.go(0);
+        }
     },
     created() {
         this.$axios({
@@ -107,7 +180,13 @@ export default {
             }
         }).then((res)=>{
             if(res.data.status==="S-200"){
+                res.data.data.forEach(element => {
+                    if(this.nickname===element.nickname){
+                        this.isMine=element.rnum;
+                    }
+                });;
                 this.list = res.data.data;
+                this.getMyRank(2);
             }
         }).catch(e=>{
         });
@@ -123,16 +202,40 @@ export default {
                 }
             }).then((res)=>{
                 if(res.data.status==="S-200"){
+                    res.data.data.forEach(element => {
+                        if(this.nickname===element.nickname){
+                            this.isMine=element.rnum;
+                        }
+                    });;
                     this.list = res.data.data;
+                    this.getMyRank(val);
                 }
             }).catch(e=>{
             });
         },
-        
+        getMyRank(val){
+            if(this.nickname&&isMine==0){
+                this.$axios({
+                    url:"/rank/user/mine",
+                    method:"GET",
+                    params:{
+                        sort:val
+                    }
+                }).then((res)=>{
+                    if(res.data.status==="S-200"){
+                        this.myRank = res.data.data;
+                    }
+                }).catch(e=>{
+                    console.log(e);
+                });
+            }
+        }
     },
 };
 </script>
 
 <style>
-
+.my-rank{
+    font-weight: bold;
+}
 </style>

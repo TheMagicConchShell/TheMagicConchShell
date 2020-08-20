@@ -92,6 +92,7 @@ export default {
                     this.$bvModal.hide('findpw');
                 })
                 .catch((error) => {
+                    this.$toast('안내', error.response.data.message);
                 });
         },
     },
