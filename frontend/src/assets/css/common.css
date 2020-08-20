@@ -43,6 +43,20 @@ background-color: #bdbdbd;
 border-radius: 10px;
 box-shadow: inset 0px 0px 5px white;
 }
+#content {
+    margin: 50px 120px;
+}
+
+@media (max-width:992px) {
+    #content {
+        margin: 40px 40px!important;
+    }
+}
+a {
+    text-decoration: none;
+    color: black;
+    transition: 0.5s;
+}
 
 #photo {
     height: 100px;
@@ -123,11 +137,11 @@ button {
 .conversion-enter {opacity:0; visibility: 0; transform: translateY(30%);}
 
 /*nav바 밑줄*/
-.nav-item{
+#ddmenu{
     display:inline;
     transition: 0.5s ease;
 }
-.nav-item:before, .nav-item:after {
+#ddmenu:before, #ddmenu:after {
     content: '';
     position: absolute;
     width: 0;
@@ -136,8 +150,8 @@ button {
     -webkit-transition: all 0.5s ease;
     transition: all 0.5s ease;
 }
-.nav-item:before { left:50%; }
-.nav-item:after { right: 50%; }
-.nav-item:hover:before, .nav-item:hover:after {
+#ddmenu:before { left:50%; }
+#ddmenu:after { right: 50%; }
+#ddmenu:hover:before, #ddmenu:hover:after {
     width: 50%;
 }
