@@ -412,7 +412,6 @@ export default {
         },
         showCraousel(){
             const showme = document.getElementById('spotCarousel');
-            console.dir(showme);
         },
         openChat(){
             if(this.nickname){
