@@ -473,7 +473,7 @@ a:hover {
     /* height: 0; */
     width: 0;
     transition-duration: 0.5s;
-    z-index :10;
+    z-index :2;
 }
 #sidebar {
     font-family: sb;
@@ -524,7 +524,7 @@ a:hover {
     margin-right: 16px;
     display:flex;
     flex-direction: row;
-    z-index: 10;
+    z-index: 2;
 }
 #photo {
     height: 64px; 
@@ -536,7 +536,7 @@ a:hover {
 }
 #navitems #ddmenu:hover #ddopen {
     display:block;
-    z-index:10;
+    z-index:2;
     height: auto;
 }
 #ddopen {
@@ -550,7 +550,7 @@ a:hover {
     font-size: 75%;
     border: 1px solid #bdbdbd;
     background-color: #f1f1f1;
-    z-index:10;
+    z-index:2;
 }
 #ddopen li {
     transition-duration: 0.5s;
@@ -562,7 +562,7 @@ a:hover {
     position: fixed;
     top: 68px;
     width: 100%;
-    z-index:0;
+    z-index:3;
 }
 .show {
     background-color: #BEDAE5!important;
@@ -573,6 +573,9 @@ a:hover {
     cursor: pointer;
 }
 @media (max-width: 992px) {
+    #ddopen {
+        font-size: 85%;
+    }
     .navbar {
         height: 52px;
         font-size: 100%;
@@ -605,6 +608,11 @@ a:hover {
         background-color: #bdbdbd;
         /* height: 128px; */
         width: 150px;
+    }
+}
+@media (max-width: 600px) {
+    #ddopen {
+        font-size: 100%;
     }
 }
 </style>

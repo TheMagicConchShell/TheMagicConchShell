@@ -103,10 +103,15 @@ export default {
             })
                 .then((res) => {
                     this.$toast('안내', '로그인 되었습니다.');
-                    console.log(res);
                 })
                 .catch((err) => {
-                    console.log(err);
+                    if(err.response.status==400){
+                        this.$toast('로그인 실패', err.response.data.message);
+                    }else if(err.response.status==404){
+                        this.$toast('로그인 실패', err.response.data.message);
+                    }else {
+                        this.$toast('로그인 실패','로그인에 실패했습니다.');
+                    }
                 });
         },
     },

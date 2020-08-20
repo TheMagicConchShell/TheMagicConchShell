@@ -54,7 +54,7 @@
                     </div>
                     <hr>
                     <div id="originPost">
-                        원글: {{ item.postTitle }}
+                        {{ $t('account.post.origin') }}: {{ item.postTitle }}
                     </div>
                 </b-list-group-item>
             </b-list-group>
@@ -77,7 +77,7 @@
         </template>
 
         <template v-else>
-            고민 글 작성 내역이 없습니다.
+            {{ $t('account.nocontent.reply')}}
         </template>
     </div>
 </template>
@@ -94,10 +94,16 @@ export default {
         perPage: 10,
     }),
     computed: {
-        ...mapGetters(['nickname']),
+        ...mapGetters([
+            'nickname',
+            'language',
+        ]),
     },
     watch: {
         page() {
+            this.fetchMyReplies(this.page);
+        },
+        language() {
             this.fetchMyReplies(this.page);
         },
     },
@@ -122,8 +128,8 @@ export default {
             });
         },
         getSelected(selected){
-            if(selected) return '채택';
-            else return '미채택';
+            if(selected) return this.$t('account.post.selected');
+            else return this.$t('account.post.noselected');
         },
         getFormatDate(date) {
             return moment(new Date(date)).format("YYYY.MM.DD HH:mm:ss");
