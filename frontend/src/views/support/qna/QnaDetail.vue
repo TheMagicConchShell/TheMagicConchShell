@@ -182,6 +182,9 @@ export default {
 
 <style scoped>
 .timeline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     margin-left: 0px;
     padding-left: 0px;
 }
