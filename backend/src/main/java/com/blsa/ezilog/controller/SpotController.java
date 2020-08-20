@@ -90,7 +90,7 @@ public class SpotController {
                     errorMap.put("data", pageable);
                     eresult.errors = errorMap;
 
-                    response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+                    response = new ResponseEntity<>(eresult, HttpStatus.OK);
                 }
 
             } else {

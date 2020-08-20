@@ -110,7 +110,6 @@ export default {
                 }
             })
                 .then((response) => {
-                    console.log(response);
                 	if (200 <= response.status && response.status < 300) {
                 		let formatDate = function (date) {
                 			let d = new Date(date),
@@ -131,7 +130,8 @@ export default {
                 	}
                 })
                 .catch((error) => {
-                	console.log(error.response);
+                    this.$toast('안내', '문의를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.');
+                    console.log(error.response);
                 })
                 .finally(() => {
                 	this.$wait.end("board list load");
