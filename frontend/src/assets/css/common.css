@@ -44,12 +44,12 @@ border-radius: 10px;
 box-shadow: inset 0px 0px 5px white;
 }
 #content {
-    margin: 70px 200px;
+    margin: 50px 120px;
 }
 
 @media (max-width:992px) {
     #content {
-        margin: 70px 88px!important;
+        margin: 40px 40px!important;
     }
 }
 a {

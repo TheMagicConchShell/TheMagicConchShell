@@ -7,6 +7,29 @@
         </div>
         <div class="d-flex">
             <div id="article">
+                <div id="selectbox">
+                    <select
+                        v-model="currentCategory"
+                        @change="fetchCounsel"
+                    >
+                        <option  
+                            id="0"
+                            :class="{active: (currentCategory === '전체')}"
+                            :value="'전체'"
+                        >
+                            <span :key="language">{{ $t('board.all') }}</span>
+                        </option>
+                        <option
+                            v-for="category in categories"
+                            :id="category.id"
+                            :key="category.id"
+                            :class="{active: (currentCategory === category.name.ko)}"
+                            :value="category.name.ko"
+                        >
+                            <span :key="language">{{ category.name[language] }}</span>
+                        </option>
+                    </select>
+                </div>
                 <ul id="tab">
                     <li
                         id="0"
@@ -125,12 +148,9 @@ export default {
 </script>
 
 <style scoped>
-.active {
-    background: #0363BA;
-    color:white;
-}
 #home {
   display: flex;
+  font-family: sb;
   margin: 30px 0;
   justify-content: space-between;
   font-size: 30px;
@@ -145,22 +165,42 @@ export default {
 #tab {
     display:flex;
     align-items: center;
-    margin: 0;
+    margin-bottom: 10px;
     padding: 0;
     width: 100%;
     height: 24px;
     font-size: 16px;
     background-color: #ffffff;
 }
+#selectbox {
+    display:none;
+}
+@media (max-width:992px) {
+    #tab {
+        display:none
+    }
+    #selectbox {
+        display:flex;
+    }
+}
 #tab li{
+    font-family: sb;
     clear: both;
-    min-width: 12.5%;
+    width: 50px;
+    margin: 0 5px;
     display: inline-block;    
     transition-duration: 0.5s;
-    border-radius: 5px 5px 0 0;
+    border-radius: 5px;
+    color: white;
+    background:linear-gradient(to top, #aaaaaa,#bbbbbb,#c0c0c0);
+    border:1px solid #dadada;
+}
+.active {
+    background:linear-gradient(to top, #1c3eb4, #154cbd, #1059c6, #1266ce, #1b73d5)!important;
+    color:white;
 }
 #tab li:hover {
-    background-color: #0363BA;
+    background:linear-gradient(to top, #1c3eb4, #154cbd, #1059c6, #1266ce, #1b73d5);
     color: white
 }
 #article {

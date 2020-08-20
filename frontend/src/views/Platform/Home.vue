@@ -75,31 +75,41 @@
             id="history"
             class="cursor"       
         >
-            <b-card
+            <div 
                 v-for="(history,i) in histories"
                 id="detail"
                 :key="i"
-                class="mb-3 d-inline"
                 @mouseover="select(history)"
                 @mouseleave="unselect()"
             >
-                <router-link
-                    :to="{name: 'CounselDetail', params: {no: history.no}}"
-                    style="text-decoration: none;"
-                >
-                    <b-card-text>
-                        <p>{{ history.title }}</p>
-                        <div id="history_detail">                           
-                            <div
-                                v-if="nowshowing===history"
-                                id="history_content"
-                            >
-                                조회 {{ history.views }} 좋아요 {{ history.likeCount }} 댓글 {{ history.replies }}
-                            </div>
-                        </div>
-                    </b-card-text>
-                </router-link>
-            </b-card>
+                <div class="skill-card">
+                    <router-link
+                        :to="{name: 'CounselDetail', params: {no: history.no}}"
+                        style="text-decoration: none;"
+                    >
+                        <header class="skill-card__header">
+                            <span id="card_title">{{ history.title }}</span>
+                            <viewer
+                                :initial-value="history.content"
+                            />
+                        </header>
+                        <section class="skill-card__body">
+                            <p class="skill-card__title">
+                                <img
+                                    class="skill-card__icon"
+                                    :src="history.profileImg? history.profileImg: require(`@/assets/images/default_profile.png`)"
+                                >
+                                <span class="skill-card__duration">{{ history.writer }}</span>
+                            </p>
+                            <ul class="skill-card__knowledge">
+                                <li>조회수 {{ history.views }}</li>
+                                <li>좋아요 {{ history.likeCount }}</li>
+                                <li>댓글 {{ history.replies }}</li>
+                            </ul>
+                        </section>
+                    </router-link>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -229,7 +239,7 @@ export default {
 <style scoped>
 #home {
   display: flex;
-  margin: 30px 0 0 0;
+  margin: 30px 0;
   padding-top: 30px;
   justify-content: space-between;
   font-family: sb;
@@ -271,19 +281,7 @@ export default {
         grid-template-columns: 1fr 1fr;
     }
 }
-#detail {
-    border: 1px solid #f1f1f1;
-    box-shadow: 10px 10px 10px #9e9e9e;
-    height: 80px;
-    -webkit-transition: all 0.5s ease-in-out;
-    transition: all 0.5s ease-in-out;
-    z-index: 0;
-}
-#detail:hover {
-    height: 100%;
-    z-index: 1;
-    overflow:hidden;
-}
+
 #history_detail {
     color: black;
 }
@@ -303,15 +301,10 @@ export default {
     background-color: white;
     box-shadow: 10px 10px 10px #9e9e9e;
 }
-.carousel-3d-slide.current:hover {
-
-}
 .carousel-3d-slide.right-1, .carousel-3d-slide.left-1 {
-    /* background-color: #f5f5f5; */
     border-radius: 5px;
 }
 .carousel-3d-slide.right-2, .carousel-3d-slide.left-2 {
-    /* background-color: #e7e7e7; */
     border-radius: 5px;
 }
 #slidefooter {
@@ -329,7 +322,116 @@ export default {
     background-color: white;
     opacity: 0.8;
 }
-a:hover {
-    color: #777777;
+
+.skill-card {
+  padding: 20px;
+  /* width: 15em; */
+  background-color: #FFF;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  cursor: pointer;
+}
+.skill-card:hover {
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
+.skill-card:hover .skill-card__header {
+  height: 40px;
+}
+/* .skill-card:hover .skill-card__header .skill-card__icon {
+  -webkit-transform: translateX(-50%) translateY(-50%) scale(3);
+          transform: translateX(-50%) translateY(-50%) scale(3);
+} */
+#card_title {
+    font-family: sb;
+    font-size:120%;
+}
+.skill-card:hover .skill-card__body {
+  height: 150px;
+}
+.skill-card:hover .skill-card__body .skill-card__knowledge li {
+  -webkit-transform: translateX(0);
+          transform: translateX(0);
+  -webkit-transition-timing-function: cubic-bezier(0, 1.5, 1, 1);
+          transition-timing-function: cubic-bezier(0, 1.5, 1, 1);
+  -webkit-transition-duration: 0.5s;
+          transition-duration: 0.5s;
+}
+.skill-card:hover .skill-card__body .skill-card__knowledge li:nth-child(1) {
+  -webkit-transition-delay: 0.25s;
+          transition-delay: 0.25s;
+}
+.skill-card:hover .skill-card__body .skill-card__knowledge li:nth-child(2) {
+  -webkit-transition-delay: 0.5s;
+          transition-delay: 0.5s;
+}
+.skill-card:hover .skill-card__body .skill-card__knowledge li:nth-child(3) {
+  -webkit-transition-delay: 0.75s;
+          transition-delay: 0.75s;
+}
+.skill-card:hover .skill-card__body .skill-card__knowledge li:nth-child(4) {
+  -webkit-transition-delay: 1s;
+          transition-delay: 1s;
+}
+.skill-card:hover .skill-card__body .skill-card__knowledge li:nth-child(5) {
+  -webkit-transition-delay: 1.25s;
+          transition-delay: 1.25s;
+}
+.skill-card:hover .skill-card__body .skill-card__knowledge li:nth-child(6) {
+  -webkit-transition-delay: 1.5s;
+          transition-delay: 1.5s;
+}
+.skill-card .skill-card__header {
+  position: relative;
+  /* background-color: #eb6c3f; */
+  height: 150px;
+  margin: -20px -20px 20px -20px;
+  -webkit-transition: height 0.5s;
+  transition: height 0.5s;
+  overflow: hidden;
+}
+.skill-card__icon {
+    width: 20px;
+}
+/* .skill-card .skill-card__header .skill-card__icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translateY(-50%) translateX(-50%);
+          transform: translateY(-50%) translateX(-50%);
+  display: block;
+  width: 60%;
+  max-height: auto;
+  -webkit-transition: -webkit-transform 0.5s;
+  transition: -webkit-transform 0.5s;
+  transition: transform 0.5s;
+  transition: transform 0.5s, -webkit-transform 0.5s;
+} */
+.skill-card .skill-card__body {
+  height: 40px;
+  -webkit-transition: height 0.5s;
+  transition: height 0.5s;
+  overflow: hidden;
+  display:flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.skill-card .skill-card__body .skill-card__title {
+    font-family: sb;
+}
+.skill-card .skill-card__body .skill-card__duration {
+  color: #9E9E9E;
+  font-style: italic;
+}
+.skill-card .skill-card__body .skill-card__knowledge {
+  margin-top: 10px;
+  color: #424242;
+}
+.skill-card .skill-card__body .skill-card__knowledge li {
+  margin-top: 5px;
+  -webkit-transition-duration: 0;
+          transition-duration: 0;
+  -webkit-transition-delay: 0.5s;
+          transition-delay: 0.5s;
+  -webkit-transform: translateX(-550%);
+          transform: translateX(-550%);
 }
 </style>

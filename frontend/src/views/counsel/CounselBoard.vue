@@ -4,70 +4,63 @@
             <template slot="waiting">
                 <infinite-loading />
             </template>
-            <ul class="fz_list">
-                <li class="fz_list_th">
-                    <div
-                        class="fz_num d-md-table-cell"
-                    >
-                        {{ $t('board.no') }}
-                    </div>
-                    <div
-                        class="fz_subject"
-                    >
-                        {{ $t('board.title') }}
-                        <!-- 제목 -->
-                    </div>
-                    <div
-                        class="fz_hit d-md-table-cell"
-                    >
-                        {{ $t('board.views') }}
-                        <!-- 조회 -->
-                    </div>
-                    <div
-                        class="fz_writer hidden-md"
-                    >
-                        {{ $t('board.writer') }}
-                        <!-- 작성자 -->
-                    </div>
-                    <div
-                        class="fz_date hidden-md"
-                    >
-                        {{ $t('board.date') }}
-                        <!-- 날짜 -->
-                    </div>
-                </li>
-                <template v-if="!list">
-                    <div
-                        class=""
-                    >
-                        이런 사이트가 망해서 고민이 없습니다...
-                    </div>
-                </template>
-                <li
-                    v-for="item in list"
-                    :key="item.no"
+            <div class="tbl-header">
+                <table
+                    cellpadding="0"
+                    cellspacing="0"
+                    border="0"
                 >
-                    <div class="fz_num hidden-xs">
-                        {{ item.no }}
-                    </div>
-                    <div class="fz_subject">
-                        <router-link
-                            :to="{name: 'CounselDetail', params: {no: item.no}}"
+                    <thead>
+                        <tr id="t_header">
+                            <th>{{ $t('board.no') }}</th>
+                            <th>{{ $t('board.title') }}</th>
+                            <th>{{ $t('board.views') }}</th>
+                            <th>{{ $t('board.writer') }}</th>
+                            <th>{{ $t('board.date') }}</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="tbl-content">
+                <table
+                    cellpadding="0"
+                    cellspacing="0"
+                    border="0"
+                >
+                    <tbody>
+                        <tr 
+                            v-for="item in list"
+                            id="t_body"
+                            :key="item.no"
                         >
-                            [{{ item.category }}] {{ item.title }}
-                        </router-link>
-                    </div>
-                    <div class="fz_hit">
-                        {{ item.views }}
-                    </div>
-                    <div class="fz_writer">
-                        {{ item.writer }}
-                    </div>
-                    <div class="fz_date">
-                        {{ item.writeDate }}
-                    </div>
-                </li>
-            </ul>
+                            <td id="tb_no">
+                                {{ item.no }}
+                            </td>
+                            <td id="tb_title">
+                                <router-link
+                                    :to="{name: 'CounselDetail', params: {no: item.no}}"
+                                >
+                                    [{{ item.category }}] {{ item.title }} <small style="color: #5BBDCB">[{{ item.replies }}]</small>
+                                </router-link>
+                            </td>
+                            <td id="tb_views">
+                                {{ item.views }}
+                            </td>
+                            <td id="tb_writer">
+                                <div class="d-flex w-100">
+                                    <img
+                                        :src="item.profileImg? item.profileImg: require(`@/assets/images/default_profile.png`)"
+                                        style="width: 20px;height: 20px; border-radius: 20px; margin-right: 5px"
+                                    >{{ item.writer }}
+                                </div>
+                            </td>
+                            <td id="tb_date">
+                                {{ item.writeDate }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </v-wait>
         <template v-if="list && list.length">
             <CounselSelectPaginate
@@ -100,6 +93,7 @@ export default {
     data: () => ({
         list: [],
         pageCount: 1,
+        replies: 0
     }),
     computed: {
         ...mapGetters(['language']),
@@ -153,6 +147,13 @@ export default {
                                 e.category = this.$store.getters.categoryNameById(e.categoryId, this.language);
                                 return e;
                             });
+                            this.list.forEach((e) => {
+                                this.fetchreplies(e.no)
+                                    .then((length) => {
+                                        e.replies = length;
+                                    })
+                                    .catch(() => {});
+                            });
                         }
                     })
                     .catch((error) => {
@@ -192,6 +193,14 @@ export default {
                                 e.category = this.$store.getters.categoryNameById(e.categoryId, this.language);
                                 return e;
                             });
+                            this.list.forEach((e) => {
+                                this.fetchreplies(e.no)
+                                    .then((length) => {
+                                        e.replies = length;
+                                    })
+                                    .catch(() => {});
+                            });
+                            console.log(this.list);
                         }
                     })
                     .catch((error) => {
@@ -201,6 +210,27 @@ export default {
                         this.$wait.end("board list load");
                     });
             }
+        },
+        fetchreplies(number) {
+            return new Promise((resolve, reject) => {
+                this.$axios({
+                    url: '/counsel/post/post-no',
+                    method: 'get',
+                    params: {
+                        no: number,
+                    },
+                })
+                    .then((response) => {
+                        if (response.status >= 200 && response.status < 300) {
+                            resolve(response.data.data.replies.length);
+                        } else {
+                            reject(error);
+                        }
+                    })
+                    .catch((error) => {
+                        reject(error);
+                    });
+            });
         },
         pageHandle(nextPage) {
             this.$router.push({
@@ -215,597 +245,121 @@ export default {
 </script>
 
 <style scoped>
-@charset "utf-8";
-/* @import url(//fonts.googleapis.com/earlyaccess/nanumgothic.css); */
-
-a {
-    color: unset;
-}
 a:hover {
-    text-decoration: unset;
-}
-
-/* 게시판 기본 설정 */
-
-#container_title {
-    display: none;
-}
-
-.fz_wrap,
-.fz_wrap h1,
-.fz_wrap h2,
-.fz_wrap h3,
-.fz_wrap h4,
-.fz_wrap h5,
-.fz_wrap h6,
-.fz_wrap input,
-.fz_wrap button,
-.fz_wrap textarea,
-.fz_wrap select,
-.fz_wrap .bo_current {
-    /* font-family: Nanum Gothic; */
-    color: #333;
-}
-
-.fz_wrap a:hover {
     text-decoration: none;
 }
-
-.fz_wrap .f_wrap {
-    *zoom: 1;
+table{
+  width:100%;
+  table-layout: fixed;
 }
-
-.fz_wrap .f_wrap:after {
-    content: "";
-    display: block;
-    clear: both;
+.tbl-header{
+  background-color: #A6C2CE;
+  border-bottom: 1px solid #1F1762;
+ }
+.tbl-content{
+  margin: 0 0 10px 0;
 }
-
-.fz_wrap .fl {
-    float: left;
+th{
+  padding: 10px 15px;
+  text-align: center;
+  font-family: sb;
+  font-size: 12px;
 }
-
-.fz_wrap .fr {
-    float: right;
+#t_header :nth-child(1) {
+    width: 60px;
 }
-
-.fz_wrap legend {
-    border: none !important;
-}
-
-.i_text {
-    height: 22px;
-    padding: 0 3px;
-    line-height: 20px;
-    font-size: 14px;
-    color: #333;
-    background: none;
-    border: 1px solid #b7b7b7;
-    border-right-color: #e1e1e1;
-    border-bottom-color: #e1e1e1;
-}
-
-.i_text_large {
-    display: inline-block;
-    height: 31px;
-    padding: 4px 6px;
-    font-size: 14px;
-    line-height: 20px;
-    color: #333;
-    border: 1px solid #b7b7b7;
-    border-right-color: #e1e1e1;
-    border-bottom-color: #e1e1e1;
-    vertical-align: top;
-    width: 218px;
-    background: none;
-}
-
-.fz_title_box {
-    font-size: 14px;
-    font-weight: bold;
-    color: #515151;
-    position: relative;
-    background: #f3f3f3;
-    /* background: url("./img/fz_title_bg.png") 0 0 repeat-x; */
-    height: 35px;
-    line-height: 35px;
-    border: 1px solid #dedede;
-    padding: 0px 15px;
-    font-weight: 700;
-    margin-bottom: 20px;
-}
-
-textarea#wr_content {
-    border: 1px solid #ccc;
-    height: 200px;
-}
-
-#captcha #captcha_info {
-    display: none;
-}
-
-.fz_wrap .required {
-    background-color: #fff !important;
-}
-
-.fz_wrap input[type="text"],
-.fz_wrap input[type="password"],
-.fz_wrap input[type="submit"],
-.fz_wrap input[type="search"],
-.fz_wrap input[type="image"] {
-    -webkit-border-radius: 0;
-    border-radius: 0;
-    -webkit-appearance: none;
-}
-
-
-/* safari 둥근모서리 그림자 제거 */
-
-.bo_fx {
-    margin-bottom: 5px;
-    zoom: 1
-}
-
-.bo_fx:after {
-    display: block;
-    visibility: hidden;
-    clear: both;
-    content: ""
-}
-
-.bo_fx ul {
-    margin: 0;
-    padding: 0;
-    list-style: none
-}
-
-#bo_list_total {
-    float: left;
-    padding-top: 5px
-}
-
-.btn_bo_user {
-    float: right;
-    margin: 0;
-    padding: 0;
-    list-style: none
-}
-
-.btn_bo_user li {
-    float: left;
-    margin-left: 5px
-}
-
-.btn_bo_adm {
-    float: left
-}
-
-.btn_bo_adm li {
-    float: left;
-    margin-right: 5px
-}
-
-.btn_bo_adm input {
-    padding: 8px;
-    border: 0;
-    background: #e8180c;
-    color: #fff;
-    text-decoration: none;
-    vertical-align: middle
-}
-
-.bo_notice td {
-    background: #fffaf2
-}
-
-.bo_notice td a {
-    font-weight: 700
-}
-
-.td_num strong {
-    color: #000
-}
-
-.bo_cate_link {
-    display: inline-block;
-    margin: 0 6px 0 0;
-    padding: 0 6px 0 0;
-    border-right: 1px solid #e7f1ed;
-    color: #555 !important;
-    font-weight: 700;
-    text-decoration: none;
-}
-
-
-/* 글제목줄 분류스타일 */
-
-.bo_current {
-    color: #e8180c !important;
-    font-size: 14px;
-}
-
-
-/* 게시판 카테고리 */
-
-#bo_cate h2 {
-    position: absolute;
-    font-size: 0;
-    line-height: 0;
-    overflow: hidden;
-}
-
-#bo_cate ul {
-    margin-bottom: 10px;
-    padding-left: 1px;
-    zoom: 1;
-    font-size: 14px;
-    list-style: none
-}
-
-#bo_cate ul:after {
-    display: block;
-    visibility: hidden;
-    clear: both;
-    content: ""
-}
-
-#bo_cate li {
-    float: left;
-    margin-top: -1px;
-}
-
-#bo_cate a {
-    display: block;
-    position: relative;
-    margin-left: -1px;
-    padding: 8px 15px;
-    color: #888;
-    text-align: center;
-    letter-spacing: -0.1em;
-    line-height: 1.2em;
-    cursor: pointer;
-    border: 1px solid #ddd;
-}
-
-#bo_cate a:focus,
-#bo_cate a:hover,
-#bo_cate a:active {
-    text-decoration: none
-}
-
-#bo_cate #bo_cate_on {
-    z-index: 2;
-    border: 1px solid #0e8185;
-    background: #0e8185;
-    color: #fff;
-    font-weight: 700
-}
-
-#bo_cate a:hover {
-    z-index: 2;
-    border: 1px solid #23ADB2;
-    background: #fff;
-    color: #23adb2;
-}
-
-
-/* 리스트 상단 */
-
-.fz_header {
-    *zoom: 1;
-    margin-bottom: 8px;
-    padding-top: 10px;
-}
-
-.fz_header:after {
-    content: "";
-    display: block;
-    clear: both;
-}
-
-.fz_total_count {
-    float: left;
-}
-
-.fz_rss {
-    float: right;
-}
-
-.fz_total_count span {
-    padding-left: 21px;
-    font-weight: 700;
-    color: #333;
-    /* background: url('./img/sprites_ico.gif') no-repeat 0 -24px; */
-    font-size: 14px;
-}
-
-.fz_total_count strong {
-    color: #0e8185;
-    font-weight: 700;
-}
-
-.fz_list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 10px 0;
-    width: 100%;
-    display: table;
-    font-size: 14px;
-    border-top: 2px solid #808080;
-}
-
-.fz_list li.fz_list_th {
-    background: lightgray;
-    /* background: url(./img/list_top_bar.gif) 0 0 repeat-x; */
-    height: 38px;
-}
-
-.fz_list li.fz_list_th div {
-    text-align: center;
-    vertical-align: middle;
-    color: #101010;
-    font-weight: bold;
-    font-size: 14px !important;
-    height: 38px;
-    line-height: 25px;
-}
-
-.fz_list li.fz_list_th .fz_subject,
-.fz_list li.fz_list_th .fz_checkbox {
-    line-height: 38px;
-}
-
-.fz_list li.fz_list_th .fz_checkbox {
-    padding: 0;
-}
-
-.fz_list li.fz_list_th a {
-    color: #0e8185 !important;
-}
-
-.fz_list li div .sv_wrap .sv {
+#t_header :nth-child(2) {
+    /* width: 455px; */
     text-align: left;
 }
-
-.fz_list li div input {
-    margin: 0;
+#t_header :nth-child(3) {
+    width: 60px;
 }
-
-.fz_list li.bg_e div .sv_wrap .sv a {
-    color: #fff !important
+#t_header :nth-child(4) {
+    width: 150px;
 }
-
-.fz_list li {
-    display: block;
-    border-bottom: 1px solid #dadada;
-    position: relative;
+#t_header :nth-child(5) {
+    width: 80px;
 }
-
-.fz_list li.bo_notice {
-    background: #fffaf2;
+#t_body {
+    border-bottom: 1px solid #BEDAE5;;
 }
-
-.fz_list li.bg_e {
-    background: #f5f5f5;
+#tb_no {
+    width: 60px;
 }
-
-.fz_list li.bg_e div,
-.fz_list li.bg_e div * {
-    color: #23ADB2 !important;
+#tb_title {
+    /* width: 455px; */
+    text-align: left;
 }
-
-.fz_list li div {
-    display: inline-block;
-    text-align: center;
-    height: 33px;
-    line-height: 22px;
-    padding: 6px 0;
-    vertical-align: middle;
+#tb_views {
+    width: 60px;
+}
+#tb_writer {
+    width: 150px;
+    text-align:left;
+    overflow: hidden;
     word-break: break-all;
 }
-
-.fz_list li .fz_checkbox {
-    position: absolute;
-    left: 13px;
-    top: -2px;
+#tb_date {
+    width: 80px;
 }
-
-.fz_list li .fz_subject {
-    display: block;
-    text-align: left;
-    height: auto;
-    padding: 0;
-}
-
-.fz_list li .fz_subject a {
-    display: block;
-    line-height: 33px;
-    line-height: 21px;
-    padding: 6px 10px 6px 15px;
-    /* vertical-align: middle; */
-    word-break: break-all
-}
-
-.fz_list li .fz_mobile_info {
-    display: inline-block;
-    margin-right: 5px;
-    font-size: 14px;
-    color: #333
-}
-
-.fz_list li .fz_writer,
-.fz_list li .fz_date,
-.fz_list li .fz_hit,
-.fz_list li .fz_good,
-.fz_list li .fz_nogood {
-    width: auto;
-    display: inline-block;
-    padding: 0 0 0 15px;
-}
-
-.fz_list li .fz_num,
-.fz_list li .fz_date,
-.fz_list li .fz_hit,
-.fz_list li .fz_good,
-.fz_list li .fz_nogood {
-    font-size: 14px;
-    /* font-family: tahoma; */
-}
-
-.fz_list li.re1 {
-    padding-left: 0;
-}
-
-.fz_list li.re2 {
-    padding-left: 18px;
-}
-
-.fz_list li.re3 {
-    padding-left: 36px;
-}
-
-.fz_list li.re4 {
-    padding-left: 54px;
-}
-
-.fz_list li.re5 {
-    padding-left: 72px;
-}
-
-.fz_list li.re6 {
-    padding-left: 90px;
-}
-
-.fz_list li.re7 {
-    padding-left: 108px;
-}
-
-.fz_list li.re8 {
-    padding-left: 126px;
-}
-
-.fz_list .fz_empty_list {
-    width: 100%;
-    padding: 30px 0;
-    height: auto;
-    line-height: 100px;
-    display: table-caption;
-    caption-side: bottom;
-    text-align: center;
-    border-bottom: 1px solid #dadada;
-}
-
-@media (min-width:768px) {
-    .fz_list li.fz_list_th .fz_subject,
-    .fz_list li.fz_list_th .fz_checkbox {
-        line-height: 25px;
+@media (max-width: 992px) {
+    #t_header :nth-child(1) {
+        display:none
     }
-    .fz_list li {
-        display: table-row;
+    #t_header :nth-child(2) {
+        width: 60%;
     }
-    .fz_list li div {
-        display: table-cell;
-        text-align: center;
-        height: 33px;
-        line-height: 20px;
-        padding: 6px 0;
-        vertical-align: middle;
-        border-bottom: 1px solid #dadada;
-        word-break: break-all;
+    #t_header :nth-child(3) {
+        display:none
     }
-    .fz_list li.bo_notice div {
-        background: #fffaf2
+    #t_header :nth-child(4) {
+        width: 40%;
     }
-    .fz_list li.bg_e div {
-        background: #f5f5f5;
+    #t_header :nth-child(5) {
+        display:none
     }
-    .fz_list li .fz_num {
-        width: 50px;
+    #tb_no {
+        display:none;
     }
-    .fz_list li .fz_checkbox {
-        width: 20px;
-        position: static;
-        left: 0;
-        top: 0
+    #tb_title {
+        width: 60%;
     }
-    .fz_list li .fz_subject {
-        display: table-cell;
+    #tb_views {
+        display:none
     }
-    .fz_list li .fz_writer {
-        width: 90px;
+    #tb_writer {
+        width: 40%;
     }
-    .fz_list li .fz_date {
-        width: 70px;
-    }
-    .fz_list li .fz_hit {
-        width: 45px;
-    }
-    .fz_list li .fz_good {
-        width: 45px;
-    }
-    .fz_list li .fz_nogood {
-        width: 45px;
-    }
-    .fz_list li .fz_mobile_info {
-        display: none;
-    }
-    .fz_list li .fz_writer,
-    .fz_list li .fz_date,
-    .fz_list li .fz_hit,
-    .fz_list li .fz_good,
-    .fz_list li .fz_nogood {
-        display: table-cell;
-        padding: 6px 0;
-    }
-    .fz_list li.re1,
-    .fz_list li.re2,
-    .fz_list li.re3,
-    .fz_list li.re4,
-    .fz_list li.re5,
-    .fz_list li.re6,
-    .fz_list li.re7,
-    .fz_list li.re8 {
-        padding-left: 0;
-    }
-    /* 답변시 들여쓰기 */
-    .fz_list li.re1 .icon_reply {
-        margin-left: 0;
-    }
-    .fz_list li.re2 .icon_reply {
-        margin-left: 18px;
-    }
-    .fz_list li.re3 .icon_reply {
-        margin-left: 36px;
-    }
-    .fz_list li.re4 .icon_reply {
-        margin-left: 54px;
-    }
-    .fz_list li.re5 .icon_reply {
-        margin-left: 72px;
-    }
-    .fz_list li.re6 .icon_reply {
-        margin-left: 90px;
-    }
-    .fz_list li.re7 .icon_reply {
-        margin-left: 108px;
-    }
-    .fz_list li.re8 .icon_reply {
-        margin-left: 126px;
+    #tb_date {
+        display:none
     }
 }
 
-
-/* 리스트 하단 */
-
-.fz_footer {
-    *zoom: 1;
-    margin-top: 10px;
+td{
+  padding: 15px;
+  text-align: center;
+  vertical-align:middle;
+  font-weight: 300;
+  font-size: 12px;
+}
+#t_no {
+    width: 10%;
+}
+#t_title {
+    width: 60%;
 }
 
-.fz_footer:after {
-    content: "";
-    display: block;
-    clear: both;
+/* demo styles */
+
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,500,300,700);
+body{
+  background: -webkit-linear-gradient(left, #25c481, #25b7c4);
+  background: linear-gradient(to right, #25c481, #25b7c4);
+  font-family: 'Roboto', sans-serif;
+}
+section{
+  margin: 50px;
 }
 
 </style>

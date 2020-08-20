@@ -555,7 +555,8 @@ textarea#wr_content {
 	line-height: 21px;
 	padding: 6px 10px 6px 15px;
 	/* vertical-align: middle; */
-	word-break: break-all
+	word-break: break-all;
+	float:left;
 }
 
 .fz_list li .fz_mobile_info {
