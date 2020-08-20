@@ -101,6 +101,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(encrypted);
         user.setLevel(temp.getLevel());
         user.setPoint(temp.getPoint());
+        user.setSocialAccount(temp.isSocialAccount());
         user.setProfileImg(request.getProfileImg());
         user.setSocialAccount(temp.isSocialAccount());
         user = dao.save(user);
