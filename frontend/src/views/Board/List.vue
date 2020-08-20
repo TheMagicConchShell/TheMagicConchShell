@@ -37,7 +37,7 @@
                         :class="{active: (currentCategory === '전체')}"
                         @click="fetchCounsel"
                     >
-                        <span :key="language">{{ $t('board.all') }}</span>
+                        {{ $t('board.all') }}
                     </li>
                     <li
                         v-for="category in categories"
@@ -47,7 +47,7 @@
                         :class="{active: (currentCategory === category.name.ko)}"
                         @click.stop="fetchCounsel"
                     >
-                        <span :key="language">{{ category.name[language] }}</span>
+                        {{ category.name[language] }}
                     </li>
                 </ul>
                 <div>
@@ -131,7 +131,7 @@ export default {
             if (e.target.id === '0') {
                 this.currentCategory = '전체';
             } else {
-                this.currentCategory = this.$store.getters.categoryNameById(e.target.id);
+                this.currentCategory = this.$store.getters.categoryNameById(e.target.id,this.language);
             }
             this.page = 1;
         },

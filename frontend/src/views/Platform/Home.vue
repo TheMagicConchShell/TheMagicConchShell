@@ -129,7 +129,6 @@ export default {
             size: 1000,
             list: [],
             histories: [],
-            replies: 0,
         };
     },
     computed: {
@@ -182,7 +181,10 @@ export default {
 
             if (response) {
                 if (response.status >= 200 && response.status < 300) {
-                    this.histories = response.data.data;
+                    this.histories = response.data.data.map((h) => {
+                        h.replies = 1;
+                        return h;
+                    });
                     this.histories.forEach((e) => {
                         this.fetchreplies(e.no)
                             .then((length) => {

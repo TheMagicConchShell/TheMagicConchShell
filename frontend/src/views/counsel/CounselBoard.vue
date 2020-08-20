@@ -93,7 +93,6 @@ export default {
     data: () => ({
         list: [],
         pageCount: 1,
-        replies: 0
     }),
     computed: {
         ...mapGetters(['language']),
@@ -113,103 +112,69 @@ export default {
         await this.fetchPost(this.page);
     },
     methods: {
+        fetchPostAll() {
+            return this.$axios({
+                url: 'counsel/post',
+                methods: 'get',
+                params: {
+                    page: this.page,
+                }
+            });
+        },
+        fetchPostByCategory() {
+            return this.$axios({
+                url: 'counsel/post/category',
+                methods: 'get',
+                params: {
+                    page: this.page,
+                    category: this.category,
+                }
+            });
+        },
         fetchPost(page) {
             this.$wait.start("board list load");
             this.$store.dispatch('fetchCategories');
             this.list = null;
 
-            if (this.category === '전체') {
-                this.$axios({
-                    url: '/counsel/post',
-                    method: 'get',
-                    params: {
-                        page: page || 1,
+            const fetching = this.category === '전체' ? this.fetchPostAll() : this.fetchPostByCategory();
+            fetching
+                .then((response) => {
+                    if (200 <= response.status && response.status < 300) {
+                        let formatDate = function (date) {
+                            let d = new Date(date),
+                                month = '' + (d.getMonth() + 1),
+                                day = '' + d.getDate(),
+                                year = d.getFullYear();
+
+                            if (month.length < 2) 
+                                month = '0' + month;
+                            if (day.length < 2) 
+                                day = '0' + day;
+
+                            return [month, day].join('-');
+                        };
+                        this.pageCount = response.data.data.totalPages;
+                        this.list = response.data.data.content.map((e) => {
+                            e.writeDate = formatDate(e.writeDate);
+                            e.replies = 1;
+                            e.category = this.$store.getters.categoryNameById(e.categoryId, this.language);
+                            return e;
+                        });
+                        this.list.forEach((e) => {
+                            this.fetchreplies(e.no)
+                                .then((length) => {
+                                    e.replies = length;
+                                })
+                                .catch(() => {});
+                        });
                     }
                 })
-                    .then((response) => {
-                        if (200 <= response.status && response.status < 300) {
-                            let formatDate = function (date) {
-                                let d = new Date(date),
-                                    month = '' + (d.getMonth() + 1),
-                                    day = '' + d.getDate(),
-                                    year = d.getFullYear();
-
-                                if (month.length < 2) 
-                                    month = '0' + month;
-                                if (day.length < 2) 
-                                    day = '0' + day;
-
-                                return [month, day].join('-');
-                            };
-                            this.pageCount = response.data.data.totalPages;
-                            this.list = response.data.data.content.map((e) => {
-                                e.writeDate = formatDate(e.writeDate);
-                                e.category = this.$store.getters.categoryNameById(e.categoryId, this.language);
-                                return e;
-                            });
-                            this.list.forEach((e) => {
-                                this.fetchreplies(e.no)
-                                    .then((length) => {
-                                        e.replies = length;
-                                    })
-                                    .catch(() => {});
-                            });
-                        }
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    })
-                    .finally(() => {
-                        this.$wait.end("board list load");
-                    });
-
-            } else {
-                this.$axios({
-                    url: '/counsel/post/category',
-                    method: 'get',
-                    params: {
-                        page: page || 1,
-                        category: this.category,
-                    }
+                .catch((error) => {
+                    console.log(error);
                 })
-                    .then((response) => {
-                        if (200 <= response.status && response.status < 300) {
-                            let formatDate = function (date) {
-                                let d = new Date(date),
-                                    month = '' + (d.getMonth() + 1),
-                                    day = '' + d.getDate(),
-                                    year = d.getFullYear();
-
-                                if (month.length < 2) 
-                                    month = '0' + month;
-                                if (day.length < 2) 
-                                    day = '0' + day;
-
-                                return [month, day].join('-');
-                            };
-                            this.pageCount = response.data.data.totalPages;
-                            this.list = response.data.data.content.map((e) => {
-                                e.writeDate = formatDate(e.writeDate);
-                                e.category = this.$store.getters.categoryNameById(e.categoryId, this.language);
-                                return e;
-                            });
-                            this.list.forEach((e) => {
-                                this.fetchreplies(e.no)
-                                    .then((length) => {
-                                        e.replies = length;
-                                    })
-                                    .catch(() => {});
-                            });
-                            console.log(this.list);
-                        }
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                    })
-                    .finally(() => {
-                        this.$wait.end("board list load");
-                    });
-            }
+                .finally(() => {
+                    this.$wait.end("board list load");
+                });
         },
         fetchreplies(number) {
             return new Promise((resolve, reject) => {
