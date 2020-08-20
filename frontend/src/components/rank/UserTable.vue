@@ -194,6 +194,8 @@ export default {
     },
     methods: {
         changeSort(val){
+            this.isMine = 0;
+            this.myRank = null;
             this.mySort = val;
             this.$axios({
                 url:"/rank/user",
@@ -216,7 +218,7 @@ export default {
             });
         },
         getMyRank(val){
-            if(this.nickname&&isMine==0){
+            if(this.nickname&&this.isMine==0){
                 this.$axios({
                     url:"/rank/user/mine",
                     method:"GET",
@@ -225,6 +227,7 @@ export default {
                     }
                 }).then((res)=>{
                     if(res.data.status==="S-200"){
+                        console.log(res.data.data);
                         this.myRank = res.data.data;
                     }
                 }).catch(e=>{
