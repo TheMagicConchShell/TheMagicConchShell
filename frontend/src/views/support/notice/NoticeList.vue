@@ -1,48 +1,52 @@
 <template>
     <div class="list-area">
         <template v-if="list && list.length">
-            <table
-                class="table"
-            >
-                <colgroup>
-                    <col width="10%">
-                    <col width="60%">
-                    <col width="15%">
-                    <col width="15%">
-                </colgroup>
-                <thead class="thead-dark">
-                    <tr>
-                        <th
-                            class="text-left"
-                            scope="col"
-                            colspan="2"
+            <div class="tbl-header">
+                <table
+                    cellpadding="0"
+                    cellspacing="0"
+                    border="0"
+                >
+                    <thead>
+                        <tr id="t_header">
+                            <th>{{ $t('board.title') }}</th>
+                            <th>{{ $t('board.writer') }}</th>
+                            <th>{{ $t('board.date') }}</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="tbl-content">
+                <table
+                    cellpadding="0"
+                    cellspacing="0"
+                    border="0"
+                >
+                    <tbody>
+                        <tr 
+                            v-for="item in list"
+                            id="t_body"
+                            :key="item.no"
                         >
-                            제목
-                        </th>
-                        <th scope="col">
-                            작성자
-                        </th>
-                        <th scope="col">
-                            작성시간
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr 
-                        v-for="item in list"
-                        :key="item.nid"
-                    >
-                        <td>{{ item.nid }}</td>
-                        <td class="title text-left">
-                            <router-link :to="{path: '/support/notice/'+ item.nid}">
-                                {{ item.title }}
-                            </router-link>
-                        </td>
-                        <td>{{ item.writer }}</td>
-                        <td>{{ item.writeDate }}</td>
-                    </tr>
-                </tbody>
-            </table>
+                            <td id="tb_title">
+                                <router-link
+                                    :to="{path: '/support/notice/'+ item.nid}"
+                                >
+                                    {{ item.title }}
+                                </router-link>
+                            </td>
+                            <td id="tb_writer">
+                                <div class="d-flex w-100 justify-content-center">
+                                    {{ item.writer }}
+                                </div>
+                            </td>
+                            <td id="tb_date">
+                                {{ item.writeDate }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </template>
 
         <template v-else>
@@ -146,27 +150,97 @@ export default {
 </script>
 
 <style scoped>
-.list-area {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-a {
-    color: black;
-}
 a:hover {
-    text-decoration: unset;
+    text-decoration: none;
+}
+table{
+  width:100%;
+  table-layout: fixed;
+}
+.tbl-header{
+  background-color: #A6C2CE;
+  border-bottom: 1px solid #1F1762;
+ }
+.tbl-content{
+  margin: 0 0 10px 0;
+}
+th{
+  padding: 10px 15px;
+  text-align: center;
+  font-family: sb;
+  font-size: 12px;
+}
+#t_header :nth-child(1) {
+	text-align: left;
+	/* width: 455px; */
+}
+#t_header :nth-child(2) {
+    width: 150px;
+}
+#t_header :nth-child(3) {
+    width: 80px;
+}
+#t_body {
+    border-bottom: 1px solid #BEDAE5;;
+}
+#tb_title {
+    /* width: 455px; */
+    text-align: left;
+}
+#tb_writer {
+    width: 150px;
+    overflow: hidden;
+    word-break: break-all;
+    
+}
+#tb_date {
+    width: 80px;
+}
+@media (max-width: 992px) {
+    #t_header :nth-child(1) {
+        width: 60%;
+    }
+    #t_header :nth-child(2) {
+        width: 40%;
+    }
+    #t_header :nth-child(3) {
+       display:none;
+    }
+    #tb_title {
+        width: 60%;
+    }
+    #tb_writer {
+        width: 40%;
+    }
+    #tb_date {
+        display:none
+    }
 }
 
-table {
-    table-layout: fixed;
+td{
+  padding: 15px;
+  text-align: center;
+  vertical-align:middle;
+  font-weight: 300;
+  font-size: 12px;
+}
+#t_no {
+    width: 10%;
+}
+#t_title {
+    width: 60%;
 }
 
-.title {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden; 
+/* demo styles */
+
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,500,300,700);
+body{
+  background: -webkit-linear-gradient(left, #25c481, #25b7c4);
+  background: linear-gradient(to right, #25c481, #25b7c4);
+  font-family: 'Roboto', sans-serif;
 }
+section{
+  margin: 50px;
+}
+
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <div class="support-center">
+    <div>
         <router-view />
     </div>
 </template>
@@ -11,4 +11,11 @@ export default {
 </script>
 
 <style scoped>
+#home {
+  display: flex;
+  font-family: sb;
+  margin: 30px 0;
+  justify-content: space-between;
+  font-size: 30px;
+}
 </style>

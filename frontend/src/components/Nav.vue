@@ -10,7 +10,7 @@
             <div id="bottombar_button">
                 <i 
                     id="clockwise"
-                    class="fas fa-grip-lines"
+                    class="fas fa-bars"
                     style="color: #bdbdbd;font-size: 150%;"
                 />
             </div>

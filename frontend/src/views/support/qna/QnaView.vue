@@ -23,6 +23,7 @@ export default {
 <style scoped>
 #home {
   display: flex;
+  font-family: sb;
   margin: 30px 0;
   justify-content: space-between;
   font-size: 30px;
