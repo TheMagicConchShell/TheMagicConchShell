@@ -456,7 +456,6 @@ export default {
                 this.userFetch();
                 this.$refs.pointHistory.fetchPointHistory(1);
             }).catch((error) => {
-                console.log(error.response);
             });
         }
     },
