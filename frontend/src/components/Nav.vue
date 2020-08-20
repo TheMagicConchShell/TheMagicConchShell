@@ -448,7 +448,7 @@ a:hover {
     display:none;
 }
 #bottombar_button {
-    z-index:2;
+    z-index:5;
     cursor: pointer;
     visibility: hidden;
     opacity: 0;
@@ -523,7 +523,7 @@ a:hover {
     margin-right: 16px;
     display:flex;
     flex-direction: row;
-    z-index: 2;
+    z-index: 5;
 }
 #photo {
     height: 64px; 
