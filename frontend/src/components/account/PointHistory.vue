@@ -102,7 +102,7 @@ export default {
             else return change;
         },
         getFormatDate(date) {
-            return moment(new Date(date)).format("YYYY.MM.DD hh:mm:ss");
+            return moment(new Date(date)).format("YYYY.MM.DD HH:mm:ss");
         },
     },
 };
