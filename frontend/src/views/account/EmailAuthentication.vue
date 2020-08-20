@@ -41,7 +41,6 @@ export default {
             })
             .catch((error) => {
                 this.text = '이메일 인증에 실패하였습니다. 다시 시도해주세요.';
-                console.log(error.response);
             });
     },
     methods: {

@@ -171,7 +171,6 @@ export default {
                 },
             })
                 .catch((error) => {
-                    console.log(error);
                 });
 
             if (response) {

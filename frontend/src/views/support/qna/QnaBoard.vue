@@ -110,7 +110,6 @@ export default {
                 }
             })
                 .then((response) => {
-                    console.log(response);
                 	if (200 <= response.status && response.status < 300) {
                 		let formatDate = function (date) {
                 			let d = new Date(date),
@@ -131,7 +130,6 @@ export default {
                 	}
                 })
                 .catch((error) => {
-                	console.log(error.response);
                 })
                 .finally(() => {
                 	this.$wait.end("board list load");

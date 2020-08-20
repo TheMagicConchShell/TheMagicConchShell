@@ -146,7 +146,6 @@ export default {
             url:`/counsel/post/post-no?no=${this.no}`,
         }).then((res) => {
             if(res.data.status === "S-200"){
-                console.log(res.data.data);
                 this.allow = res.data.data.post.allow;
                 this.category = res.data.data.post.categoryId;
                 this.secret = res.data.data.post.secret;
@@ -179,7 +178,6 @@ export default {
                     this.$toast('안내',this.msg);
                 }
             }).catch((e)=>{
-                console.log(e.response);
             });
         }
     },

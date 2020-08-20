@@ -134,7 +134,6 @@ export default {
                     this.page = res.data.data.content.size;
                 }
             }).catch((error)=>{
-                console.log(error.response);
             });
         },
         getFormatDate(date) {
@@ -163,7 +162,6 @@ export default {
                 this.$toast('안내', msg);
                 this.$router.go();
             }).catch((error)=>{
-                console.log(error.response);
             });
 
             this.$nextTick(() =>{

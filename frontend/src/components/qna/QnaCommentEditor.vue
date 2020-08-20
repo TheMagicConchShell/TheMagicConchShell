@@ -83,7 +83,6 @@ export default {
                 },
             })
                 .catch((error) => {
-                    console.log(error.response);
                 })
                 .finally(() => {
                     this.$wait.end('counsel-chunk');
@@ -94,7 +93,6 @@ export default {
                     this.$emit('submit');
                     this.$toast('답변', '답변이 작성되었습니다.');
                 } else {
-                    console.log('글 작성이 실패하였습니다');
                 }
             }
         },

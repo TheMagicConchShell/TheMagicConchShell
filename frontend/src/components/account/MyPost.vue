@@ -116,7 +116,6 @@ export default {
                 this.rows = res.data.data.totalElements;
                 this.perPage = res.data.data.size;
             }).catch((error) => {
-                console.log(error.response);
             });
         },
         getCategory(categoryId){

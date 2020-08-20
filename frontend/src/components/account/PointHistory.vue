@@ -95,7 +95,6 @@ export default {
                 this.rows = res.data.data.pList.totalElements;
                 this.perPage = res.data.data.pList.size;
             }).catch((error) => {
-                console.log(error.response);
             });
         },
         getPointSign(change){

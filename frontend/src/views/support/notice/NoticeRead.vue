@@ -77,7 +77,6 @@ export default {
         });
 
         if (response) {
-            console.log(response);
             if (response.status == 200) {
                 this.writer = '관리자'; //response.data.data.writer;
                 this.writeDate = this.formatDate(response.data.data.writeDate);

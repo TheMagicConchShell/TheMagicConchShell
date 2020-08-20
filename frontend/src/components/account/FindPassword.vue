@@ -92,7 +92,6 @@ export default {
                     this.$bvModal.hide('findpw');
                 })
                 .catch((error) => {
-                    console.log(error.response);
                 });
         },
     },

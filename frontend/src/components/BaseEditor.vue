@@ -114,7 +114,6 @@ export default {
                     writeDate:"2020-08-03T05:57:45"
                 };
             }
-            console.log(submitData);
             const response = await this.$axios({
                 url: this.submitUrl,
                 method: this.submitMethod,
@@ -124,7 +123,7 @@ export default {
                 },
                 data:submitData
             })
-                .catch((error) => { console.log(error.response); });
+                .catch((error) => { });
 
             if (response) {
                 if (response.status >= 200 && response.status < 300) {
@@ -133,7 +132,6 @@ export default {
                         name: 'NoticeList',
                     });
                 } else {
-                    console.log('글 작성이 실패하였습니다');
                 }
             }
         },

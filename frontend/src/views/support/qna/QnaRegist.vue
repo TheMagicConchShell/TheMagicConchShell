@@ -79,7 +79,6 @@ export default {
                     this.$toast('안내',this.msg);
                 }
             }).catch((e)=>{
-                console.log(e.response);
             });
         }
     },

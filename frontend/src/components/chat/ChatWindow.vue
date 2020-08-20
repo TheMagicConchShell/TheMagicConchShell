@@ -155,7 +155,6 @@ export default {
             );
         },
         onError(error) {
-            console.log(error);
         },
         sendMessage(element) {
             if(this.message.length > 0 && this.stompClient) {

@@ -229,7 +229,6 @@ export default {
                     this.$toast('안내', this.msg);
                     this.$bvModal.hide('signup');
                 }).catch((error) => {
-                    console.log(error.response);
                 });
         },
     },

@@ -352,7 +352,6 @@ export default {
                 nickname: this.nicknameInput
             })
                 .then((res) => {
-                    console.log(res);
                     if (res.data.status === 'S-200') {
                         this.email = res.data.data.email;
                         this.profileImgUrl = res.data.data.profileImg;
@@ -363,7 +362,6 @@ export default {
                     }
                 })
                 .catch((error) => {
-                    console.log(error.response);
                 });
         },
         async userUpdate() {
@@ -384,14 +382,11 @@ export default {
             this.$store.dispatch('updateUser', formData)
                 .then((res) => {
                     if (res.data.status === 'S-200') {
-                        console.log(res);
-                        
                         this.msg = '수정 완료되었습니다.';
                         this.$toast('안내', this.msg);
                     }
                 })
                 .catch((error) => {
-                    console.log(error.response);
                 });
         },
         userDelete() {
@@ -403,11 +398,9 @@ export default {
                     Kakao.API.request({
                         url: '/v1/user/unlink',
                         success: (response)=>{
-                            console.log(response);
                             this.$router.push({ name: 'Home'});
                         },
                         fail: function(error) {
-                            console.log(error);
                         },
                     });
 
@@ -461,7 +454,6 @@ export default {
                 this.userFetch();
                 this.$refs.pointHistory.fetchPointHistory(1);
             }).catch((error) => {
-                console.log(error.response);
             });
         }
     },

@@ -51,7 +51,6 @@ export default {
             }
         }
 
-        console.log("end");
     }
 };
 </script>

@@ -110,7 +110,6 @@ export default {
                 this.list = res.data.data;
             }
         }).catch(e=>{
-            console.log(e);
         });
     },
     methods: {
@@ -127,7 +126,6 @@ export default {
                     this.list = res.data.data;
                 }
             }).catch(e=>{
-                console.log(e);
             });
         },
         
