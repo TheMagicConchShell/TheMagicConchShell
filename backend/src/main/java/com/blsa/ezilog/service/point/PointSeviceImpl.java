@@ -1,6 +1,5 @@
 package com.blsa.ezilog.service.point;
 
-import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +30,6 @@ public class PointSeviceImpl implements PointService {
         int total = totalPoint(point.getUid());
         if (!(total + point.getChange() < 0)) {
             pointDao.save(point);
-
             result = true;
 
         }

@@ -103,7 +103,7 @@ public class QnaController {
             errorMap.put("data", null);
             eresult.errors = errorMap;
 
-            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+            response = new ResponseEntity<>(eresult, HttpStatus.OK);
         }
 
         return response;
@@ -231,7 +231,7 @@ public class QnaController {
             errorMap.put("data", page);
             eresult.errors = errorMap;
 
-            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+            response = new ResponseEntity<>(eresult, HttpStatus.OK);
         }
 
         return response;
@@ -260,7 +260,7 @@ public class QnaController {
             errorMap.put("data", null);
             eresult.errors = errorMap;
 
-            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+            response = new ResponseEntity<>(eresult, HttpStatus.OK);
         }
 
         return response;

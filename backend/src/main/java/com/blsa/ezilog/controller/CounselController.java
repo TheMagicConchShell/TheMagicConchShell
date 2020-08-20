@@ -132,7 +132,7 @@ public class CounselController {
                 errorMap.put("data", pageable);
                 eresult.errors = errorMap;
 
-                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+                response = new ResponseEntity<>(eresult, HttpStatus.OK);
             }
 
         }
@@ -550,7 +550,7 @@ public class CounselController {
                     errorMap.put("data", pageable);
                     eresult.errors = errorMap;
 
-                    response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+                    response = new ResponseEntity<>(eresult, HttpStatus.OK);
                 }
             } else if (keyword.contains("익명")) {
                 Page<Post> aList = postDao.findPostByAnonymousAll(keyword, pageable);
@@ -1939,7 +1939,7 @@ public class CounselController {
                 errorMap.put("data", pageable);
                 eresult.errors = errorMap;
 
-                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+                response = new ResponseEntity<>(eresult, HttpStatus.OK);
             }
 
         }
@@ -1984,7 +1984,7 @@ public class CounselController {
                 errorMap.put("data", pageable);
                 eresult.errors = errorMap;
 
-                response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+                response = new ResponseEntity<>(eresult, HttpStatus.OK);
             }
 
         }
