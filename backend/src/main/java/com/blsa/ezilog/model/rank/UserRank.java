@@ -25,4 +25,6 @@ public class UserRank {
     private int point;
     @Column
     private int level;
+    @Column(name = "rnum")
+    private int rnum;
 }
