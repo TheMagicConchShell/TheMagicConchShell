@@ -218,6 +218,7 @@ th{
 #t_header :nth-child(3) {
     width: 150px;
     text-align: left;
+    padding-left: 40px;
 }
 #t_header :nth-child(4) {
     width: 80px;
