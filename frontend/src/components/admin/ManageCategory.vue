@@ -309,7 +309,6 @@ export default {
                     this.$toast('안내', '카테고리 내용 수정 완료');
                 })
                 .catch((error) => {
-                    console.log(error);
                 });
 
             this.$nextTick(() =>{
@@ -333,7 +332,6 @@ export default {
                     this.$router.go();
                 })
                 .catch((error) => {
-                    console.log(error);
                 });
 
             this.$nextTick(() =>{
@@ -372,7 +370,6 @@ export default {
                     this.$router.go();
                 })
                 .catch((error) => {
-                    console.log(error);
                 });
 
             this.$nextTick(() =>{

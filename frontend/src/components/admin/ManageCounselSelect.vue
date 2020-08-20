@@ -388,10 +388,8 @@ export default {
         }).then((res)=>{
             if(res.status >= 200 && res.status < 300){
                 this.recommendList = res.data.data;
-                //console.log(res.data);
             }
         }).catch((error) => {
-            console.log(error.response);
         });
     },
     methods: {
@@ -407,7 +405,6 @@ export default {
                 this.perPage = response.data.data.size;
                 this.list = response.data.data.content;
             }).catch((error) => {
-                console.log(error.response);
             });
         },
         checkFormValidity() {
@@ -453,7 +450,6 @@ export default {
                 }
                 this.$toast('안내', msg);
             }).catch((error) => {
-                console.log(error.response);
             });
 
             this.$nextTick(() => {
@@ -470,10 +466,8 @@ export default {
             }).then((res)=>{
                 if(res.status >= 200 && res.status < 300){
                     this.recommendList = res.data.data;
-                    console.log(res.data);
                 }
             }).catch((error) => {
-                console.log(error.response);
             });
         },
         async fetchMainPosts(size) {
@@ -487,7 +481,6 @@ export default {
                 this.mainlist = res.data.data;
                 this.lastNo = this.mainlist[this.mainlist.length-1].no;
             }).catch((error) => {
-                console.log(error.response);
             });
         },
         infiniteHandler($state) {
@@ -508,13 +501,11 @@ export default {
                         if(res.data.data.length / this.size < 1) {
                             $state.complete();
                         }
-                        console.log(res);
                     }
                 }, 1000);
             }).catch((error) => {
                 // 끝 지정(No more data)
                 $state.complete();
-                console.log(error.response);
             });
         },
         openDeleteModal(no, index) {
@@ -543,7 +534,6 @@ export default {
                 this.$toast('안내', msg);
                 this.mainlist.splice(this.indexDel, 1);
             }).catch((error) => {
-                console.log(error.response);
             });
 
             this.$nextTick(() => {

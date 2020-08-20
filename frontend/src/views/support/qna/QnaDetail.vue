@@ -81,7 +81,6 @@ export default {
     },
     methods: {
         tempo() {
-            console.log("fetching...");
             this.fetchQuestion();
         },
         async fetchQuestion() {
@@ -94,7 +93,6 @@ export default {
                 },
             })
                 .then((response) => {
-                    console.log(response);
                     if (200 <= response.status && response.status < 300) {
                         let formatDate = (date) => {
                             let d = new Date(date),
@@ -120,7 +118,6 @@ export default {
                     }
                 })
                 .catch((e) => {
-                    console.log(e);
                 });
             this.$wait.end('counsel loading');
         },
@@ -146,7 +143,6 @@ export default {
                     this.fetchQuestion();
                 }
             }).catch((error) => {
-                console.log(error);
             }).finally(() => {
                 this.$wait.end('counsel-chunk');
             });

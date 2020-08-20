@@ -120,7 +120,6 @@ export default {
                 this.perPage = res.data.data.size;
 
             }).catch((error) =>{
-                console.log(error.response);
             });
         },
         getFormatDate(date) {

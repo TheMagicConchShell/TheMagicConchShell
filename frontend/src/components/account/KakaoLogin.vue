@@ -89,12 +89,9 @@ export default {
         await Kakao.Auth.createLoginButton({
             container: this.$refs.kakaoLogin,
             success: (authObj)=> {
-                //console.log(authObj);
                 Kakao.API.request({
                     url: '/v2/user/me',
                     success: (res) => {
-                        //console.log(res);
-                        //console.log(authObj);
                         this.userId = res.id; 
                         if(res.kakao_account.has_email==true){
                             this.userEmail = res.kakao_account.email;
@@ -110,10 +107,8 @@ export default {
                             const jwtAuthToken = response.headers['jwt-auth-token'];
                             const nickname = response.headers['nickname'];
                             this.$store.commit('LOGIN_SUCCESS', {jwtAuthToken,nickname});
-                            console.log("성공");
                         }).catch(e=>{
                             this.$bvModal.show("snsNickname");
-                            console.log(e);
                         });
                     },
                     fail: function(error) {
@@ -130,7 +125,6 @@ export default {
         });
     },
     updated() {
-        console.log(check);
     },
     methods: {
         snsRegist(){

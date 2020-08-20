@@ -170,7 +170,6 @@ export default {
                     }
                 })
                 .catch((error) => {
-                    console.log(error);
                 })
                 .finally(() => {
                     this.$wait.end("board list load");

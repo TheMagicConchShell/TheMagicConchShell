@@ -61,7 +61,6 @@ export default {
             url:`/qna/question/no?no=${this.no}`,
         }).then((res) => {
             if(res.data.status === "S-200"){
-                console.log(res.data.data);
                 this.title = res.data.data.question.title;
                 this.editorText = res.data.data.question.content;
             }
@@ -88,7 +87,6 @@ export default {
                     this.$toast('안내',this.msg);
                 }
             }).catch((e)=>{
-                console.log(e.response);
             });
         }
     },

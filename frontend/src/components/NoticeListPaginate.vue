@@ -46,7 +46,6 @@ export default {
                     page: nextPage,
                 },
             }).catch(() => {});
-            // console.log(nextPage);
             // this.$emit("page-move", nextPage);
         },
     },

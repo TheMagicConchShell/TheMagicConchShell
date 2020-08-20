@@ -112,7 +112,6 @@ export default {
                 },
             })
                 .catch((error) => {
-                    console.log(error.response);
                 })
                 .finally(() => {
                     this.$wait.end('counsel-chunk');
@@ -122,7 +121,6 @@ export default {
                 if (response.status >= 200 && response.status < 300) {
                     this.$emit('submit');
                 } else {
-                    console.log('글 작성이 실패하였습니다');
                 }
             }
         },

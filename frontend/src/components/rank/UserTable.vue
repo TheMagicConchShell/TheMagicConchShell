@@ -189,7 +189,6 @@ export default {
                 this.getMyRank(2);
             }
         }).catch(e=>{
-            console.log(e);
         });
     },
     methods: {
@@ -212,7 +211,6 @@ export default {
                     this.getMyRank(val);
                 }
             }).catch(e=>{
-                console.log(e);
             });
         },
         getMyRank(val){

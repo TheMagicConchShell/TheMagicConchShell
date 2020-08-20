@@ -44,7 +44,6 @@ instance.interceptors.response.use(
             break;
         }
 
-        console.log(error);
         // const message = error.response.data.message;
         // const vm = new Vue();
         // vm.$bvToast.toast(`${message}`, {
