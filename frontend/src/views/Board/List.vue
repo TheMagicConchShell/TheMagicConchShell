@@ -1,8 +1,9 @@
 <template>
     <div>
         <div id="home">
-            <span v-if="language==='ko'">고민게시판</span>
-            <span v-else>Counsel</span>
+            <transition name="conversion">
+                <span :key="language">{{ $t('title.counselBoard') }}</span>
+            </transition>
         </div>
         <div class="d-flex">
             <div id="article">
@@ -13,7 +14,7 @@
                         :class="{active: (currentCategory === '전체')}"
                         @click="fetchCounsel"
                     >
-                        <span id="0">{{ $t('board.all') }}</span>
+                        <span :key="language">{{ $t('board.all') }}</span>
                     </li>
                     <li
                         v-for="category in categories"
@@ -23,7 +24,7 @@
                         :class="{active: (currentCategory === category.name.ko)}"
                         @click.stop="fetchCounsel"
                     >
-                        <span :id="category.id">{{ category.name[language] }}</span>
+                        <span :key="language">{{ category.name[language] }}</span>
                     </li>
                 </ul>
                 <div>
@@ -31,29 +32,36 @@
                         :page="page"
                         :category="currentCategory"
                     />
+                    <div>
+                        <b-button
+                            v-if="nickname"
+                            class="button-write"
+                            @click="write"
+                        >
+                            작성
+                        </b-button>
+                    </div>
                 </div>
-                <div />
-                <button
-                    v-if="nickname"
-                    class="button-write"
-                    @click="write"
-                >
-                    작성
-                </button>
             </div>
             <transition name="right-side">
                 <div
                     v-show="Y"
                     id="category"
                 >
-                    고민 카테고리
-                    <ul>
-                        <li>
+                    <ul id="tab-column">
+                        <li
+                            class="cursor-pointer-hover"
+                            :class="{active: (currentCategory === '전체')}"
+                            @click="fetchCounsel"
+                        >
                             {{ $t('board.all') }}
                         </li>
                         <li
                             v-for="category in categories"
                             :key="category.id"
+                            class="cursor-pointer-hover"
+                            :class="{active: (currentCategory === category.name)}"
+                            @click="fetchCounsel"
                         >
                             {{ category.name[language] }}
                         </li>
@@ -118,7 +126,8 @@ export default {
 
 <style scoped>
 .active {
-    background: #A6C2CE;
+    background: #0363BA;
+    color:white;
 }
 #home {
   display: flex;
@@ -136,6 +145,7 @@ export default {
 #tab {
     display:flex;
     align-items: center;
+    margin: 0;
     padding: 0;
     width: 100%;
     height: 24px;
@@ -145,17 +155,41 @@ export default {
 #tab li{
     clear: both;
     min-width: 12.5%;
-    display: inline-block;
-    border: 1px solid;
-    
+    display: inline-block;    
+    transition-duration: 0.5s;
+    border-radius: 5px 5px 0 0;
+}
+#tab li:hover {
+    background-color: #0363BA;
+    color: white
 }
 #article {
     margin-left: 20px;
     width: 100%;
 }
-
+#tab-column {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+    width: 100%;
+    font-size: 16px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #ebeaea
+}
+#tab-column li{
+    clear: both;
+    width: 100%;
+    display: inline-block;    
+    transition-duration: 0.5s;
+}
+#tab-column li:hover {
+    background-color: #0363BA;
+    color: white
+}
 .button-write {
-    float: right;
+    float:right;
+    background-color: #0363BA;
 }
 .cursor-pointer-hover:hover {
     cursor: pointer;

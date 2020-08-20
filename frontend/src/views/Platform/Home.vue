@@ -38,11 +38,13 @@
                     >
                         <div id="slide">
                             <div id="slideheader">
-                                <h3>{{ post.title }}</h3>
+                                <p style="font-family:sb">
+                                    {{ post.title }}
+                                </p>
                                 <p class="d-flex justify-content-end align-items-center">
                                     <img
                                         :src="post.profileImg? post.profileImg: require(`@/assets/images/default_profile.png`)"
-                                        style="width: 5%;max-height: auto"
+                                        style="width: 5%;max-height: auto; border-radius: 20px;"
                                     >{{ post.writer }}
                                 </p>
                                 <small class="d-flex justify-content-end">{{ post.writeDate }}</small>
@@ -294,18 +296,23 @@ export default {
 .carousel-3d-container {
     height: 300px !important;
 }
-.carousel-3d-slide.current {
-   padding: 5px;
-   border: 1px solid #e7e7e7;
-   border-radius: 5px;
-   box-shadow: 10px 10px 10px #9e9e9e;
-   background-color: white;
+.carousel-3d-slide {
+    padding: 5px;
+    border: 1px solid #e7e7e7;
+    border-radius: 5px;
+    background-color: white;
+    box-shadow: 10px 10px 10px #9e9e9e;
+}
+.carousel-3d-slide.current:hover {
+
 }
 .carousel-3d-slide.right-1, .carousel-3d-slide.left-1 {
-    background-color: #f5f5f5;
+    /* background-color: #f5f5f5; */
+    border-radius: 5px;
 }
 .carousel-3d-slide.right-2, .carousel-3d-slide.left-2 {
-    background-color: #e7e7e7;
+    /* background-color: #e7e7e7; */
+    border-radius: 5px;
 }
 #slidefooter {
     position: absolute;
@@ -321,14 +328,6 @@ export default {
     font-weight: bold;
     background-color: white;
     opacity: 0.8;
-}
-#slidebody {
-
-}
-a {
-    text-decoration: none;
-    color: black;
-    transition: 0.5s;
 }
 a:hover {
     color: #777777;
