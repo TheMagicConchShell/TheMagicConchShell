@@ -1,22 +1,24 @@
 <template>
-    <paginate
-        v-model="page"
-        :page-count="last"
-        :click-handler="pageHandle"
-        :prev-text="'<'"
-        :next-text="'>'"
-        :hide-prev-next="true"
-        :first-last-button="true"
-        :container-class="'pagination'"
-        :page-class="'page-item'"
-        :page-link-class="'page-link'"
-        :prev-class="'page-item'"
-        :prev-link-class="'page-link'"
-        :next-class="'page-item'"
-        :next-link-class="'page-link'"
-        :active-class="'active'"
-        :disabled-class="'disabled'"
-    />
+    <div class="d-flex justify-content-center">
+        <paginate
+            v-model="page"
+            :page-count="last"
+            :click-handler="pageHandle"
+            :prev-text="'<'"
+            :next-text="'>'"
+            :hide-prev-next="true"
+            :first-last-button="true"
+            :container-class="'pagination'"
+            :page-class="'page-item'"
+            :page-link-class="'page-link'"
+            :prev-class="'page-item'"
+            :prev-link-class="'page-link'"
+            :next-class="'page-item'"
+            :next-link-class="'page-link'"
+            :active-class="'active'"
+            :disabled-class="'disabled'"
+        />
+    </div>
 </template>
 
 <script>

@@ -68,7 +68,7 @@
         </template>
 
         <template v-else>
-            고민 글 작성 내역이 없습니다.
+            {{ $t('account.nocontent.post')}}
         </template>
     </div>
 </template>
@@ -85,10 +85,16 @@ export default {
         perPage: 10,
     }),
     computed: {
-        ...mapGetters(['nickname']),
+        ...mapGetters([
+            'nickname',
+            'language',
+        ]),
     },
     watch: {
         page() {
+            this.fetchMyPosts(this.page);
+        },
+        language() {
             this.fetchMyPosts(this.page);
         },
     },
@@ -114,10 +120,10 @@ export default {
             });
         },
         getCategory(categoryId){
-            return this.$store.getters.categoryNameById(categoryId);
+            return this.$store.getters.categoryNameById(categoryId, this.language);
         },
         getFormatDate(date) {
-            return moment(new Date(date)).format("YYYY.MM.DD HH:mm:ss");
+            return moment(new Date(date)).format("YY.MM.DD HH:mm");
         },
         removeImg(html) {
             let img_tag = /<img[^>]*src=[\"']?([^>\"']+)[\"']?[^>]*>/gi;
@@ -136,12 +142,12 @@ export default {
     margin-top: 1rem;
 }
 #divider {
-    margin-left: 1rem;
-    margin-right: 1rem;
+    margin-left: 0.4rem;
+    margin-right: 0.4rem;
     color: lightgray;
 }
 .title {
-    max-width: 50%;
+    /* max-width: 40%; */
     font-size: x-large;
     text-align: left;
 }
@@ -164,7 +170,7 @@ export default {
     text-align: left;
 }
 .item:nth-child(1) { flex: 1 1 100px; }
-.item:nth-child(2) { flex: 1 1 100px; }
+/* .item:nth-child(2) { flex: 1 1 100px; } */
 img {
     max-width: 120px;
     max-height: 120px;

@@ -36,7 +36,7 @@
                 v-if="!isSocialAccount"
                 label-cols-sm="2"
                 label-cols-lg="2"
-                label="이메일"
+                :label="$t('account.info.email')"
                 label-for="email"
             >
                 <b-input
@@ -52,7 +52,7 @@
             <b-form-group
                 label-cols-sm="2"
                 label-cols-lg="2"
-                label="별명"
+                :label="$t('account.info.nickname')"
                 label-for="nickname"
             >
                 <ValidationProvider
@@ -65,7 +65,7 @@
                         ref="nickname"
                         v-model="nicknameInput"
                         type="text"
-                        placeholder="별명"
+                        :placeholder="$t('account.info.nickname')"
                         :disabled="!editable"
                     />
                     <div
@@ -82,7 +82,7 @@
                     v-if="!isSocialAccount"
                     label-cols-sm="2"
                     label-cols-lg="2"
-                    label="비밀번호"
+                    :label="$t('account.info.password')"
                     label-for="password"
                 >
                     <ValidationProvider
@@ -100,7 +100,7 @@
                                 ref="password"
                                 v-model="password"
                                 :type="passwordType"
-                                placeholder="영문/숫자 포함 8자 이상"
+                                :placeholder="$t('account.info.holder.password')"
                             />
                             <i
                                 :class="{ 'fa fa-eye fa-lg' : passwordType === 'password' ,
@@ -122,7 +122,7 @@
                     v-if="!isSocialAccount"
                     label-cols-sm="2"
                     label-cols-lg="2"
-                    label="비밀번호 확인"
+                    :label="$t('account.info.check')"
                     label-for="passwordConfirm"
                 >
                     <ValidationProvider
@@ -136,7 +136,7 @@
                             ref="passwordConfirm"
                             v-model="passwordConfirm"
                             :type="passwordType"
-                            placeholder="비밀번호 확인"
+                            :placeholder="$t('account.info.check')"
                         />
                         <div
                             v-if="errors[0]"
@@ -152,7 +152,7 @@
                 <b-form-group
                     label-cols-sm="2"
                     label-cols-lg="2"
-                    label="포인트"
+                    :label="$t('account.info.point.name')"
                     label-for="point"
                 >
                     <b-input
@@ -161,13 +161,14 @@
                         v-model="point"
                         type="text"
                         readonly
+                        disabled
                     />
                 </b-form-group>
 
                 <b-form-group
                     label-cols-sm="2"
                     label-cols-lg="2"
-                    label="레벨"
+                    :label="$t('account.info.level')"
                     label-for="level"
                 >
                     <div class="d-flex">
@@ -175,8 +176,9 @@
                             id="level"
                             ref="level"
                             v-model="level"
-                            type="text"
+                            type="number"
                             readonly
+                            disabled
                         />
                         <b-button             
                             v-b-modal.ask-level-up
@@ -200,14 +202,14 @@
                 class="detail-button"
             >
                 <b-button @click="userUpdate">
-                    정보 수정
+                    {{ $t('account.info.update') }}
                 </b-button>
                 &nbsp;
                 <b-button
                     variant="danger"
                     @click="userDelete"
                 >
-                    회원 탈퇴
+                    {{ $t('account.info.delete') }}
                 </b-button>
             </div>
             <b-button
@@ -230,15 +232,19 @@
                     fill
                 >
                     <b-tab
-                        title="내 고민 글 목록"
+                        :title="$t('account.titles.post')"
                         active
                     >
                         <MyPost />
                     </b-tab>
-                    <b-tab title="내 답변 목록">
+                    <b-tab
+                        :title="$t('account.titles.reply')"
+                    >
                         <MyReply />
                     </b-tab>
-                    <b-tab title="포인트 내역">
+                    <b-tab
+                        :title="$t('account.titles.point')"
+                    >
                         <PointHistory
                             ref="pointHistory"
                         />
@@ -249,13 +255,13 @@
 
         <b-modal
             id="user-delete-check"
-            title="탈퇴 완료"
+            :title="$t('account.delete.done')"
             ok-only
             no-close-on-backdrop
             no-close-on-esc
             @ok="handleDeleteOk"
         >
-            정상적으로 탈퇴 처리되었습니다.
+            {{ $t('account.delete.message') }}
         </b-modal>
     </div>
 </template>
@@ -407,7 +413,7 @@ export default {
 
                 })
                 .catch((error) => {
-                    console.log(error.response);
+                    this.$toast('안내','작성한 고민과 답변을 모두 삭제 후 회원탈퇴가 가능합니다.');
                 });
         },
         onClickImageUpload() {
@@ -427,20 +433,20 @@ export default {
             }
         },
         checkImageSize(file) {
-            var maxSize  = 5 * 1024 * 1024;
-            var fileSize = 0;
+            const maxSize  = 5 * 1024 * 1024;
+            let fileSize = 0;
 
-            var browser=navigator.appName;
+            const browser = navigator.appName;
         
-            if (browser=="Microsoft Internet Explorer") {
-                var oas = new ActiveXObject("Scripting.FileSystemObject");
+            if (browser == "Microsoft Internet Explorer") {
+                const oas = new ActiveXObject("Scripting.FileSystemObject");
                 fileSize = oas.getFile( file.value ).size;
             }
             else {
                 fileSize = file.files[0].size;
             }
-            if(fileSize > maxSize) return false;
-            else return true;
+            
+            return fileSize <= maxSize;
         },
         handleDeleteOk() {
             this.$router.push('/');

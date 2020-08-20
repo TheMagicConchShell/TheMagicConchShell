@@ -1,11 +1,35 @@
 <template>
     <div>
         <div id="home">
-            <span v-if="language==='ko'">고민게시판</span>
-            <span v-else>Counsel</span>
+            <transition name="conversion">
+                <span :key="language">{{ $t('title.counselBoard') }}</span>
+            </transition>
         </div>
         <div class="d-flex">
             <div id="article">
+                <div id="selectbox">
+                    <select
+                        v-model="currentCategory"
+                        @change="fetchCounsel"
+                    >
+                        <option  
+                            id="0"
+                            :class="{active: (currentCategory === '전체')}"
+                            :value="'전체'"
+                        >
+                            <span :key="language">{{ $t('board.all') }}</span>
+                        </option>
+                        <option
+                            v-for="category in categories"
+                            :id="category.id"
+                            :key="category.id"
+                            :class="{active: (currentCategory === category.name.ko)}"
+                            :value="category.name.ko"
+                        >
+                            <span :key="language">{{ category.name[language] }}</span>
+                        </option>
+                    </select>
+                </div>
                 <ul id="tab">
                     <li
                         id="0"
@@ -13,7 +37,7 @@
                         :class="{active: (currentCategory === '전체')}"
                         @click="fetchCounsel"
                     >
-                        <span id="0">{{ $t('board.all') }}</span>
+                        {{ $t('board.all') }}
                     </li>
                     <li
                         v-for="category in categories"
@@ -23,7 +47,7 @@
                         :class="{active: (currentCategory === category.name.ko)}"
                         @click.stop="fetchCounsel"
                     >
-                        <span :id="category.id">{{ category.name[language] }}</span>
+                        {{ category.name[language] }}
                     </li>
                 </ul>
                 <div>
@@ -31,29 +55,36 @@
                         :page="page"
                         :category="currentCategory"
                     />
+                    <div>
+                        <b-button
+                            v-if="nickname"
+                            class="button-write"
+                            @click="write"
+                        >
+                            작성
+                        </b-button>
+                    </div>
                 </div>
-                <div />
-                <button
-                    v-if="nickname"
-                    class="button-write"
-                    @click="write"
-                >
-                    작성
-                </button>
             </div>
             <transition name="right-side">
                 <div
                     v-show="Y"
                     id="category"
                 >
-                    고민 카테고리
-                    <ul>
-                        <li>
+                    <ul id="tab-column">
+                        <li
+                            class="cursor-pointer-hover"
+                            :class="{active: (currentCategory === '전체')}"
+                            @click="fetchCounsel"
+                        >
                             {{ $t('board.all') }}
                         </li>
                         <li
                             v-for="category in categories"
                             :key="category.id"
+                            class="cursor-pointer-hover"
+                            :class="{active: (currentCategory === category.name)}"
+                            @click="fetchCounsel"
                         >
                             {{ category.name[language] }}
                         </li>
@@ -100,7 +131,7 @@ export default {
             if (e.target.id === '0') {
                 this.currentCategory = '전체';
             } else {
-                this.currentCategory = this.$store.getters.categoryNameById(e.target.id);
+                this.currentCategory = this.$store.getters.categoryNameById(e.target.id,this.language);
             }
             this.page = 1;
         },
@@ -117,11 +148,9 @@ export default {
 </script>
 
 <style scoped>
-.active {
-    background: #A6C2CE;
-}
 #home {
   display: flex;
+  font-family: sb;
   margin: 30px 0;
   justify-content: space-between;
   font-size: 30px;
@@ -136,26 +165,71 @@ export default {
 #tab {
     display:flex;
     align-items: center;
+    margin-bottom: 10px;
     padding: 0;
     width: 100%;
     height: 24px;
     font-size: 16px;
     background-color: #ffffff;
 }
+#selectbox {
+    display:none;
+}
+@media (max-width:992px) {
+    #tab {
+        display:none
+    }
+    #selectbox {
+        display:flex;
+    }
+}
 #tab li{
+    font-family: sb;
     clear: both;
-    min-width: 12.5%;
-    display: inline-block;
-    border: 1px solid;
-    
+    width: 50px;
+    margin: 0 5px;
+    display: inline-block;    
+    transition-duration: 0.5s;
+    border-radius: 5px;
+    color: white;
+    background:linear-gradient(to top, #aaaaaa,#bbbbbb,#c0c0c0);
+    border:1px solid #dadada;
+}
+.active {
+    background:linear-gradient(to top, #1c3eb4, #154cbd, #1059c6, #1266ce, #1b73d5)!important;
+    color:white;
+}
+#tab li:hover {
+    background:linear-gradient(to top, #1c3eb4, #154cbd, #1059c6, #1266ce, #1b73d5);
+    color: white
 }
 #article {
     margin-left: 20px;
     width: 100%;
 }
-
+#tab-column {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+    width: 100%;
+    font-size: 16px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #ebeaea
+}
+#tab-column li{
+    clear: both;
+    width: 100%;
+    display: inline-block;    
+    transition-duration: 0.5s;
+}
+#tab-column li:hover {
+    background-color: #0363BA;
+    color: white
+}
 .button-write {
-    float: right;
+    float:right;
+    background-color: #0363BA;
 }
 .cursor-pointer-hover:hover {
     cursor: pointer;
