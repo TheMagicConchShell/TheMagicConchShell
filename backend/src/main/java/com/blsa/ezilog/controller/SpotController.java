@@ -123,8 +123,6 @@ public class SpotController {
         if (!sList.isEmpty()) {
             sList.forEach((e) -> {
                 pList.add(postDao.findById(e.getPostNo()).get());
-//               Post temp = postDao.findById(e.getPostNo()).get();
-//               bList.add(new SpotBanner(temp.getNo(), temp.getTitle()));
             });
             result.status = "S-200";
             result.message = "Spot table에 있는 post 목록 불러오기에 성공했습니다.";
@@ -139,7 +137,7 @@ public class SpotController {
             errorMap.put("data", null);
             eresult.errors = errorMap;
 
-            response = new ResponseEntity<>(eresult, HttpStatus.NOT_FOUND);
+            response = new ResponseEntity<>(eresult, HttpStatus.OK);
         }
 
         return response;
