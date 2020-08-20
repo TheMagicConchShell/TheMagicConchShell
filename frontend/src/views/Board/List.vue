@@ -186,7 +186,7 @@ export default {
 #tab li{
     font-family: sb;
     clear: both;
-    width: 50px;
+    width: 70px;
     margin: 0 5px;
     display: inline-block;    
     transition-duration: 0.5s;
@@ -204,7 +204,6 @@ export default {
     color: white
 }
 #article {
-    margin-left: 20px;
     width: 100%;
 }
 #tab-column {

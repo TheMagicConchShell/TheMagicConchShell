@@ -95,11 +95,13 @@
                         </header>
                         <section class="skill-card__body">
                             <p class="skill-card__title">
-                                <img
-                                    class="skill-card__icon"
-                                    :src="history.profileImg? history.profileImg: require(`@/assets/images/default_profile.png`)"
-                                >
-                                <span class="skill-card__duration">{{ history.writer }}</span>
+                                <span>
+                                    <img
+                                        class="skill-card__icon"
+                                        :src="history.profileImg? history.profileImg: require(`@/assets/images/default_profile.png`)"
+                                    >{{ history.writer }}
+                                </span>
+                                <span class="skill-card__duration">{{ history.writeDate }}</span>
                             </p>
                             <ul class="skill-card__knowledge">
                                 <li>조회수 {{ history.views }}</li>
@@ -142,6 +144,9 @@ export default {
         formatDate(writeDate) {
             return moment(new Date(writeDate)).format("YYYY.MM.DD HH:mm");
         },
+        formatDate2(writeDate) {
+            return moment(new Date(writeDate)).format("YYYY.MM.DD");
+        },
         select(selected) {
             this.nowshowing=selected;
         },
@@ -182,6 +187,7 @@ export default {
             if (response) {
                 if (response.status >= 200 && response.status < 300) {
                     this.histories = response.data.data.map((h) => {
+                        h.writeDate= this.formatDate2(h.writeDate);
                         h.replies = 1;
                         return h;
                     });
@@ -326,11 +332,11 @@ export default {
 }
 
 .skill-card {
-  padding: 20px;
   /* width: 15em; */
   background-color: #FFF;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   cursor: pointer;
+  margin-bottom: 20px;
 }
 .skill-card:hover {
   box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
@@ -347,7 +353,7 @@ export default {
     font-size:120%;
 }
 .skill-card:hover .skill-card__body {
-  height: 150px;
+  height: 180px;
 }
 .skill-card:hover .skill-card__body .skill-card__knowledge li {
   -webkit-transform: translateX(0);
@@ -383,17 +389,19 @@ export default {
 }
 .skill-card .skill-card__header {
   position: relative;
+  padding: 20px;
   /* background-color: #eb6c3f; */
-  height: 150px;
-  margin: -20px -20px 20px -20px;
+  height: 160px;
+  margin: -20px -20px 0 -20px;
   -webkit-transition: height 0.5s;
   transition: height 0.5s;
   overflow: hidden;
 }
 .skill-card__icon {
     width: 20px;
+    border-radius: 20px;
 }
-/* .skill-card .skill-card__header .skill-card__icon {
+/* .skill-card .skill-card__header{
   position: absolute;
   top: 50%;
   left: 50%;
@@ -408,26 +416,32 @@ export default {
   transition: transform 0.5s, -webkit-transform 0.5s;
 } */
 .skill-card .skill-card__body {
-  height: 40px;
+  height: 90px;
+  padding: 20px 20px 20px 20px;
   -webkit-transition: height 0.5s;
   transition: height 0.5s;
   overflow: hidden;
   display:flex;
   flex-direction: column;
   align-items: flex-end;
+  background-color: #ededed;
 }
 .skill-card .skill-card__body .skill-card__title {
     font-family: sb;
+    display:flex;
+    flex-direction: column;
+    margin:0;
 }
 .skill-card .skill-card__body .skill-card__duration {
   color: #9E9E9E;
   font-style: italic;
 }
 .skill-card .skill-card__body .skill-card__knowledge {
-  margin-top: 10px;
   color: #424242;
 }
 .skill-card .skill-card__body .skill-card__knowledge li {
+    font-family: sb;
+    color: #6B799E;
   margin-top: 5px;
   -webkit-transition-duration: 0;
           transition-duration: 0;
