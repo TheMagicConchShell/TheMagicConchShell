@@ -123,12 +123,13 @@ div, button {
     border: gray 1px solid;
     
     .notice-title {
+        padding-bottom: 4px;
         border-bottom: gray 1px dotted;
         font-weight: bold;
+        font-size: 1.2rem;
     }
 
     .notice-informations {
-        font-size: 1rem;
         display: flex;
         margin: 0 auto;
         .information {
