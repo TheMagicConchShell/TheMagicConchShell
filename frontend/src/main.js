@@ -18,8 +18,7 @@ import '@toast-ui/editor/dist/toastui-editor-viewer.css';
 
 import { Editor,Viewer } from '@toast-ui/vue-editor';
 
-import Kakao from '@/initKakao.js';
-Kakao.init();
+window.Kakao.init(process.env.VUE_APP_KAKAO_API_KEY);
 
 import VueI18n from 'vue-i18n';
 Vue.use(VueI18n);

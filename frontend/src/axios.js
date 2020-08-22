@@ -7,11 +7,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
 Vue.use(BootstrapVue);
 
-import constant from '@/constant';
-
 const instance = axios.create({
-    // baseURL: 'http://localhost:8399'
-    baseURL: constant.baseURL,
+    baseURL: process.env.VUE_APP_API_URL,
 });
 
 instance.interceptors.request.use(
