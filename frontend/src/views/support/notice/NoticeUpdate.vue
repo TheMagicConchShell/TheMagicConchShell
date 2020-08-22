@@ -38,7 +38,8 @@ export default {
             }
         })
             .catch((error) => {
-                this.$toast('공지사항을 불러오지 못했습니다.', error.response.data.data.message);
+                this.$toast('안내', error.response.data.message);
+                this.$router.push({ name: 'NoticeList' });
             });
 
         if (response) {

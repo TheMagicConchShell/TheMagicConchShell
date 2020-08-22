@@ -1,5 +1,5 @@
 <template>
-    <div class="content">
+    <div class="wrapper">
         <router-link
             :to="{name: 'NoticeList'}"
             tag="button"
@@ -7,12 +7,12 @@
         >
             목록
         </router-link>
-        <div class="view">
-            <div class="title">
+        <div class="notice-view">
+            <div class="notice-title">
                 {{ title }}
             </div>
 
-            <div class="informations">
+            <div class="notice-informations">
                 <div class="information flex-1 text-left">
                     {{ writer }}
                 </div>
@@ -21,7 +21,7 @@
                 </div>
             </div>
 
-            <div class="content">
+            <div class="notice-content">
                 <viewer
                     v-if="content"
                     :initial-value="content"
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import moment from 'moment';
+import { formatDate } from '@/util/format';
 import { mapGetters } from 'vuex';
 import WriteButton from "@/components/WriteButton";
 
@@ -73,22 +73,20 @@ export default {
                 id: this.no
             }
         }).catch(() => {
-            this.$router.push({name: 'Error'});
+            this.$toast('안내', '해당 공지사항이 존재하지 않습니다.');
+            this.$router.push({ name: 'NoticeList' });
         });
 
         if (response) {
             if (response.status == 200) {
                 this.writer = '관리자'; //response.data.data.writer;
-                this.writeDate = this.formatDate(response.data.data.writeDate);
+                this.writeDate = formatDate(response.data.data.writeDate);
                 this.title = response.data.data.title;
                 this.content = response.data.data.content;
             }
         }
     },
     methods: {
-        formatDate(date) {
-            return moment(new Date(date)).format("YYYY.MM.DD HH:mm:ss");
-        },
         moveUpdate() {
             this.$router.push({
                 name: 'NoticeUpdate',
@@ -101,7 +99,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 div, button {
     margin: 8px;
     text-align: left;
@@ -117,25 +115,25 @@ div, button {
     color: gray;
 }
 
-.title {
-    border-bottom: gray 1px dotted;
-    font-weight: bold;
-}
-
-.informations {
-    font-size: 90%;
-    display: flex;
-    margin: 0 auto;
-}
-.information {
-    margin-top: 0px;
-}
-
-.view {
-    border: gray 1px solid;
-}
-
 .flex-1 {
     flex: 1;
+}
+
+.notice-view {
+    border: gray 1px solid;
+    
+    .notice-title {
+        border-bottom: gray 1px dotted;
+        font-weight: bold;
+    }
+
+    .notice-informations {
+        font-size: 1rem;
+        display: flex;
+        margin: 0 auto;
+        .information {
+            margin-top: 0px;
+        }
+    }
 }
 </style>

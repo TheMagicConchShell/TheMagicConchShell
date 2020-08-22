@@ -72,6 +72,7 @@
 </template>
 
 <script>
+import { formatDate } from '@/util/format';
 import { mapGetters } from 'vuex';
 import NoticeListPaginate from "@/components/NoticeListPaginate";
 import WriteButton from "@/components/WriteButton";
@@ -119,27 +120,25 @@ export default {
                 }
             })
                 .catch((error) => {
+                    if (error.response && error.response.status === 404) {
+                        this.$router.push({
+                            name: 'Error',
+                            params: {
+                                error: {
+                                    CODE: '404',
+                                    MESSAGE: '공지사항을 불러올 수 없습니다. 다시 시도해주세요.',
+                                },
+                            },
+                        });
+                    }
                 });
 
             if (response) {
                 if (response.status >= 200 && response.status < 300) {
-                    let formatDate = function (date) {
-                        let d = new Date(date),
-                            month = '' + (d.getMonth() + 1),
-                            day = '' + d.getDate(),
-                            year = d.getFullYear();
-
-                        if (month.length < 2) 
-                            month = '0' + month;
-                        if (day.length < 2) 
-                            day = '0' + day;
-
-                        return [month, day].join('-');
-                    };
                     this.pageCount = response.data.data.totalPages;
                     this.list = response.data.data.content.map((e) => {
                         e.writer = '관리자';
-                        e.writeDate = formatDate(e.writeDate);
+                        e.writeDate = formatDate(e.writeDate, 'MM-DD');
                         return e;
                     });
                 }
@@ -168,7 +167,7 @@ th{
   padding: 10px 15px;
   text-align: center;
   font-family: sb;
-  font-size: 12px;
+  font-size: 1rem;
 }
 #t_header :nth-child(1) {
 	text-align: left;
@@ -222,7 +221,7 @@ td{
   text-align: center;
   vertical-align:middle;
   font-weight: 300;
-  font-size: 12px;
+  font-size: 1rem;
 }
 #t_no {
     width: 10%;

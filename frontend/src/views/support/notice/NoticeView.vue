@@ -15,17 +15,17 @@ import { mapState, mapGetters } from 'vuex';
 export default {
     name: 'NoticeView',
     computed: {
-        ...mapGetters(['language'])
+        ...mapGetters(['language']),
     }
 };
 </script>
 
 <style scoped>
 #home {
-  display: flex;
-  font-family: sb;
-  margin: 30px 0;
-  justify-content: space-between;
-  font-size: 30px;
+    display: flex;
+    font-family: sb;
+    margin: 30px 0;
+    justify-content: space-between;
+    font-size: 1.8rem;
 }
 </style>

@@ -3,18 +3,15 @@
         <div 
             class="container" 
         >
-            <div>
-                <h2>
-                    <label for="noticetitle"> 제목: </label>
-                    <input 
-                        id="noticetitle"
-                        v-model="title"
-                        type="text"
-                        name="noticetitle"
-                        placeholder="제목을 입력해주세요."
-                        style="width:90%"
-                    >
-                </h2>
+            <div class="header">
+                <span class="header-title">제목: </span>
+                <input 
+                    id="noticetitle"
+                    v-model="title"
+                    type="text"
+                    placeholder="제목을 입력해주세요."
+                    style="width:90%"
+                >
             </div>
             <div>
                 <editor 
@@ -139,6 +136,16 @@ export default {
 };
 </script>
 
-<style>
-
+<style scoped>
+.header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+.header-title {
+    flex: 1;
+    text-align: left;
+}
 </style>
