@@ -4,7 +4,6 @@
             id="chat-page"
             :class="{shadow: !minified}"
         >
-            <!-- <div class="chat-container"> -->
             <div
                 id="chat-header"
                 @mousedown.self="drag"
@@ -81,24 +80,23 @@
 </template>
 
 <script>
-import { makeDraggable } from '@/components/chat/draggable';
+import { makeDraggable } from '@/util/draggable';
 import Stomp from 'webstomp-client';
 import SockJS from 'sockjs-client';
 import { mapGetters } from 'vuex';
 import moment from 'moment';
-import constant from '@/constant';
 
 export default {
     props: {
         closeHandler: {
             type: Function,
-            required: true
+            required: true,
         },
         status: {
             type: Boolean,
             required: false,
             default: false,
-        }
+        },
     },
     data: () => ({
         message: '',
@@ -136,7 +134,7 @@ export default {
     },
     methods: {
         connect() {
-            const serverURL = `${constant.baseURL}/ws`;
+            const serverURL = `${process.env.VUE_APP_API_URL}/ws`;
             let socket = new SockJS(serverURL);
             this.stompClient = Stomp.over(socket);
             this.stompClient.hasDebug = false;
@@ -151,7 +149,6 @@ export default {
                     content:''
                 }),
                 {},
-                
             );
         },
         onError(error) {
@@ -183,7 +180,7 @@ export default {
             if (!this.stompClient)
                 return;
 
-            var content = JSON.parse(payload.body);
+            const content = JSON.parse(payload.body);
 
             switch(content.type) {
             case 'JOIN':
@@ -197,10 +194,10 @@ export default {
             case 'CHAT':
                 content.time = `${this.getFormatDate(Date.now())}`;
             }
+
             this.userCount = content.count;
             this.receiveList.push(content);
 
-            
             const messageAreaElement = document.getElementById('message-area');
             
             if (messageAreaElement) {
@@ -218,7 +215,7 @@ export default {
         },
         leaved() {
             if (this.stompClient) {
-                var chatMessage = {
+                const chatMessage = {
                     sender:this.nickname,
                     content:'',
                     type:"LEAVE"
