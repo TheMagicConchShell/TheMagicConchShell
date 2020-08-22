@@ -133,7 +133,7 @@ const routes = [
                 ],
             },
             {
-                path:'/qna',
+                path:'qna',
                 name:'QnaView',
                 component:QnaView,
                 children:[
@@ -165,14 +165,25 @@ const routes = [
 
     },
     {
+        path: '/manager',
+        name: 'managepage',
+        component: ManagePage,
+    },
+    {
         path: "/error",
         name: "Error",
         component: Error,
     },
     {
-        path: '/manager',
-        name: 'managepage',
-        component: ManagePage,
+        path: '*',
+        name: 'NotFound',
+        component: Error,
+        props: {
+            error: {
+                CODE: 404,
+                MESSAGE: '페이지를 찾을 수 없습니다.'
+            },
+        },
     },
 ];
 
@@ -186,7 +197,7 @@ const router = new VueRouter({
 });
 
 router.onError(() => {
-    router.push({path: '/error'});
+    router.push({name: 'Error'});
 });
 
 export default router;
