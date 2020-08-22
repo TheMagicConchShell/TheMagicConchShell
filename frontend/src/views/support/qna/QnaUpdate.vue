@@ -68,7 +68,7 @@ export default {
     },
     methods: {
         updateQna(){
-            var contentHtml = this.$refs.editorText.invoke("getHtml");
+            const contentHtml = this.$refs.editorText.invoke("getHtml");
             this.$axios({
                 method:"PUT",
                 url:"/qna/question",

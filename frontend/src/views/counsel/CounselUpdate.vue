@@ -156,7 +156,7 @@ export default {
     },
     methods: {
         updateCounsel(){
-            var contentHtml = this.$refs.editorText.invoke("getHtml");
+            const contentHtml = this.$refs.editorText.invoke("getHtml");
             this.$axios({
                 method:"put",
                 url:"/counsel/post",

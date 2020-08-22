@@ -98,7 +98,7 @@ export default {
     },
     methods: {
         async submit() {
-            var submitData = null;
+            let submitData = null;
             if(this.submitMethod==='post'){
                 submitData = {
                     title: this.title,

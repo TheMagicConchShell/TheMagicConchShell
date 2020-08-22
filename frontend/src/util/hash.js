@@ -94,7 +94,7 @@ export function sha256(s) {
         string = string.replace(/\r\n/g, "\n");
         let utftext = "";
 
-        for (var n = 0; n < string.length; n++) {
+        for (let n = 0; n < string.length; n++) {
 
             const c = string.charCodeAt(n);
 

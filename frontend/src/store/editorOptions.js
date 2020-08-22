@@ -5,15 +5,15 @@ export default Object.freeze({
     options : {
         hooks:{
             addImageBlobHook :  async (blob, callback) => {
-                var u = window.URL.createObjectURL(blob);
-                var img = new Image();
+                const u = window.URL.createObjectURL(blob);
+                const img = new Image();
                 img.src = u;
-                var canvas = document.createElement('canvas');
+                const canvas = document.createElement('canvas');
                 img.onload=function(){
-                    var MAX_WIDTH = 1000;
-                    var MAX_HEIGHT = 800;
-                    var width = img.width;
-                    var height = img.height;
+                    const MAX_WIDTH = 1000;
+                    const MAX_HEIGHT = 800;
+                    const width = img.width;
+                    const height = img.height;
                         
                     if (width > height) {
                         if (width > MAX_WIDTH) {
@@ -28,9 +28,9 @@ export default Object.freeze({
                     }
                     canvas.width = width;
                     canvas.height = height;
-                    var ctx = canvas.getContext('2d');
+                    const ctx = canvas.getContext('2d');
                     ctx.drawImage(img,0,0,width,height);
-                    var ret = canvas.toDataURL();
+                    const ret = canvas.toDataURL();
                     callback(ret,"uploaded image");
                 };
                 

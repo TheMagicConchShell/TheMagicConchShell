@@ -128,17 +128,17 @@ export default {
     },
     methods: {
         snsRegist(){
-            var data = null;
-            if(this.userEmail!=null){
+            let data = null;
+            if(this.userEmail != null){
                 data = {
-                    id:this.userId,
-                    nickname:this.nicknameR,
-                    email:this.userEmail
+                    id: this.userId,
+                    nickname: this.nicknameR,
+                    email: this.userEmail
                 };
             }else{
                 data = {
-                    id:this.userId,
-                    nickname:this.nicknameR,
+                    id: this.userId,
+                    nickname: this.nicknameR,
                 };
             }
             this.$axios({
