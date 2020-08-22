@@ -84,7 +84,8 @@ import { makeDraggable } from '@/util/draggable';
 import Stomp from 'webstomp-client';
 import SockJS from 'sockjs-client';
 import { mapGetters } from 'vuex';
-import moment from 'moment';
+
+import { formatDate } from '@/util/format';
 
 export default {
     props: {
@@ -174,7 +175,7 @@ export default {
             }
         },
         getFormatDate(date) {
-            return moment(new Date(date)).format("HH:mm");
+            return formatDate(date, "HH:mm");
         },
         onMessageReceived(payload) {
             if (!this.stompClient)

@@ -87,6 +87,8 @@
 <script>
 import QnaBoardPaginate from '@/components/qna/QnaBoardPaginate.vue';
 import { mapGetters } from 'vuex';
+import { formatDate } from '@/util/format';
+
 export default {
     components: {
         QnaBoardPaginate
@@ -124,21 +126,10 @@ export default {
             })
                 .then((response) => {
                 	if (200 <= response.status && response.status < 300) {
-                		let formatDate = function (date) {
-                			let d = new Date(date),
-                				month = '' + (d.getMonth() + 1),
-                				day = '' + d.getDate(),
-                				year = d.getFullYear();
-                			if (month.length < 2) 
-                				month = '0' + month;
-                			if (day.length < 2) 
-                				day = '0' + day;
-                			return [month, day].join('-');
-                		};
                         this.pageCount = response.data.data.totalPages;
                 		this.list = response.data.data.content.map((e) => {
                             e.answers = 0;
-                            e.writeDate = formatDate(e.writeDate);
+                            e.writeDate = formatDate(e.writeDate, 'MM-DD');
                 			return e;
                         });
                         this.list.forEach((e) => {

@@ -76,6 +76,8 @@
 import { mapGetters } from 'vuex';
 import CounselSelectPaginate from "@/components/CounselSelectPaginate";
 
+import { formatDate } from '@/util/format';
+
 export default {
     components: {
         CounselSelectPaginate,
@@ -140,22 +142,9 @@ export default {
             fetching
                 .then((response) => {
                     if (200 <= response.status && response.status < 300) {
-                        let formatDate = function (date) {
-                            let d = new Date(date),
-                                month = '' + (d.getMonth() + 1),
-                                day = '' + d.getDate(),
-                                year = d.getFullYear();
-
-                            if (month.length < 2) 
-                                month = '0' + month;
-                            if (day.length < 2) 
-                                day = '0' + day;
-
-                            return [month, day].join('-');
-                        };
                         this.pageCount = response.data.data.totalPages;
                         this.list = response.data.data.content.map((e) => {
-                            e.writeDate = formatDate(e.writeDate);
+                            e.writeDate = formatDate(e.writeDate, 'MM-DD');
                             e.replies = 1;
                             e.category = this.$store.getters.categoryNameById(e.categoryId, this.language);
                             return e;

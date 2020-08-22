@@ -75,7 +75,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import moment from 'moment';
+import { formatDate } from '@/util/format';
 
 export default {
     data: () => ({
@@ -122,7 +122,7 @@ export default {
             return this.$store.getters.categoryNameById(categoryId, this.language);
         },
         getFormatDate(date) {
-            return moment(new Date(date)).format("YY.MM.DD HH:mm");
+            return formatDate(date, 'YY.MM.DD HH:mm');
         },
         removeImg(html) {
             let img_tag = /<img[^>]*src=[\"']?([^>\"']+)[\"']?[^>]*>/gi;

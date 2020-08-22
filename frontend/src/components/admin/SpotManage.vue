@@ -99,10 +99,11 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex';
-import moment from 'moment';
+import { mapGetters } from 'vuex';
+import { formatDate } from '@/util/format';
+
 export default {
-    data:()=>({
+    data: () => ({
         spotList:[],
         id: '',
         page:1,
@@ -116,7 +117,7 @@ export default {
         this.fetchSpotList(this.page);
     },
     methods: {
-        async fetchSpotList(page){
+        async fetchSpotList(page) {
             const response = await this.$axios({
                 method: 'get',
                 url: '/spot',
@@ -136,7 +137,7 @@ export default {
             });
         },
         getFormatDate(date) {
-            return moment(new Date(date)).format("YYYY.MM.DD hh:mm:ss");
+            return formatDate(date, "YYYY.MM.DD hh:mm:ss");
         },
         openDeleteModal(id){
             this.$bvModal.show('modal-delete-spot');

@@ -53,6 +53,8 @@ import { mapGetters } from 'vuex';
 import QnaDetailComment from '@/components/qna/QnaDetailComment.vue';
 import QnaCommentEditor from '@/components/qna/QnaCommentEditor.vue';
 
+import { formatDate } from '@/util/format';
+
 export default {
     name: 'QnaDetail',
     components: {
@@ -94,25 +96,11 @@ export default {
             })
                 .then((response) => {
                     if (200 <= response.status && response.status < 300) {
-                        let formatDate = (date) => {
-                            let d = new Date(date),
-                                month = '' + (d.getMonth() + 1),
-                                day = '' + d.getDate(),
-                                year = d.getFullYear();
-
-                            if (month.length < 2) 
-                                month = '0' + month;
-                            if (day.length < 2) 
-                                day = '0' + day;
-
-                            return [month, day].join('-');
-                        };
-
                         this.question = response.data.data.question;
-                        this.question.writeDate = formatDate(this.question.writeDate);
+                        this.question.writeDate = formatDate(this.question.writeDate, 'MM-DD');
                         this.answers = response.data.data.answers.map((e) => {
                             let n = e;
-                            n.writeDate = formatDate(e.writeDate);
+                            n.writeDate = formatDate(e.writeDate, 'MM-DD');
                             return n;
                         });
                     }

@@ -57,7 +57,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
-import moment from 'moment';
+import { formatDate } from '@/util/format';
 
 export default {
     data: () => ({
@@ -102,7 +102,7 @@ export default {
             else return change;
         },
         getFormatDate(date) {
-            return moment(new Date(date)).format("YYYY.MM.DD HH:mm:ss");
+            return formatDate(date, "YYYY.MM.DD HH:mm:ss");
         },
     },
 };

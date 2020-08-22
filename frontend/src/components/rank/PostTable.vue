@@ -93,6 +93,8 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import { formatDate } from '@/util/format';
+
 export default {
     data() {
         return {
@@ -122,19 +124,8 @@ export default {
                 }
             }).then((res)=>{
                 if(res.data.status==="S-200"){
-                    let formatDate = function (date) {
-                        let d = new Date(date),
-                            month = '' + (d.getMonth() + 1),
-                            day = '' + d.getDate(),
-                            year = d.getFullYear();
-                        if (month.length < 2) 
-                            month = '0' + month;
-                        if (day.length < 2) 
-                            day = '0' + day;
-                        return [month, day].join('-');
-                    };
                     this.list = res.data.data.map((e)=>{
-                        e.writeDate = formatDate(e.writeDate);
+                        e.writeDate = formatDate(e.writeDate, 'MM-DD');
                         e.category = this.$store.getters.categoryNameById(e.categoryId, this.language);
                         return e;
                     });

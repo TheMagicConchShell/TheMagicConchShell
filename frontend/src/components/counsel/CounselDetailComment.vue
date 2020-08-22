@@ -293,7 +293,6 @@
 </template>
 
 <script>
-import moment from 'moment';
 import { mapGetters } from 'vuex';
 import SvgExclamation from '@/components/general/SvgMaterialReportProblem.vue';
 import SvgPencil from '@/components/general/SvgMaterialRateReview.vue';
@@ -301,6 +300,8 @@ import SvgAuthor from '@/components/general/SvgMaterialVerifiedUser.vue';
 import SvgDelete from '@/components/general/SvgMaterialBackspace.vue';
 import SvgCheckBox from '@/components/general/SvgMaterialCheckBox.vue';
 import SvgAdvertise from '@/components/general/SvgMaterialCampaign.vue';
+
+import { formatDate } from '@/util/format';
 
 export default {
     name: "CounselDetailComment",
@@ -414,7 +415,7 @@ export default {
     computed: {
         ...mapGetters(['nickname']),
         formatDate() {
-            return moment(new Date(this.writeDate)).format("YYYY.MM.DD HH:mm:ss");
+            return formatDate(this.writeDate, "YYYY.MM.DD HH:mm:ss");
         },
     },
     mounted() {

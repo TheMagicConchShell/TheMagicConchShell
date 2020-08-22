@@ -345,8 +345,8 @@
     </div>
 </template>
 <script>
-import moment from 'moment';
 import InfiniteLoading from 'vue-infinite-loading';
+import { formatDate } from '@/util/format';
 
 export default {
     name: 'CounselSelect',
@@ -457,7 +457,7 @@ export default {
             });
         },
         getFormatDate(date) {
-            return moment(new Date(date)).format("YYYY.MM.DD");
+            return formatDate(date, "YYYY.MM.DD");
         },
         async recommendUpdate(){
             await this.$axios({

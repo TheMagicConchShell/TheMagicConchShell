@@ -119,7 +119,8 @@
 <script>
 import { mapGetters } from 'vuex';
 import { Carousel3d, Slide } from 'vue-carousel-3d';
-import moment from 'moment';
+
+import { formatDate } from '@/util/format';
 
 export default {
     name: 'Home',
@@ -141,12 +142,6 @@ export default {
         this.fetchHistory(this.size);
     },
     methods: {
-        formatDate(writeDate) {
-            return moment(new Date(writeDate)).format("YYYY.MM.DD HH:mm");
-        },
-        formatDate2(writeDate) {
-            return moment(new Date(writeDate)).format("YYYY.MM.DD");
-        },
         select(selected) {
             this.nowshowing=selected;
         },
@@ -167,7 +162,7 @@ export default {
             if (response) {
                 if (response.status >= 200 && response.status < 300) {
                     this.list = response.data.data.map((e) => {
-                        e.writeDate= this.formatDate(e.writeDate);
+                        e.writeDate = formatDate(e.writeDate, 'YYYY.MM.DD HH:mm');
                         return e;
                     });
                 }
@@ -187,7 +182,7 @@ export default {
             if (response) {
                 if (response.status >= 200 && response.status < 300) {
                     this.histories = response.data.data.map((h) => {
-                        h.writeDate= this.formatDate2(h.writeDate);
+                        h.writeDate = formatDate(h.writeDate, 'YYYY.MM.DD');
                         h.replies = 1;
                         return h;
                     });
