@@ -1,4 +1,4 @@
-# 마법의 싸피고둥
+# <img src="images/logo/conch.png" width="28"> 마법의 싸피고둥  
 > SSAFY 3기 4반 3팀 블사조  
 
 [![UCC](https://img.shields.io/badge/ucc-youtube-red)](https://www.youtube.com/watch?v=yQqSDPEUsyQ)
@@ -18,14 +18,22 @@
 
 > "개인이 가진 고민을 자유롭게 소통할 수 있는 공간을 만들자"
 
-## Demo
+## 🎬 Demo
+[![YOUTUBE](images/demo/youtube_image.png)](https://www.youtube.com/watch?v=yQqSDPEUsyQ)
+
+<br>
+
 *Write your worries*  
 ![고민 작성](images/demo/counsel_write.png)  
+
+<br>
 
 *Explore others worry of waiting for an answer*  
 ![금주의 싸피고둥이들](images/demo/this_week_worries.png)  
 ![고민 게시판](images/demo/counsel_list.png)  
 ![고민 읽기](images/demo/counsel_read.png)  
+
+<br>
 
 *Solve your problems by chatting with others*  
 ![채팅](images/demo/chat.png)  
