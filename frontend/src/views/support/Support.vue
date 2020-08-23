@@ -16,6 +16,6 @@ export default {
   font-family: sb;
   margin: 30px 0;
   justify-content: space-between;
-  font-size: 30px;
+  font-size: 1.8rem;
 }
 </style>

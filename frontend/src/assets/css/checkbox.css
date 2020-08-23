@@ -7,7 +7,7 @@
 .el-radio,
 .el-checkbox {
   position: relative;
-  font-size: 100%;
+  font-size: 1rem;
 }
 label.el-radio,
 label.el-checkbox {
@@ -225,7 +225,7 @@ label.el-checkbox {
 }
 .el-switch {
   display: inline-block;
-  font-size: 100%;
+  font-size: 1rem;
   height: 1.6em;
   position: relative;
 }
@@ -301,10 +301,10 @@ label.el-checkbox {
 .el-radio.el-radio-sm,
 .el-checkbox.el-checkbox-sm,
 .el-switch.el-switch-sm {
-  font-size: 85%;
+  font-size: 0.85rem;
 }
 .el-radio.el-radio-lg,
 .el-checkbox.el-checkbox-lg,
 .el-switch.el-switch-lg {
-  font-size: 125%;
+  font-size: 1.25rem;
 }

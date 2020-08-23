@@ -246,7 +246,7 @@ export default {
   padding-top: 30px;
   justify-content: space-between;
   font-family: sb;
-  font-size: 120%;
+  font-size: 1.8rem;
 }
 #exp {
     font-family: md;
@@ -278,7 +278,7 @@ export default {
 
 @media (max-width: 992px) {
     #home {
-        font-size: 22.5px;
+        font-size: 1.6rem;
     }
     #history {
         grid-template-columns: 1fr 1fr;
@@ -345,7 +345,7 @@ export default {
 } */
 #card_title {
     font-family: sb;
-    font-size:120%;
+    font-size: 1.2rem;
 }
 .skill-card:hover .skill-card__body {
   height: 180px;

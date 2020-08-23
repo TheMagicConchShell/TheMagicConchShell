@@ -196,7 +196,6 @@ th{
   padding: 10px 15px;
   text-align: center;
   font-family: sb;
-  font-size: 12px;
 }
 #t_header :nth-child(1) {
     width: 60px;
@@ -266,7 +265,6 @@ td{
   text-align: center;
   vertical-align:middle;
   font-weight: 300;
-  font-size: 12px;
 }
 #t_no {
     width: 10%;

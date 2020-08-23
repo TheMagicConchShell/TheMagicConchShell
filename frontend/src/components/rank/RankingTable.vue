@@ -38,7 +38,4 @@ export default {
 </script>
 
 <style>
-.tab-ranking{
-    font-size: 20px;
-}
 </style>

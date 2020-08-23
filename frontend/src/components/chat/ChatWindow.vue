@@ -369,7 +369,7 @@ export default {
     .message {
         .time {
             color: gray;
-            font-size: 12px;
+            font-size: 0.7rem;
         }
     }
 }

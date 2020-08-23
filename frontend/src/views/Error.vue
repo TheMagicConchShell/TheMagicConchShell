@@ -28,14 +28,14 @@ export default {
 
 <style scoped>
 .worried-face {
-    font-size: 60px;
+    font-size: 4rem;
 }
 .code {
-    font-size: 60px;
+    font-size: 4rem;
     color: coral;
     text-decoration: underline;
 }
 .message {
-    font-size: 36px;
+    font-size: 1.4rem;
 }
 </style>

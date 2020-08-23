@@ -151,13 +151,13 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 #home {
   display: flex;
   font-family: sb;
   margin: 30px 0;
   justify-content: space-between;
-  font-size: 30px;
+  font-size: 1.8rem;
 }
 #category {
     position: fixed;
@@ -173,7 +173,6 @@ export default {
     padding: 0;
     width: 100%;
     height: 24px;
-    font-size: 16px;
     background-color: #ffffff;
 }
 #selectbox {
@@ -185,9 +184,15 @@ export default {
     }
     #selectbox {
         display:flex;
+
+        select {
+            padding: 4px 6px;
+            margin: 4px 0px;
+        }
     }
 }
 #tab li{
+    padding: 4px 6px;
     font-family: sb;
     clear: both;
     width: 70px;
@@ -216,9 +221,8 @@ export default {
     align-items: center;
     padding: 0;
     width: 100%;
-    font-size: 16px;
     background-color: #ffffff;
-    border-bottom: 1px solid #ebeaea
+    border-bottom: 1px solid #ebeaea;
 }
 #tab-column li{
     clear: both;

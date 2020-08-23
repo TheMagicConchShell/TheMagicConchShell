@@ -11,7 +11,6 @@
                 <i 
                     id="clockwise"
                     class="fas fa-bars"
-                    style="color: #bdbdbd;font-size: 150%;"
                 />
             </div>
         </label>
@@ -428,7 +427,11 @@ export default {
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+#clockwise {
+    color: #bdbdbd;
+    font-size: 1.5rem;
+}
 .sidebar-item {
     color: #f8f9fa !important;
 }
@@ -510,7 +513,7 @@ a:hover {
     height: 68px;
     margin: 0;
     padding: 0;
-    font-size: 130%;
+    font-size: 1.4rem;
 }
 #logo {
     width: 100%;
@@ -546,7 +549,7 @@ a:hover {
     display:none;
     width: 80px;
     left: -12px;
-    font-size: 75%;
+    font-size: 1rem;
     border: 1px solid #bdbdbd;
     background-color: #f1f1f1;
     z-index:2;
@@ -573,16 +576,16 @@ a:hover {
 }
 @media (max-width: 992px) {
     #ddopen {
-        font-size: 85%;
+        font-size: 1.1rem;
     }
     .navbar {
         height: 52px;
-        font-size: 100%;
+        font-size: 1rem;
     }
     #spot_area {
         position: fixed;
         top: 52px!important;
-        font-size: 75%;  
+        font-size: 0.8rem;  
     }
     #photo {
         height: 48px;
@@ -611,7 +614,13 @@ a:hover {
 }
 @media (max-width: 600px) {
     #ddopen {
-        font-size: 100%;
+        width: 100px;
+        left: -32px;
+        font-size: 1.2rem;
+        
+        li {
+            margin: 2px 4px;
+        }
     }
 }
 </style>
