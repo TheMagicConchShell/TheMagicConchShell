@@ -51,12 +51,7 @@ box-shadow: inset 0px 0px 5px white;
     font-family: sb;
     margin: 30px 0;
     justify-content: space-between;
-    font-size: 30px;
-  }
-@media (max-width:992px) {
-    #content {
-        margin: 45px 40px!important;
-    }
+    font-size: 1.8rem;
 }
 a {
     text-decoration: none;
@@ -98,10 +93,6 @@ input {
 }
 li {
     list-style: none;
-}
-
-#title {
-    font-size: 50px;
 }
 
 /*마우스 오버 시 커서로 변경*/
@@ -160,4 +151,8 @@ button {
 #ddmenu:after { right: 50%; }
 #ddmenu:hover:before, #ddmenu:hover:after {
     width: 50%;
+}
+
+.tui-editor-contents {
+    font-size: 1rem;
 }

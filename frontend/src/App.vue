@@ -151,20 +151,20 @@ export default {
 
 #content {
     margin: 70px 120px;
-    padding: 0 10px;
+    padding: 0 0px;
     z-index: 4;
 }
 
 @media (max-width: 992px) {
     #content {
-        margin: 70px 40px!important;
+        margin: 45px 40px!important;
         padding: 0 10px;
     }
 }
 
 @media (max-width: 768px) {
     #content {
-        margin: 70px 12px!important;
+        margin: 45px 12px!important;
         padding: 0 0px;
     }
 }
